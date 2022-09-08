@@ -47,3 +47,5 @@ app.*.map.json
 /android/app/release
 
 pubspec.lock
+android/private_key.pepk
+android/monday-key.jks
