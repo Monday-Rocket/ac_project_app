@@ -1,4 +1,4 @@
-import 'package:ac_project_app/view/home/home_controller.dart';
+import 'package:ac_project_app/ui/page/home/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

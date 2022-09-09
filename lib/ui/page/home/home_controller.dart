@@ -7,7 +7,7 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     Future.delayed(const Duration(seconds: 1), () {
-      greeting = '비사이드 12기 먼데이 로켓';
+      greeting = '날씨 정보 가져오기';
       update();
     });
     super.onInit();
