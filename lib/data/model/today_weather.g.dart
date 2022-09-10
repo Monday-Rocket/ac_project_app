@@ -13,6 +13,8 @@ TodayWeather _$TodayWeatherFromJson(Map<String, dynamic> json) => TodayWeather(
       temp: (json['temp'] as num?)?.toDouble(),
       humidity: json['humidity'] as int?,
       weather: json['weather'] as String?,
+      lat: (json['lat'] as num?)?.toDouble(),
+      lon: (json['lon'] as num?)?.toDouble(),
     );
 
 Map<String, dynamic> _$TodayWeatherToJson(TodayWeather instance) =>
@@ -23,4 +25,6 @@ Map<String, dynamic> _$TodayWeatherToJson(TodayWeather instance) =>
       'temp': instance.temp,
       'humidity': instance.humidity,
       'weather': instance.weather,
+      'lat': instance.lat,
+      'lon': instance.lon,
     };

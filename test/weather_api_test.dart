@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:ac_project_app/data/model/location.dart';
 import 'package:ac_project_app/data/provider/weather_api.dart';
+import 'package:ac_project_app/data/repository/weather_repository.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -19,5 +21,10 @@ void main() {
   test('weather api 호출 테스트', () async {
     final what = await client.getData('44.34', '10.99', dotenv.env['weather.api.key'] ?? '');
     logger.i(jsonDecode(jsonEncode(what)));
+  });
+
+  test('today 날씨 테스트', () async {
+    final today = await WeatherRepository(client).getWeather(Location(44.34, 10.99));
+    logger.i(jsonDecode(jsonEncode(today)));
   });
 }

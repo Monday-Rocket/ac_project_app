@@ -327,8 +327,8 @@ Wind copyWith({  double? speed,
 
 class Main {
   Main({
-      double? temp, 
-      double? feelsLike, 
+      double? temp,
+      num? feelsLike,
       double? tempMin, 
       double? tempMax, 
       int? pressure, 
@@ -347,7 +347,7 @@ class Main {
 
   Main.fromJson(dynamic json) {
     _temp = json['temp'] as double?;
-    _feelsLike = json['feels_like'] as double?;
+    _feelsLike = json['feels_like'] as num?;
     _tempMin = json['temp_min'] as double?;
     _tempMax = json['temp_max'] as double?;
     _pressure = json['pressure'] as int?;
@@ -356,7 +356,7 @@ class Main {
     _grndLevel = json['grnd_level'] as int?;
   }
   double? _temp;
-  double? _feelsLike;
+  num? _feelsLike;
   double? _tempMin;
   double? _tempMax;
   int? _pressure;
@@ -364,7 +364,7 @@ class Main {
   int? _seaLevel;
   int? _grndLevel;
 Main copyWith({  double? temp,
-  double? feelsLike,
+  num? feelsLike,
   double? tempMin,
   double? tempMax,
   int? pressure,
@@ -381,7 +381,7 @@ Main copyWith({  double? temp,
   grndLevel: grndLevel ?? _grndLevel,
 );
   double? get temp => _temp;
-  double? get feelsLike => _feelsLike;
+  num? get feelsLike => _feelsLike;
   double? get tempMin => _tempMin;
   double? get tempMax => _tempMax;
   int? get pressure => _pressure;

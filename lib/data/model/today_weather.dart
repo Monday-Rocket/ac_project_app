@@ -11,6 +11,8 @@ class TodayWeather {
     this.temp,
     this.humidity,
     this.weather,
+    this.lat,
+    this.lon,
   });
 
   factory TodayWeather.fromJson(Map<String, dynamic> json) =>
@@ -24,4 +26,6 @@ class TodayWeather {
   final double? temp;
   final int? humidity;
   final String? weather;
+  final double? lat;
+  final double? lon;
 }
