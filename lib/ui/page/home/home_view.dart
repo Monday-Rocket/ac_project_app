@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:ac_project_app/ui/page/home/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -13,8 +15,8 @@ class HomeView extends StatelessWidget {
         child: Center(
           child: GetBuilder<HomeController>(
             builder: (c) {
-              if (c.greeting != null) {
-                return Text(c.greeting!, style: const TextStyle(fontSize: 24));
+              if (c.state.isNotEmpty) {
+                return Text(jsonEncode(c.state.todayWeather));
               } else {
                 return const SizedBox(
                   width: 100,
