@@ -23,6 +23,9 @@ dependencies:
   geolocator: ^9.0.1
   permission_handler:
   flutter_dotenv: ^5.0.2
+  sign_in_with_apple: ^4.1.0
+  google_sign_in: ^5.4.1
+  kakao_flutter_sdk_user: ^1.2.1
 
 dev_dependencies:
   flutter_test:

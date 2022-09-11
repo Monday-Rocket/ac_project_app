@@ -37,15 +37,37 @@ class LoginView extends GetView<LoginController> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 50),
-                  SizedBox(
-                    width: Get.width / 2,
-                    child: SignInWithAppleButton(
-                      onPressed: () => controller.login(LoginType.apple),
-                      text: 'Apple Login',
-                      iconAlignment: IconAlignment.left,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 40),
+                    child: SizedBox(
+                      width: Get.width / 2,
+                      child: SignInWithAppleButton(
+                        onPressed: () => controller.login(LoginType.apple),
+                        text: 'Apple Login',
+                        iconAlignment: IconAlignment.left,
+                      ),
                     ),
-                  )
+                  ),
+                  GestureDetector(
+                    onTap: () => controller.login(LoginType.google),
+                    child: const ColoredBox(
+                      color: Colors.white,
+                      child: Padding(
+                        padding: EdgeInsets.all(24),
+                        child: Text('Google Login'),
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () => controller.login(LoginType.kakao),
+                    child: const ColoredBox(
+                      color: Color(0xFFCEBB19),
+                      child: Padding(
+                        padding: EdgeInsets.all(24),
+                        child: Text('Kakao Login'),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),

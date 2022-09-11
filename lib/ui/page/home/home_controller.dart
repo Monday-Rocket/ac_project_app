@@ -10,20 +10,20 @@ class HomeController extends GetxController {
   final WeatherRepository _weatherRepository;
   final LocationProvider _locationProvider;
 
-  Rx<HomeState> _state = HomeState(
+  HomeState _state = HomeState(
     todayWeather: TodayWeather(),
     isNotEmpty: false,
-  ).obs;
+  );
 
-  HomeState get state => _state.value;
+  HomeState get state => _state;
 
   @override
   void onInit() {
-    Future.delayed(const Duration(seconds: 1), () async {
+    Future.microtask(() async {
       _state = state.copyWith(
         todayWeather: await getTodayWeather(),
         isNotEmpty: true,
-      ).obs;
+      );
       update();
     });
     super.onInit();

@@ -1,3 +1,1 @@
-enum LoginType {
-  apple,
-}
+enum LoginType { apple, google, kakao }

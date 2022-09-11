@@ -35,3 +35,4 @@ Runner/GeneratedPluginRegistrant.*
 
 # etc
 Podfile.lock
+Runner/GoogleService-Info.plist
