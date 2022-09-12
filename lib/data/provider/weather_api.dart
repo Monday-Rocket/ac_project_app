@@ -9,5 +9,9 @@ abstract class WeatherApi {
   factory WeatherApi(Dio dio, {String baseUrl}) = _WeatherApi;
 
   @GET('/data/2.5/weather?lat={lat}&lon={lon}&appid={apiKey}')
-  Future<OpenWeather> getData(@Path('lat') String lat, @Path('lon') String lon, @Path('apiKey') String apiKey);
+  Future<OpenWeather> getData(
+    @Path('lat') String lat,
+    @Path('lon') String lon,
+    @Path('apiKey') String apiKey,
+  );
 }

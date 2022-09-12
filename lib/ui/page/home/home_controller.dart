@@ -5,10 +5,9 @@ import 'package:ac_project_app/ui/page/home/home_state.dart';
 import 'package:get/get.dart';
 
 class HomeController extends GetxController {
-  HomeController(this._weatherRepository, this._locationProvider);
+  HomeController(this._weatherRepository);
 
   final WeatherRepository _weatherRepository;
-  final LocationProvider _locationProvider;
 
   HomeState _state = HomeState(
     todayWeather: TodayWeather(),
@@ -30,7 +29,7 @@ class HomeController extends GetxController {
   }
 
   Future<TodayWeather> getTodayWeather() async {
-    final currentLocation = await _locationProvider.getLocation();
+    final currentLocation = await LocationProvider.getLocation();
     return _weatherRepository.getWeather(currentLocation);
   }
 }
