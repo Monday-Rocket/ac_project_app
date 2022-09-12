@@ -28,6 +28,8 @@ if (signingPropertiesFile.exists()) {
         signingProperties.load(it)
     }
 }
+def kakaoApiKey = localProperties.getProperty('kakao.api.key')
+
 def _keyAlias = signingProperties.getProperty('key.alias')
 def _keyPassword = signingProperties.getProperty('key.password')
 def _storePassword = signingProperties.getProperty('store.password')
@@ -57,11 +59,12 @@ android {
     }
 
     defaultConfig {
-        applicationId "project.mr.ac_project_app"
+        applicationId "com.mr.ac_project_app"
         minSdkVersion 23
         targetSdkVersion 33
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        manifestPlaceholders.KAKAO_API_KEY = kakaoApiKey
     }
 
     signingConfigs {
