@@ -1,19 +1,24 @@
 import 'package:ac_project_app/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/route_manager.dart';
+import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 
-void main() {
+Future<void> main() async {
+  await dotenv.load();
+  KakaoSdk.init(nativeAppKey: dotenv.env['kakao.api.key']);
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: Routes.home,
+      initialRoute: Routes.login,
       getPages: Pages.pages,
     );
   }
