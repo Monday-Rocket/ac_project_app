@@ -1,19 +1,23 @@
 package com.mr.ac_project_app
 
+import android.app.Activity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.appcompat.app.AppCompatActivity
-import kotlinx.android.synthetic.main.activity_share.*
+import com.mr.ac_project_app.databinding.ActivityShareBinding
 
 
-class ShareActivity: ComponentActivity() {
+class ShareActivity: Activity() {
+
+    private lateinit var binding: ActivityShareBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_share)
+        binding = ActivityShareBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
-        button.setOnClickListener {
+        binding.button.setOnClickListener {
             finishAffinity()
         }
     }
