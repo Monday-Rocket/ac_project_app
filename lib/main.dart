@@ -1,13 +1,27 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:ac_project_app/routes.dart';
+import 'package:ac_project_app/util/logger.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/route_manager.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
+import 'package:path_provider/path_provider.dart';
 
 Future<void> main() async {
   await dotenv.load();
   KakaoSdk.init(nativeAppKey: dotenv.env['kakao.api.key']);
   WidgetsFlutterBinding.ensureInitialized();
+  unawaited(
+    getApplicationDocumentsDirectory().then((Directory dir) {
+      final basePath = '${dir.path}/share.txt';
+      Log.i('basePath: $basePath');
+      if (File(basePath).existsSync()) {
+        Log.i(File(basePath).readAsStringSync());
+      }
+    }),
+  );
   runApp(const MyApp());
 }
 
