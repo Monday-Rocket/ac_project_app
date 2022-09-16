@@ -27,6 +27,7 @@ dependencies:
   google_sign_in: ^5.4.1
   kakao_flutter_sdk_user: ^1.2.1
   path_provider:
+  flutter_background_service:
 
 dev_dependencies:
   flutter_test:
