@@ -87,6 +87,7 @@ android {
             signingConfig signingConfigs.release
         }
     }
+    namespace 'com.mr.ac_project_app'
 
     applicationVariants.all { variant ->
         variant.outputs.all { output ->
