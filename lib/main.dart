@@ -2,8 +2,10 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:ac_project_app/firebase_options.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/util/logger.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -13,8 +15,15 @@ import 'package:path_provider/path_provider.dart';
 
 Future<void> main() async {
   await dotenv.load();
-  KakaoSdk.init(nativeAppKey: dotenv.env['kakao.api.key']);
   WidgetsFlutterBinding.ensureInitialized();
+  KakaoSdk.init(nativeAppKey: dotenv.env['kakao.api.key']);
+  if (Firebase.apps.isEmpty) {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } else {
+    Firebase.app();
+  }
   unawaited(
     getApplicationDocumentsDirectory().then((Directory dir) {
       final basePath = '${dir.path}/share.txt';

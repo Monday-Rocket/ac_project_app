@@ -29,6 +29,8 @@ dependencies:
   path_provider:
   flutter_background_service:
 
+  firebase_auth: ^3.9.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -5,6 +5,7 @@ import 'package:ac_project_app/data/provider/login/google_login.dart';
 import 'package:ac_project_app/data/provider/login/kakao_login.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/page/login/login_type.dart';
+import 'package:ac_project_app/util/logger.dart';
 import 'package:get/get.dart';
 
 class LoginController extends GetxController {
@@ -14,7 +15,8 @@ class LoginController extends GetxController {
         final result = await Apple.login();
         break;
       case LoginType.google:
-        final result = await Google.login();
+        final userCredential = await Google.login();
+        Log.i(userCredential?.credential?.token);
         break;
       case LoginType.kakao:
         final result = await Kakao.login();
