@@ -1,28 +1,59 @@
 package com.mr.ac_project_app
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
+import android.text.TextUtils
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.appcompat.app.AppCompatActivity
-import kotlinx.android.synthetic.main.activity_share.*
+import com.mr.ac_project_app.databinding.ActivityShareBinding
+import java.io.*
 
 
-class ShareActivity: ComponentActivity() {
+class ShareActivity : Activity() {
+
+    private var resultData: String = ""
+    private lateinit var binding: ActivityShareBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_share)
+        binding = ActivityShareBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
-        button.setOnClickListener {
+        binding.button.setOnClickListener {
+            Log.i("ACP", dataDir.absolutePath)
+            writeTextFile(resultData)
             finishAffinity()
         }
     }
 
+    private fun writeTextFile(contents: String) {
+        try {
+            val absolutePath = dataDir.absolutePath
+            val dir = File(absolutePath)
+            if (!dir.exists()) { dir.mkdir() }
+            //파일 output stream 생성
+            val fos = FileOutputStream("$absolutePath/app_flutter/share.txt", true)
+            val writer = BufferedWriter(OutputStreamWriter(fos))
+            writer.write(contents + "\n")
+            writer.flush()
+            writer.close()
+            fos.close()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+    }
+
+
     override fun onResume() {
         super.onResume()
-        Toast.makeText(applicationContext, "onResume", Toast.LENGTH_SHORT).show()
-        var msg = this.intent.getStringExtra("KEY") //전송부의 키값의 value를 가져온다.
-        Log.i("ACP","onResume:: $msg")
+        resultData = intent.getStringExtra(Intent.EXTRA_TEXT) ?: ""
+        if (TextUtils.isEmpty(resultData)) {
+            resultData = intent.getStringExtra("android.intent.extra.PROCESS_TEXT") ?: ""
+        }
+        Toast.makeText(applicationContext, resultData, Toast.LENGTH_SHORT).show()
+        Log.i("ACP", "onResume:: $resultData")
     }
 
     override fun onPause() {

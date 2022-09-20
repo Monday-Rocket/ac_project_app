@@ -1,6 +1,5 @@
 import 'package:ac_project_app/ui/page/login/login_controller.dart';
 import 'package:ac_project_app/ui/page/login/login_type.dart';
-import 'package:ac_project_app/ui/widget/buttons/apple/apple_login_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -37,17 +36,6 @@ class LoginView extends GetView<LoginController> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 40),
-                    child: SizedBox(
-                      width: Get.width / 2,
-                      child: SignInWithAppleButton(
-                        onPressed: () => controller.login(LoginType.apple),
-                        text: 'Apple Login',
-                        iconAlignment: IconAlignment.left,
-                      ),
-                    ),
-                  ),
                   GestureDetector(
                     onTap: () => controller.login(LoginType.google),
                     child: const ColoredBox(
@@ -55,16 +43,6 @@ class LoginView extends GetView<LoginController> {
                       child: Padding(
                         padding: EdgeInsets.all(24),
                         child: Text('Google Login'),
-                      ),
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () => controller.login(LoginType.kakao),
-                    child: const ColoredBox(
-                      color: Color(0xFFCEBB19),
-                      child: Padding(
-                        padding: EdgeInsets.all(24),
-                        child: Text('Kakao Login'),
                       ),
                     ),
                   ),

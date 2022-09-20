@@ -26,6 +26,10 @@ dependencies:
   sign_in_with_apple: ^4.1.0
   google_sign_in: ^5.4.1
   kakao_flutter_sdk_user: ^1.2.1
+  path_provider:
+  flutter_background_service:
+
+  firebase_auth: ^3.9.0
 
 dev_dependencies:
   flutter_test:
