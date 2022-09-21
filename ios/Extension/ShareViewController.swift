@@ -83,8 +83,8 @@ class ShareViewController: UIViewController {
                             }catch let error as NSError{
                                 print("error : \(error.localizedDescription)")
                             }
-                            
-                            
+
+                            print("path : \(urlPath)")
                         }
                     }
                 }
