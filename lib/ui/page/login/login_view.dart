@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:ac_project_app/ui/page/login/login_controller.dart';
 import 'package:ac_project_app/ui/page/login/login_type.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:path_provider/path_provider.dart';
 
 class LoginView extends GetView<LoginController> {
   const LoginView({super.key});

@@ -3,6 +3,8 @@ import 'dart:ui';
 
 import 'package:ac_project_app/data/provider/share_data_provider.dart';
 import 'package:ac_project_app/firebase_options.dart';
+import 'dart:io';
+
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -11,6 +13,8 @@ import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/route_manager.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:developer' as dev;
 
 Future<void> main() async {
   await initSettings();
@@ -29,6 +33,11 @@ Future<void> initSettings() async {
   } else {
     Firebase.app();
   }
+  WidgetsFlutterBinding.ensureInitialized();
+
+
+
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
