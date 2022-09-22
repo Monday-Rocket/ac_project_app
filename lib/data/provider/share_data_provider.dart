@@ -1,17 +1,24 @@
-import 'dart:async';
-import 'dart:io';
-
 import 'package:ac_project_app/util/logger.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:flutter/services.dart';
 
 class ShareDataProvider {
-  static Future<String> get() async {
-    final dir = await getApplicationDocumentsDirectory();
-    final basePath = '${dir.path}/share.txt';
-    Log.i('basePath: $basePath');
-    if (File(basePath).existsSync()) {
-      return File(basePath).readAsStringSync();
+  static const _platform = MethodChannel('share_data_provider');
+
+  static Future<List<String>> getShareDataList() async {
+    try {
+      final data =
+          await _platform.invokeMethod('getShareData') as List<Object?>;
+
+      final result = <String>[];
+
+      for (final item in data) {
+        result.add(item.toString());
+      }
+
+      return result;
+    } on PlatformException catch (e) {
+      Log.e(e.message);
+      rethrow;
     }
-    return '';
   }
 }

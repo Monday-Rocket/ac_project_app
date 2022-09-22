@@ -43,9 +43,11 @@ dev_dependencies:
   json_serializable: ^6.3.1
   freezed: ^1.1.1
 
+
 flutter:
 
   uses-material-design: true
 
   assets:
     - .env
+    - images/

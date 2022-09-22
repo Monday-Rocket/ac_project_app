@@ -1,6 +1,8 @@
 package com.mr.ac_project_app
 
+import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
@@ -15,6 +17,11 @@ class ShareActivity : Activity() {
     private var resultData: String = ""
     private lateinit var binding: ActivityShareBinding
 
+    companion object {
+        const val SHARED_PREF = "share_pref"
+        const val SHARE_LIST_ID = "sharedDataList"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityShareBinding.inflate(layoutInflater)
@@ -23,11 +30,12 @@ class ShareActivity : Activity() {
 
         binding.button.setOnClickListener {
             Log.i("ACP", dataDir.absolutePath)
-            writeTextFile(resultData)
+            writeSharedPref(resultData)
             finishAffinity()
         }
     }
 
+    @Suppress("unused")
     private fun writeTextFile(contents: String) {
         try {
             val absolutePath = dataDir.absolutePath
@@ -43,6 +51,15 @@ class ShareActivity : Activity() {
         } catch (e: IOException) {
             e.printStackTrace()
         }
+    }
+
+    private fun writeSharedPref(contents: String) {
+        val sharedPref = getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE)
+        val saved = sharedPref.getStringSet(SHARE_LIST_ID, HashSet<String>())!!
+        val resultSet = HashSet<String>()
+        resultSet.addAll(saved)
+        resultSet.add(contents)
+        sharedPref.edit().putStringSet(SHARE_LIST_ID, resultSet).apply()
     }
 
 
