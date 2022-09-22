@@ -95,14 +95,17 @@ class LoginView extends GetView<LoginController> {
                   return Padding(
                     padding: const EdgeInsets.all(16),
                     child: Container(
-                      color: Colors.white,
+                      color: Colors.black,
                       height: 100,
                       child: ListView.builder(
                         itemCount: c.shareDataList.length,
                         itemBuilder: (_, index) {
                           return Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(c.shareDataList[index]),
+                            padding: const EdgeInsets.all(8),
+                            child: Text(
+                              c.shareDataList[index],
+                              style: const TextStyle(color: Colors.white),
+                            ),
                           );
                         },
                       ),

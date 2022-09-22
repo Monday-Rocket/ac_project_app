@@ -2,7 +2,7 @@ import 'package:ac_project_app/util/logger.dart';
 import 'package:flutter/services.dart';
 
 class ShareDataProvider {
-  static const _platform = MethodChannel('ios_local_path');
+  static const _platform = MethodChannel('share_data_provider');
 
   static Future<List<String>> getShareDataList() async {
     try {

@@ -30,7 +30,6 @@ dependencies:
   flutter_background_service:
 
   firebase_auth: ^3.9.0
-  shared_preferences: ^2.0.15
 
 dev_dependencies:
   flutter_test:

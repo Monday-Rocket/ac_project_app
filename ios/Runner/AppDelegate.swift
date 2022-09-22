@@ -9,7 +9,7 @@ import Flutter
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
         let controller : FlutterViewController = window?.rootViewController as! FlutterViewController
-        let localPathChannel = FlutterMethodChannel(name: "ios_local_path",
+        let localPathChannel = FlutterMethodChannel(name: "share_data_provider",
                                                     binaryMessenger: controller.binaryMessenger)
         localPathChannel.setMethodCallHandler({
             (call: FlutterMethodCall, result: @escaping FlutterResult) -> Void in
