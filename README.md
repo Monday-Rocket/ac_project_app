@@ -1,15 +1,24 @@
 # ac_project_app
 
-비사이드 12기 먼데이 로켓팀 프로젝트
+- 비사이드 12기 먼데이 로켓팀 프로젝트
 
+## 사용 기술
 
-### data flow
+- Flutter 3.3.2
 
-1. provider: api 호출
-2. repository: 필요 데이터 추출
-3. controller: ui에 필요한 state 생성
-4. page(view): 보여주기
+![bloc.png](images/bloc.png)
 
+- DI Architecture: [bloc](https://pub.dev/packages/flutter_bloc)
+- main plugins: flutter_bloc, retrofit, very_good_analysis, firebase_auth
 
-### Directory
-- <img src="images/arch.png" width="60%" height="60%">
+## Platform Specification
+
+### Android OS
+- sdk: 24 ~ 33
+- gradle: 7.4
+
+### iOS
+- Minimum Deployments: iOS 15.0
+
+### Source Directory Structure
+![project_directory.png](images/project_directory.png)

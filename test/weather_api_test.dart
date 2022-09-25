@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:ac_project_app/data/model/location.dart';
-import 'package:ac_project_app/data/provider/weather_api.dart';
-import 'package:ac_project_app/data/repository/weather_repository.dart';
+import 'package:ac_project_app/models/location.dart';
+import 'package:ac_project_app/provider/api/weather/weather_api.dart';
+import 'package:ac_project_app/provider/api/weather/weather_repository.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';

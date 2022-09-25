@@ -1,4 +1,4 @@
-import 'package:ac_project_app/data/model/location.dart';
+import 'package:ac_project_app/models/location.dart';
 import 'package:geolocator/geolocator.dart';
 
 class LocationProvider {

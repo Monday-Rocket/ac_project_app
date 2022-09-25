@@ -1,10 +1,27 @@
-import 'package:ac_project_app/ui/page/login/login_controller.dart';
-import 'package:ac_project_app/ui/page/login/login_type.dart';
+import 'package:ac_project_app/cubits/google_login_cubit.dart';
+import 'package:ac_project_app/routes.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class LoginView extends GetView<LoginController> {
+class LoginView extends StatefulWidget {
   const LoginView({super.key});
+
+  @override
+  State<LoginView> createState() => _LoginViewState();
+}
+
+class _LoginViewState extends State<LoginView> {
+
+  @override
+  void initState() {
+    super.initState();
+
+    BlocProvider.of<GoogleLoginCubit>(context).stream.listen((event) {
+      if (event != null) {
+        Navigator.popAndPushNamed(context, Routes.home);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +71,7 @@ class LoginView extends GetView<LoginController> {
                               horizontal: 16,
                             ),
                             child: GestureDetector(
-                              onTap: () => controller.login(LoginType.google),
+                              onTap: () => context.read<GoogleLoginCubit>().login(),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
@@ -76,42 +93,6 @@ class LoginView extends GetView<LoginController> {
                     ],
                   ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: GestureDetector(
-                  onTap: controller.getShareData,
-                  child: Container(
-                    color: Colors.white,
-                    child: const Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Text('웹에서 가져온 데이터 보기'),
-                    ),
-                  ),
-                ),
-              ),
-              GetBuilder<LoginController>(
-                builder: (c) {
-                  return Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Container(
-                      color: Colors.black,
-                      height: 100,
-                      child: ListView.builder(
-                        itemCount: c.shareDataList.length,
-                        itemBuilder: (_, index) {
-                          return Padding(
-                            padding: const EdgeInsets.all(8),
-                            child: Text(
-                              c.shareDataList[index],
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  );
-                },
               ),
             ],
           ),

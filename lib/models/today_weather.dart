@@ -18,6 +18,8 @@ class TodayWeather {
   factory TodayWeather.fromJson(Map<String, dynamic> json) =>
       _$TodayWeatherFromJson(json);
 
+  factory TodayWeather.nullObject() => TodayWeather();
+
   Map<String, dynamic> toJson() => _$TodayWeatherToJson(this);
 
   final String? city;
