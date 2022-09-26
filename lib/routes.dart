@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:ac_project_app/cubits/google_login_cubit.dart';
+import 'package:ac_project_app/cubits/url_data_cubit.dart';
 import 'package:ac_project_app/cubits/weather_cubit.dart';
 import 'package:ac_project_app/ui/page/home/home_view.dart';
 import 'package:ac_project_app/ui/page/login/login_view.dart';
@@ -32,8 +33,15 @@ class Pages {
         );
       case Routes.home:
         return MultiPlatformPageRoute.create(
-          builder: (_) => BlocProvider(
-            create: (_) => WeatherCubit(null),
+          builder: (_) => MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: (_) => WeatherCubit(null),
+              ),
+              BlocProvider(
+                create: (_) => UrlDataCubit([]),
+              ),
+            ],
             child: const HomeView(),
           ),
         );

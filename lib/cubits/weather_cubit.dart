@@ -1,7 +1,7 @@
 import 'package:ac_project_app/models/today_weather.dart';
-import 'package:ac_project_app/provider/location_provider.dart';
 import 'package:ac_project_app/provider/api/weather/weather_api.dart';
 import 'package:ac_project_app/provider/api/weather/weather_repository.dart';
+import 'package:ac_project_app/provider/location_provider.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
