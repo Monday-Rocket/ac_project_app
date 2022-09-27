@@ -104,8 +104,8 @@
 			isa = PBXGroup;
 			children = (
 				AE66222428DCA79100E5DE18 /* Extension.entitlements */,
-				0F872E3D28D875E3002954CC /* ShareViewController.swift */,
 				0F872E3F28D875E3002954CC /* MainInterface.storyboard */,
+				0F872E3D28D875E3002954CC /* ShareViewController.swift */,
 				0F872E4228D875E3002954CC /* Info.plist */,
 			);
 			path = Extension;
