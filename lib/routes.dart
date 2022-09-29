@@ -19,6 +19,7 @@ class Routes {
 
 class Pages {
   static Route<dynamic>? getPages(RouteSettings settings) {
+    final arguments = settings.arguments;
     switch (settings.name) {
       case Routes.login:
         /*
@@ -54,6 +55,9 @@ class Pages {
       case Routes.signUp:
         return MultiPlatformPageRoute.create(
           builder: (_) => const SignUpView(),
+          settings: RouteSettings(
+            arguments: arguments,
+          ),
         );
       default:
         return null;
@@ -73,7 +77,7 @@ class MultiPlatformPageRoute {
           builder: builder,
           settings: settings,
           maintainState: maintainState!,
-          fullscreenDialog: fullscreenDialog!);
+          fullscreenDialog: fullscreenDialog!,);
     } else if (Platform.isIOS) {
       return CupertinoPageRoute(
           builder: builder,

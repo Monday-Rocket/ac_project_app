@@ -20,16 +20,14 @@ class _LoginViewState extends State<LoginView> {
   void initState() {
     super.initState();
 
-    BlocProvider.of<GoogleLoginCubit>(context).stream.listen((event) {
-      if (event != null) {
-        Navigator.popAndPushNamed(context, Routes.home);
-      }
-    });
-    BlocProvider.of<AppleLoginCubit>(context).stream.listen((event) {
-      if (event != null) {
-        Navigator.popAndPushNamed(context, Routes.home);
-      }
-    });
+    BlocProvider.of<GoogleLoginCubit>(context).stream.listen(_moveToSignUpPage);
+    BlocProvider.of<AppleLoginCubit>(context).stream.listen(_moveToSignUpPage);
+  }
+
+  void _moveToSignUpPage(String? event) {
+    if (event != null) {
+      Navigator.popAndPushNamed(context, Routes.signUp, arguments: event);
+    }
   }
 
   @override
