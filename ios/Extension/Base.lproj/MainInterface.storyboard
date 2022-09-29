@@ -26,7 +26,7 @@
                                     </backgroundConfiguration>
                                 </buttonConfiguration>
                                 <connections>
-                                    <action selector="test" destination="j1y-V4-xli" eventType="touchDown" id="Oxe-mO-bSX"/>
+                                    <action selector="saveUrl" destination="j1y-V4-xli" eventType="touchDown" id="Oxe-mO-bSX"/>
                                 </connections>
                             </button>
                         </subviews>
