@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:ac_project_app/firebase_options.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -34,13 +36,28 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      initialRoute: Routes.login,
-      onGenerateRoute: Pages.getPages,
-    );
+    return MultiPlatformApp.create();
   }
 }
+
+class MultiPlatformApp {
+  static StatefulWidget create() {
+    if (Platform.isAndroid) {
+      return const MaterialApp(
+        debugShowCheckedModeBanner: false,
+        initialRoute: Routes.login,
+        onGenerateRoute: Pages.getPages,
+      );
+    } else {
+      return const CupertinoApp(
+        debugShowCheckedModeBanner: false,
+        initialRoute: Routes.login,
+        onGenerateRoute: Pages.getPages,
+      );
+    }
+  }
+}
+
 
 Future<void> initBackgroundService() async {
   final service = FlutterBackgroundService();

@@ -30,6 +30,7 @@ dependencies:
   kakao_flutter_sdk_user: ^1.2.1
   path_provider:
   flutter_background_service:
+  flutter_signin_button: ^2.0.0
 
   firebase_auth: ^3.9.0
   metadata_fetch:
