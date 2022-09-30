@@ -1,0 +1,50 @@
+import 'package:flutter/widgets.dart';
+
+extension FontSize on Text {
+
+  Text fontSize(double fontSize) {
+    final curStyle = style == null ? const TextStyle() : style!;
+    return Text(
+      data ?? '',
+      style: curStyle.copyWith(
+        fontSize: fontSize,
+      ),
+    );
+  }
+}
+
+extension Bold on Text {
+  Text bold() {
+    final curStyle = style == null ? const TextStyle() : style!;
+    return Text(
+      data ?? '',
+      style: curStyle.copyWith(
+        fontWeight: FontWeight.bold,
+      ),
+    );
+  }
+}
+
+extension Pretendard on Text {
+  Text pretendard() {
+    final curStyle = style == null ? const TextStyle() : style!;
+    return Text(
+      data ?? '',
+      style: curStyle.copyWith(
+        fontFamily: 'Pretendard',
+      ),
+    );
+  }
+}
+
+extension Roboto on Text {
+  Text roboto() {
+    final curStyle = style == null ? const TextStyle() : style!;
+    return Text(
+      data ?? '',
+      style: curStyle.copyWith(
+        fontFamily: 'Roboto',
+      ),
+    );
+  }
+}

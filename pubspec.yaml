@@ -12,27 +12,34 @@ dependencies:
   flutter:
     sdk: flutter
 
+  cupertino_icons:
 
-  cupertino_icons: ^1.0.2
-
-  flutter_bloc: ^8.1.1
-
-  very_good_analysis: ^3.0.1
+  ## Network
   retrofit: ^3.0.1+1
   dio: ^4.0.6
   json_annotation: ^4.6.0
-  logger:
-  geolocator: ^9.0.1
-  permission_handler:
-  flutter_dotenv: ^5.0.2
+
+  ## Architecture
+  flutter_bloc: ^8.1.1
+
+  ## login
   sign_in_with_apple: ^4.1.0
   google_sign_in: ^5.4.1
   kakao_flutter_sdk_user: ^1.2.1
-  path_provider:
-  flutter_background_service:
-
   firebase_auth: ^3.9.0
-  metadata_fetch:
+
+  ## Utils
+  very_good_analysis: ^3.0.1
+  metadata_fetch: ^0.4.1
+  permission_handler: ^10.0.2
+  flutter_dotenv: ^5.0.2
+  logger: ^1.1.0
+  path_provider: ^2.0.11
+  flutter_background_service: ^2.4.3
+
+  ## for Test Functions
+  geolocator: ^9.0.1
+  flutter_signin_button: ^2.0.0
 
 dev_dependencies:
   flutter_test:
@@ -53,4 +60,22 @@ flutter:
 
   assets:
     - .env
-    - images/
+    - assets/images/login/3.0x/
+    - assets/images/login/2.0x/
+    - assets/images/login/
+
+  fonts:
+    - family: Pretendard
+      fonts:
+        - asset: assets/fonts/Pretendard/Pretendard-Thin.otf
+          weight: 200
+        - asset: assets/fonts/Pretendard/Pretendard-Regular.otf
+          weight: 400
+        - asset: assets/fonts/Pretendard/Pretendard-Bold.otf
+          weight: 700
+    - family: Roboto
+      fonts:
+        - asset: assets/fonts/Roboto/Roboto-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Roboto/Roboto-Bold.ttf
+          weight: 700
