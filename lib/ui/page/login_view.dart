@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/const/resource.dart';
 import 'package:ac_project_app/cubits/login/apple_login_cubit.dart';
 import 'package:ac_project_app/cubits/login/google_login_cubit.dart';
@@ -16,6 +17,10 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
+  static const google = 'Google';
+  static const apple = 'Apple';
+  static const loginText = '로 로그인';
+
   @override
   void initState() {
     super.initState();
@@ -37,30 +42,38 @@ class _LoginViewState extends State<LoginView> {
         child: Center(
           child: Column(
             children: [
-              const Expanded(
-                child: Center(
-                  child: Icon(
-                    Icons.apple,
-                    size: 140,
-                  ),
-                ),
-              ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 37),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      buildGoogleLoginButton(context),
-                      const SizedBox(height: 12),
-                      buildAppleLoginButton(context),
-                    ],
-                  ),
-                ),
-              ),
+              buildAppImage(),
+              buildLoginButtons(context),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Align buildLoginButtons(BuildContext context) {
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 37),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            buildGoogleLoginButton(context),
+            const SizedBox(height: 12),
+            buildAppleLoginButton(context),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Expanded buildAppImage() {
+    return const Expanded(
+      child: Center(
+        child: Icon(
+          Icons.apple,
+          size: 140,
         ),
       ),
     );
@@ -87,20 +100,20 @@ class _LoginViewState extends State<LoginView> {
                   Padding(
                     padding: const EdgeInsets.only(left: 8),
                     child: const Text(
-                      'Google',
+                      google,
                       style: TextStyle(
                         fontSize: 20,
-                        color: Color(0xff757575),
+                        color: loginTextGreyColor,
                       ),
                     ).bold().roboto(),
                   ),
                   const Text(
-                    '로 로그인',
+                    loginText,
                     style: TextStyle(
                       fontSize: 20,
-                      color: Color(0xff757575),
+                      color: loginTextGreyColor,
                     ),
-                  ).bold().pretendard()
+                  ).bold().pretendard(),
                 ],
               ),
             ),
@@ -134,7 +147,7 @@ class _LoginViewState extends State<LoginView> {
                   Padding(
                     padding: const EdgeInsets.only(left: 8),
                     child: const Text(
-                      'Apple',
+                      apple,
                       style: TextStyle(
                         fontSize: 20,
                         color: Colors.white,
@@ -142,12 +155,12 @@ class _LoginViewState extends State<LoginView> {
                     ).bold().roboto(),
                   ),
                   const Text(
-                    '로 로그인',
+                    loginText,
                     style: TextStyle(
                       fontSize: 20,
                       color: Colors.white,
                     ),
-                  ).bold().pretendard()
+                  ).bold().pretendard(),
                 ],
               ),
             ),
