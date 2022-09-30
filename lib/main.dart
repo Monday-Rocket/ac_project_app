@@ -7,6 +7,7 @@ import 'package:ac_project_app/routes.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
@@ -19,6 +20,11 @@ Future<void> main() async {
 Future<void> initSettings() async {
   await dotenv.load();
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarBrightness: Brightness.light,
+    ),
+  );
   KakaoSdk.init(nativeAppKey: dotenv.env['kakao.api.key']);
   if (Firebase.apps.isEmpty) {
     await Firebase.initializeApp(
@@ -47,6 +53,7 @@ class MultiPlatformApp {
         debugShowCheckedModeBanner: false,
         initialRoute: Routes.login,
         onGenerateRoute: Pages.getPages,
+        themeMode: ThemeMode.light,
       );
     } else {
       return const CupertinoApp(
@@ -57,7 +64,6 @@ class MultiPlatformApp {
     }
   }
 }
-
 
 Future<void> initBackgroundService() async {
   final service = FlutterBackgroundService();

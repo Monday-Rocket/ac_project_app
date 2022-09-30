@@ -60,4 +60,22 @@ flutter:
 
   assets:
     - .env
-    - images/
+    - assets/images/login/3.0x/
+    - assets/images/login/2.0x/
+    - assets/images/login/
+
+  fonts:
+    - family: Pretendard
+      fonts:
+        - asset: assets/fonts/Pretendard/Pretendard-Thin.otf
+          weight: 200
+        - asset: assets/fonts/Pretendard/Pretendard-Regular.otf
+          weight: 400
+        - asset: assets/fonts/Pretendard/Pretendard-Bold.otf
+          weight: 700
+    - family: Roboto
+      fonts:
+        - asset: assets/fonts/Roboto/Roboto-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Roboto/Roboto-Bold.ttf
+          weight: 700

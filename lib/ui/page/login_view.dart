@@ -1,12 +1,12 @@
 import 'dart:io';
 
+import 'package:ac_project_app/const/resource.dart';
 import 'package:ac_project_app/cubits/login/apple_login_cubit.dart';
 import 'package:ac_project_app/cubits/login/google_login_cubit.dart';
 import 'package:ac_project_app/routes.dart';
+import 'package:ac_project_app/ui/widget/text/custom_font.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_signin_button/button_list.dart';
-import 'package:flutter_signin_button/button_view.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -36,27 +36,74 @@ class _LoginViewState extends State<LoginView> {
       body: SafeArea(
         child: Center(
           child: Column(
-            mainAxisSize: MainAxisSize.min,
             children: [
-              ConstrainedBox(
-                constraints: const BoxConstraints(minHeight: 300),
-                child: const Icon(
-                  Icons.apple,
-                  size: 200,
+              const Expanded(
+                child: Center(
+                  child: Icon(
+                    Icons.apple,
+                    size: 140,
+                  ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 8,
-                  horizontal: 16,
-                ),
-                child: SignInButton(
-                  Buttons.Google,
-                  onPressed: context.read<GoogleLoginCubit>().login,
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 37),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      buildGoogleLoginButton(context),
+                      const SizedBox(height: 12),
+                      buildAppleLoginButton(context),
+                    ],
+                  ),
                 ),
               ),
-              buildAppleLoginButton(context),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  GestureDetector buildGoogleLoginButton(BuildContext context) {
+    return GestureDetector(
+      onTap: context.read<GoogleLoginCubit>().login,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: const BorderRadius.all(Radius.circular(12)),
+            border: Border.all(color: const Color(0xffd9dee0)),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 22),
+            child: Center(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Image.asset(R.ASSETS_IMAGES_LOGIN_GOOGLEICON_PNG),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8),
+                    child: const Text(
+                      'Google',
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Color(0xff757575),
+                      ),
+                    ).bold().roboto(),
+                  ),
+                  const Text(
+                    '로 로그인',
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Color(0xff757575),
+                    ),
+                  ).bold().pretendard()
+                ],
+              ),
+            ),
           ),
         ),
       ),
@@ -67,14 +114,45 @@ class _LoginViewState extends State<LoginView> {
     if (Platform.isAndroid) {
       return const SizedBox.shrink();
     }
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        vertical: 8,
-        horizontal: 8,
-      ),
-      child: SignInButton(
-        Buttons.AppleDark,
-        onPressed: context.read<AppleLoginCubit>().login,
+    return GestureDetector(
+      onTap: context.read<AppleLoginCubit>().login,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: Colors.black,
+            borderRadius: const BorderRadius.all(Radius.circular(12)),
+            border: Border.all(color: const Color(0xffd9dee0)),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 22),
+            child: Center(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Image.asset(R.ASSETS_IMAGES_LOGIN_APPLEICON_PNG),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8),
+                    child: const Text(
+                      'Apple',
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.white,
+                      ),
+                    ).bold().roboto(),
+                  ),
+                  const Text(
+                    '로 로그인',
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.white,
+                    ),
+                  ).bold().pretendard()
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
