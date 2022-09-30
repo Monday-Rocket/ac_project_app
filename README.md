@@ -6,7 +6,7 @@
 
 - Flutter 3.3.2
 
-![bloc.png](docs/bloc.png)
+![bloc.png](docs/bloc_white.png)
 
 - DI Architecture: [bloc](https://pub.dev/packages/flutter_bloc)
 - main plugins: flutter_bloc, retrofit, very_good_analysis, firebase_auth
