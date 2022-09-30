@@ -6,7 +6,7 @@
 
 - Flutter 3.3.2
 
-![bloc.png](images/bloc.png)
+![bloc.png](docs/bloc.png)
 
 - DI Architecture: [bloc](https://pub.dev/packages/flutter_bloc)
 - main plugins: flutter_bloc, retrofit, very_good_analysis, firebase_auth
@@ -21,4 +21,4 @@
 - Minimum Deployments: iOS 15.0
 
 ### Source Directory Structure
-![project_directory.png](images/project_directory.png)
+![project_directory.png](docs/project_directory.png)
