@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class SignUpView extends StatelessWidget {
   const SignUpView({super.key});
@@ -8,10 +8,12 @@ class SignUpView extends StatelessWidget {
 
     final token = ModalRoute.of(context)!.settings.arguments as String? ?? 'null';
 
-    return CupertinoPageScaffold(
-      backgroundColor: CupertinoColors.white,
-      child: Center(
-        child: Text(token, style: const TextStyle(color: CupertinoColors.black),),
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Center(
+          child: Text(token, style: const TextStyle(color: Colors.black),),
+        ),
       ),
     );
   }
