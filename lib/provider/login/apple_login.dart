@@ -1,18 +1,24 @@
 import 'package:ac_project_app/util/logger.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class Apple {
-  static Future<AuthorizationCredentialAppleID?> login() async {
+  static Future<String?> login() async {
     try {
-      final appleCredential = await SignInWithApple.getAppleIDCredential(
+      final credential = await SignInWithApple.getAppleIDCredential(
         scopes: [
-          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
         ],
       );
 
-      Log.d('authCode: ${appleCredential.authorizationCode}');
-      Log.d('token: ${appleCredential.identityToken}');
-      return appleCredential;
+      final oAuthCredential = OAuthProvider('apple.com').credential(
+        idToken: credential.identityToken,
+        accessToken: credential.authorizationCode,
+      );
+
+      // Firebase Sign in
+      final userCredential = await FirebaseAuth.instance.signInWithCredential(oAuthCredential);
+      return await userCredential.user?.getIdToken();
     } catch (error) {
       Log.e(error.toString());
       return null;

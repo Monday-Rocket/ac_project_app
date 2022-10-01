@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/const/resource.dart';
-import 'package:ac_project_app/cubits/login/apple_login_cubit.dart';
-import 'package:ac_project_app/cubits/login/google_login_cubit.dart';
+import 'package:ac_project_app/cubits/login/login_cubit.dart';
+import 'package:ac_project_app/cubits/login/login_type.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/text/custom_font.dart';
 import 'package:flutter/material.dart';
@@ -25,8 +25,7 @@ class _LoginViewState extends State<LoginView> {
   void initState() {
     super.initState();
 
-    BlocProvider.of<GoogleLoginCubit>(context).stream.listen(_moveToSignUpPage);
-    BlocProvider.of<AppleLoginCubit>(context).stream.listen(_moveToSignUpPage);
+    BlocProvider.of<LoginCubit>(context).stream.listen(_moveToSignUpPage);
   }
 
   void _moveToSignUpPage(String? event) {
@@ -81,7 +80,7 @@ class _LoginViewState extends State<LoginView> {
 
   GestureDetector buildGoogleLoginButton(BuildContext context) {
     return GestureDetector(
-      onTap: context.read<GoogleLoginCubit>().login,
+      onTap: () => context.read<LoginCubit>().login(LoginType.google),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24),
         child: DecoratedBox(
@@ -128,7 +127,7 @@ class _LoginViewState extends State<LoginView> {
       return const SizedBox.shrink();
     }
     return GestureDetector(
-      onTap: context.read<AppleLoginCubit>().login,
+      onTap: () => context.read<LoginCubit>().login(LoginType.apple),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24),
         child: DecoratedBox(
