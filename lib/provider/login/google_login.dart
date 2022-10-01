@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class Google {
-  static Future<UserCredential?> login() async {
+  static Future<String?> login() async {
     final _googleSignIn = GoogleSignIn(
       scopes: [
         'email',
@@ -13,15 +13,14 @@ class Google {
       final account = await _googleSignIn.signIn();
       final authentication = await account?.authentication;
 
-      Log.d('Google idToken: ${authentication?.idToken}');
-      Log.d('Google AccessToken: ${authentication?.accessToken}');
-
       final credential = GoogleAuthProvider.credential(
         accessToken: authentication?.accessToken,
         idToken: authentication?.idToken,
       );
 
-      return FirebaseAuth.instance.signInWithCredential(credential);
+      // Firebase Sign in
+      final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+      return await userCredential.user?.getIdToken();
     } catch (error) {
       Log.e(error);
       return null;

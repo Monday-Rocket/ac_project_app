@@ -1,7 +1,6 @@
 import 'dart:io';
 
-import 'package:ac_project_app/cubits/login/apple_login_cubit.dart';
-import 'package:ac_project_app/cubits/login/google_login_cubit.dart';
+import 'package:ac_project_app/cubits/login/login_cubit.dart';
 import 'package:ac_project_app/cubits/url_data_cubit.dart';
 import 'package:ac_project_app/cubits/weather_cubit.dart';
 import 'package:ac_project_app/ui/page/home_view.dart';
@@ -26,15 +25,8 @@ class Pages {
           TODO 다른 로그인 추가 예정
          */
         return MultiPlatformPageRoute.create(
-          builder: (_) => MultiBlocProvider(
-            providers: [
-              BlocProvider(
-                create: (_) => GoogleLoginCubit(null),
-              ),
-              BlocProvider(
-                create: (_) => AppleLoginCubit(null),
-              ),
-            ],
+          builder: (_) => BlocProvider(
+            create: (_) => LoginCubit(null),
             child: const LoginView(),
           ),
         );
@@ -74,16 +66,18 @@ class MultiPlatformPageRoute {
   }) {
     if (Platform.isAndroid) {
       return MaterialPageRoute(
-          builder: builder,
-          settings: settings,
-          maintainState: maintainState!,
-          fullscreenDialog: fullscreenDialog!,);
+        builder: builder,
+        settings: settings,
+        maintainState: maintainState!,
+        fullscreenDialog: fullscreenDialog!,
+      );
     } else if (Platform.isIOS) {
       return CupertinoPageRoute(
-          builder: builder,
-          settings: settings,
-          maintainState: maintainState!,
-          fullscreenDialog: fullscreenDialog!);
+        builder: builder,
+        settings: settings,
+        maintainState: maintainState!,
+        fullscreenDialog: fullscreenDialog!,
+      );
     } else {
       throw Exception('Platform 미지원');
     }
