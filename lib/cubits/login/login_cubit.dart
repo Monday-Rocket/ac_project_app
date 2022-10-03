@@ -23,7 +23,7 @@ class LoginCubit extends Cubit<String?> {
   void sendResult(String? token) {
     if (token != null) {
       globalToken = token;
-      LoginApi().createUser();
+      LoginApi().postUsers();
       emit(token);
     }
   }

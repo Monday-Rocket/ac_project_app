@@ -7,7 +7,7 @@ void main() {
   final logger = Logger(printer: PrettyPrinter());
 
   test('create user test', () async {
-    final result = await LoginApi().createUser();
+    final result = await LoginApi().postUsers();
     logger.i(result.toJson());
   });
 }
