@@ -13,4 +13,12 @@ class User {
   final String id;
 
   Map<String, dynamic> toJson() => _$UserToJson(this);
+
+  @override
+  bool operator ==(Object other) {
+    return (other as User).id == id;
+  }
+
+  @override
+  int get hashCode => super.hashCode;
 }

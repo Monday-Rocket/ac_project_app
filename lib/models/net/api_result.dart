@@ -1,5 +1,5 @@
 import 'package:ac_project_app/models/net/api_error.dart';
-import 'package:ac_project_app/models/user.dart';
+import 'package:ac_project_app/models/user/user.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'api_result.g.dart';

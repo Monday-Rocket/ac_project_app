@@ -14,7 +14,8 @@ class CustomClient extends http.BaseClient {
 
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) {
-    request.headers['x-auth-token'] = globalToken ?? '1234';
+    request.headers['Content-Type'] = 'application/json';
+    request.headers['x-auth-token'] = globalToken ?? 'test-token';
     return _inner.send(request);
   }
 
@@ -33,14 +34,14 @@ class CustomClient extends http.BaseClient {
   Future<Result<Map<String, dynamic>>> postUri(
     String uri, {
     Map<String, String>? headers,
-    Object? body,
+    Map<String, dynamic>? body,
     Encoding? encoding,
   }) async {
     return _makeResult(
       await super.post(
         Uri.parse(baseUrl + uri),
         headers: headers,
-        body: body,
+        body: makeBody(body),
         encoding: encoding,
       ),
     );
@@ -49,14 +50,14 @@ class CustomClient extends http.BaseClient {
   Future<Result<Map<String, dynamic>>> putUri(
     String uri, {
     Map<String, String>? headers,
-    Object? body,
+    Map<String, dynamic>? body,
     Encoding? encoding,
   }) async {
     return _makeResult(
       await super.put(
         Uri.parse(baseUrl + uri),
         headers: headers,
-        body: body,
+        body: makeBody(body),
         encoding: encoding,
       ),
     );
@@ -65,14 +66,14 @@ class CustomClient extends http.BaseClient {
   Future<Result> patchUri(
     String uri, {
     Map<String, String>? headers,
-    Object? body,
+    Map<String, dynamic>? body,
     Encoding? encoding,
   }) async {
     return _makeResult(
       await super.patch(
         Uri.parse(baseUrl + uri),
         headers: headers,
-        body: body,
+        body: makeBody(body),
         encoding: encoding,
       ),
     );
@@ -89,6 +90,13 @@ class CustomClient extends http.BaseClient {
         return Result.error(apiResult.error!.message);
       }
     }
-    return const Result.error('Network Error');
+    return Result.error('Network Error: ${response.statusCode}');
+  }
+
+  String? makeBody(Map<String, dynamic>? body) {
+    if (body != null) {
+      return jsonEncode(body);
+    }
+    return null;
   }
 }
