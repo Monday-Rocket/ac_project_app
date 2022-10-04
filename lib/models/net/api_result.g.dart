@@ -6,14 +6,17 @@ part of 'api_result.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-ApiResult _$ApiResultFromJson(Map<String, dynamic> json) => ApiResult(
+ApiResult<T> _$ApiResultFromJson<T>(Map<String, dynamic> json) => ApiResult<T>(
       json['status'] as int?,
-      json['data'] as Map<String, dynamic>?,
-      json['error'] as Map<String, dynamic>?,
+      DataConverter<T>().fromJson(json['data']),
+      json['error'] == null
+          ? null
+          : ApiError.fromJson(json['error'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$ApiResultToJson(ApiResult instance) => <String, dynamic>{
+Map<String, dynamic> _$ApiResultToJson<T>(ApiResult<T> instance) =>
+    <String, dynamic>{
       'status': instance.status,
-      'data': instance.data,
-      'error': instance.error,
+      'error': instance.error?.toJson(),
+      'data': DataConverter<T>().toJson(instance.data),
     };
