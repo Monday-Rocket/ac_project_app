@@ -19,7 +19,7 @@ class CustomClient extends http.BaseClient {
     return _inner.send(request);
   }
 
-  Future<Result<Map<String, dynamic>>> getUri(
+  Future<Result<dynamic>> getUri(
     String uri, {
     Map<String, String>? headers,
   }) async {
@@ -31,7 +31,7 @@ class CustomClient extends http.BaseClient {
     );
   }
 
-  Future<Result<Map<String, dynamic>>> postUri(
+  Future<Result<dynamic>> postUri(
     String uri, {
     Map<String, String>? headers,
     Map<String, dynamic>? body,
@@ -47,7 +47,7 @@ class CustomClient extends http.BaseClient {
     );
   }
 
-  Future<Result<Map<String, dynamic>>> putUri(
+  Future<Result<dynamic>> putUri(
     String uri, {
     Map<String, String>? headers,
     Map<String, dynamic>? body,
@@ -63,7 +63,7 @@ class CustomClient extends http.BaseClient {
     );
   }
 
-  Future<Result> patchUri(
+  Future<Result<dynamic>> patchUri(
     String uri, {
     Map<String, String>? headers,
     Map<String, dynamic>? body,
@@ -79,9 +79,11 @@ class CustomClient extends http.BaseClient {
     );
   }
 
-  Result<Map<String, dynamic>> _makeResult(http.Response response) {
+  Result<dynamic> _makeResult(http.Response response) {
     if (response.statusCode == 200) {
-      final apiResult = ApiResult<Map<String, dynamic>>.fromJson(
+      print(response.body);
+
+      final apiResult = ApiResult<dynamic>.fromJson(
         jsonDecode(response.body) as Map<String, dynamic>,
       );
       if (apiResult.error == null) {

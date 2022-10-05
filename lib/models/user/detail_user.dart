@@ -4,8 +4,8 @@
 
 // ignore_for_file: avoid_dynamic_calls, test_types_in_equals
 
-class PatchResult {
-  PatchResult({
+class DetailUser {
+  DetailUser({
     String? id,
     String? nickname,
     JobGroup? jobGroup,
@@ -15,7 +15,7 @@ class PatchResult {
     _jobGroup = jobGroup;
   }
 
-  PatchResult.fromJson(dynamic json) {
+  DetailUser.fromJson(dynamic json) {
     _id = json['id'] as String?;
     _nickname = json['nickname'] as String?;
     _jobGroup =
@@ -24,12 +24,12 @@ class PatchResult {
   String? _id;
   String? _nickname;
   JobGroup? _jobGroup;
-  PatchResult copyWith({
+  DetailUser copyWith({
     String? id,
     String? nickname,
     JobGroup? jobGroup,
   }) =>
-      PatchResult(
+      DetailUser(
         id: id ?? _id,
         nickname: nickname ?? _nickname,
         jobGroup: jobGroup ?? _jobGroup,
@@ -50,7 +50,7 @@ class PatchResult {
 
   @override
   bool operator ==(Object other) {
-    final input = other as PatchResult;
+    final input = other as DetailUser;
     return input.id == id &&
         input.nickname == nickname &&
         input.jobGroup == jobGroup;
@@ -70,6 +70,14 @@ class JobGroup {
   }) {
     _id = id;
     _name = name;
+  }
+
+  static List<JobGroup> fromJsonList(List<dynamic> jsonList) {
+    final result = <JobGroup>[];
+    for (final json in jsonList) {
+      result.add(JobGroup.fromJson(json));
+    }
+    return result;
   }
 
   JobGroup.fromJson(dynamic json) {

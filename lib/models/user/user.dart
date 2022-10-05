@@ -1,24 +1,13 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+part 'user.freezed.dart';
 part 'user.g.dart';
 
-@JsonSerializable()
-class User {
-  User(this.id);
-
-  factory User.nullObject() => User('');
+@freezed
+class User with _$User {
+  const factory User({
+    required String? id,
+  }) = _User;
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
-
-  final String id;
-
-  Map<String, dynamic> toJson() => _$UserToJson(this);
-
-  @override
-  bool operator ==(Object other) {
-    return (other as User).id == id;
-  }
-
-  @override
-  int get hashCode => super.hashCode;
 }

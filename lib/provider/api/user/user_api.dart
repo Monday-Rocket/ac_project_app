@@ -1,7 +1,8 @@
 // ignore_for_file: strict_raw_type
 
+import 'package:ac_project_app/models/job/topic.dart';
 import 'package:ac_project_app/models/result.dart';
-import 'package:ac_project_app/models/user/patch_result.dart';
+import 'package:ac_project_app/models/user/detail_user.dart';
 import 'package:ac_project_app/models/user/user.dart';
 import 'package:ac_project_app/provider/api/custom_client.dart';
 
@@ -11,17 +12,18 @@ class UserApi {
   Future<Result<User>> postUsers() async {
     final result = await client.postUri('/users');
     return result.when(
-      success: (data) => Result.success(User.fromJson(data)),
+      success: (data) =>
+          Result.success(User.fromJson(data as Map<String, dynamic>)),
       error: Result.error,
     );
   }
 
-  Future<Result<PatchResult>> patchUsers(
+  Future<Result<DetailUser>> patchUsers(
     String id,
     String nickname,
     String jobGroupId,
   ) async {
-    final result = await client.putUri(
+    final result = await client.patchUri(
       '/users/$id',
       body: {
         'nickname': nickname,
@@ -29,7 +31,35 @@ class UserApi {
       },
     );
     return result.when(
-      success: (data) => Result.success(PatchResult.fromJson(data)),
+      success: (data) => Result.success(DetailUser.fromJson(data)),
+      error: Result.error,
+    );
+  }
+
+  Future<Result<DetailUser>> getUsers(String id) async {
+    final result = await client.getUri('/users/$id');
+    return result.when(
+      success: (data) => Result.success(DetailUser.fromJson(data)),
+      error: Result.error,
+    );
+  }
+
+  Future<Result<List<JobGroup>>> getJobGroups() async {
+    final result = await client.getUri('/job-groups');
+    return result.when(
+      success: (data) => Result.success(
+        JobGroup.fromJsonList(data as List<dynamic>),
+      ),
+      error: Result.error,
+    );
+  }
+
+  Future<Result<List<Topic>>> getTopics() async {
+    final result = await client.getUri('/topics');
+    return result.when(
+      success: (data) => Result.success(
+        Topic.fromJsonList(data as List<dynamic>),
+      ),
       error: Result.error,
     );
   }

@@ -1,4 +1,5 @@
 import 'package:ac_project_app/models/net/api_error.dart';
+import 'package:ac_project_app/models/user/detail_user.dart';
 import 'package:ac_project_app/models/user/user.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -15,7 +16,7 @@ class ApiResult<T> {
   final ApiError? error;
 
   @DataConverter<dynamic>()
-  final T data;
+  final T? data;
 
   Map<String, dynamic> toJson() => _$ApiResultToJson(this);
 }
@@ -29,7 +30,18 @@ class DataConverter<T> implements JsonConverter<T, Object?> {
       switch (T) {
         case User:
           return User.fromJson(json) as T;
+        case DetailUser:
+          return DetailUser.fromJson(json) as T;
+        case JobGroup:
+          return JobGroup.fromJson(json) as T;
       }
+    }
+    if (json is List && json.isNotEmpty) {
+      final resultList = <dynamic>[];
+      for (final item in json) {
+        resultList.add(fromJson(item as Map<String, dynamic>));
+      }
+      return resultList as T;
     }
     return json as T;
   }
