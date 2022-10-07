@@ -81,8 +81,6 @@ class CustomClient extends http.BaseClient {
 
   Result<dynamic> _makeResult(http.Response response) {
     if (response.statusCode == 200) {
-      print(response.body);
-
       final apiResult = ApiResult<dynamic>.fromJson(
         jsonDecode(response.body) as Map<String, dynamic>,
       );

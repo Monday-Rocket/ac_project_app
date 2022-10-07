@@ -38,23 +38,22 @@ void main() {
     );
   });
 
-  // test('유저 조회', () async {
-  //   const id = '1';
-  //   final result = await userApi.getUsers(id);
-  //   result.when(
-  //     success: (data) {
-  //       expect(
-  //         data,
-  //         DetailUser(
-  //           id: '1',
-  //           nickname: 'test',
-  //           jobGroup: JobGroup(id: 1, name: '소프트웨어 엔지니어'),
-  //         ),
-  //       );
-  //     },
-  //     error: fail,
-  //   );
-  // });
+  test('유저 조회', () async {
+    final result = await userApi.getUsers();
+    result.when(
+      success: (data) {
+        expect(
+          data,
+          DetailUser(
+            id: '1',
+            nickname: 'test',
+            jobGroup: JobGroup(id: 1, name: '소프트웨어 엔지니어'),
+          ),
+        );
+      },
+      error: fail,
+    );
+  });
 
   test('get job groups', () async {
     final result = await userApi.getJobGroups();

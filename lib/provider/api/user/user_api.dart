@@ -36,8 +36,8 @@ class UserApi {
     );
   }
 
-  Future<Result<DetailUser>> getUsers(String id) async {
-    final result = await client.getUri('/users/$id');
+  Future<Result<DetailUser>> getUsers() async {
+    final result = await client.getUri('/users');
     return result.when(
       success: (data) => Result.success(DetailUser.fromJson(data)),
       error: Result.error,
