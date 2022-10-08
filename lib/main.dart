@@ -45,11 +45,12 @@ class MyApp extends StatelessWidget {
 
 class MultiPlatformApp {
   static StatefulWidget create() {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
       initialRoute: Routes.login,
       onGenerateRoute: Pages.getPages,
       themeMode: ThemeMode.light,
+      theme: ThemeData(fontFamily: 'Pretendard'),
     );
   }
 }

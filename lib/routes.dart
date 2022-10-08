@@ -1,10 +1,10 @@
 import 'dart:io';
 
-import 'package:ac_project_app/cubits/sign_up/job_cubit.dart';
 import 'package:ac_project_app/cubits/login/login_cubit.dart';
+import 'package:ac_project_app/cubits/sign_up/job_cubit.dart';
 import 'package:ac_project_app/cubits/sign_up/job_list_cubit.dart';
-import 'package:ac_project_app/cubits/sign_up/sign_up_cubit.dart';
 import 'package:ac_project_app/cubits/sign_up/nickname_cubit.dart';
+import 'package:ac_project_app/cubits/sign_up/sign_up_cubit.dart';
 import 'package:ac_project_app/cubits/url_data_cubit.dart';
 import 'package:ac_project_app/ui/page/home_view.dart';
 import 'package:ac_project_app/ui/page/login_view.dart';

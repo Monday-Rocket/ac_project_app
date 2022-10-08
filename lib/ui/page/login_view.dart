@@ -270,7 +270,14 @@ class _LoginViewState extends State<LoginView> {
                     padding: EdgeInsets.zero,
                     child: const Padding(
                       padding: EdgeInsets.only(left: 24, top: 14, right: 24),
-                      child: Text(secondCheckText),
+                      child: Text(
+                        secondCheckText,
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          color: greyApproveText,
+                        ),
+                      ),
                     ),
                   ),
                 )
@@ -374,7 +381,14 @@ class _LoginViewState extends State<LoginView> {
                     padding: EdgeInsets.zero,
                     child: const Padding(
                       padding: EdgeInsets.only(left: 24, top: 14, right: 24),
-                      child: Text(firstCheckText),
+                      child: Text(
+                        firstCheckText,
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          color: greyApproveText,
+                        ),
+                      ),
                     ),
                   ),
                 )
