@@ -4,13 +4,13 @@ import 'package:google_sign_in/google_sign_in.dart';
 
 class Google {
   static Future<String?> login() async {
-    final _googleSignIn = GoogleSignIn(
+    final googleSignIn = GoogleSignIn(
       scopes: [
         'email',
       ],
     );
     try {
-      final account = await _googleSignIn.signIn();
+      final account = await googleSignIn.signIn();
       final authentication = await account?.authentication;
 
       final credential = GoogleAuthProvider.credential(

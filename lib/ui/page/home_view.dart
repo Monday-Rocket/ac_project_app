@@ -1,8 +1,4 @@
-import 'dart:convert';
-
 import 'package:ac_project_app/cubits/url_data_cubit.dart';
-import 'package:ac_project_app/cubits/weather_cubit.dart';
-import 'package:ac_project_app/models/today_weather.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,9 +14,10 @@ class _HomeViewState extends State<HomeView> {
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<WeatherCubit>(context).getTodayWeather();
-    BlocProvider.of<UrlDataCubit>(context).loadUrls();
+    BlocProvider.of<UrlDataCubit>(context).loadUrls();// 처음에 그냥 호출
   }
+
+  final textController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -32,23 +29,6 @@ class _HomeViewState extends State<HomeView> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              BlocBuilder<WeatherCubit, TodayWeather?>(
-                builder: (context, state) {
-                  if (state != null) {
-                    return Text(jsonEncode(state));
-                  } else {
-                    return const SizedBox(
-                      width: 100,
-                      height: 100,
-                      child: RepaintBoundary(
-                        child: CircularProgressIndicator(
-                          color: Colors.red,
-                        ),
-                      ),
-                    );
-                  }
-                },
-              ),
               Padding(
                 padding: const EdgeInsets.all(16),
                 child: Container(
