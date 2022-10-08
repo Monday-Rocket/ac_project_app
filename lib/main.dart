@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:ac_project_app/firebase_options.dart';
 import 'package:ac_project_app/routes.dart';
@@ -46,19 +45,19 @@ class MyApp extends StatelessWidget {
 
 class MultiPlatformApp {
   static StatefulWidget create() {
-    if (Platform.isAndroid) {
+    //if (Platform.isAndroid) {
       return const MaterialApp(
         debugShowCheckedModeBanner: false,
         initialRoute: Routes.login,
         onGenerateRoute: Pages.getPages,
         themeMode: ThemeMode.light,
       );
-    } else {
-      return const CupertinoApp(
-        debugShowCheckedModeBanner: false,
-        initialRoute: Routes.home,
-        onGenerateRoute: Pages.getPages,
-      );
-    }
+    // } else {
+    //   return const CupertinoApp(
+    //     debugShowCheckedModeBanner: false,
+    //     initialRoute: Routes.login,
+    //     onGenerateRoute: Pages.getPages,
+    //   );
+    // }
   }
 }

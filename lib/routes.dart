@@ -1,9 +1,13 @@
 import 'dart:io';
 
+import 'package:ac_project_app/cubits/JobCubit.dart';
 import 'package:ac_project_app/cubits/login/login_cubit.dart';
+import 'package:ac_project_app/cubits/nickname_cubit.dart';
 import 'package:ac_project_app/cubits/url_data_cubit.dart';
 import 'package:ac_project_app/ui/page/home_view.dart';
 import 'package:ac_project_app/ui/page/login_view.dart';
+import 'package:ac_project_app/ui/page/sign_up_job_view.dart';
+import 'package:ac_project_app/ui/page/sign_up_nickname_view.dart';
 import 'package:ac_project_app/ui/page/sign_up_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +17,8 @@ class Routes {
   static const login = '/login';
   static const home = '/home';
   static const signUp = '/signUp';
+  static const signUpNickname = '/signUpNickname';
+  static const singUpJob = '/signUpJob';
 }
 
 class Pages {
@@ -43,6 +49,23 @@ class Pages {
       case Routes.signUp:
         return MultiPlatformPageRoute.create(
           builder: (_) => const SignUpView(),
+          settings: RouteSettings(
+            arguments: arguments,
+          ),
+        );
+      case Routes.signUpNickname:
+        return MultiPlatformPageRoute.create(
+          builder: (_) => BlocProvider(
+            create: (_) => NicknameCubit(null),
+            child: const SignUpNicknameView(),
+          ),
+        );
+      case Routes.singUpJob:
+        return MultiPlatformPageRoute.create(
+          builder: (_) => BlocProvider(
+            create: (_) => JobCubit(null),
+            child: const SignUpJobView(),
+          ),
           settings: RouteSettings(
             arguments: arguments,
           ),
