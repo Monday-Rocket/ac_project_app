@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/const/resource.dart';
+import 'package:ac_project_app/const/strings.dart';
 import 'package:ac_project_app/cubits/login/login_cubit.dart';
 import 'package:ac_project_app/cubits/login/login_type.dart';
 import 'package:ac_project_app/models/login/login_type.dart';
@@ -31,11 +32,14 @@ class _LoginViewState extends State<LoginView> {
   bool secondOpened = false;
   bool thirdOpened = false;
 
+  ScrollController secondController = ScrollController();
+  ScrollController thirdController = ScrollController();
+
   @override
   void initState() {
     // BlocProvider.of<LoginCubit>(context).stream.listen(_moveToSignUpPage);
 
-    Future.delayed(const Duration(seconds: 2), () {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _moveToSignUpPage(SignUpType.newUser);
     });
 
@@ -51,86 +55,96 @@ class _LoginViewState extends State<LoginView> {
       final result = await showModalBottomSheet<bool?>(
         backgroundColor: Colors.transparent,
         context: context,
+        isScrollControlled: true,
         builder: (BuildContext context) {
-          return StatefulBuilder(
-            builder: (context, setState) {
-              return Container(
-                height: 338,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20),
-                  ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 33, left: 24, right: 24),
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 37),
-                        child: Stack(
-                          children: [
-                            Center(
-                              child: const Text('서비스 이용을 위한 동의')
-                                  .bold()
-                                  .fontSize(21),
-                            ),
-                            Container(
-                              alignment: Alignment.centerRight,
-                              child: GestureDetector(
-                                onTap: () => Navigator.pop(context),
-                                child: const Icon(
-                                  Icons.close_rounded,
-                                  size: 24,
+          return Wrap(
+            children: [
+              StatefulBuilder(
+                builder: (context, setState) {
+                  return DecoratedBox(
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20),
+                      ),
+                    ),
+                    child: Padding(
+                      padding:
+                          const EdgeInsets.only(top: 33, left: 24, right: 24),
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 37),
+                            child: Stack(
+                              children: [
+                                Center(
+                                  child: const Text('서비스 이용을 위한 동의')
+                                      .bold()
+                                      .fontSize(21),
                                 ),
-                              ),
+                                Container(
+                                  alignment: Alignment.centerRight,
+                                  child: GestureDetector(
+                                    onTap: () => Navigator.pop(context),
+                                    child: const Icon(
+                                      Icons.close_rounded,
+                                      size: 24,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                      ),
-                      buildFirstCheckBox(setState),
-                      const SizedBox(
-                        height: 28,
-                      ),
-                      buildSecondCheckBox(setState),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      buildThirdCheckBox(setState),
-                      const SizedBox(
-                        height: 28,
-                      ),
-                      Builder(
-                        builder: (context) {
-                          final allChecked = firstCheck && secondCheck && thirdCheck;
-                          return ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              minimumSize: const Size.fromHeight(55),
-                              backgroundColor: allChecked ? purpleMain : purpleUnchecked,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
+                          ),
+                          buildFirstCheckBox(setState),
+                          const SizedBox(
+                            height: 28,
+                          ),
+                          buildSecondCheckBox(setState),
+                          buildThirdCheckBox(setState),
+                          const SizedBox(
+                            height: 28,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 54),
+                            child: Builder(
+                              builder: (context) {
+                                final allChecked =
+                                    firstCheck && secondCheck && thirdCheck;
+                                return ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    minimumSize: const Size.fromHeight(55),
+                                    backgroundColor: allChecked
+                                        ? purpleMain
+                                        : purpleUnchecked,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                  onPressed: allChecked
+                                      ? () {
+                                          // TODO 이동
+                                        }
+                                      : null,
+                                  child: const Text(
+                                    '약관동의',
+                                    style: TextStyle(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    textWidthBasis: TextWidthBasis.parent,
+                                  ),
+                                );
+                              },
                             ),
-
-                            onPressed: allChecked ? () {
-                              // TODO 이동
-                            } : null,
-                            child: const Text('약관동의',
-                              style: TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              textWidthBasis: TextWidthBasis.parent,
-                            ),
-                          );
-                        }
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
-              );
-            },
+                    ),
+                  );
+                },
+              ),
+            ],
           );
         },
       );
@@ -168,15 +182,15 @@ class _LoginViewState extends State<LoginView> {
                       padding: const EdgeInsets.all(2),
                       child: thirdCheck
                           ? const Icon(
-                        Icons.check,
-                        size: 18,
-                        color: purpleMain,
-                      )
+                              Icons.check,
+                              size: 18,
+                              color: purpleMain,
+                            )
                           : const Icon(
-                        Icons.check,
-                        size: 18,
-                        color: greyUncheckedIcon,
-                      ),
+                              Icons.check,
+                              size: 18,
+                              color: greyUncheckedIcon,
+                            ),
                     ),
                   ),
                 ),
@@ -188,8 +202,9 @@ class _LoginViewState extends State<LoginView> {
                   },
                   child: Padding(
                     padding: const EdgeInsets.only(left: 11),
-                    child:
-                    const Text('서비스 이용방침').weight(FontWeight.w500).fontSize(15),
+                    child: const Text('서비스 이용방침')
+                        .weight(FontWeight.w500)
+                        .fontSize(15),
                   ),
                 ),
               ],
@@ -206,19 +221,44 @@ class _LoginViewState extends State<LoginView> {
                   padding: const EdgeInsets.all(2),
                   child: thirdOpened
                       ? const Icon(
-                    Icons.keyboard_arrow_down_sharp,
-                    size: 20,
-                    color: greyArrow,
-                  )
+                          Icons.keyboard_arrow_down_sharp,
+                          size: 20,
+                          color: greyArrow,
+                        )
                       : const Icon(
-                    Icons.keyboard_arrow_right_sharp,
-                    size: 20,
-                    color: greyArrow,
-                  ),
+                          Icons.keyboard_arrow_right_sharp,
+                          size: 20,
+                          color: greyArrow,
+                        ),
                 ),
               ),
             ),
           ],
+        ),
+        AnimatedContainer(
+          height: thirdOpened ? 15 : 0,
+          duration: const Duration(milliseconds: 150),
+        ),
+        AnimatedContainer(
+          height: thirdOpened ? 140 : 0,
+          duration: const Duration(milliseconds: 150),
+          decoration: const BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(5)),
+            color: blueBack,
+          ),
+          child: thirdOpened
+              ? Scrollbar(
+                  controller: thirdController,
+                  child: SingleChildScrollView(
+                    controller: thirdController,
+                    padding: EdgeInsets.zero,
+                    child: const Padding(
+                      padding: EdgeInsets.only(left: 24, top: 14, right: 24),
+                      child: Text(secondCheckText),
+                    ),
+                  ),
+                )
+              : const SizedBox.shrink(),
         ),
       ],
     );
@@ -265,8 +305,9 @@ class _LoginViewState extends State<LoginView> {
                   },
                   child: Padding(
                     padding: const EdgeInsets.only(left: 11),
-                    child:
-                        const Text('개인정보 처리방침').weight(FontWeight.w500).fontSize(15),
+                    child: const Text('개인정보 처리방침')
+                        .weight(FontWeight.w500)
+                        .fontSize(15),
                   ),
                 ),
               ],
@@ -298,6 +339,34 @@ class _LoginViewState extends State<LoginView> {
               ),
             ),
           ],
+        ),
+        const SizedBox(
+          height: 15,
+        ),
+        AnimatedContainer(
+          height: secondOpened ? 140 : 0,
+          duration: const Duration(milliseconds: 150),
+          decoration: const BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(5)),
+            color: blueBack,
+          ),
+          child: secondOpened
+              ? Scrollbar(
+                  controller: secondController,
+                  child: SingleChildScrollView(
+                    controller: secondController,
+                    padding: EdgeInsets.zero,
+                    child: const Padding(
+                      padding: EdgeInsets.only(left: 24, top: 14, right: 24),
+                      child: Text(firstCheckText),
+                    ),
+                  ),
+                )
+              : const SizedBox.shrink(),
+        ),
+        AnimatedContainer(
+          height: secondOpened ? 15 : 0,
+          duration: const Duration(milliseconds: 150),
         ),
       ],
     );
