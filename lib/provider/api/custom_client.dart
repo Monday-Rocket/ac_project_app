@@ -2,9 +2,9 @@
 
 import 'dart:convert';
 
-import 'package:ac_project_app/const/token.dart';
 import 'package:ac_project_app/models/net/api_result.dart';
 import 'package:ac_project_app/models/result.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 
 class CustomClient extends http.BaseClient {
@@ -13,9 +13,12 @@ class CustomClient extends http.BaseClient {
   final http.Client _inner = http.Client();
 
   @override
-  Future<http.StreamedResponse> send(http.BaseRequest request) {
+  Future<http.StreamedResponse> send(http.BaseRequest request) async {
+
+    final idToken = await FirebaseAuth.instance.currentUser?.getIdToken();
+
     request.headers['Content-Type'] = 'application/json';
-    request.headers['x-auth-token'] = globalToken ?? 'test-token';
+    request.headers['x-auth-token'] = idToken ?? 'test-token';
     return _inner.send(request);
   }
 
