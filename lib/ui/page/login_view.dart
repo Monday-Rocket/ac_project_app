@@ -37,11 +37,11 @@ class _LoginViewState extends State<LoginView> {
 
   @override
   void initState() {
-    // BlocProvider.of<LoginCubit>(context).stream.listen(_moveToSignUpPage);
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _moveToSignUpPage(SignUpType.newUser);
-    });
+    BlocProvider.of<LoginCubit>(context).stream.listen(_moveToSignUpPage);
+    // 바로 사용 동의 화면 볼 때 사용
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   _moveToSignUpPage(SignUpType.newUser);
+    // });
 
     super.initState();
   }
@@ -122,9 +122,7 @@ class _LoginViewState extends State<LoginView> {
                                     ),
                                   ),
                                   onPressed: allChecked
-                                      ? () {
-                                          // TODO 이동
-                                        }
+                                      ? () => Navigator.pushNamed(context, Routes.signUpNickname)
                                       : null,
                                   child: const Text(
                                     '약관동의',
@@ -149,7 +147,6 @@ class _LoginViewState extends State<LoginView> {
         },
       );
       if (result != true) {
-        Log.d('닫힘');
         if (!mounted) return;
         context.read<LoginCubit>().initialize();
       } else {
@@ -157,8 +154,15 @@ class _LoginViewState extends State<LoginView> {
         unawaited(Navigator.pushNamed(context, Routes.signUpNickname));
       }
     } else {
-      // 홈화면으로 이동
+      unawaited(goHomeScreen(context));
     }
+  }
+
+  Future<Object?> goHomeScreen(BuildContext context) {
+    return Navigator.pushNamed(
+                                          context,
+                                          Routes.home,
+                                        );
   }
 
   Widget buildThirdCheckBox(StateSetter setState) {
@@ -202,7 +206,7 @@ class _LoginViewState extends State<LoginView> {
                   },
                   child: Padding(
                     padding: const EdgeInsets.only(left: 11),
-                    child: const Text('서비스 이용방침')
+                    child: const Text('서비스 이용방침 (필수)')
                         .weight(FontWeight.w500)
                         .fontSize(15),
                   ),
@@ -305,7 +309,7 @@ class _LoginViewState extends State<LoginView> {
                   },
                   child: Padding(
                     padding: const EdgeInsets.only(left: 11),
-                    child: const Text('개인정보 처리방침')
+                    child: const Text('개인정보 처리방침 (필수)')
                         .weight(FontWeight.w500)
                         .fontSize(15),
                   ),
