@@ -64,7 +64,7 @@ class Pages {
         return MultiPlatformPageRoute.create(
           builder: (_) => BlocProvider(
             create: (_) => JobCubit(null),
-            child: SignUpJobView(),
+            child: const SignUpJobView(),
           ),
           settings: RouteSettings(
             arguments: arguments,
