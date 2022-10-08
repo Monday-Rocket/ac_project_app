@@ -141,8 +141,10 @@ class _LoginViewState extends State<LoginView> {
                                 ),
                                 onPressed: allChecked
                                     ? () => Navigator.pushNamed(
-                                        context, Routes.signUpNickname,
-                                        arguments: user)
+                                          context,
+                                          Routes.signUpNickname,
+                                          arguments: user,
+                                        )
                                     : null,
                                 child: const Text(
                                   '약관동의',

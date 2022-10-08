@@ -19,14 +19,14 @@ class SignUpJobView extends StatefulWidget {
 class _SignUpJobViewState extends State<SignUpJobView> {
   final textHint = '직업을 선택해주세요';
   late TextEditingController _textController;
-  List<JobGroup> jobs = [];
+  late Future<List<JobGroup>> futureJobs;
 
   @override
   void initState() {
     _textController = TextEditingController(text: textHint);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      jobs = await context.read<JobListCubit>().getJobList();
+      futureJobs = context.read<JobListCubit>().getJobList();
     });
     super.initState();
   }
@@ -160,6 +160,7 @@ class _SignUpJobViewState extends State<SignUpJobView> {
   }
 
   Future<JobGroup?> getJobResult() async {
+    final jobs = await futureJobs;
     return showModalBottomSheet<JobGroup?>(
       backgroundColor: Colors.transparent,
       context: context,
@@ -190,7 +191,7 @@ class _SignUpJobViewState extends State<SignUpJobView> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        buildJobListView(),
+                        buildJobListView(jobs),
                       ],
                     ),
                   ),
@@ -203,7 +204,7 @@ class _SignUpJobViewState extends State<SignUpJobView> {
     );
   }
 
-  Widget buildJobListView() {
+  Widget buildJobListView(List<JobGroup> jobs) {
     return Container(
       constraints: const BoxConstraints(
         maxHeight: 431,
