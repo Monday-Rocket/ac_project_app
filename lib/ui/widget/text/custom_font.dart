@@ -13,6 +13,18 @@ extension FontSize on Text {
   }
 }
 
+extension Weight on Text {
+  Text weight(FontWeight fontWeight) {
+    final curStyle = style == null ? const TextStyle() : style!;
+    return Text(
+      data ?? '',
+      style: curStyle.copyWith(
+        fontWeight: fontWeight,
+      ),
+    );
+  }
+}
+
 extension Bold on Text {
   Text bold() {
     final curStyle = style == null ? const TextStyle() : style!;

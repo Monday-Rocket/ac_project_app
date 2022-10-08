@@ -1,0 +1,3 @@
+enum SignUpType {
+  newUser, signedUser
+}

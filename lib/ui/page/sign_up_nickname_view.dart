@@ -76,8 +76,8 @@ class _SignUpNicknameViewState extends State<SignUpNicknameView> {
   Widget NextButton(){
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        minimumSize: Size.fromHeight(55),
-        backgroundColor: _isButtonEnabled ? buttonColor : Colors.grey,
+        minimumSize: const Size.fromHeight(55),
+        backgroundColor: _isButtonEnabled ? purpleMain : purpleUnchecked,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
@@ -90,7 +90,7 @@ class _SignUpNicknameViewState extends State<SignUpNicknameView> {
           arguments: context.read<NicknameCubit>().getNickname(),
         );
       } : null,
-      child: Text("확인",
+      child: const Text('확인',
         style: TextStyle(
           fontFamily: 'Pretendard',
           fontSize: 17,
@@ -118,18 +118,18 @@ class _SignUpNicknameViewState extends State<SignUpNicknameView> {
               color: Colors.grey,
             ),
             hintText: '사용하실 닉네임을 입력해주세요',
-            hoverColor: buttonColor,
+            hoverColor: purpleMain,
             focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: buttonColor),
+              borderSide: BorderSide(color: purpleMain),
             ),
             errorStyle: TextStyle(
-              color: errorColor,
+              color: redError,
             ),
             focusedErrorBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: errorColor)
+              borderSide: BorderSide(color: redError)
             ),
             suffixIcon: _isButtonEnabled
-                ? Icon(Icons.check, color: buttonColor,)
+                ? Icon(Icons.check, color: purpleMain,)
                 : null,
           ),
           validator: (value){

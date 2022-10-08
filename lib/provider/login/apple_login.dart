@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class Apple {
-  static Future<String?> login() async {
+  static Future<bool> login() async {
     try {
       final credential = await SignInWithApple.getAppleIDCredential(
         scopes: [
@@ -18,10 +18,10 @@ class Apple {
 
       // Firebase Sign in
       final userCredential = await FirebaseAuth.instance.signInWithCredential(oAuthCredential);
-      return await userCredential.user?.getIdToken();
+      return userCredential.user != null;
     } catch (error) {
       Log.e(error.toString());
-      return null;
+      return false;
     }
   }
 }

@@ -7,6 +7,7 @@ part 'user.g.dart';
 class User with _$User {
   const factory User({
     required String? id,
+    required bool? isNew,
   }) = _User;
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
