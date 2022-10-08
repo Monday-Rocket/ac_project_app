@@ -9,12 +9,29 @@ class SignUpView extends StatelessWidget {
     final token = ModalRoute.of(context)!.settings.arguments as String? ?? 'null';
 
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          onPressed: (){
+            Navigator.pop(context);
+          },
+          icon: Icon(Icons.abc),
+        ),
+      ),
+
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Center(
-          child: Text(token, style: const TextStyle(color: Colors.black),),
+        child: Column(
+          children: [
+            Text(""),
+            TextField(
+
+            )
+          ],
         ),
       ),
     );
+
+
+
   }
 }

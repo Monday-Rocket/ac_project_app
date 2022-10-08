@@ -30,7 +30,8 @@ class _LoginViewState extends State<LoginView> {
 
   void _moveToSignUpPage(String? event) {
     if (event != null) {
-      Navigator.popAndPushNamed(context, Routes.signUp, arguments: event);
+      Navigator.pushNamed(context, Routes.signUpNickname);
+      //Navigator.pushNamed(context, Routes.signUp, arguments: event);
     }
   }
 
