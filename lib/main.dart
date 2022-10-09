@@ -45,19 +45,11 @@ class MyApp extends StatelessWidget {
 
 class MultiPlatformApp {
   static StatefulWidget create() {
-    //if (Platform.isAndroid) {
-      return const MaterialApp(
-        debugShowCheckedModeBanner: false,
-        initialRoute: Routes.login,
-        onGenerateRoute: Pages.getPages,
-        themeMode: ThemeMode.light,
-      );
-    // } else {
-    //   return const CupertinoApp(
-    //     debugShowCheckedModeBanner: false,
-    //     initialRoute: Routes.login,
-    //     onGenerateRoute: Pages.getPages,
-    //   );
-    // }
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      initialRoute: Routes.login,
+      onGenerateRoute: Pages.getPages,
+      themeMode: ThemeMode.light,
+    );
   }
 }

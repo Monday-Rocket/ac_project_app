@@ -10,7 +10,7 @@ void main() {
     final result = await userApi.postUsers();
     result.when(
       success: (data) {
-        expect(data, const User(id: '1'));
+        expect(data, const User(id: '1', isNew: true));
       },
       error: fail,
     );

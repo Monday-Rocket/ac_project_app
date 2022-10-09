@@ -61,7 +61,7 @@ class _SignUpJobViewState extends State<SignUpJobView> {
               ElevatedButton(
                   style: ElevatedButton.styleFrom(
                       minimumSize: const Size.fromHeight(55),
-                      backgroundColor: buttonColor,
+                      backgroundColor: purpleMain,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       )),
@@ -101,7 +101,7 @@ class _SignUpJobViewState extends State<SignUpJobView> {
           ),
           decoration: InputDecoration(
               focusedBorder: const UnderlineInputBorder(
-                borderSide: BorderSide(color: buttonColor),
+                borderSide: BorderSide(color: purpleMain),
               ),
               suffix: IconButton(
                 iconSize: 24,
@@ -113,9 +113,10 @@ class _SignUpJobViewState extends State<SignUpJobView> {
               )),
           readOnly: true,
           onTap: () async {
-            final result = await showModalBottomSheet(
+            final result = await showModalBottomSheet<String?>(
               backgroundColor: Colors.transparent,
               context: context,
+              isDismissible: false,
               builder: (BuildContext context) {
                 return Container(
                   height: 600,
@@ -145,8 +146,9 @@ class _SignUpJobViewState extends State<SignUpJobView> {
                   ),
                 );
               },
-            ) as String?;
+            );
 
+            if (!mounted) return;
             context.read<JobCubit>().updateJob(result);
 
             changeText();
@@ -186,7 +188,7 @@ class _SignUpJobViewState extends State<SignUpJobView> {
               Navigator.pop(context, jobs[index]);
             },
             child: Text(
-              '${jobs[index]}',
+              jobs[index],
               style: const TextStyle(
                 color: Colors.black,
               ),

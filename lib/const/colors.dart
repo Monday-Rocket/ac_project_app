@@ -1,5 +1,13 @@
 import 'dart:ui';
 
-const loginTextGreyColor = Color(0xff757575);
-const buttonColor = Color(0xff741fff);
-const errorColor = Color(0xffF81D51);
+const greyLoginText = Color(0xFF757575);
+const greyUnchecked = Color(0xFFF3F5F8);
+const greyUncheckedIcon = Color(0xFFD4D8E1);
+const greyArrow = Color(0xFF7A828B);
+
+const purpleMain = Color(0xFF741FFF);
+const purpleUnchecked = Color(0xFFC5BDF6);
+
+const redError = Color(0xFFF81D51);
+
+const blueBack = Color(0xFFF6F7FE);
