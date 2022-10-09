@@ -6,7 +6,7 @@ import 'package:ac_project_app/const/resource.dart';
 import 'package:ac_project_app/const/strings.dart';
 import 'package:ac_project_app/cubits/login/login_cubit.dart';
 import 'package:ac_project_app/cubits/login/login_type.dart';
-import 'package:ac_project_app/models/login/login_type.dart';
+import 'package:ac_project_app/models/user/user.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/text/custom_font.dart';
 import 'package:ac_project_app/util/logger.dart';
@@ -46,110 +46,19 @@ class _LoginViewState extends State<LoginView> {
     super.initState();
   }
 
-  Future<void> _moveToSignUpPage(SignUpType? signUpType) async {
-    if (signUpType == null) {
+  Future<void> _moveToSignUpPage(User? user) async {
+    if (user == null) {
       Log.d('first');
-    } else if (signUpType == SignUpType.newUser) {
+    } else if (user.isNew ?? false) {
       // 1. 서비스 이용 동의
       // 2. 가입 화면으로 이동
-      final result = await showModalBottomSheet<bool?>(
-        backgroundColor: Colors.transparent,
-        context: context,
-        isScrollControlled: true,
-        builder: (BuildContext context) {
-          return Wrap(
-            children: [
-              StatefulBuilder(
-                builder: (context, setState) {
-                  return DecoratedBox(
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        topRight: Radius.circular(20),
-                      ),
-                    ),
-                    child: Padding(
-                      padding:
-                          const EdgeInsets.only(top: 33, left: 24, right: 24),
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 37),
-                            child: Stack(
-                              children: [
-                                Center(
-                                  child: const Text('서비스 이용을 위한 동의')
-                                      .bold()
-                                      .fontSize(21),
-                                ),
-                                Container(
-                                  alignment: Alignment.centerRight,
-                                  child: GestureDetector(
-                                    onTap: () => Navigator.pop(context),
-                                    child: const Icon(
-                                      Icons.close_rounded,
-                                      size: 24,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          buildFirstCheckBox(setState),
-                          const SizedBox(
-                            height: 28,
-                          ),
-                          buildSecondCheckBox(setState),
-                          buildThirdCheckBox(setState),
-                          const SizedBox(
-                            height: 28,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 54),
-                            child: Builder(
-                              builder: (context) {
-                                final allChecked =
-                                    firstCheck && secondCheck && thirdCheck;
-                                return ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    minimumSize: const Size.fromHeight(55),
-                                    backgroundColor: allChecked
-                                        ? purpleMain
-                                        : purpleUnchecked,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                  ),
-                                  onPressed: allChecked
-                                      ? () => Navigator.pushNamed(context, Routes.signUpNickname)
-                                      : null,
-                                  child: const Text(
-                                    '약관동의',
-                                    style: TextStyle(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    textWidthBasis: TextWidthBasis.parent,
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ],
-          );
-        },
-      );
+      final result = await getServiceApproval(user);
       if (result != true) {
+        // 초기화
         if (!mounted) return;
         context.read<LoginCubit>().initialize();
       } else {
+        // 회원가입 이동
         if (!mounted) return;
         unawaited(Navigator.pushNamed(context, Routes.signUpNickname));
       }
@@ -158,11 +67,114 @@ class _LoginViewState extends State<LoginView> {
     }
   }
 
+  Future<bool?> getServiceApproval(User user) async {
+    return showModalBottomSheet<bool?>(
+      backgroundColor: Colors.transparent,
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return Wrap(
+          children: [
+            StatefulBuilder(
+              builder: (context, setState) {
+                return DecoratedBox(
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20),
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                      top: 33,
+                      left: 24,
+                      right: 24,
+                    ),
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 37),
+                          child: Stack(
+                            children: [
+                              Center(
+                                child: const Text('서비스 이용을 위한 동의')
+                                    .bold()
+                                    .fontSize(21),
+                              ),
+                              Container(
+                                alignment: Alignment.centerRight,
+                                child: GestureDetector(
+                                  onTap: () => Navigator.pop(context),
+                                  child: const Icon(
+                                    Icons.close_rounded,
+                                    size: 24,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        buildFirstCheckBox(setState),
+                        const SizedBox(
+                          height: 28,
+                        ),
+                        buildSecondCheckBox(setState),
+                        buildThirdCheckBox(setState),
+                        const SizedBox(
+                          height: 28,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 54),
+                          child: Builder(
+                            builder: (context) {
+                              final allChecked =
+                                  firstCheck && secondCheck && thirdCheck;
+                              return ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  minimumSize: const Size.fromHeight(55),
+                                  backgroundColor:
+                                      allChecked ? purpleMain : purpleUnchecked,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                onPressed: allChecked
+                                    ? () => Navigator.pushNamed(
+                                          context,
+                                          Routes.signUpNickname,
+                                          arguments: user,
+                                        )
+                                    : null,
+                                child: const Text(
+                                  '약관동의',
+                                  style: TextStyle(
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textWidthBasis: TextWidthBasis.parent,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<Object?> goHomeScreen(BuildContext context) {
     return Navigator.pushNamed(
-                                          context,
-                                          Routes.home,
-                                        );
+      context,
+      Routes.home,
+    );
   }
 
   Widget buildThirdCheckBox(StateSetter setState) {
@@ -258,7 +270,14 @@ class _LoginViewState extends State<LoginView> {
                     padding: EdgeInsets.zero,
                     child: const Padding(
                       padding: EdgeInsets.only(left: 24, top: 14, right: 24),
-                      child: Text(secondCheckText),
+                      child: Text(
+                        secondCheckText,
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          color: greyApproveText,
+                        ),
+                      ),
                     ),
                   ),
                 )
@@ -362,7 +381,14 @@ class _LoginViewState extends State<LoginView> {
                     padding: EdgeInsets.zero,
                     child: const Padding(
                       padding: EdgeInsets.only(left: 24, top: 14, right: 24),
-                      child: Text(firstCheckText),
+                      child: Text(
+                        firstCheckText,
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          color: greyApproveText,
+                        ),
+                      ),
                     ),
                   ),
                 )

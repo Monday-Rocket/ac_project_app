@@ -19,9 +19,13 @@ void main() {
   test('유저 정보 수정', () async {
     const id = '1';
     const nickname = 'test';
-    const jobGroupId = '1';
+    const jobGroupId = 1;
 
-    final result = await userApi.patchUsers(id, nickname, jobGroupId);
+    final result = await userApi.patchUsers(
+      id: id,
+      nickname: nickname,
+      jobGroupId: jobGroupId,
+    );
 
     result.when(
       success: (data) {
