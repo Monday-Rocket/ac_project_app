@@ -26,7 +26,7 @@ dependencies:
   sign_in_with_apple: ^4.1.0
   google_sign_in: ^5.4.1
   kakao_flutter_sdk_user: ^1.2.1
-  firebase_auth: ^3.9.0
+  firebase_auth: ^3.11.2
 
   ## Utils
   very_good_analysis: ^3.0.1
