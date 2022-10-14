@@ -59,7 +59,7 @@ package="com.mr.ac_project_app">
        </activity>
        <activity
                android:name="com.mr.ac_project_app.ShareActivity"
-               android:theme="@style/Theme.Transparent"
+               android:theme="@style/TransparentCompat"
                android:exported="true"
                android:launchMode="standard">
            <intent-filter>

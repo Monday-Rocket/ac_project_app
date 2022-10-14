@@ -8,7 +8,6 @@ import android.text.TextUtils
 import android.util.Log
 import android.widget.Toast
 import com.mr.ac_project_app.databinding.ActivityShareBinding
-import java.io.*
 
 
 class ShareActivity : Activity() {
