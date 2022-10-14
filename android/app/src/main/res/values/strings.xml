@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="save_success">링크 저장 완료!</string>
+    <string name="close_window">창 닫기</string>
+    <string name="select_folder">폴더 선택</string>
+    <string name="add_folder">폴더 추가</string>
+</resources>

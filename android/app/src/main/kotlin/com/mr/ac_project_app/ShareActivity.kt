@@ -1,6 +1,5 @@
 package com.mr.ac_project_app
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -28,29 +27,11 @@ class ShareActivity : Activity() {
         val view = binding.root
         setContentView(view)
 
-        binding.button.setOnClickListener {
-            Log.i("ACP", dataDir.absolutePath)
-            writeSharedPref(resultData)
-            finishAffinity()
-        }
-    }
-
-    @Suppress("unused")
-    private fun writeTextFile(contents: String) {
-        try {
-            val absolutePath = dataDir.absolutePath
-            val dir = File(absolutePath)
-            if (!dir.exists()) { dir.mkdir() }
-            //파일 output stream 생성
-            val fos = FileOutputStream("$absolutePath/app_flutter/share.txt", true)
-            val writer = BufferedWriter(OutputStreamWriter(fos))
-            writer.write(contents + "\n")
-            writer.flush()
-            writer.close()
-            fos.close()
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
+//        binding.button.setOnClickListener {
+//            Log.i("ACP", dataDir.absolutePath)
+//            writeSharedPref(resultData)
+//            finishAffinity()
+//        }
     }
 
     private fun writeSharedPref(contents: String) {
