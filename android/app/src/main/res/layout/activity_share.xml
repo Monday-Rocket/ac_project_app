@@ -85,5 +85,6 @@
             android:paddingBottom="4dp"
             android:src="@drawable/btn_add"
             android:contentDescription="@string/add_folder"/>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </RelativeLayout>
