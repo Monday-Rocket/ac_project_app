@@ -2,13 +2,14 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/trans_grey800">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="308dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_margin="0dp"
         android:background="@drawable/share_white_round_back">
@@ -63,6 +64,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/textView" />
         <TextView
+            android:id="@+id/select_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/select_folder"
@@ -85,6 +87,23 @@
             android:paddingBottom="4dp"
             android:src="@drawable/btn_add"
             android:contentDescription="@string/add_folder"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/folder_list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintTop_toBottomOf="@id/select_text"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="14dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginBottom="30dp"
+            android:clipToPadding="false"
+            android:paddingStart="0dp"
+            android:paddingEnd="36dp"
+            tools:listitem="@layout/three_private_folder"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </RelativeLayout>
