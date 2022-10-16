@@ -103,7 +103,7 @@
             android:clipToPadding="false"
             android:paddingStart="0dp"
             android:paddingEnd="36dp"
-            tools:listitem="@layout/three_private_folder"/>
+            tools:listitem="@layout/triple_folder"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </RelativeLayout>

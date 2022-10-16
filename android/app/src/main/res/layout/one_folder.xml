@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
@@ -14,6 +15,7 @@
         android:background="@drawable/folder_one" />
     <TextView
         android:id="@+id/folder_text"
+        tools:text="앱 디자인"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/pretendard_medium"
@@ -23,4 +25,11 @@
         app:layout_constraintTop_toBottomOf="@id/oneImage"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+    <ImageView
+        android:id="@+id/lockImage"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@drawable/ic_lock"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/oneImage" />
 </androidx.constraintlayout.widget.ConstraintLayout>

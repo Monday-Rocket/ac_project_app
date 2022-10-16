@@ -31,6 +31,7 @@
         app:layout_constraintTop_toBottomOf="@id/rightTopImage"
         android:background="@drawable/folder_right_bottom" />
     <ImageView
+        android:id="@+id/lockImage"
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:src="@drawable/ic_lock"
@@ -44,6 +45,7 @@
         android:textColor="@color/grey700"
         android:textSize="12sp"
         android:layout_marginTop="6dp"
+        tools:text="앱 디자인"
         app:layout_constraintTop_toBottomOf="@id/rightBottomImage"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

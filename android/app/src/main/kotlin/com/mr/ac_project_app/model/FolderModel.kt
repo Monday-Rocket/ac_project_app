@@ -9,17 +9,17 @@ data class FolderModel(
     companion object {
         fun create(imageUrlList: List<String>, name: String, private: Boolean): FolderModel {
             return if (imageUrlList.isEmpty()) {
-                FolderModel(FolderType.None, arrayListOf(), name, false)
+                FolderModel(FolderType.None, arrayListOf(), name, private)
             } else {
-                if (imageUrlList.size == 1) {
-                    FolderModel(FolderType.One, imageUrlList, name, false)
-                } else if (imageUrlList.size == 2) {
-                    FolderModel(FolderType.Double, imageUrlList, name, false)
-                } else {
-                    if (private) {
-                        FolderModel(FolderType.PrivateTriple, imageUrlList, name, true)
-                    } else {
-                        FolderModel(FolderType.PublicTriple, imageUrlList, name, false)
+                when (imageUrlList.size) {
+                    1 -> {
+                        FolderModel(FolderType.One, imageUrlList, name, private)
+                    }
+                    2 -> {
+                        FolderModel(FolderType.Double, imageUrlList, name, private)
+                    }
+                    else -> {
+                        FolderModel(FolderType.Triple, imageUrlList, name, private)
                     }
                 }
             }

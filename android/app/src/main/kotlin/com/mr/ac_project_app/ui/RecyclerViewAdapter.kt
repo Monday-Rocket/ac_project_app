@@ -48,6 +48,7 @@ class RecyclerViewAdapter(private val modelList: ArrayList<FolderModel>) :
     ) : ViewHolder(itemView), FolderViewHolder {
 
         private val oneImageView: ImageView = itemView.findViewById(R.id.oneImage)
+        private val lockImageView: ImageView = itemView.findViewById(R.id.lockImage)
         private val textView: TextView = itemView.findViewById(R.id.folder_text)
 
         override fun bind(folderModel: FolderModel) {
@@ -57,6 +58,12 @@ class RecyclerViewAdapter(private val modelList: ArrayList<FolderModel>) :
             }
 
             textView.text = folderModel.name
+
+            if (folderModel.private) {
+                lockImageView.visibility = View.VISIBLE
+            } else {
+                lockImageView.visibility = View.GONE
+            }
 
             Glide.with(itemView)
                 .load(Uri.parse(folderModel.imageUrlList[0]))
@@ -72,6 +79,7 @@ class RecyclerViewAdapter(private val modelList: ArrayList<FolderModel>) :
 
         private val leftImageView: ImageView = itemView.findViewById(R.id.leftImage)
         private val rightImageView: ImageView = itemView.findViewById(R.id.rightImage)
+        private val lockImageView: ImageView = itemView.findViewById(R.id.lockImage)
         private val textView: TextView = itemView.findViewById(R.id.folder_text)
 
         override fun bind(folderModel: FolderModel) {
@@ -81,6 +89,12 @@ class RecyclerViewAdapter(private val modelList: ArrayList<FolderModel>) :
             }
 
             textView.text = folderModel.name
+
+            if (folderModel.private) {
+                lockImageView.visibility = View.VISIBLE
+            } else {
+                lockImageView.visibility = View.GONE
+            }
 
             Glide.with(itemView)
                 .load(Uri.parse(folderModel.imageUrlList[0]))
@@ -102,6 +116,7 @@ class RecyclerViewAdapter(private val modelList: ArrayList<FolderModel>) :
         private val leftImageView: ImageView = itemView.findViewById(R.id.leftImage)
         private val rightTopImageView: ImageView = itemView.findViewById(R.id.rightTopImage)
         private val rightBottomImageView: ImageView = itemView.findViewById(R.id.rightBottomImage)
+        private val lockImageView: ImageView = itemView.findViewById(R.id.lockImage)
         private val textView: TextView = itemView.findViewById(R.id.folder_text)
 
         override fun bind(folderModel: FolderModel) {
@@ -111,6 +126,12 @@ class RecyclerViewAdapter(private val modelList: ArrayList<FolderModel>) :
             }
 
             textView.text = folderModel.name
+
+            if (folderModel.private) {
+                lockImageView.visibility = View.VISIBLE
+            } else {
+                lockImageView.visibility = View.GONE
+            }
 
             Glide.with(itemView)
                 .load(Uri.parse(folderModel.imageUrlList[0]))
@@ -134,16 +155,10 @@ class RecyclerViewAdapter(private val modelList: ArrayList<FolderModel>) :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 
         when (viewType) {
-            FolderType.PrivateTriple.ordinal -> {
+            FolderType.Triple.ordinal -> {
                 return TripleFolderViewHolder(
                     itemView = LayoutInflater.from(parent.context)
-                        .inflate(R.layout.three_private_folder, parent, false)
-                )
-            }
-            FolderType.PublicTriple.ordinal -> {
-                return TripleFolderViewHolder(
-                    itemView = LayoutInflater.from(parent.context)
-                        .inflate(R.layout.three_public_folder, parent, false)
+                        .inflate(R.layout.triple_folder, parent, false)
                 )
             }
             FolderType.Double.ordinal -> {
@@ -175,10 +190,9 @@ class RecyclerViewAdapter(private val modelList: ArrayList<FolderModel>) :
     override fun getItemViewType(position: Int): Int {
 
         return when (modelList[position].type) {
-            FolderType.PrivateTriple -> 0
-            FolderType.PublicTriple -> 1
-            FolderType.Double -> 2
-            FolderType.One -> 3
+            FolderType.Triple -> 0
+            FolderType.Double -> 1
+            FolderType.One -> 2
             else -> -1
         }
     }

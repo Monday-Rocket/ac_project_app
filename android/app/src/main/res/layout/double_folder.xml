@@ -35,4 +35,12 @@
         app:layout_constraintTop_toBottomOf="@id/leftImage"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <ImageView
+        android:id="@+id/lockImage"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@drawable/ic_lock"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/rightImage" />
 </androidx.constraintlayout.widget.ConstraintLayout>
