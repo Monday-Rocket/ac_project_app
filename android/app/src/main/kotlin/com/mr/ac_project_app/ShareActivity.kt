@@ -33,44 +33,56 @@ class ShareActivity : Activity() {
         val view = binding.root
         setContentView(view)
 
-        binding.folderList.addItemDecoration(HorizontalSpaceItemDecoration(toDp(12f, applicationContext).toInt()))
-        binding.folderList.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
-        binding.folderList.adapter = RecyclerViewAdapter(
-            arrayListOf(
-                FolderModel.create(
-                    listOf("https://upload.wikimedia.org/wikipedia/ko/thumb/4/4a/%EC%8B%A0%EC%A7%B1%EA%B5%AC.png/230px-%EC%8B%A0%EC%A7%B1%EA%B5%AC.png"),
-                    "짱구",
-                    false
-                ),
-                FolderModel.create(
-                    listOf(
-                        "https://upload.wikimedia.org/wikipedia/ko/thumb/4/4a/%EC%8B%A0%EC%A7%B1%EA%B5%AC.png/230px-%EC%8B%A0%EC%A7%B1%EA%B5%AC.png",
-                        "https://upload.wikimedia.org/wikipedia/ko/thumb/4/4a/%EC%8B%A0%EC%A7%B1%EA%B5%AC.png/230px-%EC%8B%A0%EC%A7%B1%EA%B5%AC.png",
-                    ),
-                    "짱구",
-                    false
-                ),
-                FolderModel.create(
-                    listOf(
-                        "https://i.pinimg.com/originals/82/18/c4/8218c49bb19adffbe1704a9a60ec4875.jpg",
-                        "https://i.pinimg.com/originals/82/18/c4/8218c49bb19adffbe1704a9a60ec4875.jpg",
-                        "https://upload.wikimedia.org/wikipedia/ko/thumb/4/4a/%EC%8B%A0%EC%A7%B1%EA%B5%AC.png/230px-%EC%8B%A0%EC%A7%B1%EA%B5%AC.png"
-                    ),
-                    "스타 버터플라이",
-                    false
-                ),
-                FolderModel.create(
-                    listOf("https://upload.wikimedia.org/wikipedia/ko/thumb/4/4a/%EC%8B%A0%EC%A7%B1%EA%B5%AC.png/230px-%EC%8B%A0%EC%A7%B1%EA%B5%AC.png"),
-                    "짱구",
-                    false
-                ),
-                FolderModel.create(
-                    listOf(),
-                    "없음",
-                    false
-                )
+        binding.folderList.addItemDecoration(
+            HorizontalSpaceItemDecoration(
+                toDp(
+                    12f,
+                    applicationContext
+                ).toInt()
             )
         )
+        binding.folderList.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
+        val modelList = arrayListOf(
+            FolderModel.create(
+                listOf("https://upload.wikimedia.org/wikipedia/ko/thumb/4/4a/%EC%8B%A0%EC%A7%B1%EA%B5%AC.png/230px-%EC%8B%A0%EC%A7%B1%EA%B5%AC.png"),
+                "짱구",
+                false
+            ),
+            FolderModel.create(
+                listOf(
+                    "https://upload.wikimedia.org/wikipedia/ko/thumb/4/4a/%EC%8B%A0%EC%A7%B1%EA%B5%AC.png/230px-%EC%8B%A0%EC%A7%B1%EA%B5%AC.png",
+                    "https://upload.wikimedia.org/wikipedia/ko/thumb/4/4a/%EC%8B%A0%EC%A7%B1%EA%B5%AC.png/230px-%EC%8B%A0%EC%A7%B1%EA%B5%AC.png",
+                ),
+                "짱구",
+                false
+            ),
+            FolderModel.create(
+                listOf(
+                    "https://i.pinimg.com/originals/82/18/c4/8218c49bb19adffbe1704a9a60ec4875.jpg",
+                    "https://i.pinimg.com/originals/82/18/c4/8218c49bb19adffbe1704a9a60ec4875.jpg",
+                    "https://upload.wikimedia.org/wikipedia/ko/thumb/4/4a/%EC%8B%A0%EC%A7%B1%EA%B5%AC.png/230px-%EC%8B%A0%EC%A7%B1%EA%B5%AC.png"
+                ),
+                "스타 버터플라이",
+                false
+            ),
+            FolderModel.create(
+                listOf("https://upload.wikimedia.org/wikipedia/ko/thumb/4/4a/%EC%8B%A0%EC%A7%B1%EA%B5%AC.png/230px-%EC%8B%A0%EC%A7%B1%EA%B5%AC.png"),
+                "짱구",
+                false
+            ),
+            FolderModel.create(
+                listOf(),
+                "없음",
+                false
+            )
+        )
+        binding.folderList.adapter = RecyclerViewAdapter(
+            modelList
+        ) { position ->
+            val intent = Intent(this@ShareActivity, SaveSuccessActivity::class.java)
+            intent.putExtra("folder", modelList[position])
+            startActivity(intent)
+        }
     }
 
     private fun writeSharedPref(contents: String) {

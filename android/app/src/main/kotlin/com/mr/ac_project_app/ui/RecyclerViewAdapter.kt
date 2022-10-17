@@ -13,9 +13,8 @@ import com.mr.ac_project_app.R
 import com.mr.ac_project_app.model.FolderModel
 import com.mr.ac_project_app.model.FolderType
 
-class RecyclerViewAdapter(private val modelList: ArrayList<FolderModel>) :
+class RecyclerViewAdapter(private val modelList: ArrayList<FolderModel>, private val onFolderSelected: (Int) -> Unit) :
     RecyclerView.Adapter<ViewHolder>() {
-
 
     interface FolderViewHolder {
         fun bind(folderModel: FolderModel)
@@ -54,7 +53,7 @@ class RecyclerViewAdapter(private val modelList: ArrayList<FolderModel>) :
         override fun bind(folderModel: FolderModel) {
 
             itemView.setOnClickListener {
-                // TODO Save folderModel
+                onFolderSelected(bindingAdapterPosition)
             }
 
             textView.text = folderModel.name
@@ -85,7 +84,7 @@ class RecyclerViewAdapter(private val modelList: ArrayList<FolderModel>) :
         override fun bind(folderModel: FolderModel) {
 
             itemView.setOnClickListener {
-                // TODO Save folderModel
+                onFolderSelected(bindingAdapterPosition)
             }
 
             textView.text = folderModel.name
@@ -122,7 +121,7 @@ class RecyclerViewAdapter(private val modelList: ArrayList<FolderModel>) :
         override fun bind(folderModel: FolderModel) {
 
             itemView.setOnClickListener {
-                // TODO Save folderModel
+                onFolderSelected(bindingAdapterPosition)
             }
 
             textView.text = folderModel.name
