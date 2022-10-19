@@ -6,7 +6,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:name="${applicationName}"
+        android:name=".LinkPoolApp"
         android:icon="@mipmap/ic_launcher"
         android:label="ac_project_app">
 
@@ -61,7 +61,6 @@
         <activity
             android:name="com.mr.ac_project_app.ShareActivity"
             android:exported="true"
-            android:launchMode="standard"
             android:theme="@style/TransparentCompat">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
