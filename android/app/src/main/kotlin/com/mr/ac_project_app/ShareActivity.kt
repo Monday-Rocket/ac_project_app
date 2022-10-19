@@ -1,6 +1,5 @@
 package com.mr.ac_project_app
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
@@ -9,6 +8,7 @@ import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mr.ac_project_app.databinding.ActivityShareBinding
@@ -17,7 +17,7 @@ import com.mr.ac_project_app.ui.RecyclerViewAdapter
 import com.mr.ac_project_app.utils.toDp
 
 
-class ShareActivity : Activity() {
+class ShareActivity : ComponentActivity() {
 
     private var resultData: String = ""
     private lateinit var binding: ActivityShareBinding
@@ -32,10 +32,16 @@ class ShareActivity : Activity() {
         binding = ActivityShareBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        binding.background.setOnClickListener {
+            finishAffinity()
+        }
+
         binding.folderPlusButton.setOnClickListener {
             val intent = Intent(this@ShareActivity, NewFolderActivity::class.java)
             intent.putExtra("link", resultData)
             startActivity(intent)
+            finish()
+            overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit)
         }
 
         binding.folderList.addItemDecoration(
@@ -87,6 +93,8 @@ class ShareActivity : Activity() {
             val intent = Intent(this@ShareActivity, SaveSuccessActivity::class.java)
             intent.putExtra("folder", modelList[position])
             startActivity(intent)
+            overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit)
+            finish()
         }
     }
 
@@ -108,11 +116,6 @@ class ShareActivity : Activity() {
         }
         Toast.makeText(applicationContext, resultData, Toast.LENGTH_SHORT).show()
         Log.i("ACP", "onResume:: $resultData")
-    }
-
-    override fun onPause() {
-        super.onPause()
-        finishAffinity()
     }
 
     inner class HorizontalSpaceItemDecoration(private val space: Int) :

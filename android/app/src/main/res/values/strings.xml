@@ -8,4 +8,9 @@
     <string name="move_to_app">앱에서 보기</string>
     <string name="input_comment">코멘트 남기기</string>
     <string name="move_back">뒤로 가기</string>
+    <string name="complete">완료</string>
+    <string name="save_folder">폴더에 저장하기</string>
+    <string name="invisible_folder">비공개 폴더</string>
+    <string name="new_folder_name">새로운 폴더 이름</string>
+    <string name="new_folder_title">새로운 폴더</string>
 </resources>
