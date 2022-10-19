@@ -82,44 +82,42 @@
         </LinearLayout>
 
 
-        <Button
-            android:id="@+id/write_comment_button"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
+            android:orientation="horizontal"
             android:layout_marginTop="32dp"
             android:layout_marginBottom="24dp"
-            android:background="@drawable/second_button_back"
-            android:fontFamily="@font/pretendard_bold"
-            android:paddingHorizontal="36dp"
-            android:paddingVertical="18dp"
-            android:text="@string/input_comment"
-            android:textColor="@color/primary600"
-            android:textSize="16sp"
-
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/move_to_app_button"
+            app:layout_constraintTop_toBottomOf="@+id/folder_layout"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/folder_layout" />
-
-        <Button
-            android:id="@+id/move_to_app_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginBottom="24dp"
-            android:background="@drawable/primary_button_back"
-            android:fontFamily="@font/pretendard_bold"
-            android:paddingHorizontal="36dp"
-            android:paddingVertical="18dp"
-            android:text="@string/move_to_app"
-            android:textColor="@android:color/white"
-            android:textSize="16sp"
-            app:layout_constraintStart_toEndOf="@id/write_comment_button"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/folder_layout" />
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <Button
+                android:id="@+id/write_comment_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="7dp"
+                android:background="@drawable/second_button_back"
+                android:fontFamily="@font/pretendard_bold"
+                android:paddingHorizontal="36dp"
+                android:paddingVertical="18dp"
+                android:text="@string/input_comment"
+                android:textColor="@color/primary600"
+                android:textSize="16sp"/>
+
+            <Button
+                android:id="@+id/move_to_app_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/primary_button_back"
+                android:fontFamily="@font/pretendard_bold"
+                android:paddingHorizontal="36dp"
+                android:paddingVertical="18dp"
+                android:text="@string/move_to_app"
+                android:textColor="@android:color/white"
+                android:textSize="16sp" />
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </RelativeLayout>

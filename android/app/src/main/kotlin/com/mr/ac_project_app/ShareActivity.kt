@@ -30,8 +30,13 @@ class ShareActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityShareBinding.inflate(layoutInflater)
-        val view = binding.root
-        setContentView(view)
+        setContentView(binding.root)
+
+        binding.folderPlusButton.setOnClickListener {
+            val intent = Intent(this@ShareActivity, NewFolderActivity::class.java)
+            intent.putExtra("link", resultData)
+            startActivity(intent)
+        }
 
         binding.folderList.addItemDecoration(
             HorizontalSpaceItemDecoration(

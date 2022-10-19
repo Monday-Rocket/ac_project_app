@@ -7,4 +7,5 @@
     <string name="save_success_for_selected_folder">선택한 폴더에 저장 완료!</string>
     <string name="move_to_app">앱에서 보기</string>
     <string name="input_comment">코멘트 남기기</string>
+    <string name="move_back">뒤로 가기</string>
 </resources>

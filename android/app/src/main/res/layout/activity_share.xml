@@ -76,6 +76,7 @@
             android:layout_marginTop="22dp"
             android:layout_marginStart="24dp" />
         <ImageButton
+            android:id="@+id/folder_plus_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"

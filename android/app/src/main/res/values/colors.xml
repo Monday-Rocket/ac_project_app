@@ -3,8 +3,12 @@
 
     <color name="primary600">#804DFF</color>
     <color name="secondary">#F3F1FF</color>
+    <color name="disabled">#C8BFFF</color>
 
     <color name="grey100">#F5F7FA</color>
+
+    <color name="grey300">#CFD4DE</color>
+    <color name="grey400">#B0B8C1</color>
     <color name="grey700">#424852</color>
     <color name="grey800">#30343E</color>
     <color name="trans_grey800">#8830343E</color>
