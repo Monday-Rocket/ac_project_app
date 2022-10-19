@@ -46,6 +46,9 @@
         android:textSize="12sp"
         android:layout_marginTop="6dp"
         tools:text="앱 디자인"
+        tools:background="@drawable/folder_text_back"
+        android:paddingVertical="5dp"
+        android:paddingHorizontal="12dp"
         app:layout_constraintTop_toBottomOf="@id/rightBottomImage"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

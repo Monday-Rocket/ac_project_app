@@ -1,6 +1,5 @@
 package com.mr.ac_project_app
 
-import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
@@ -38,7 +37,8 @@ class ShareActivity : ComponentActivity() {
 
         binding.folderPlusButton.setOnClickListener {
             val intent = Intent(this@ShareActivity, NewFolderActivity::class.java)
-            intent.putExtra("link", resultData)
+            // TODO intent.putExtra("link", resultData)
+            intent.putExtra("link", "https://i.pinimg.com/originals/82/18/c4/8218c49bb19adffbe1704a9a60ec4875.jpg")
             startActivity(intent)
             finish()
             overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit)
@@ -91,22 +91,13 @@ class ShareActivity : ComponentActivity() {
             modelList
         ) { position ->
             val intent = Intent(this@ShareActivity, SaveSuccessActivity::class.java)
+            intent.putExtra("title", "선택한 폴더에 저장 완료!")
             intent.putExtra("folder", modelList[position])
             startActivity(intent)
-            overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit)
+            overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit)
             finish()
         }
     }
-
-    private fun writeSharedPref(contents: String) {
-        val sharedPref = getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE)
-        val saved = sharedPref.getStringSet(SHARE_LIST_ID, HashSet<String>())!!
-        val resultSet = HashSet<String>()
-        resultSet.addAll(saved)
-        resultSet.add(contents)
-        sharedPref.edit().putStringSet(SHARE_LIST_ID, resultSet).apply()
-    }
-
 
     override fun onResume() {
         super.onResume()

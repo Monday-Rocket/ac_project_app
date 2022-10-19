@@ -35,6 +35,8 @@ class RecyclerViewAdapter(private val modelList: ArrayList<FolderModel>, private
 
             textView.text = folderModel.name
 
+            oneImageView.clipToOutline = true
+
             Glide.with(itemView)
                 .load(R.drawable.folder_one)
                 .centerCrop()
@@ -63,6 +65,8 @@ class RecyclerViewAdapter(private val modelList: ArrayList<FolderModel>, private
             } else {
                 lockImageView.visibility = View.GONE
             }
+
+            oneImageView.clipToOutline = true
 
             Glide.with(itemView)
                 .load(Uri.parse(folderModel.imageUrlList[0]))
@@ -94,6 +98,9 @@ class RecyclerViewAdapter(private val modelList: ArrayList<FolderModel>, private
             } else {
                 lockImageView.visibility = View.GONE
             }
+
+            leftImageView.clipToOutline = true
+            rightImageView.clipToOutline = true
 
             Glide.with(itemView)
                 .load(Uri.parse(folderModel.imageUrlList[0]))
@@ -131,6 +138,10 @@ class RecyclerViewAdapter(private val modelList: ArrayList<FolderModel>, private
             } else {
                 lockImageView.visibility = View.GONE
             }
+
+            leftImageView.clipToOutline = true
+            rightTopImageView.clipToOutline = true
+            rightBottomImageView.clipToOutline = true
 
             Glide.with(itemView)
                 .load(Uri.parse(folderModel.imageUrlList[0]))

@@ -1,9 +1,7 @@
 package com.mr.ac_project_app
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -12,13 +10,12 @@ import android.view.View
 import android.view.Window
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
-import android.window.OnBackInvokedDispatcher
-import android.window.OnBackInvokedDispatcher.PRIORITY_DEFAULT
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.mr.ac_project_app.databinding.ActivityNewFolderBinding
+import com.mr.ac_project_app.model.FolderModel
 
 class NewFolderActivity : ComponentActivity() {
 
@@ -42,10 +39,10 @@ class NewFolderActivity : ComponentActivity() {
             overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit)
         }
 
-        setInputFolderName()
+        setFolderNameEditText()
 
         binding.completeText.setOnClickListener {
-            if (binding.inputNewFolderText.text.toString().isNotEmpty()) {
+            if (binding.folderNameEditText.text.toString().isNotEmpty()) {
                 binding.saveFolderButton.callOnClick()
             }
         }
@@ -55,12 +52,21 @@ class NewFolderActivity : ComponentActivity() {
         }
 
         binding.saveFolderButton.setOnClickListener {
-            val intent = Intent(this@NewFolderActivity, SaveSuccessActivity::class.java)
-            intent.putExtra("folderVisibility", folderVisibility)
-            intent.putExtra("folderName", binding.inputNewFolderText.text.toString())
-            intent.putExtra("title", "새 폴더에 저장 완료!")
-            startActivity(intent)
+
+            val link = intent.getStringExtra("link") ?: ""
+
+            val movingIntent = Intent(this@NewFolderActivity, SaveSuccessActivity::class.java)
+            val folderName = binding.folderNameEditText.text.toString()
+            movingIntent.putExtra(
+                "folder", FolderModel.create(
+                    listOf(link),
+                    folderName, folderVisibility
+                )
+            )
+            movingIntent.putExtra("title", "새 폴더에 저장 완료!")
+            startActivity(movingIntent)
             finish()
+            overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit)
         }
 
         callback = object : OnBackPressedCallback(true) {
@@ -74,10 +80,10 @@ class NewFolderActivity : ComponentActivity() {
 
 
     @SuppressLint("ClickableViewAccessibility")
-    private fun setInputFolderName() {
-        binding.inputNewFolderText.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
+    private fun setFolderNameEditText() {
+        binding.folderNameEditText.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
 
-        binding.inputNewFolderText.addTextChangedListener(object : TextWatcher {
+        binding.folderNameEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
 
             }
@@ -87,8 +93,8 @@ class NewFolderActivity : ComponentActivity() {
             }
 
             override fun afterTextChanged(s: Editable?) {
-                if (binding.inputNewFolderText.text.toString() != "") {
-                    binding.inputNewFolderText.setCompoundDrawablesWithIntrinsicBounds(
+                if (binding.folderNameEditText.text.toString() != "") {
+                    binding.folderNameEditText.setCompoundDrawablesWithIntrinsicBounds(
                         0,
                         0,
                         R.drawable.btn_x_small,
@@ -97,7 +103,7 @@ class NewFolderActivity : ComponentActivity() {
                     binding.completeText.setTextColor(getColor(R.color.grey800))
                     binding.saveFolderButton.isEnabled = true
                 } else {
-                    binding.inputNewFolderText.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
+                    binding.folderNameEditText.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
                     binding.completeText.setTextColor(getColor(R.color.grey300))
                     binding.saveFolderButton.isEnabled = false
                 }
@@ -105,13 +111,13 @@ class NewFolderActivity : ComponentActivity() {
 
         })
 
-        binding.inputNewFolderText.setOnTouchListener(object : View.OnTouchListener {
+        binding.folderNameEditText.setOnTouchListener(object : View.OnTouchListener {
             override fun onTouch(v: View?, event: MotionEvent): Boolean {
                 val right = 2
-                if (event.action == MotionEvent.ACTION_UP && binding.inputNewFolderText.text.toString() != "") {
-                    if (event.rawX >= binding.inputNewFolderText.right - binding.inputNewFolderText.compoundDrawables[right].bounds.width()
+                if (event.action == MotionEvent.ACTION_UP && binding.folderNameEditText.text.toString() != "") {
+                    if (event.rawX >= binding.folderNameEditText.right - binding.folderNameEditText.compoundDrawables[right].bounds.width()
                     ) {
-                        binding.inputNewFolderText.setText("")
+                        binding.folderNameEditText.setText("")
                         return true
                     }
                 }
@@ -119,28 +125,20 @@ class NewFolderActivity : ComponentActivity() {
             }
         })
 
-        binding.inputNewFolderText.setOnEditorActionListener { v, actionId, event ->
+        binding.folderNameEditText.setOnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 Toast.makeText(applicationContext, "확인", Toast.LENGTH_SHORT).show()
-                keyBordHide()
+                hideKeyboard()
             }
             false
         }
     }
 
-    fun keyBordHide() {
+    private fun hideKeyboard() {
         val window: Window = window
         WindowInsetsControllerCompat(
             window,
             window.decorView
         ).hide(WindowInsetsCompat.Type.ime())
-    }
-
-    fun keyBordShow() {
-        val window: Window = window
-        WindowInsetsControllerCompat(
-            window,
-            window.decorView
-        ).show(WindowInsetsCompat.Type.ime())
     }
 }

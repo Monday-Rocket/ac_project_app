@@ -11,19 +11,28 @@ data class FolderModel(
     val private: Boolean
 ): Parcelable {
     companion object {
-        fun create(imageUrlList: List<String>, name: String, private: Boolean): FolderModel {
-            return if (imageUrlList.isEmpty()) {
+        fun create(imageUrlList: List<String?>, name: String, private: Boolean): FolderModel {
+
+            val realUrlList = mutableListOf<String>()
+
+            imageUrlList.forEach {
+                if (it != null && it.isNotEmpty()) {
+                    realUrlList.add(it)
+                }
+            }
+
+            return if (realUrlList.isEmpty()) {
                 FolderModel(FolderType.None, arrayListOf(), name, private)
             } else {
-                when (imageUrlList.size) {
+                when (realUrlList.size) {
                     1 -> {
-                        FolderModel(FolderType.One, imageUrlList, name, private)
+                        FolderModel(FolderType.One, realUrlList, name, private)
                     }
                     2 -> {
-                        FolderModel(FolderType.Double, imageUrlList, name, private)
+                        FolderModel(FolderType.Double, realUrlList, name, private)
                     }
                     else -> {
-                        FolderModel(FolderType.Triple, imageUrlList, name, private)
+                        FolderModel(FolderType.Triple, realUrlList, name, private)
                     }
                 }
             }

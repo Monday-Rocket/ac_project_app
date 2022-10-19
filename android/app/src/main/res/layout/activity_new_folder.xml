@@ -78,7 +78,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <EditText
-            android:id="@+id/input_new_folder_text"
+            android:id="@+id/folder_name_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="60dp"
@@ -108,7 +108,7 @@
             android:textSize="16sp"
             android:layout_marginTop="16dp"
             android:layout_marginStart="24dp"
-            app:layout_constraintTop_toBottomOf="@id/input_new_folder_text"
+            app:layout_constraintTop_toBottomOf="@id/folder_name_edit_text"
             app:layout_constraintStart_toStartOf="parent" />
 
         <ToggleButton
@@ -116,7 +116,7 @@
             android:layout_width="40dp"
             android:layout_height="24dp"
             app:layout_constraintStart_toEndOf="@id/folder_visible_text"
-            app:layout_constraintTop_toBottomOf="@id/input_new_folder_text"
+            app:layout_constraintTop_toBottomOf="@id/folder_name_edit_text"
             android:background="@drawable/toggle_button"
             android:textOn=""
             android:textOff=""

@@ -31,7 +31,7 @@
 
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/title_success_text_view"
             android:layout_width="wrap_content"
             android:layout_height="28dp"
             android:layout_marginTop="30dp"
@@ -69,7 +69,7 @@
             android:layout_marginTop="32dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/textView">
+            app:layout_constraintTop_toBottomOf="@id/title_success_text_view">
 
             <include
                 android:id="@+id/triple_layout"
