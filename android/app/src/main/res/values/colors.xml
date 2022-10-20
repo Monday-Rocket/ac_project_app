@@ -9,6 +9,8 @@
 
     <color name="grey300">#CFD4DE</color>
     <color name="grey400">#B0B8C1</color>
+    <color name="grey500">#7A828B</color>
+
     <color name="grey700">#424852</color>
     <color name="grey800">#30343E</color>
     <color name="trans_grey800">#8830343E</color>

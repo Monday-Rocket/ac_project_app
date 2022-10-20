@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/white_dialog"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:layout_width="285dp"
+    tools:layout_height="256dp">
+
+    <ImageButton
+        android:id="@+id/imageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/close_window"
+        android:paddingStart="28dp"
+        android:paddingTop="24dp"
+        android:paddingEnd="20dp"
+        android:src="@drawable/btn_x_primary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/folder_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="30dp"
+        tools:src="@drawable/folder_icon"/>
+
+    <TextView
+        android:id="@+id/dialog_title_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/folder_icon"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="7dp"
+        tools:text="새폴더를 만들고 있어요"
+        android:fontFamily="@font/pretendard_bold"
+        android:textSize="20sp"
+        android:gravity="center"
+        android:textColor="@color/grey900"/>
+
+    <TextView
+        android:id="@+id/dialog_content_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/dialog_title_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="10dp"
+        tools:text="지금 폴더 만들기를 그만두신다면\n
+링크는 폴더에 담기지 않은 채로 저장돼요!"
+        android:gravity="center"
+        android:fontFamily="@font/pretendard_medium"
+        android:textColor="@color/grey500"
+        android:textSize="14sp"/>
+
+    <Button
+        android:id="@+id/dialog_one_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@drawable/primary_button_back"
+        tools:text="다음에 만들기"
+        android:text="@string/save_folder"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        android:fontFamily="@font/pretendard_bold"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="20dp"
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
