@@ -10,14 +10,16 @@ import android.view.View
 import android.view.Window
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
-import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.fragment.app.FragmentActivity
 import com.mr.ac_project_app.databinding.ActivityNewFolderBinding
+import com.mr.ac_project_app.dialog.ConfirmDialogInterface
+import com.mr.ac_project_app.dialog.MessageDialog
 import com.mr.ac_project_app.model.FolderModel
 
-class NewFolderActivity : ComponentActivity() {
+class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
 
     private lateinit var binding: ActivityNewFolderBinding
     private var folderVisibility = false
@@ -29,7 +31,11 @@ class NewFolderActivity : ComponentActivity() {
         setContentView(binding.root)
 
         binding.background.setOnClickListener {
-            Toast.makeText(applicationContext, "터치됨", Toast.LENGTH_SHORT).show()
+            val dialog = MessageDialog(title = "새폴더를 만들고 있어요", content = "지금 폴더 만들기를 그만두신다면\n" +
+                    "링크는 폴더에 담기지 않은 채로 저장돼요!", confirmDialogInterface = this, imageId = R.drawable.folder_icon)
+            dialog.isCancelable = true
+            dialog.show(supportFragmentManager, "Confirm dialog")
+
         }
 
         binding.backButton.setOnClickListener {
@@ -140,5 +146,9 @@ class NewFolderActivity : ComponentActivity() {
             window,
             window.decorView
         ).hide(WindowInsetsCompat.Type.ime())
+    }
+
+    override fun onButtonClick() {
+        finishAffinity()
     }
 }
