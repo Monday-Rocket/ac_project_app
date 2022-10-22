@@ -84,7 +84,7 @@ class SaveSuccessActivity: ComponentActivity() {
                         .into(binding.tripleLayout.rightBottomImage)
 
                     binding.tripleLayout.lockImage.visibility =
-                        if (folder.private) View.VISIBLE else View.GONE
+                        if (folder.visible) View.GONE else View.VISIBLE
                 }
                 FolderType.Double -> {
                     binding.doubleLayout.root.visibility = View.VISIBLE
@@ -108,7 +108,7 @@ class SaveSuccessActivity: ComponentActivity() {
                         .into(binding.doubleLayout.rightImage)
 
                     binding.doubleLayout.lockImage.visibility =
-                        if (folder.private) View.VISIBLE else View.GONE
+                        if (folder.visible) View.GONE else View.VISIBLE
                 }
                 FolderType.One -> {
 
@@ -127,7 +127,7 @@ class SaveSuccessActivity: ComponentActivity() {
                         .into(binding.oneLayout.oneImage)
 
                     binding.oneLayout.lockImage.visibility =
-                        if (folder.private) View.VISIBLE else View.GONE
+                        if (folder.visible) View.GONE else View.VISIBLE
                 }
                 else -> {
                     binding.oneLayout.root.visibility = View.VISIBLE
@@ -144,7 +144,7 @@ class SaveSuccessActivity: ComponentActivity() {
                         .into(binding.oneLayout.oneImage)
 
                     binding.oneLayout.lockImage.visibility =
-                        if (folder.private) View.VISIBLE else View.GONE
+                        if (folder.visible) View.GONE else View.VISIBLE
                 }
             }
         }

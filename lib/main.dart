@@ -20,30 +20,30 @@ Future<void> initSqflite() async {
   final path = '${await getDatabasesPath()}/share.db';
   Log.i('DB Path: $path');
   const folderSql = 'create table folder( '
-      'seq int primary key, '
+      'seq integer primary key autoincrement, '
       'name varchar(20) not null, '
       'visible boolean not null default 1 '
       ');';
 
   const linkSql = 'create table link( '
-      'seq int primary key, '
+      'seq integer primary key autoincrement, '
       'link varchar(2000) not null, '
       'comment varchar(300), '
       'folder_seq int(11), '
-      'image_link varchar(2000) not null '
+      'image_link varchar(2000) '
       ');';
   const folderTempSql = 'create table folder_temp( '
-      'seq int primary key, '
+      'seq integer primary key autoincrement, '
       'name varchar(20) not null, '
       'visible boolean not null default 1 '
       ');';
 
   const linkTempSql = 'create table link_temp( '
-      'seq int primary key, '
+      'seq integer primary key autoincrement, '
       'link varchar(2000) not null, '
       'comment varchar(300), '
       'folder_seq int(11), '
-      'image_link varchar(2000) not null '
+      'image_link varchar(2000) '
       ');';
   final database = await openDatabase(
     path,

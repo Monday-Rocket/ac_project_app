@@ -6,7 +6,6 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.graphics.Rect
 import android.os.Bundle
-import android.provider.BaseColumns
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
@@ -28,6 +27,7 @@ import com.mr.ac_project_app.utils.toDp
 
 class ShareActivity : ComponentActivity() {
 
+    private var linkSeq: Long? = null
     private var savedLink: String = ""
     private var isLinkSaved = false
     private lateinit var binding: ActivityShareBinding
@@ -57,6 +57,7 @@ class ShareActivity : ComponentActivity() {
         binding.folderPlusButton.setOnClickListener {
             val intent = Intent(this@ShareActivity, NewFolderActivity::class.java)
             intent.putExtra("link", savedLink)
+            intent.putExtra("linkSeq", linkSeq)
             startActivity(intent)
             finish()
             overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit)
@@ -71,17 +72,20 @@ class ShareActivity : ComponentActivity() {
             )
         )
         binding.folderList.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
-        modelList.addAll(getFoldersFromDB())
+
         binding.folderList.adapter = RecyclerViewAdapter(
             modelList
         ) { position ->
             val intent = Intent(this@ShareActivity, SaveSuccessActivity::class.java)
             intent.putExtra("folder", modelList[position])
             intent.putExtra("saveType", SaveType.Selected)
+            intent.putExtra("linkSeq", linkSeq)
             startActivity(intent)
             overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit)
             finish()
         }
+
+        modelList.addAll(getFoldersFromDB())
     }
 
     override fun onResume() {
@@ -103,7 +107,7 @@ class ShareActivity : ComponentActivity() {
             val values = ContentValues().apply {
                 put(LinkTempEntry.link, savedLink)
             }
-            db.insert(LinkTempEntry.table, LinkTempEntry.link, values)
+            linkSeq = db.insert(LinkTempEntry.table, null, values)
             db.close()
         }
     }
@@ -127,6 +131,7 @@ class ShareActivity : ComponentActivity() {
                 getFolderImage(
                     folderTempCursor,
                     db,
+                    FolderTempEntry.seq,
                     FolderTempEntry.folderName,
                     FolderTempEntry.visible,
                     linkColumns
@@ -136,6 +141,7 @@ class ShareActivity : ComponentActivity() {
                 getFolderImage(
                     folderCursor,
                     db,
+                    FolderEntry.seq,
                     FolderEntry.folderName,
                     FolderEntry.visible,
                     linkColumns
@@ -151,6 +157,7 @@ class ShareActivity : ComponentActivity() {
     private fun getFolderImage(
         folderCursor: Cursor,
         db: SQLiteDatabase,
+        folderSeq: String,
         folderNameColumn: String,
         visibleColumn: String,
         linkColumns: Array<String>,
@@ -158,14 +165,14 @@ class ShareActivity : ComponentActivity() {
         val folders = mutableListOf<FolderModel>()
         with(folderCursor) {
             while (moveToNext()) {
-                val id = getLong(getColumnIndexOrThrow(BaseColumns._ID))
+                val seq = getLong(getColumnIndexOrThrow(folderSeq))
                 val folderName = getString(getColumnIndexOrThrow(folderNameColumn))
                 val visible = getInt(getColumnIndexOrThrow(visibleColumn)) == 1
 
                 val linkTempCursor =
-                    getImageLinks(db, LinkTempEntry.table, linkColumns, LinkTempEntry.folderSeq, id)
+                    getImageLinks(db, LinkTempEntry.table, linkColumns, LinkTempEntry.folderSeq, seq)
                 val linkCursor =
-                    getImageLinks(db, LinkEntry.table, linkColumns, LinkEntry.folderSeq, id)
+                    getImageLinks(db, LinkEntry.table, linkColumns, LinkEntry.folderSeq, seq)
 
                 val imageLinks = mutableListOf<String>()
                 imageLinks.addAll(addImageLinks(linkTempCursor, LinkTempEntry.imageLink))
@@ -192,16 +199,16 @@ class ShareActivity : ComponentActivity() {
     }
 
     private fun addImageLinks(
-        linkTempCursor: Cursor,
+        linkCursor: Cursor,
         imageLink: String
     ): MutableList<String> {
         val imageLinks = mutableListOf<String>()
-        with(linkTempCursor) {
+        with(linkCursor) {
             while (moveToNext()) {
                 imageLinks.add(getString(getColumnIndexOrThrow(imageLink)))
             }
         }
-        linkTempCursor.close()
+        linkCursor.close()
         return imageLinks
     }
 
@@ -210,12 +217,12 @@ class ShareActivity : ComponentActivity() {
         table: String,
         linkColumns: Array<String>,
         folderSeq: String,
-        id: Long
+        seq: Long
     ) = db.query(
         table,
         linkColumns,
         "$folderSeq = ?",
-        arrayOf("$id"),
+        arrayOf("$seq"),
         null,
         null,
         null,

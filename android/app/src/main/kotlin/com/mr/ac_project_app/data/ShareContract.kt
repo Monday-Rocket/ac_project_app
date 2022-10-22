@@ -4,6 +4,7 @@ import android.provider.BaseColumns
 
 object ShareContract {
     object LinkTempEntry: BaseColumns {
+        const val seq = "seq"
         const val table = "link_temp"
         const val link = "link"
         const val comment = "comment"
@@ -12,6 +13,7 @@ object ShareContract {
     }
 
     object LinkEntry: BaseColumns {
+        const val seq = "seq"
         const val table = "link"
         const val link = "link"
         const val comment = "comment"

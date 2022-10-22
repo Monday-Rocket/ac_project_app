@@ -30,7 +30,7 @@ class RecyclerViewAdapter(private val modelList: ArrayList<FolderModel>, private
         override fun bind(folderModel: FolderModel) {
 
             itemView.setOnClickListener {
-                // TODO Save folderModel
+                onFolderSelected(bindingAdapterPosition)
             }
 
             textView.text = folderModel.name
@@ -60,7 +60,7 @@ class RecyclerViewAdapter(private val modelList: ArrayList<FolderModel>, private
 
             textView.text = folderModel.name
 
-            if (folderModel.private) {
+            if (folderModel.visible) {
                 lockImageView.visibility = View.VISIBLE
             } else {
                 lockImageView.visibility = View.GONE
@@ -93,7 +93,7 @@ class RecyclerViewAdapter(private val modelList: ArrayList<FolderModel>, private
 
             textView.text = folderModel.name
 
-            if (folderModel.private) {
+            if (folderModel.visible) {
                 lockImageView.visibility = View.VISIBLE
             } else {
                 lockImageView.visibility = View.GONE
@@ -133,7 +133,7 @@ class RecyclerViewAdapter(private val modelList: ArrayList<FolderModel>, private
 
             textView.text = folderModel.name
 
-            if (folderModel.private) {
+            if (folderModel.visible) {
                 lockImageView.visibility = View.VISIBLE
             } else {
                 lockImageView.visibility = View.GONE

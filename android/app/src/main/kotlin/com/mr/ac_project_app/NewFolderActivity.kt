@@ -1,6 +1,7 @@
 package com.mr.ac_project_app
 
 import android.annotation.SuppressLint
+import android.content.ContentValues
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -13,6 +14,8 @@ import androidx.activity.OnBackPressedCallback
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.FragmentActivity
+import com.mr.ac_project_app.data.ShareContract
+import com.mr.ac_project_app.data.ShareDbHelper
 import com.mr.ac_project_app.databinding.ActivityNewFolderBinding
 import com.mr.ac_project_app.dialog.ConfirmDialogInterface
 import com.mr.ac_project_app.dialog.MessageDialog
@@ -21,8 +24,9 @@ import com.mr.ac_project_app.model.SaveType
 
 class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
 
+    private var linkSeq: Long = -1L
     private lateinit var binding: ActivityNewFolderBinding
-    private var folderVisibility = false
+    private var folderVisibility = true
     private lateinit var callback: OnBackPressedCallback
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,26 +34,21 @@ class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
         binding = ActivityNewFolderBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        linkSeq = intent.getLongExtra("linkSeq", -1L)
+
         binding.background.setOnClickListener {
             val dialog = MessageDialog(
                 title = "새 폴더를 만들고 있어요",
-                content = "지금 폴더 만들기를 그만두신다면\n" +
-                        "링크는 폴더에 담기지 않은 채로 저장돼요!",
+                content = "지금 폴더 만들기를 그만두신다면\n" + "링크는 폴더에 담기지 않은 채로 저장돼요!",
                 confirmDialogInterface = this,
                 imageId = R.drawable.folder_icon,
                 buttonText = "다음에 만들기"
             )
             dialog.isCancelable = true
             dialog.show(supportFragmentManager, "Folder Cancel Dialog")
-
         }
 
-        binding.backButton.setOnClickListener {
-            val intent = Intent(this@NewFolderActivity, ShareActivity::class.java)
-            startActivity(intent)
-            finish()
-            overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit)
-        }
+        setBackButton()
 
         setFolderNameEditText()
 
@@ -67,18 +66,60 @@ class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
 
             val link = intent.getStringExtra("link") ?: ""
 
+            saveTempFolderDB(binding.folderNameEditText.text.toString(), link, folderVisibility)
+
             val movingIntent = Intent(this@NewFolderActivity, SaveSuccessActivity::class.java)
             val folderName = binding.folderNameEditText.text.toString()
+            // FIXME temp image
             movingIntent.putExtra(
-                "folder", FolderModel.create(
-                    listOf(link),
-                    folderName, folderVisibility
-                )
+                "folder", FolderModel.create(listOf("https://i.pinimg.com/originals/82/18/c4/8218c49bb19adffbe1704a9a60ec4875.jpg"), folderName, folderVisibility)
             )
             movingIntent.putExtra("saveType", SaveType.New)
+            movingIntent.putExtra("link", link)
             startActivity(movingIntent)
             finish()
             overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit)
+        }
+
+    }
+
+    private fun saveTempFolderDB(name: String, link: String, visible: Boolean) {
+        val dbHelper = ShareDbHelper(applicationContext)
+        val db = dbHelper.writableDatabase
+
+        val values = ContentValues().apply {
+            put(ShareContract.FolderTempEntry.folderName, name)
+            put(ShareContract.FolderTempEntry.visible, visible)
+        }
+        val folderSeq = db.insert(ShareContract.FolderTempEntry.table, null, values)
+
+        val updateColumns = ContentValues().apply {
+            put(ShareContract.LinkTempEntry.link, link)
+            put(ShareContract.LinkTempEntry.folderSeq, folderSeq)
+            // FIXME temp image
+            put(
+                ShareContract.LinkTempEntry.imageLink,
+                "https://i.pinimg.com/originals/82/18/c4/8218c49bb19adffbe1704a9a60ec4875.jpg"
+            )
+        }
+        if (linkSeq != -1L) {
+            db.update(
+                ShareContract.LinkTempEntry.table,
+                updateColumns,
+                "${ShareContract.LinkTempEntry.seq} = ?",
+                arrayOf("$linkSeq")
+            )
+        }
+
+        db.close()
+    }
+
+    private fun setBackButton() {
+        binding.backButton.setOnClickListener {
+            val intent = Intent(this@NewFolderActivity, ShareActivity::class.java)
+            startActivity(intent)
+            finish()
+            overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit)
         }
 
         callback = object : OnBackPressedCallback(true) {
@@ -107,10 +148,7 @@ class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
             override fun afterTextChanged(s: Editable?) {
                 if (binding.folderNameEditText.text.toString() != "") {
                     binding.folderNameEditText.setCompoundDrawablesWithIntrinsicBounds(
-                        0,
-                        0,
-                        R.drawable.btn_x_small,
-                        0
+                        0, 0, R.drawable.btn_x_small, 0
                     )
                     binding.completeText.setTextColor(getColor(R.color.grey800))
                     binding.saveFolderButton.isEnabled = true
@@ -127,8 +165,7 @@ class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
             override fun onTouch(v: View?, event: MotionEvent): Boolean {
                 val right = 2
                 if (event.action == MotionEvent.ACTION_UP && binding.folderNameEditText.text.toString() != "") {
-                    if (event.rawX >= binding.folderNameEditText.right - binding.folderNameEditText.compoundDrawables[right].bounds.width()
-                    ) {
+                    if (event.rawX >= binding.folderNameEditText.right - binding.folderNameEditText.compoundDrawables[right].bounds.width()) {
                         binding.folderNameEditText.setText("")
                         return true
                     }
@@ -137,7 +174,7 @@ class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
             }
         })
 
-        binding.folderNameEditText.setOnEditorActionListener { v, actionId, event ->
+        binding.folderNameEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 hideKeyboard()
             }
@@ -148,8 +185,7 @@ class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
     private fun hideKeyboard() {
         val window: Window = window
         WindowInsetsControllerCompat(
-            window,
-            window.decorView
+            window, window.decorView
         ).hide(WindowInsetsCompat.Type.ime())
     }
 

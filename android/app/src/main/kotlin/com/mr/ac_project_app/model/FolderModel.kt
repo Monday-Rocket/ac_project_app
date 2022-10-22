@@ -8,7 +8,7 @@ data class FolderModel(
     val type: FolderType,
     val imageUrlList: List<String>,
     val name: String,
-    val private: Boolean
+    val visible: Boolean
 ): Parcelable {
     companion object {
         fun create(imageUrlList: List<String?>, name: String, private: Boolean): FolderModel {
@@ -18,6 +18,8 @@ data class FolderModel(
             imageUrlList.forEach {
                 if (it != null && it.isNotEmpty()) {
                     realUrlList.add(it)
+                } else {
+                    realUrlList.add("")
                 }
             }
 
