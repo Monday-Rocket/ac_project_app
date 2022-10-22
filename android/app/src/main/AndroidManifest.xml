@@ -25,10 +25,10 @@
             <meta-data
                 android:name="io.flutter.embedding.android.NormalTheme"
                 android:resource="@style/NormalTheme" />
-            <!--            <intent-filter>-->
-            <!--                <action android:name="android.intent.action.MAIN"/>-->
-            <!--                <category android:name="android.intent.category.LAUNCHER"/>-->
-            <!--            </intent-filter>-->
+                        <intent-filter>
+                            <action android:name="android.intent.action.MAIN"/>
+                            <category android:name="android.intent.category.LAUNCHER"/>
+                        </intent-filter>
         </activity>
         <activity
             android:name="com.aboutyou.dart_packages.sign_in_with_apple.SignInWithAppleCallback"
@@ -62,16 +62,16 @@
             android:name="com.mr.ac_project_app.ShareActivity"
             android:exported="true"
             android:theme="@style/TransparentCompat">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-            <!--           <intent-filter>-->
-            <!--               <action android:name="android.intent.action.SEND" />-->
-            <!--               <action android:name="android.intent.action.PROCESS_TEXT"/>-->
-            <!--               <category android:name="android.intent.category.DEFAULT" />-->
-            <!--               <data android:mimeType="text/plain" />-->
-            <!--           </intent-filter>-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
+                       <intent-filter>
+                           <action android:name="android.intent.action.SEND" />
+                           <action android:name="android.intent.action.PROCESS_TEXT"/>
+                           <category android:name="android.intent.category.DEFAULT" />
+                           <data android:mimeType="text/plain" />
+                       </intent-filter>
 
         </activity>
 
