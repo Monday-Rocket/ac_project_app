@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mr.ac_project_app.databinding.ActivityShareBinding
 import com.mr.ac_project_app.model.FolderModel
+import com.mr.ac_project_app.model.SaveType
 import com.mr.ac_project_app.ui.RecyclerViewAdapter
 import com.mr.ac_project_app.utils.toDp
 
@@ -91,8 +92,8 @@ class ShareActivity : ComponentActivity() {
             modelList
         ) { position ->
             val intent = Intent(this@ShareActivity, SaveSuccessActivity::class.java)
-            intent.putExtra("title", "선택한 폴더에 저장 완료!")
             intent.putExtra("folder", modelList[position])
+            intent.putExtra("saveType", SaveType.Selected)
             startActivity(intent)
             overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit)
             finish()

@@ -8,27 +8,15 @@ import androidx.fragment.app.DialogFragment
 import com.mr.ac_project_app.databinding.ShareDialogBinding
 
 class MessageDialog(
-    confirmDialogInterface: ConfirmDialogInterface,
-    imageId: Int,
-    title: String,
-    content: String,
+    private val confirmDialogInterface: ConfirmDialogInterface,
+    private val imageId: Int?,
+    private val title: String,
+    private val buttonText: String,
+    private val content: String,
 ): DialogFragment() {
 
     private var _binding: ShareDialogBinding? = null
     private val binding get() = _binding!!
-
-    private var confirmDialogInterface: ConfirmDialogInterface? = null
-
-    private var title: String? = null
-    private var content: String? = null
-    private var imageId: Int? = null
-
-    init {
-        this.title = title
-        this.content = content
-        this.imageId = imageId
-        this.confirmDialogInterface = confirmDialogInterface
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,13 +29,24 @@ class MessageDialog(
         binding.dialogTitleText.text = title
         binding.dialogContentText.text = content
         if (imageId != null) {
-            binding.folderIcon.setImageResource(imageId!!)
+            binding.folderIcon.setImageResource(imageId)
+            binding.dialogCloseButton.setOnClickListener {
+                dismiss()
+            }
+        } else {
+            binding.dialogCloseButton.setOnClickListener {
+                this.confirmDialogInterface.onButtonClick()
+                dismiss()
+            }
         }
 
+        binding.dialogOneButton.text = buttonText
+
         binding.dialogOneButton.setOnClickListener {
-            this.confirmDialogInterface?.onButtonClick()
+            this.confirmDialogInterface.onButtonClick()
             dismiss()
         }
+
 
         return view
     }

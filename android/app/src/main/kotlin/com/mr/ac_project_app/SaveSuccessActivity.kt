@@ -1,5 +1,6 @@
 package com.mr.ac_project_app
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -9,6 +10,7 @@ import com.bumptech.glide.Glide
 import com.mr.ac_project_app.databinding.ActivitySuccessBinding
 import com.mr.ac_project_app.model.FolderModel
 import com.mr.ac_project_app.model.FolderType
+import com.mr.ac_project_app.model.SaveType
 
 class SaveSuccessActivity: ComponentActivity() {
 
@@ -23,8 +25,28 @@ class SaveSuccessActivity: ComponentActivity() {
             finishAffinity()
         }
 
-        val title = intent.getStringExtra("title") ?: ""
-        binding.titleSuccessTextView.text = title
+        binding.closeButton.setOnClickListener {
+            finishAffinity()
+        }
+
+        val saveType = intent.getSerializableExtra("saveType") as SaveType
+
+        when (saveType) {
+            SaveType.New -> {
+                binding.titleSuccessTextView.text = "새 폴더에 저장 완료!"
+            }
+            SaveType.Selected -> {
+                binding.titleSuccessTextView.text = "선택한 폴더에 저장 완료!"
+            }
+        }
+
+        binding.writeCommentButton.setOnClickListener {
+            val intent = Intent(this@SaveSuccessActivity, CommentActivity::class.java)
+            intent.putExtra("saveType", saveType)
+            startActivity(intent)
+            finish()
+            overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit)
+        }
 
         setFolderView()
     }

@@ -9,7 +9,6 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.Window
 import android.view.inputmethod.EditorInfo
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -18,6 +17,7 @@ import com.mr.ac_project_app.databinding.ActivityNewFolderBinding
 import com.mr.ac_project_app.dialog.ConfirmDialogInterface
 import com.mr.ac_project_app.dialog.MessageDialog
 import com.mr.ac_project_app.model.FolderModel
+import com.mr.ac_project_app.model.SaveType
 
 class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
 
@@ -31,10 +31,16 @@ class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
         setContentView(binding.root)
 
         binding.background.setOnClickListener {
-            val dialog = MessageDialog(title = "새폴더를 만들고 있어요", content = "지금 폴더 만들기를 그만두신다면\n" +
-                    "링크는 폴더에 담기지 않은 채로 저장돼요!", confirmDialogInterface = this, imageId = R.drawable.folder_icon)
+            val dialog = MessageDialog(
+                title = "새 폴더를 만들고 있어요",
+                content = "지금 폴더 만들기를 그만두신다면\n" +
+                        "링크는 폴더에 담기지 않은 채로 저장돼요!",
+                confirmDialogInterface = this,
+                imageId = R.drawable.folder_icon,
+                buttonText = "다음에 만들기"
+            )
             dialog.isCancelable = true
-            dialog.show(supportFragmentManager, "Confirm dialog")
+            dialog.show(supportFragmentManager, "Folder Cancel Dialog")
 
         }
 
@@ -69,7 +75,7 @@ class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
                     folderName, folderVisibility
                 )
             )
-            movingIntent.putExtra("title", "새 폴더에 저장 완료!")
+            movingIntent.putExtra("saveType", SaveType.New)
             startActivity(movingIntent)
             finish()
             overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit)
@@ -133,7 +139,6 @@ class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
 
         binding.folderNameEditText.setOnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                Toast.makeText(applicationContext, "확인", Toast.LENGTH_SHORT).show()
                 hideKeyboard()
             }
             false
