@@ -45,7 +45,7 @@ class SaveSuccessActivity: ComponentActivity() {
         binding.writeCommentButton.setOnClickListener {
             val moveIntent = Intent(this@SaveSuccessActivity, CommentActivity::class.java)
             moveIntent.putExtra("saveType", saveType)
-            moveIntent.putExtra("linkSeq", intent.getStringExtra("linkSeq"))
+            moveIntent.putExtra("linkSeq", intent.getLongExtra("linkSeq", -1L))
             startActivity(moveIntent)
             finish()
             overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit)

@@ -35,7 +35,7 @@ class MessageDialog(
             }
         } else {
             binding.dialogCloseButton.setOnClickListener {
-                this.confirmDialogInterface.onButtonClose()
+                this.confirmDialogInterface.onButtonClick()
                 dismiss()
             }
         }
@@ -54,5 +54,4 @@ class MessageDialog(
 
 interface ConfirmDialogInterface {
     fun onButtonClick()
-    fun onButtonClose()
 }

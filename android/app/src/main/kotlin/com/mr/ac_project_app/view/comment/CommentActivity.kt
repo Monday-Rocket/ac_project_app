@@ -8,6 +8,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.Window
 import android.view.inputmethod.EditorInfo
+import androidx.activity.viewModels
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.FragmentActivity
@@ -20,6 +21,8 @@ import com.mr.ac_project_app.model.SaveType
 class CommentActivity : FragmentActivity(), ConfirmDialogInterface {
 
     private lateinit var binding: ActivityCommentBinding
+
+    private val viewModel: CommentViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,9 +44,12 @@ class CommentActivity : FragmentActivity(), ConfirmDialogInterface {
 
         binding.saveCommentButton.setOnClickListener {
 
+
+            val linkSeq = intent.getLongExtra("linkSeq", -1L)
+            viewModel.addComment(linkSeq, binding.commentTextField.text.toString())
+
             val saveText = if (saveType == SaveType.New) "새" else "선택한"
             val contentText = "$saveText 폴더에 링크와 코멘트가 담겼어요"
-
             val dialog = MessageDialog(
                 title = "저장완료!",
                 content = contentText,
@@ -71,7 +77,6 @@ class CommentActivity : FragmentActivity(), ConfirmDialogInterface {
 
     @SuppressLint("ClickableViewAccessibility")
     private fun setCommentEditText() {
-        binding.commentTextField.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
 
         binding.commentTextField.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -83,18 +88,7 @@ class CommentActivity : FragmentActivity(), ConfirmDialogInterface {
             }
 
             override fun afterTextChanged(s: Editable?) {
-                if (binding.commentTextField.text.toString() != "") {
-                    binding.commentTextField.setCompoundDrawablesWithIntrinsicBounds(
-                        0,
-                        0,
-                        R.drawable.btn_x_small,
-                        0
-                    )
-                    binding.saveCommentButton.isEnabled = true
-                } else {
-                    binding.commentTextField.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
-                    binding.saveCommentButton.isEnabled = false
-                }
+                binding.saveCommentButton.isEnabled = binding.commentTextField.text.toString() != ""
             }
 
         })
@@ -113,7 +107,7 @@ class CommentActivity : FragmentActivity(), ConfirmDialogInterface {
             }
         })
 
-        binding.commentTextField.setOnEditorActionListener { v, actionId, event ->
+        binding.commentTextField.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 hideKeyboard()
             }
@@ -130,14 +124,6 @@ class CommentActivity : FragmentActivity(), ConfirmDialogInterface {
     }
 
     override fun onButtonClick() {
-        val linkSeq = intent.getStringExtra("linkSeq")
-
-
-
-        finishAffinity()
-    }
-
-    override fun onButtonClose() {
         finishAffinity()
     }
 }

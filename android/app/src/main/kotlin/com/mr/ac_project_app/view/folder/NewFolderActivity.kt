@@ -175,8 +175,4 @@ class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
     override fun onButtonClick() {
         finishAffinity()
     }
-
-    override fun onButtonClose() {
-        finishAffinity()
-    }
 }
