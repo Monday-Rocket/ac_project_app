@@ -76,6 +76,11 @@ class ShareActivity : ComponentActivity() {
         binding.folderList.adapter = RecyclerViewAdapter(
             modelList
         ) { position ->
+
+            val folder = modelList[position]
+
+            saveLinkWithFolder(folder, linkSeq)
+
             val intent = Intent(this@ShareActivity, SaveSuccessActivity::class.java)
             intent.putExtra("folder", modelList[position])
             intent.putExtra("saveType", SaveType.Selected)
@@ -96,18 +101,31 @@ class ShareActivity : ComponentActivity() {
         }
         Log.i("ACP", "onResume:: $savedLink")
         if (!isLinkSaved && !TextUtils.isEmpty(savedLink)) {
-            saveLinkWithoutFolder()
+            linkSeq = saveLinkWithoutFolder(savedLink)
             isLinkSaved = true
         }
     }
 
-    private fun saveLinkWithoutFolder() {
+    private fun saveLinkWithoutFolder(savedLink: String): Long {
+        var linkSeq: Long = -1L
         if (dbHelper != null) {
             val db = dbHelper!!.writableDatabase
             val values = ContentValues().apply {
                 put(LinkTempEntry.link, savedLink)
             }
             linkSeq = db.insert(LinkTempEntry.table, null, values)
+            db.close()
+        }
+        return linkSeq
+    }
+
+    private fun saveLinkWithFolder(folder: FolderModel, linkSeq: Long?) {
+        if (dbHelper != null) {
+            val db = dbHelper!!.writableDatabase
+            val values = ContentValues().apply {
+                put(LinkTempEntry.folderSeq, folder.seq)
+            }
+            db.update(LinkTempEntry.table, values, "${LinkTempEntry.seq} = ?", arrayOf("$linkSeq"))
             db.close()
         }
     }
@@ -170,7 +188,13 @@ class ShareActivity : ComponentActivity() {
                 val visible = getInt(getColumnIndexOrThrow(visibleColumn)) == 1
 
                 val linkTempCursor =
-                    getImageLinks(db, LinkTempEntry.table, linkColumns, LinkTempEntry.folderSeq, seq)
+                    getImageLinks(
+                        db,
+                        LinkTempEntry.table,
+                        linkColumns,
+                        LinkTempEntry.folderSeq,
+                        seq
+                    )
                 val linkCursor =
                     getImageLinks(db, LinkEntry.table, linkColumns, LinkEntry.folderSeq, seq)
 
@@ -180,16 +204,48 @@ class ShareActivity : ComponentActivity() {
 
                 when (imageLinks.size) {
                     1 -> {
-                        folders.add(FolderModel(FolderType.One, imageLinks, folderName, visible))
+                        folders.add(
+                            FolderModel(
+                                FolderType.One,
+                                imageLinks,
+                                folderName,
+                                visible,
+                                seq
+                            )
+                        )
                     }
                     2 -> {
-                        folders.add(FolderModel(FolderType.Double, imageLinks, folderName, visible))
+                        folders.add(
+                            FolderModel(
+                                FolderType.Double,
+                                imageLinks,
+                                folderName,
+                                visible,
+                                seq
+                            )
+                        )
                     }
                     3 -> {
-                        folders.add(FolderModel(FolderType.Triple, imageLinks, folderName, visible))
+                        folders.add(
+                            FolderModel(
+                                FolderType.Triple,
+                                imageLinks,
+                                folderName,
+                                visible,
+                                seq
+                            )
+                        )
                     }
                     else -> {
-                        folders.add(FolderModel(FolderType.None, imageLinks, folderName, visible))
+                        folders.add(
+                            FolderModel(
+                                FolderType.None,
+                                imageLinks,
+                                folderName,
+                                visible,
+                                seq
+                            )
+                        )
                     }
                 }
             }

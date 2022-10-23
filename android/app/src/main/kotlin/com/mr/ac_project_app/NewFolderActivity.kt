@@ -66,13 +66,19 @@ class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
 
             val link = intent.getStringExtra("link") ?: ""
 
-            saveTempFolderDB(binding.folderNameEditText.text.toString(), link, folderVisibility)
+            val folderSeq = saveTempFolderDB(binding.folderNameEditText.text.toString(), link, folderVisibility)
 
             val movingIntent = Intent(this@NewFolderActivity, SaveSuccessActivity::class.java)
             val folderName = binding.folderNameEditText.text.toString()
             // FIXME temp image
             movingIntent.putExtra(
-                "folder", FolderModel.create(listOf("https://i.pinimg.com/originals/82/18/c4/8218c49bb19adffbe1704a9a60ec4875.jpg"), folderName, folderVisibility)
+                "folder",
+                FolderModel.create(
+                    listOf("https://i.pinimg.com/originals/82/18/c4/8218c49bb19adffbe1704a9a60ec4875.jpg"),
+                    folderName,
+                    folderVisibility,
+                    folderSeq
+                )
             )
             movingIntent.putExtra("saveType", SaveType.New)
             movingIntent.putExtra("link", link)
@@ -83,7 +89,7 @@ class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
 
     }
 
-    private fun saveTempFolderDB(name: String, link: String, visible: Boolean) {
+    private fun saveTempFolderDB(name: String, link: String, visible: Boolean): Long {
         val dbHelper = ShareDbHelper(applicationContext)
         val db = dbHelper.writableDatabase
 
@@ -112,6 +118,7 @@ class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
         }
 
         db.close()
+        return folderSeq
     }
 
     private fun setBackButton() {
