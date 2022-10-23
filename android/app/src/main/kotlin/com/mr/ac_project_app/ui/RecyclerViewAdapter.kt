@@ -25,6 +25,7 @@ class RecyclerViewAdapter(private val modelList: ArrayList<FolderModel>, private
     ) : ViewHolder(itemView), FolderViewHolder {
 
         private val oneImageView: ImageView = itemView.findViewById(R.id.oneImage)
+        private val lockImageView: ImageView = itemView.findViewById(R.id.lockImage)
         private val textView: TextView = itemView.findViewById(R.id.folder_text)
 
         override fun bind(folderModel: FolderModel) {
@@ -34,6 +35,12 @@ class RecyclerViewAdapter(private val modelList: ArrayList<FolderModel>, private
             }
 
             textView.text = folderModel.name
+
+            if (folderModel.visible) {
+                lockImageView.visibility = View.GONE
+            } else {
+                lockImageView.visibility = View.VISIBLE
+            }
 
             oneImageView.clipToOutline = true
 
@@ -61,9 +68,9 @@ class RecyclerViewAdapter(private val modelList: ArrayList<FolderModel>, private
             textView.text = folderModel.name
 
             if (folderModel.visible) {
-                lockImageView.visibility = View.VISIBLE
-            } else {
                 lockImageView.visibility = View.GONE
+            } else {
+                lockImageView.visibility = View.VISIBLE
             }
 
             oneImageView.clipToOutline = true
@@ -94,9 +101,9 @@ class RecyclerViewAdapter(private val modelList: ArrayList<FolderModel>, private
             textView.text = folderModel.name
 
             if (folderModel.visible) {
-                lockImageView.visibility = View.VISIBLE
-            } else {
                 lockImageView.visibility = View.GONE
+            } else {
+                lockImageView.visibility = View.VISIBLE
             }
 
             leftImageView.clipToOutline = true
@@ -134,9 +141,9 @@ class RecyclerViewAdapter(private val modelList: ArrayList<FolderModel>, private
             textView.text = folderModel.name
 
             if (folderModel.visible) {
-                lockImageView.visibility = View.VISIBLE
-            } else {
                 lockImageView.visibility = View.GONE
+            } else {
+                lockImageView.visibility = View.VISIBLE
             }
 
             leftImageView.clipToOutline = true

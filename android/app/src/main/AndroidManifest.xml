@@ -59,7 +59,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.mr.ac_project_app.ShareActivity"
+            android:name="com.mr.ac_project_app.view.share.ShareActivity"
             android:exported="true"
             android:theme="@style/TransparentCompat">
 <!--            <intent-filter>-->
@@ -76,15 +76,15 @@
         </activity>
 
         <activity
-            android:name=".SaveSuccessActivity"
+            android:name=".view.SaveSuccessActivity"
             android:exported="false"
             android:theme="@style/TransparentCompat"/>
 
-        <activity android:name=".NewFolderActivity"
+        <activity android:name=".view.folder.NewFolderActivity"
             android:exported="false"
             android:theme="@style/TransparentCompat"/>
 
-        <activity android:name=".CommentActivity"
+        <activity android:name=".view.comment.CommentActivity"
             android:exported="false"
             android:theme="@style/TransparentCompat"/>
 

@@ -1,7 +1,6 @@
-package com.mr.ac_project_app
+package com.mr.ac_project_app.view.folder
 
 import android.annotation.SuppressLint
-import android.content.ContentValues
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -11,16 +10,18 @@ import android.view.View
 import android.view.Window
 import android.view.inputmethod.EditorInfo
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.viewModels
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.FragmentActivity
-import com.mr.ac_project_app.data.ShareContract
-import com.mr.ac_project_app.data.ShareDbHelper
+import com.mr.ac_project_app.R
+import com.mr.ac_project_app.view.SaveSuccessActivity
 import com.mr.ac_project_app.databinding.ActivityNewFolderBinding
 import com.mr.ac_project_app.dialog.ConfirmDialogInterface
 import com.mr.ac_project_app.dialog.MessageDialog
 import com.mr.ac_project_app.model.FolderModel
 import com.mr.ac_project_app.model.SaveType
+import com.mr.ac_project_app.view.share.ShareActivity
 
 class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
 
@@ -28,6 +29,8 @@ class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
     private lateinit var binding: ActivityNewFolderBinding
     private var folderVisibility = true
     private lateinit var callback: OnBackPressedCallback
+
+    private val viewModel: NewFolderViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,7 +69,12 @@ class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
 
             val link = intent.getStringExtra("link") ?: ""
 
-            val folderSeq = saveTempFolderDB(binding.folderNameEditText.text.toString(), link, folderVisibility)
+            val folderSeq = viewModel.saveTempFolderDB(
+                binding.folderNameEditText.text.toString(),
+                link,
+                folderVisibility,
+                linkSeq
+            )
 
             val movingIntent = Intent(this@NewFolderActivity, SaveSuccessActivity::class.java)
             val folderName = binding.folderNameEditText.text.toString()
@@ -81,44 +89,12 @@ class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
                 )
             )
             movingIntent.putExtra("saveType", SaveType.New)
-            movingIntent.putExtra("link", link)
+            movingIntent.putExtra("linkSeq", linkSeq)
             startActivity(movingIntent)
             finish()
             overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit)
         }
 
-    }
-
-    private fun saveTempFolderDB(name: String, link: String, visible: Boolean): Long {
-        val dbHelper = ShareDbHelper(applicationContext)
-        val db = dbHelper.writableDatabase
-
-        val values = ContentValues().apply {
-            put(ShareContract.FolderTempEntry.folderName, name)
-            put(ShareContract.FolderTempEntry.visible, visible)
-        }
-        val folderSeq = db.insert(ShareContract.FolderTempEntry.table, null, values)
-
-        val updateColumns = ContentValues().apply {
-            put(ShareContract.LinkTempEntry.link, link)
-            put(ShareContract.LinkTempEntry.folderSeq, folderSeq)
-            // FIXME temp image
-            put(
-                ShareContract.LinkTempEntry.imageLink,
-                "https://i.pinimg.com/originals/82/18/c4/8218c49bb19adffbe1704a9a60ec4875.jpg"
-            )
-        }
-        if (linkSeq != -1L) {
-            db.update(
-                ShareContract.LinkTempEntry.table,
-                updateColumns,
-                "${ShareContract.LinkTempEntry.seq} = ?",
-                arrayOf("$linkSeq")
-            )
-        }
-
-        db.close()
-        return folderSeq
     }
 
     private fun setBackButton() {
@@ -197,6 +173,10 @@ class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
     }
 
     override fun onButtonClick() {
+        finishAffinity()
+    }
+
+    override fun onButtonClose() {
         finishAffinity()
     }
 }

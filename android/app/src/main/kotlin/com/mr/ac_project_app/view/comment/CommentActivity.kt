@@ -1,4 +1,4 @@
-package com.mr.ac_project_app
+package com.mr.ac_project_app.view.comment
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -11,6 +11,7 @@ import android.view.inputmethod.EditorInfo
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.FragmentActivity
+import com.mr.ac_project_app.R
 import com.mr.ac_project_app.databinding.ActivityCommentBinding
 import com.mr.ac_project_app.dialog.ConfirmDialogInterface
 import com.mr.ac_project_app.dialog.MessageDialog
@@ -129,6 +130,14 @@ class CommentActivity : FragmentActivity(), ConfirmDialogInterface {
     }
 
     override fun onButtonClick() {
+        val linkSeq = intent.getStringExtra("linkSeq")
+
+
+
+        finishAffinity()
+    }
+
+    override fun onButtonClose() {
         finishAffinity()
     }
 }

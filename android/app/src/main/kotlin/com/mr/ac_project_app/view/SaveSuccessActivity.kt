@@ -1,4 +1,4 @@
-package com.mr.ac_project_app
+package com.mr.ac_project_app.view
 
 import android.content.Intent
 import android.net.Uri
@@ -7,10 +7,12 @@ import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.core.content.res.ResourcesCompat
 import com.bumptech.glide.Glide
+import com.mr.ac_project_app.R
 import com.mr.ac_project_app.databinding.ActivitySuccessBinding
 import com.mr.ac_project_app.model.FolderModel
 import com.mr.ac_project_app.model.FolderType
 import com.mr.ac_project_app.model.SaveType
+import com.mr.ac_project_app.view.comment.CommentActivity
 
 class SaveSuccessActivity: ComponentActivity() {
 
@@ -41,9 +43,10 @@ class SaveSuccessActivity: ComponentActivity() {
         }
 
         binding.writeCommentButton.setOnClickListener {
-            val intent = Intent(this@SaveSuccessActivity, CommentActivity::class.java)
-            intent.putExtra("saveType", saveType)
-            startActivity(intent)
+            val moveIntent = Intent(this@SaveSuccessActivity, CommentActivity::class.java)
+            moveIntent.putExtra("saveType", saveType)
+            moveIntent.putExtra("linkSeq", intent.getStringExtra("linkSeq"))
+            startActivity(moveIntent)
             finish()
             overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit)
         }
