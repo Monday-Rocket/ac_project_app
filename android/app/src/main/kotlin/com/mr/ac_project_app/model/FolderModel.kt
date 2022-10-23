@@ -6,13 +6,13 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class FolderModel(
     val type: FolderType,
-    val imageUrlList: List<String>,
+    val imageUrlList: MutableList<String>,
     val name: String,
     val visible: Boolean,
      val seq: Long?,
 ): Parcelable {
     companion object {
-        fun create(imageUrlList: List<String?>, name: String, private: Boolean, seq: Long?): FolderModel {
+        fun create(imageUrlList: List<String?>, name: String, visible: Boolean, seq: Long?): FolderModel {
 
             val realUrlList = mutableListOf<String>()
 
@@ -25,20 +25,25 @@ data class FolderModel(
             }
 
             return if (realUrlList.isEmpty()) {
-                FolderModel(FolderType.None, arrayListOf(), name, private, seq)
+                FolderModel(FolderType.None, arrayListOf(), name, visible, seq)
             } else {
                 when (realUrlList.size) {
                     1 -> {
-                        FolderModel(FolderType.One, realUrlList, name, private, seq)
+                        FolderModel(FolderType.One, realUrlList, name, visible, seq)
                     }
                     2 -> {
-                        FolderModel(FolderType.Double, realUrlList, name, private, seq)
+                        FolderModel(FolderType.Double, realUrlList, name, visible, seq)
                     }
                     else -> {
-                        FolderModel(FolderType.Triple, realUrlList, name, private, seq)
+                        FolderModel(FolderType.Triple, realUrlList, name, visible, seq)
                     }
                 }
             }
         }
+    }
+
+    fun addImageUrl(imageUrl: String): FolderModel {
+        imageUrlList.add(imageUrl)
+        return create(imageUrlList, name, visible, seq)
     }
 }

@@ -14,7 +14,7 @@ class NewFolderViewModel(application: Application): AndroidViewModel(application
         dbHelper = ShareDbHelper(context = getApplication<Application>().applicationContext)
     }
 
-    fun saveTempFolderDB(name: String, link: String, visible: Boolean, linkSeq: Long): Long {
+    fun saveTempFolderDB(name: String, link: String, visible: Boolean, linkSeq: Long, imageLink: String): Long {
         val db = dbHelper.writableDatabase
 
         val values = ContentValues().apply {
@@ -29,7 +29,7 @@ class NewFolderViewModel(application: Application): AndroidViewModel(application
             // FIXME temp image
             put(
                 ShareContract.LinkTempEntry.imageLink,
-                "https://i.pinimg.com/originals/82/18/c4/8218c49bb19adffbe1704a9a60ec4875.jpg"
+                imageLink
             )
         }
         if (linkSeq != -1L) {

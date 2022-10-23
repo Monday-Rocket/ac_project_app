@@ -68,21 +68,22 @@ class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
         binding.saveFolderButton.setOnClickListener {
 
             val link = intent.getStringExtra("link") ?: ""
+            val imageLink = intent.getStringExtra("imageLink") ?: ""
 
             val folderSeq = viewModel.saveTempFolderDB(
                 binding.folderNameEditText.text.toString(),
                 link,
                 folderVisibility,
-                linkSeq
+                linkSeq,
+                imageLink
             )
 
             val movingIntent = Intent(this@NewFolderActivity, SaveSuccessActivity::class.java)
             val folderName = binding.folderNameEditText.text.toString()
-            // FIXME temp image
             movingIntent.putExtra(
                 "folder",
                 FolderModel.create(
-                    listOf("https://i.pinimg.com/originals/82/18/c4/8218c49bb19adffbe1704a9a60ec4875.jpg"),
+                    listOf(imageLink),
                     folderName,
                     folderVisibility,
                     folderSeq

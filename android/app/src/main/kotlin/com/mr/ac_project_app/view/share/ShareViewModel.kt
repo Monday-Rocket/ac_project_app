@@ -4,25 +4,80 @@ import android.app.Application
 import android.content.ContentValues
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
+import android.text.TextUtils
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.MutableLiveData
 import com.mr.ac_project_app.data.ShareContract
 import com.mr.ac_project_app.data.ShareDbHelper
 import com.mr.ac_project_app.model.FolderModel
 import com.mr.ac_project_app.model.FolderType
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import org.jsoup.Jsoup
 
 class ShareViewModel(application: Application) : AndroidViewModel(application) {
 
     private var dbHelper: ShareDbHelper
+    var savedLink = MutableLiveData("")
+    val linkSeq = MutableLiveData(-1L)
+    var imageLink = MutableLiveData<String>()
+    private var isLinkSaved = MutableLiveData(false)
+    val modelList = arrayListOf<FolderModel>()
 
     init {
         dbHelper = ShareDbHelper(context = getApplication<Application>().applicationContext)
     }
 
+    fun saveLink(link: String) {
+        if (isLinkSaved.value!! || TextUtils.isEmpty(link)) {
+            return
+        }
+        savedLink.postValue(link)
+        CoroutineScope(Dispatchers.IO).launch {
+            val linkOpenGraph = HashMap<String, String>()
+            val document = Jsoup.connect(link).get()
+            val elements = document.select("meta[property^=og:]")
+            elements?.let {
+                it.forEach { item ->
+                    when (item.attr("property")) {
+                        "og:url" -> {
+                            item.attr("content")?.let { content ->
+                                linkOpenGraph.put("url", content)
+                            }
+                        }
+                        "og:site_name" -> {
+                            item.attr("content")?.let { content ->
+                                linkOpenGraph.put("siteName", content)
+                            }
+                        }
+                        "og:title" -> {
+                            item.attr("content")?.let { content ->
+                                linkOpenGraph.put("title", content)
+                            }
+                        }
+                        "og:description" -> {
+                            item.attr("content")?.let { content ->
+                                linkOpenGraph.put("description", content)
+                            }
+                        }
+                        "og:image" -> {
+                            linkOpenGraph["image"] = item.attr("content")
+                        }
+                    }
+                }
+            }
+            imageLink.postValue(linkOpenGraph["image"] ?: "")
+            linkSeq.postValue(saveLinkWithoutFolder(link))
+            isLinkSaved.postValue(true)
+        }
+    }
 
-    fun saveLinkWithoutFolder(savedLink: String): Long {
+    private fun saveLinkWithoutFolder(savedLink: String): Long {
         val db = dbHelper.writableDatabase
         val values = ContentValues().apply {
             put(ShareContract.LinkTempEntry.link, savedLink)
+            put(ShareContract.LinkTempEntry.imageLink, imageLink.value)
         }
         val linkSeq = db.insert(ShareContract.LinkTempEntry.table, null, values)
         db.close()
