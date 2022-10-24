@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:ac_project_app/util/logger.dart';
 import 'package:flutter/services.dart';
+import 'package:sqflite/sqflite.dart';
 
 class ShareDataProvider {
   static const _platform = MethodChannel('share_data_provider');
@@ -7,7 +10,7 @@ class ShareDataProvider {
   static Future<List<String>> getShareDataList() async {
     try {
       final data =
-          await _platform.invokeMethod('getShareData') as List<Object?>;
+      await _platform.invokeMethod('getShareData') as List<Object?>;
 
       final result = <String>[];
 
@@ -16,6 +19,19 @@ class ShareDataProvider {
       }
 
       return result;
+    } on PlatformException catch (e) {
+      Log.e(e.message);
+      rethrow;
+    }
+  }
+
+  static Future<String> getShareDBUrl() async {
+    try {
+      if (Platform.isAndroid) {
+        return '${await getDatabasesPath()}/share.db';
+      } else {
+        return await _platform.invokeMethod('getShareDBUrl') as String;
+      }
     } on PlatformException catch (e) {
       Log.e(e.message);
       rethrow;

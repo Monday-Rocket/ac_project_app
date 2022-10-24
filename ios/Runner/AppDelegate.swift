@@ -14,13 +14,16 @@ import Flutter
     localPathChannel.setMethodCallHandler({
       (call: FlutterMethodCall, result: @escaping FlutterResult) -> Void in
       
-      guard call.method == "getShareData" else {
+      if (call.method == "getShareData") {
+        let sharedDefault = UserDefaults(suiteName: "group.com.mr.acProjectApp.Share")!
+        let data = sharedDefault.object(forKey: "shareDataList") as! [String]? ?? []
+        result(data)
+      } else if (call.method == "getShareDBUrl") {
+        let dbUrl = self.getShareDBUrl() ?? ""
+        result(dbUrl)
+      } else {
         result(FlutterMethodNotImplemented)
-        return
       }
-      let sharedDefault = UserDefaults(suiteName: "group.com.mr.acProjectApp.Share")!
-      let data = sharedDefault.object(forKey: "shareDataList") as! [String]? ?? []
-      result(data)
       
     })
     
@@ -28,9 +31,15 @@ import Flutter
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
   
-  func sharedDirectoryURL() -> URL? {
+  func getShareDBUrl() -> String? {
     
-    let fileManager = FileManager.default
-    return fileManager.containerURL(forSecurityApplicationGroupIdentifier: "group.com.mr.acProjectApp.Share")
+    let fileContainer = FileManager
+      .default
+      .containerURL(
+        forSecurityApplicationGroupIdentifier: "group.com.mr.acProjectApp.Share"
+      )
+    
+    return fileContainer?.appendingPathExtension("share.db").path
   }
+  
 }
