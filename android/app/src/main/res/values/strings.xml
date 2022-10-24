@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="save_success">링크 저장 완료!</string>
+    <string name="close_window">창 닫기</string>
+    <string name="select_folder">폴더 선택</string>
+    <string name="add_folder">폴더 추가</string>
+    <string name="save_success_for_selected_folder">선택한 폴더에 저장 완료!</string>
+    <string name="move_to_app">앱에서 보기</string>
+    <string name="input_comment">코멘트 남기기</string>
+    <string name="move_back">뒤로 가기</string>
+    <string name="complete">완료</string>
+    <string name="save_folder">폴더에 저장하기</string>
+    <string name="invisible_folder">비공개 폴더</string>
+    <string name="new_folder_name">새로운 폴더 이름</string>
+    <string name="new_folder_title">새로운 폴더</string>
+    <string name="memo_about_link">저장한 링크에 대해 간단하게 메모해보세요</string>
+    <string name="comment_subtitle">링크 코멘트</string>
+</resources>

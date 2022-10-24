@@ -1,8 +1,8 @@
 package com.mr.ac_project_app
 
 import android.content.Context
-import com.mr.ac_project_app.ShareActivity.Companion.SHARED_PREF
-import com.mr.ac_project_app.ShareActivity.Companion.SHARE_LIST_ID
+import com.mr.ac_project_app.view.share.ShareActivity.Companion.SHARED_PREF
+import com.mr.ac_project_app.view.share.ShareActivity.Companion.SHARE_LIST_ID
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel

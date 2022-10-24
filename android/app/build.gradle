@@ -39,6 +39,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 // END: FlutterFire Configuration
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-parcelize'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
@@ -126,5 +127,10 @@ flutter {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.4.2'
+    implementation 'androidx.activity:activity-ktx:1.6.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
+    implementation 'com.github.bumptech.glide:glide:4.14.2'
+    implementation 'org.jsoup:jsoup:1.13.1'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.14.2'
 }

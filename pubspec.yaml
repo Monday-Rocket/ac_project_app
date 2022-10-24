@@ -26,7 +26,8 @@ dependencies:
   sign_in_with_apple: ^4.1.0
   google_sign_in: ^5.4.1
   kakao_flutter_sdk_user: ^1.2.1
-  firebase_auth: ^3.11.2
+  firebase_auth: ^4.0.2
+  firebase_core: ^2.1.0
 
   ## Utils
   very_good_analysis: ^3.0.1
@@ -36,6 +37,9 @@ dependencies:
   logger: ^1.1.0
   path_provider: ^2.0.11
   flutter_background_service: ^2.4.3
+
+  ## for Database
+  sqflite: ^2.1.0+1
 
   ## for Test Functions
   geolocator: ^9.0.1
