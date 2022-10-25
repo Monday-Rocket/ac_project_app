@@ -10,6 +10,7 @@ object ShareContract {
         const val comment = "comment"
         const val folderSeq = "folder_seq"
         const val imageLink = "image_link"
+        const val title = "title"
     }
 
     object LinkEntry: BaseColumns {
@@ -19,6 +20,7 @@ object ShareContract {
         const val comment = "comment"
         const val folderSeq = "folder_seq"
         const val imageLink = "image_link"
+        const val title = "title"
     }
 
     object FolderTempEntry: BaseColumns {

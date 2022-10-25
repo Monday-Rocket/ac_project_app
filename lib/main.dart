@@ -33,7 +33,8 @@ Future<void> initSqflite() async {
       'link varchar(2000) not null, '
       'comment varchar(300), '
       'folder_seq int(11), '
-      'image_link varchar(2000) default "" '
+      'image_link varchar(2000) default "", '
+      'title varchar(300) '
       ');';
   const folderTempSql = 'create table folder_temp( '
       'seq integer primary key autoincrement, '
@@ -46,7 +47,8 @@ Future<void> initSqflite() async {
       'link varchar(2000) not null, '
       'comment varchar(300), '
       'folder_seq int(11), '
-      'image_link varchar(2000) default "" '
+      'image_link varchar(2000) default "", '
+      'title varchar(300) '
       ');';
   final database = await openDatabase(
     path,

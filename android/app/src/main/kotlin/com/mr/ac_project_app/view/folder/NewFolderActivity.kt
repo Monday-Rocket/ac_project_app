@@ -83,7 +83,7 @@ class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
             movingIntent.putExtra(
                 "folder",
                 FolderModel.create(
-                    listOf(imageLink),
+                    imageLink,
                     folderName,
                     folderVisibility,
                     folderSeq

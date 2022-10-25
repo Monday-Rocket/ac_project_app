@@ -59,60 +59,6 @@ class SaveSuccessActivity: ComponentActivity() {
 
         if (folder != null) {
             when (folder.type) {
-                FolderType.Triple -> {
-                    binding.tripleLayout.root.visibility = View.VISIBLE
-
-                    binding.tripleLayout.folderText.text = folder.name
-                    binding.tripleLayout.folderText.background =
-                        ResourcesCompat.getDrawable(resources, R.drawable.folder_text_back, null)
-
-                    binding.tripleLayout.leftImage.clipToOutline = true
-                    binding.tripleLayout.rightTopImage.clipToOutline = true
-                    binding.tripleLayout.rightBottomImage.clipToOutline = true
-
-                    Glide.with(binding.tripleLayout.root)
-                        .load(Uri.parse(folder.imageUrlList[0]))
-                        .centerCrop()
-                        .placeholder(R.drawable.folder_left)
-                        .into(binding.tripleLayout.leftImage)
-                    Glide.with(binding.tripleLayout.root)
-                        .load(Uri.parse(folder.imageUrlList[1]))
-                        .centerCrop()
-                        .placeholder(R.drawable.folder_right_top)
-                        .into(binding.tripleLayout.rightTopImage)
-                    Glide.with(binding.tripleLayout.root)
-                        .load(Uri.parse(folder.imageUrlList[2]))
-                        .centerCrop()
-                        .placeholder(R.drawable.folder_right_bottom)
-                        .into(binding.tripleLayout.rightBottomImage)
-
-                    binding.tripleLayout.lockImage.visibility =
-                        if (folder.visible) View.GONE else View.VISIBLE
-                }
-                FolderType.Double -> {
-                    binding.doubleLayout.root.visibility = View.VISIBLE
-
-                    binding.doubleLayout.folderText.text = folder.name
-                    binding.doubleLayout.folderText.background =
-                        ResourcesCompat.getDrawable(resources, R.drawable.folder_text_back, null)
-
-                    binding.doubleLayout.leftImage.clipToOutline = true
-                    binding.doubleLayout.rightImage.clipToOutline = true
-
-                    Glide.with(binding.doubleLayout.root)
-                        .load(Uri.parse(folder.imageUrlList[0]))
-                        .centerCrop()
-                        .placeholder(R.drawable.folder_left)
-                        .into(binding.doubleLayout.leftImage)
-                    Glide.with(binding.doubleLayout.root)
-                        .load(Uri.parse(folder.imageUrlList[1]))
-                        .centerCrop()
-                        .placeholder(R.drawable.folder_right)
-                        .into(binding.doubleLayout.rightImage)
-
-                    binding.doubleLayout.lockImage.visibility =
-                        if (folder.visible) View.GONE else View.VISIBLE
-                }
                 FolderType.One -> {
 
                     binding.oneLayout.root.visibility = View.VISIBLE
@@ -124,7 +70,7 @@ class SaveSuccessActivity: ComponentActivity() {
                     binding.oneLayout.oneImage.clipToOutline = true
 
                     Glide.with(binding.oneLayout.root)
-                        .load(Uri.parse(folder.imageUrlList[0]))
+                        .load(Uri.parse(folder.imageUrl))
                         .centerCrop()
                         .placeholder(R.drawable.folder_one)
                         .into(binding.oneLayout.oneImage)

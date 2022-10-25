@@ -23,7 +23,6 @@ class ShareViewModel(application: Application) : AndroidViewModel(application) {
     val linkSeq = MutableLiveData(-1L)
     var imageLink = MutableLiveData<String>()
     private var isLinkSaved = MutableLiveData(false)
-    val modelList = arrayListOf<FolderModel>()
 
     init {
         dbHelper = ShareDbHelper(context = getApplication<Application>().applicationContext)
@@ -68,16 +67,17 @@ class ShareViewModel(application: Application) : AndroidViewModel(application) {
                 }
             }
             imageLink.postValue(linkOpenGraph["image"] ?: "")
-            linkSeq.postValue(saveLinkWithoutFolder(link))
+            linkSeq.postValue(saveLinkWithoutFolder(link, linkOpenGraph["title"] ?: ""))
             isLinkSaved.postValue(true)
         }
     }
 
-    private fun saveLinkWithoutFolder(savedLink: String): Long {
+    private fun saveLinkWithoutFolder(savedLink: String, title: String): Long {
         val db = dbHelper.writableDatabase
         val values = ContentValues().apply {
             put(ShareContract.LinkTempEntry.link, savedLink)
             put(ShareContract.LinkTempEntry.imageLink, imageLink.value)
+            put(ShareContract.LinkTempEntry.title, title)
         }
         val linkSeq = db.insert(ShareContract.LinkTempEntry.table, null, values)
         db.close()
@@ -168,19 +168,21 @@ class ShareViewModel(application: Application) : AndroidViewModel(application) {
                 val visible = getInt(getColumnIndexOrThrow(visibleColumn)) == 1
 
                 val linkTempCursor =
-                    getImageLinks(
+                    getRecentImageUrl(
                         db,
                         ShareContract.LinkTempEntry.table,
                         linkColumns,
                         ShareContract.LinkTempEntry.folderSeq,
+                        ShareContract.LinkTempEntry.seq,
                         seq
                     )
                 val linkCursor =
-                    getImageLinks(
+                    getRecentImageUrl(
                         db,
                         ShareContract.LinkEntry.table,
                         linkColumns,
                         ShareContract.LinkEntry.folderSeq,
+                        ShareContract.LinkEntry.seq,
                         seq
                     )
 
@@ -193,51 +195,26 @@ class ShareViewModel(application: Application) : AndroidViewModel(application) {
                 )
                 imageLinks.addAll(addImageLinks(linkCursor, ShareContract.LinkEntry.imageLink))
 
-                when (imageLinks.size) {
-                    1 -> {
-                        folders.add(
-                            FolderModel(
-                                FolderType.One,
-                                imageLinks,
-                                folderName,
-                                visible,
-                                seq
-                            )
+                if (imageLinks.size > 0) {
+                    folders.add(
+                        FolderModel(
+                            FolderType.One,
+                            imageLinks[0],
+                            folderName,
+                            visible,
+                            seq
                         )
-                    }
-                    2 -> {
-                        folders.add(
-                            FolderModel(
-                                FolderType.Double,
-                                imageLinks,
-                                folderName,
-                                visible,
-                                seq
-                            )
+                    )
+                } else {
+                    folders.add(
+                        FolderModel(
+                            FolderType.None,
+                            null,
+                            folderName,
+                            visible,
+                            seq
                         )
-                    }
-                    3 -> {
-                        folders.add(
-                            FolderModel(
-                                FolderType.Triple,
-                                imageLinks,
-                                folderName,
-                                visible,
-                                seq
-                            )
-                        )
-                    }
-                    else -> {
-                        folders.add(
-                            FolderModel(
-                                FolderType.None,
-                                imageLinks,
-                                folderName,
-                                visible,
-                                seq
-                            )
-                        )
-                    }
+                    )
                 }
             }
         }
@@ -260,11 +237,12 @@ class ShareViewModel(application: Application) : AndroidViewModel(application) {
         return imageLinks
     }
 
-    private fun getImageLinks(
+    private fun getRecentImageUrl(
         db: SQLiteDatabase,
         table: String,
         linkColumns: Array<String>,
         folderSeq: String,
+        linkSeq: String,
         seq: Long
     ) = db.query(
         table,
@@ -273,7 +251,7 @@ class ShareViewModel(application: Application) : AndroidViewModel(application) {
         arrayOf("$seq"),
         null,
         null,
-        null,
-        "3"
+        "$linkSeq DESC",
+        "1"
     )
 }

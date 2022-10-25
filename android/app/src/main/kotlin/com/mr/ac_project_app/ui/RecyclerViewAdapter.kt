@@ -76,95 +76,10 @@ class RecyclerViewAdapter(private val modelList: ArrayList<FolderModel>, private
             oneImageView.clipToOutline = true
 
             Glide.with(itemView)
-                .load(Uri.parse(folderModel.imageUrlList[0]))
+                .load(Uri.parse(folderModel.imageUrl))
                 .centerCrop()
                 .placeholder(R.drawable.folder_one)
                 .into(oneImageView)
-        }
-    }
-
-    inner class DoubleFolderViewHolder(
-        itemView: View
-    ) : ViewHolder(itemView), FolderViewHolder {
-
-        private val leftImageView: ImageView = itemView.findViewById(R.id.leftImage)
-        private val rightImageView: ImageView = itemView.findViewById(R.id.rightImage)
-        private val lockImageView: ImageView = itemView.findViewById(R.id.lockImage)
-        private val textView: TextView = itemView.findViewById(R.id.folder_text)
-
-        override fun bind(folderModel: FolderModel) {
-
-            itemView.setOnClickListener {
-                onFolderSelected(bindingAdapterPosition)
-            }
-
-            textView.text = folderModel.name
-
-            if (folderModel.visible) {
-                lockImageView.visibility = View.GONE
-            } else {
-                lockImageView.visibility = View.VISIBLE
-            }
-
-            leftImageView.clipToOutline = true
-            rightImageView.clipToOutline = true
-
-            Glide.with(itemView)
-                .load(Uri.parse(folderModel.imageUrlList[0]))
-                .centerCrop()
-                .placeholder(R.drawable.folder_left)
-                .into(leftImageView)
-            Glide.with(itemView)
-                .load(Uri.parse(folderModel.imageUrlList[1]))
-                .centerCrop()
-                .placeholder(R.drawable.folder_right)
-                .into(rightImageView)
-        }
-    }
-
-    inner class TripleFolderViewHolder(
-        itemView: View,
-    ) : ViewHolder(itemView), FolderViewHolder {
-
-        private val leftImageView: ImageView = itemView.findViewById(R.id.leftImage)
-        private val rightTopImageView: ImageView = itemView.findViewById(R.id.rightTopImage)
-        private val rightBottomImageView: ImageView = itemView.findViewById(R.id.rightBottomImage)
-        private val lockImageView: ImageView = itemView.findViewById(R.id.lockImage)
-        private val textView: TextView = itemView.findViewById(R.id.folder_text)
-
-        override fun bind(folderModel: FolderModel) {
-
-            itemView.setOnClickListener {
-                onFolderSelected(bindingAdapterPosition)
-            }
-
-            textView.text = folderModel.name
-
-            if (folderModel.visible) {
-                lockImageView.visibility = View.GONE
-            } else {
-                lockImageView.visibility = View.VISIBLE
-            }
-
-            leftImageView.clipToOutline = true
-            rightTopImageView.clipToOutline = true
-            rightBottomImageView.clipToOutline = true
-
-            Glide.with(itemView)
-                .load(Uri.parse(folderModel.imageUrlList[0]))
-                .centerCrop()
-                .placeholder(R.drawable.folder_left)
-                .into(leftImageView)
-            Glide.with(itemView)
-                .load(Uri.parse(folderModel.imageUrlList[1]))
-                .centerCrop()
-                .placeholder(R.drawable.folder_right_top)
-                .into(rightTopImageView)
-            Glide.with(itemView)
-                .load(Uri.parse(folderModel.imageUrlList[2]))
-                .centerCrop()
-                .placeholder(R.drawable.folder_right_bottom)
-                .into(rightBottomImageView)
         }
     }
 
@@ -172,18 +87,6 @@ class RecyclerViewAdapter(private val modelList: ArrayList<FolderModel>, private
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 
         when (viewType) {
-            FolderType.Triple.ordinal -> {
-                return TripleFolderViewHolder(
-                    itemView = LayoutInflater.from(parent.context)
-                        .inflate(R.layout.triple_folder, parent, false)
-                )
-            }
-            FolderType.Double.ordinal -> {
-                return DoubleFolderViewHolder(
-                    itemView = LayoutInflater.from(parent.context)
-                        .inflate(R.layout.double_folder, parent, false)
-                )
-            }
             FolderType.One.ordinal -> {
                 return OneFolderViewHolder(
                     itemView = LayoutInflater.from(parent.context)
