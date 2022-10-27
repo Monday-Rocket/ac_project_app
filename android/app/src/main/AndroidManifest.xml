@@ -8,6 +8,7 @@
     <application
         android:name=".LinkPoolApp"
         android:icon="@mipmap/ic_launcher"
+        android:usesCleartextTraffic="true"
         android:label="ac_project_app">
 
         <activity

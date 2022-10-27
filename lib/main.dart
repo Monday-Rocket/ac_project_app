@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:ac_project_app/firebase_options.dart';
+import 'package:ac_project_app/provider/share_data_provider.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/util/logger.dart';
+// ignore: depend_on_referenced_packages
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -17,7 +19,8 @@ Future<void> main() async {
 }
 
 Future<void> initSqflite() async {
-  final path = '${await getDatabasesPath()}/share.db';
+  final path = await ShareDataProvider.getShareDBUrl();
+
   Log.i('DB Path: $path');
   const folderSql = 'create table folder( '
       'seq integer primary key autoincrement, '
@@ -69,7 +72,6 @@ Future<void> initSqflite() async {
       }
     },
   );
-  final version = await database.getVersion();
   await database.close();
 }
 
