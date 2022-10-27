@@ -15,4 +15,6 @@
     <string name="new_folder_title">새로운 폴더</string>
     <string name="memo_about_link">저장한 링크에 대해 간단하게 메모해보세요</string>
     <string name="comment_subtitle">링크 코멘트</string>
+    <string name="preference_new_links">new_links</string>
+    <string name="preference_new_folders">new_folders</string>
 </resources>

@@ -7,28 +7,21 @@ import android.database.sqlite.SQLiteOpenHelper
 class ShareDbHelper(context: Context) :
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
     override fun onCreate(db: SQLiteDatabase) {
-        db.execSQL(
-            "create table ${ShareContract.FolderTempEntry.table}( " +
-                    "seq int primary key, " +
-                    "name varchar(20) not null, " +
-                    "visible boolean not null default 1 " +
-                    ");"
-        )
-        db.execSQL(
-            "create table ${ShareContract.LinkTempEntry.table}( " +
-                    "seq int primary key, " +
-                    "link varchar(2000) not null, " +
-                    "comment varchar(300), " +
-                    "folder_seq int(11) " +
-                    ");"
+        db.execSQL("""
+            create table ${ShareContract.Folder.table} (
+                ${ShareContract.Folder.seq} int primary key,
+                ${ShareContract.Folder.folderName} varchar(20) not null,
+                ${ShareContract.Folder.visible} boolean not null default 1,
+                ${ShareContract.Folder.imageLink} varchar(2000)
+            );
+            """
         )
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         // This database is only a cache for online data, so its upgrade policy is
         // to simply to discard the data and start over
-        db.execSQL("drop table folder_temp")
-        db.execSQL("drop table link_temp")
+        db.execSQL("drop table ${ShareContract.Folder.table}")
         onCreate(db)
     }
 

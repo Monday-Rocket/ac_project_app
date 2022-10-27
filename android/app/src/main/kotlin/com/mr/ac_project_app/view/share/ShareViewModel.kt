@@ -2,26 +2,32 @@ package com.mr.ac_project_app.view.share
 
 import android.app.Application
 import android.content.ContentValues
+import android.content.Context
+import android.content.SharedPreferences
 import android.database.Cursor
-import android.database.sqlite.SQLiteDatabase
 import android.text.TextUtils
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
+import com.mr.ac_project_app.LinkPoolApp
+import com.mr.ac_project_app.R
 import com.mr.ac_project_app.data.ShareContract
 import com.mr.ac_project_app.data.ShareDbHelper
 import com.mr.ac_project_app.model.FolderModel
 import com.mr.ac_project_app.model.FolderType
+import com.mr.ac_project_app.utils.convert
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import org.jsoup.Jsoup
 
 class ShareViewModel(application: Application) : AndroidViewModel(application) {
 
     private var dbHelper: ShareDbHelper
     var savedLink = MutableLiveData("")
-    val linkSeq = MutableLiveData(-1L)
     var imageLink = MutableLiveData<String>()
+    private var title = MutableLiveData<String>()
     private var isLinkSaved = MutableLiveData(false)
 
     init {
@@ -61,161 +67,122 @@ class ShareViewModel(application: Application) : AndroidViewModel(application) {
                             }
                         }
                         "og:image" -> {
-                            linkOpenGraph["image"] = item.attr("content")
+                            var imageUrl = item.attr("content")
+                            if (!imageUrl.contains("http")) {
+                                imageUrl = if (link.contains("https")) {
+                                    "https:$imageUrl"
+                                } else {
+                                    "http:$imageUrl"
+                                }
+                            }
+                            linkOpenGraph["image"] = imageUrl
                         }
                     }
                 }
             }
-            imageLink.postValue(linkOpenGraph["image"] ?: "")
-            linkSeq.postValue(saveLinkWithoutFolder(link, linkOpenGraph["title"] ?: ""))
+            val tempImage = linkOpenGraph["image"] ?: ""
+            val tempTitle = linkOpenGraph["title"] ?: ""
+            imageLink.postValue(tempImage)
+            title.postValue(tempTitle)
+            saveLinkWithoutFolder(link, tempTitle, tempImage)
             isLinkSaved.postValue(true)
         }
     }
 
-    private fun saveLinkWithoutFolder(savedLink: String, title: String): Long {
-        val db = dbHelper.writableDatabase
-        val values = ContentValues().apply {
-            put(ShareContract.LinkTempEntry.link, savedLink)
-            put(ShareContract.LinkTempEntry.imageLink, imageLink.value)
-            put(ShareContract.LinkTempEntry.title, title)
+    private fun saveLinkWithoutFolder(savedLink: String, title: String, imageLink: String) {
+        val newLinks = getNewLinks()
+        with(newLinks.edit()) {
+            if (newLinks.getString(savedLink, null) == null) {
+                val json = JSONObject()
+                json.put("image_link", imageLink)
+                json.put("title", title)
+                val result = json.convert()
+                putString(savedLink, result)
+                apply()
+            }
         }
-        val linkSeq = db.insert(ShareContract.LinkTempEntry.table, null, values)
-        db.close()
-        return linkSeq
     }
 
-    fun saveLinkWithFolder(folder: FolderModel, linkSeq: Long?) {
+    fun saveLinkWithFolder(folder: FolderModel) {
+        val newLinks = getNewLinks()
+        with(newLinks.edit()) {
+            val json = JSONObject()
+            json.put("title", title.value)
+            json.put("folder_name", folder.name)
+            json.put("image_link", imageLink)
+            putString(savedLink.value, json.convert())
+            apply()
+        }
+
         val db = dbHelper.writableDatabase
-        val values = ContentValues().apply {
-            put(ShareContract.LinkTempEntry.folderSeq, folder.seq)
+        val cv = ContentValues().apply {
+            put(ShareContract.Folder.imageLink, folder.imageUrl)
         }
         db.update(
-            ShareContract.LinkTempEntry.table,
-            values,
-            "${ShareContract.LinkTempEntry.seq} = ?",
-            arrayOf("$linkSeq")
+            ShareContract.Folder.table,
+            cv,
+            "${ShareContract.Folder.folderName} = ?",
+            arrayOf(folder.name)
         )
         db.close()
+    }
+
+    private fun getNewLinks(): SharedPreferences {
+        val context = getApplication<Application>().applicationContext
+        return context.getSharedPreferences(
+            context.getString(R.string.preference_new_links),
+            Context.MODE_PRIVATE
+        )
     }
 
     fun getFoldersFromDB(): MutableList<FolderModel> {
         val db = dbHelper.readableDatabase
-        val folderTempColumns =
-            arrayOf(
-                ShareContract.FolderTempEntry.seq,
-                ShareContract.FolderTempEntry.folderName,
-                ShareContract.FolderTempEntry.visible
-            )
         val folderColumns =
             arrayOf(
-                ShareContract.FolderEntry.seq,
-                ShareContract.FolderEntry.folderName,
-                ShareContract.FolderEntry.visible
+                ShareContract.Folder.seq,
+                ShareContract.Folder.folderName,
+                ShareContract.Folder.visible,
+                ShareContract.Folder.imageLink
             )
-        val folderTempCursor =
-            db.query(
-                ShareContract.FolderTempEntry.table,
-                folderTempColumns,
-                null,
-                null,
-                null,
-                null,
-                null
-            )
-        val folderCursor =
-            db.query(ShareContract.FolderEntry.table, folderColumns, null, null, null, null, null)
 
-        val linkColumns = arrayOf(ShareContract.LinkTempEntry.imageLink)
+        val folderCursor =
+            db.query(ShareContract.Folder.table, folderColumns, null, null, null, null, null)
 
         val folders = mutableListOf<FolderModel>()
         folders.addAll(
-            getFolderImage(
-                folderTempCursor,
-                db,
-                ShareContract.FolderTempEntry.seq,
-                ShareContract.FolderTempEntry.folderName,
-                ShareContract.FolderTempEntry.visible,
-                linkColumns
-            )
-        )
-        folders.addAll(
-            getFolderImage(
+            getFolders(
                 folderCursor,
-                db,
-                ShareContract.FolderEntry.seq,
-                ShareContract.FolderEntry.folderName,
-                ShareContract.FolderEntry.visible,
-                linkColumns
             )
         )
         db.close()
+
+        for (folder in folders) {
+            Log.i(LinkPoolApp.TAG, folder.toString())
+        }
+
         return folders
     }
 
-    private fun getFolderImage(
-        folderCursor: Cursor,
-        db: SQLiteDatabase,
-        folderSeq: String,
-        folderNameColumn: String,
-        visibleColumn: String,
-        linkColumns: Array<String>,
+    private fun getFolders(
+        folderCursor: Cursor
     ): MutableList<FolderModel> {
         val folders = mutableListOf<FolderModel>()
         with(folderCursor) {
             while (moveToNext()) {
-                val seq = getLong(getColumnIndexOrThrow(folderSeq))
-                val folderName = getString(getColumnIndexOrThrow(folderNameColumn))
-                val visible = getInt(getColumnIndexOrThrow(visibleColumn)) == 1
+                val folderName =
+                    getString(getColumnIndexOrThrow(ShareContract.Folder.folderName))
+                val visible = getInt(getColumnIndexOrThrow(ShareContract.Folder.visible)) == 1
+                val imageLink =
+                    getString(getColumnIndexOrThrow(ShareContract.Folder.imageLink))
 
-                val linkTempCursor =
-                    getRecentImageUrl(
-                        db,
-                        ShareContract.LinkTempEntry.table,
-                        linkColumns,
-                        ShareContract.LinkTempEntry.folderSeq,
-                        ShareContract.LinkTempEntry.seq,
-                        seq
-                    )
-                val linkCursor =
-                    getRecentImageUrl(
-                        db,
-                        ShareContract.LinkEntry.table,
-                        linkColumns,
-                        ShareContract.LinkEntry.folderSeq,
-                        ShareContract.LinkEntry.seq,
-                        seq
-                    )
-
-                val imageLinks = mutableListOf<String>()
-                imageLinks.addAll(
-                    addImageLinks(
-                        linkTempCursor,
-                        ShareContract.LinkTempEntry.imageLink
+                folders.add(
+                    FolderModel(
+                        FolderType.One,
+                        imageLink,
+                        folderName,
+                        visible
                     )
                 )
-                imageLinks.addAll(addImageLinks(linkCursor, ShareContract.LinkEntry.imageLink))
-
-                if (imageLinks.size > 0) {
-                    folders.add(
-                        FolderModel(
-                            FolderType.One,
-                            imageLinks[0],
-                            folderName,
-                            visible,
-                            seq
-                        )
-                    )
-                } else {
-                    folders.add(
-                        FolderModel(
-                            FolderType.None,
-                            null,
-                            folderName,
-                            visible,
-                            seq
-                        )
-                    )
-                }
             }
         }
         folderCursor.close()
@@ -223,35 +190,4 @@ class ShareViewModel(application: Application) : AndroidViewModel(application) {
     }
 
 
-    private fun addImageLinks(
-        linkCursor: Cursor,
-        imageLink: String
-    ): MutableList<String> {
-        val imageLinks = mutableListOf<String>()
-        with(linkCursor) {
-            while (moveToNext()) {
-                imageLinks.add(getString(getColumnIndexOrThrow(imageLink)))
-            }
-        }
-        linkCursor.close()
-        return imageLinks
-    }
-
-    private fun getRecentImageUrl(
-        db: SQLiteDatabase,
-        table: String,
-        linkColumns: Array<String>,
-        folderSeq: String,
-        linkSeq: String,
-        seq: Long
-    ) = db.query(
-        table,
-        linkColumns,
-        "$folderSeq = ?",
-        arrayOf("$seq"),
-        null,
-        null,
-        "$linkSeq DESC",
-        "1"
-    )
 }

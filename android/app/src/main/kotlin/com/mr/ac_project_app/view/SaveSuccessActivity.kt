@@ -32,6 +32,7 @@ class SaveSuccessActivity: ComponentActivity() {
         }
 
         val saveType = intent.getSerializableExtra("saveType") as SaveType
+        val link = intent.getStringExtra("link")
 
         when (saveType) {
             SaveType.New -> {
@@ -43,10 +44,10 @@ class SaveSuccessActivity: ComponentActivity() {
         }
 
         binding.writeCommentButton.setOnClickListener {
-            val moveIntent = Intent(this@SaveSuccessActivity, CommentActivity::class.java)
-            moveIntent.putExtra("saveType", saveType)
-            moveIntent.putExtra("linkSeq", intent.getLongExtra("linkSeq", -1L))
-            startActivity(moveIntent)
+            val movingIntent = Intent(this@SaveSuccessActivity, CommentActivity::class.java)
+            movingIntent.putExtra("saveType", saveType)
+            movingIntent.putExtra("link", link)
+            startActivity(movingIntent)
             finish()
             overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit)
         }

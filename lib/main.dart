@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:ac_project_app/firebase_options.dart';
 import 'package:ac_project_app/provider/share_data_provider.dart';
@@ -22,55 +23,27 @@ Future<void> initSqflite() async {
   final path = await ShareDataProvider.getShareDBUrl();
 
   Log.i('DB Path: $path');
-  const folderSql = 'create table folder( '
-      'seq integer primary key autoincrement, '
-      'name varchar(20) not null, '
-      'visible boolean not null default 1 '
-      ');';
+  const folderDDL = '''
+  create table folder( 
+    seq integer primary key autoincrement, 
+    name varchar(20) not null, 
+    visible boolean not null default 1,
+    imageLink varchar(2000) 
+  );
+  ''';
 
-  const linkSql = 'create table link( '
-      'seq integer primary key autoincrement, '
-      'link varchar(2000) not null, '
-      'comment varchar(300), '
-      'folder_seq int(11), '
-      'image_link varchar(2000) default "", '
-      'title varchar(300) '
-      ');';
-  const folderTempSql = 'create table folder_temp( '
-      'seq integer primary key autoincrement, '
-      'name varchar(20) not null, '
-      'visible boolean not null default 1 '
-      ');';
-
-  const linkTempSql = 'create table link_temp( '
-      'seq integer primary key autoincrement, '
-      'link varchar(2000) not null, '
-      'comment varchar(300), '
-      'folder_seq int(11), '
-      'image_link varchar(2000) default "", '
-      'title varchar(300) '
-      ');';
   final database = await openDatabase(
     path,
     version: 1,
     onCreate: (db, version) async {
       Log.i('DB 생성됨');
-      await db.execute(folderTempSql);
-      await db.execute(linkTempSql);
-      await db.execute(folderSql);
-      await db.execute(linkSql);
+      await db.execute(folderDDL);
     },
     onUpgrade: (db, oldVersion, newVersion) async {
       if (oldVersion < newVersion) {
         Log.i('DB upgraded: $newVersion');
-        await db.execute('drop table link;');
         await db.execute('drop table folder;');
-        await db.execute('drop table link_temp;');
-        await db.execute('drop table folder_temp;');
-        await db.execute(folderTempSql);
-        await db.execute(linkTempSql);
-        await db.execute(folderSql);
-        await db.execute(linkSql);
+        await db.execute(folderDDL);
       }
     },
   );

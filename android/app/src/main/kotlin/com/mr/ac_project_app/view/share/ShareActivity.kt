@@ -46,7 +46,6 @@ class ShareActivity : ComponentActivity() {
         binding.folderPlusButton.setOnClickListener {
             val intent = Intent(this@ShareActivity, NewFolderActivity::class.java)
             intent.putExtra("link", viewModel.savedLink.value)
-            intent.putExtra("linkSeq", viewModel.linkSeq.value)
             intent.putExtra("imageLink", viewModel.imageLink.value)
             startActivity(intent)
             finish()
@@ -68,12 +67,12 @@ class ShareActivity : ComponentActivity() {
         ) { position ->
 
             val folder = modelList[position].changeImageUrl(viewModel.imageLink.value ?: "")
-            viewModel.saveLinkWithFolder(folder, viewModel.linkSeq.value)
+            viewModel.saveLinkWithFolder(folder)
 
             val intent = Intent(this@ShareActivity, SaveSuccessActivity::class.java)
             intent.putExtra("folder", folder)
+            intent.putExtra("link", viewModel.savedLink.value)
             intent.putExtra("saveType", SaveType.Selected)
-            intent.putExtra("linkSeq", viewModel.linkSeq.value)
             startActivity(intent)
             overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit)
             finish()

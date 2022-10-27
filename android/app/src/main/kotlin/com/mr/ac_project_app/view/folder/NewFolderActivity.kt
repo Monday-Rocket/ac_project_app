@@ -25,7 +25,6 @@ import com.mr.ac_project_app.view.share.ShareActivity
 
 class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
 
-    private var linkSeq: Long = -1L
     private lateinit var binding: ActivityNewFolderBinding
     private var folderVisibility = true
     private lateinit var callback: OnBackPressedCallback
@@ -36,8 +35,6 @@ class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
         super.onCreate(savedInstanceState)
         binding = ActivityNewFolderBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        linkSeq = intent.getLongExtra("linkSeq", -1L)
 
         binding.background.setOnClickListener {
             val dialog = MessageDialog(
@@ -70,11 +67,10 @@ class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
             val link = intent.getStringExtra("link") ?: ""
             val imageLink = intent.getStringExtra("imageLink") ?: ""
 
-            val folderSeq = viewModel.saveTempFolderDB(
+            viewModel.saveNewFolder(
                 binding.folderNameEditText.text.toString(),
                 link,
                 folderVisibility,
-                linkSeq,
                 imageLink
             )
 
@@ -85,12 +81,11 @@ class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
                 FolderModel.create(
                     imageLink,
                     folderName,
-                    folderVisibility,
-                    folderSeq
+                    folderVisibility
                 )
             )
             movingIntent.putExtra("saveType", SaveType.New)
-            movingIntent.putExtra("linkSeq", linkSeq)
+            movingIntent.putExtra("link", link)
             startActivity(movingIntent)
             finish()
             overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit)
