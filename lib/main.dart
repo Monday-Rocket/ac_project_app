@@ -83,7 +83,7 @@ class MultiPlatformApp {
   static StatefulWidget create() {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: Routes.login,
+      initialRoute: Routes.home,
       onGenerateRoute: Pages.getPages,
       themeMode: ThemeMode.light,
       theme: ThemeData(fontFamily: 'Pretendard'),

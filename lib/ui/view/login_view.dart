@@ -134,7 +134,7 @@ class _LoginViewState extends State<LoginView> {
                                 style: ElevatedButton.styleFrom(
                                   minimumSize: const Size.fromHeight(55),
                                   backgroundColor:
-                                      allChecked ? purpleMain : purpleUnchecked,
+                                      allChecked ? primary800 : secondary,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
@@ -200,12 +200,12 @@ class _LoginViewState extends State<LoginView> {
                           ? const Icon(
                               Icons.check,
                               size: 18,
-                              color: purpleMain,
+                              color: primary800,
                             )
                           : const Icon(
                               Icons.check,
                               size: 18,
-                              color: greyUncheckedIcon,
+                              color: grey300,
                             ),
                     ),
                   ),
@@ -239,12 +239,12 @@ class _LoginViewState extends State<LoginView> {
                       ? const Icon(
                           Icons.keyboard_arrow_down_sharp,
                           size: 20,
-                          color: greyArrow,
+                          color: grey500,
                         )
                       : const Icon(
                           Icons.keyboard_arrow_right_sharp,
                           size: 20,
-                          color: greyArrow,
+                          color: grey500,
                         ),
                 ),
               ),
@@ -260,7 +260,7 @@ class _LoginViewState extends State<LoginView> {
           duration: const Duration(milliseconds: 150),
           decoration: const BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(5)),
-            color: blueBack,
+            color: grey100,
           ),
           child: thirdOpened
               ? Scrollbar(
@@ -275,7 +275,7 @@ class _LoginViewState extends State<LoginView> {
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w400,
-                          color: greyApproveText,
+                          color: grey600,
                         ),
                       ),
                     ),
@@ -310,12 +310,12 @@ class _LoginViewState extends State<LoginView> {
                           ? const Icon(
                               Icons.check,
                               size: 18,
-                              color: purpleMain,
+                              color: primary800,
                             )
                           : const Icon(
                               Icons.check,
                               size: 18,
-                              color: greyUncheckedIcon,
+                              color: grey300,
                             ),
                     ),
                   ),
@@ -350,12 +350,12 @@ class _LoginViewState extends State<LoginView> {
                         ? const Icon(
                             Icons.keyboard_arrow_down_sharp,
                             size: 20,
-                            color: greyArrow,
+                            color: grey500,
                           )
                         : const Icon(
                             Icons.keyboard_arrow_right_sharp,
                             size: 20,
-                            color: greyArrow,
+                            color: grey500,
                           ),
                   ),
                 ),
@@ -371,7 +371,7 @@ class _LoginViewState extends State<LoginView> {
           duration: const Duration(milliseconds: 150),
           decoration: const BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(5)),
-            color: blueBack,
+            color: grey100,
           ),
           child: secondOpened
               ? Scrollbar(
@@ -386,7 +386,7 @@ class _LoginViewState extends State<LoginView> {
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w400,
-                          color: greyApproveText,
+                          color: grey600,
                         ),
                       ),
                     ),
@@ -415,7 +415,7 @@ class _LoginViewState extends State<LoginView> {
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
               decoration: BoxDecoration(
-                color: firstCheck ? purpleMain : greyUnchecked,
+                color: firstCheck ? primary800 : grey100,
                 borderRadius: const BorderRadius.all(
                   Radius.circular(8),
                 ),
@@ -435,7 +435,7 @@ class _LoginViewState extends State<LoginView> {
                     : const Icon(
                         Icons.check,
                         size: 18,
-                        color: greyUncheckedIcon,
+                        color: grey300,
                       ),
               ),
             ),

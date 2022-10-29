@@ -35,6 +35,10 @@ dependencies:
   flutter_dotenv: ^5.0.2
   logger: ^1.1.0
   path_provider: ^2.0.11
+  intl: ^0.17.0
+
+  ## SVG
+  flutter_svg: ^1.1.6
 
   ## for Database
   sqflite: ^2.1.0+1
@@ -62,9 +66,8 @@ flutter:
 
   assets:
     - .env
-    - assets/images/login/3.0x/
-    - assets/images/login/2.0x/
     - assets/images/login/
+    - assets/images/
 
   fonts:
     - family: Pretendard
