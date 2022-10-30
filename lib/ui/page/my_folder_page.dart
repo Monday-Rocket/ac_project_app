@@ -1,5 +1,8 @@
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
+import 'package:ac_project_app/ui/widget/custom_reorderable_list_view.dart';
+import 'package:ac_project_app/util/logger.dart';
+import 'package:ac_project_app/util/number_commas.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -76,65 +79,119 @@ class _MyFolderPageState extends State<MyFolderPage> {
             ),
           ),
           Container(
-            margin: const EdgeInsets.symmetric(horizontal: 28),
-            child: ListView.separated(
+            margin: const EdgeInsets.symmetric(horizontal: 24),
+            child: CustomReorderableListView.separated(
               shrinkWrap: true,
               itemCount: folders.length,
-              separatorBuilder: (ctx, index) => const Divider(
-                thickness: 1,
-                height: 1,
-              ),
+              separatorBuilder: (ctx, index) =>
+                  const Divider(thickness: 1, height: 1),
               itemBuilder: (ctx, index) {
-                
                 final lockPrivate = folders[index].private ?? true;
-                
-                return Container(
-                  margin: const EdgeInsets.symmetric(vertical: 20),
-                  child: Row(
-                    children: [
-                      SizedBox(
-                        width: 63 + 6,
-                        height: 63,
-                        child: Stack(
+                final isNullImage = folders[index].imageUrl == null ||
+                    (folders[index].imageUrl?.isEmpty ?? true);
+                return ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  key: Key('$index'),
+                  title: Container(
+                    margin:
+                        const EdgeInsets.symmetric(vertical: 20, horizontal: 4),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
                           children: [
-                            ClipRRect(
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(20),
-                              ),
-                              child: Image.network(
-                                folders[index].imageUrl ?? '',
-                                width: 63,
-                                height: 63,
-                                fit: BoxFit.contain,
-                                errorBuilder: (context, _, __) {
-                                  return Container(
-                                    width: 63,
-                                    height: 63,
-                                    color: grey100,
-                                    child: Center(
-                                      child: SvgPicture.asset(
-                                        'assets/images/folder.svg',
-                                        width: 24,
-                                        height: 24,
-                                      ),
+                            Container(
+                              width: 63 + 6,
+                              height: 63,
+                              margin: const EdgeInsets.only(right: 30),
+                              child: Stack(
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: const BorderRadius.all(
+                                      Radius.circular(20),
                                     ),
-                                  );
-                                },
+                                    child: Image.network(
+                                      folders[index].imageUrl ?? '',
+                                      width: 63,
+                                      height: 63,
+                                      fit: BoxFit.contain,
+                                      errorBuilder: (context, _, __) {
+                                        return Container(
+                                          width: 63,
+                                          height: 63,
+                                          color: grey100,
+                                          child: Center(
+                                            child: SvgPicture.asset(
+                                              'assets/images/folder.svg',
+                                              width: 24,
+                                              height: 24,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                  if (lockPrivate)
+                                    Align(
+                                      alignment: Alignment.bottomRight,
+                                      child: Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 3),
+                                        child: SvgPicture.asset(
+                                          'assets/images/ic_lock.svg',
+                                        ),
+                                      ),
+                                    )
+                                  else
+                                    const SizedBox.shrink(),
+                                ],
                               ),
                             ),
-                            if (lockPrivate) Align(
-                              alignment: Alignment.bottomRight,
-                              child: Padding(
-                                padding: const EdgeInsets.only(bottom: 3),
-                                child: SvgPicture.asset('assets/images/ic_lock.svg'),
-                              ),
-                            ) else const SizedBox.shrink(),
+                            Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  folders[index].name!,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 6,
+                                ),
+                                Text(
+                                  '링크 ${addCommasFrom(folders[index].linkCount)}개',
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    color: Color(0xFF62666C),
+                                  ),
+                                )
+                              ],
+                            )
                           ],
                         ),
-                      )
-                    ],
+                        if (isNullImage)
+                          const SizedBox.shrink()
+                        else
+                          Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: SvgPicture.asset('assets/images/more.svg'),
+                          ),
+                      ],
+                    ),
                   ),
                 );
+              },
+              onReorder: (int oldIndex, int newIndex) {
+                setState(() {
+                  Log.i('old: $oldIndex, new: $newIndex');
+                  final item = folders.removeAt(oldIndex);
+                  folders.insert(newIndex, item);
+                });
               },
             ),
           )
