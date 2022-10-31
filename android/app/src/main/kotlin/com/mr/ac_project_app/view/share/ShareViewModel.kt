@@ -146,7 +146,15 @@ class ShareViewModel(application: Application) : AndroidViewModel(application) {
             )
 
         val folderCursor =
-            db.query(ShareContract.Folder.table, folderColumns, null, null, null, null, null)
+            db.query(
+                ShareContract.Folder.table,
+                folderColumns,
+                null,
+                null,
+                null,
+                null,
+                "${ShareContract.Folder.time} DESC"
+            )
 
         val folders = mutableListOf<FolderModel>()
         folders.addAll(
