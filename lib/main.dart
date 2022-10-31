@@ -15,7 +15,7 @@ import 'package:sqflite/sqflite.dart';
 
 Future<void> main() async {
   await initSettings();
-  await initSqflite();
+  // await initSqflite();
   runApp(const MyApp());
 }
 
@@ -83,7 +83,7 @@ class MultiPlatformApp {
   static StatefulWidget create() {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: Routes.home,
+      initialRoute: Routes.login,
       onGenerateRoute: Pages.getPages,
       themeMode: ThemeMode.light,
       theme: ThemeData(fontFamily: 'Pretendard'),

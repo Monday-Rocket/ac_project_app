@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import 'package:ac_project_app/models/net/api_result.dart';
 import 'package:ac_project_app/models/result.dart';
+import 'package:ac_project_app/util/logger.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 
@@ -90,10 +91,13 @@ class CustomClient extends http.BaseClient {
       if (apiResult.error == null) {
         return Result.success(apiResult.data);
       } else {
+        Log.e(apiResult.error!.message);
         return Result.error(apiResult.error!.message);
       }
     }
-    return Result.error('Network Error: ${response.statusCode}');
+    final errorMessage = 'Network Error: ${response.statusCode}';
+    Log.e(errorMessage);
+    return Result.error(errorMessage);
   }
 
   String? makeBody(Map<String, dynamic>? body) {

@@ -6,6 +6,7 @@ import 'package:ac_project_app/const/resource.dart';
 import 'package:ac_project_app/const/strings.dart';
 import 'package:ac_project_app/cubits/login/login_cubit.dart';
 import 'package:ac_project_app/cubits/login/login_type.dart';
+import 'package:ac_project_app/models/result.dart';
 import 'package:ac_project_app/models/user/user.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/text/custom_font.dart';
@@ -46,24 +47,60 @@ class _LoginViewState extends State<LoginView> {
     super.initState();
   }
 
-  Future<void> _moveToSignUpPage(User? user) async {
-    if (user == null) {
-      Log.d('first');
-    } else if (user.isNew ?? false) {
-      // 1. 서비스 이용 동의
-      // 2. 가입 화면으로 이동
-      final result = await getServiceApproval(user);
-      if (result != true) {
-        // 초기화
-        if (!mounted) return;
-        context.read<LoginCubit>().initialize();
-      } else {
-        // 회원가입 이동
-        if (!mounted) return;
-        unawaited(Navigator.pushNamed(context, Routes.signUpNickname));
-      }
+  Future<void> _moveToSignUpPage(Result<User>? result) async {
+    if (result == null) {
+      Log.d('initialized login view');
     } else {
-      unawaited(goHomeScreen(context));
+      await result.when(
+        success: (user) async {
+          if (user.isNew ?? false) {
+            // 1. 서비스 이용 동의
+            // 2. 가입 화면으로 이동
+            final result = await getServiceApproval(user);
+            if (result != true) {
+              // 초기화
+              if (!mounted) return;
+              context.read<LoginCubit>().initialize();
+            } else {
+              // 회원가입 이동
+              if (!mounted) return;
+              unawaited(Navigator.pushNamed(context, Routes.signUpNickname));
+            }
+          } else {
+            unawaited(goHomeScreen(context));
+          }
+        },
+        error: (msg) {
+          ScaffoldMessenger.of(context).showMaterialBanner(
+            MaterialBanner(
+              backgroundColor: Colors.black,
+              content: Text(
+                msg,
+                style: const TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+              actions: [
+                InkWell(
+                  onTap: () {
+                    ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
+                    context.read<LoginCubit>().initialize();
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Text(
+                      '확인',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      );
     }
   }
 
