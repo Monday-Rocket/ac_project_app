@@ -1,5 +1,7 @@
+import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/ui/page/my_folder_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -9,39 +11,53 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-
   final textController = TextEditingController();
 
   final List<Widget> _widgetOptions = <Widget>[
-    const MyPage(),
-    const MyFolderPage(),
-    const FolderPage(),
     const HomePage(),
+    const UploadPage(),
+    const MyFolderPage(),
+    const MyPage(),
   ];
 
-  var index = 0;
+  int index = 0;
 
   @override
   Widget build(BuildContext context) {
+    final icons = getBottomIcons();
 
+    final bottomItems = [
+      BottomNavigationBarItem(
+        icon: icons[0],
+        label: '홈',
+      ),
+      BottomNavigationBarItem(
+        icon: icons[1],
+        label: '업로드',
+      ),
+      BottomNavigationBarItem(
+        icon: icons[2],
+        label: '마이폴더',
+      ),
+      BottomNavigationBarItem(
+        icon: icons[3],
+        label: '마이페이지',
+      ),
+    ];
     return Scaffold(
       body: SafeArea(
         child: _widgetOptions[index],
       ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.black,
-        selectedFontSize: 16,
-        selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
-        unselectedItemColor: Colors.grey,
-        unselectedFontSize: 14,
+        selectedItemColor: primary600,
+        selectedFontSize: 9,
+        selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500),
+        unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w400),
+        unselectedItemColor: grey200,
+        unselectedFontSize: 9,
         showUnselectedLabels: true,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.ac_unit), label: '홈'),
-          BottomNavigationBarItem(icon: Icon(Icons.access_alarm_outlined), label: '마이폴더'),
-          BottomNavigationBarItem(icon: Icon(Icons.ac_unit), label: '홈'),
-          BottomNavigationBarItem(icon: Icon(Icons.ac_unit), label: '마이폴더'),
-        ],
+        items: bottomItems,
         currentIndex: index,
         onTap: (i) {
           setState(() {
@@ -50,6 +66,33 @@ class _HomeViewState extends State<HomeView> {
         },
       ),
     );
+  }
+
+  List<SvgPicture> getBottomIcons() {
+    final enabledIcons = [
+      SvgPicture.asset('assets/images/ic_home.svg'),
+      SvgPicture.asset('assets/images/ic_upload.svg'),
+      SvgPicture.asset('assets/images/ic_myfolder.svg'),
+      SvgPicture.asset('assets/images/ic_mypage.svg'),
+    ];
+
+    final disabledIcons = [
+      SvgPicture.asset('assets/images/ic_home_disabled.svg'),
+      SvgPicture.asset('assets/images/ic_upload_disabled.svg'),
+      SvgPicture.asset('assets/images/ic_myfolder_disabled.svg'),
+      SvgPicture.asset('assets/images/ic_mypage_disabled.svg'),
+    ];
+
+    final icons = <SvgPicture>[];
+
+    for (var i = 0; i < 4; i++) {
+      if (i == index) {
+        icons.add(enabledIcons[i]);
+      } else {
+        icons.add(disabledIcons[i]);
+      }
+    }
+    return icons;
   }
 }
 
@@ -81,23 +124,19 @@ class _UnknownPageState extends State<UnknownPage> {
   }
 }
 
-
-
-class FolderPage extends StatefulWidget {
-  const FolderPage({super.key});
+class UploadPage extends StatefulWidget {
+  const UploadPage({super.key});
 
   @override
-  State<FolderPage> createState() => _FolderPageState();
+  State<UploadPage> createState() => _UploadPageState();
 }
 
-class _FolderPageState extends State<FolderPage> {
+class _UploadPageState extends State<UploadPage> {
   @override
   Widget build(BuildContext context) {
     return Container();
   }
 }
-
-
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -112,4 +151,3 @@ class _HomePageState extends State<HomePage> {
     return Container();
   }
 }
-
