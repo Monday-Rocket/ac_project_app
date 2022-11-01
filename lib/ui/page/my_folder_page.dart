@@ -119,31 +119,29 @@ class _MyFolderPageState extends State<MyFolderPage> {
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Expanded(
+                              AspectRatio(
+                                aspectRatio: 1,
                                 child: Stack(
                                   children: [
-                                    Center(
-                                      child: ClipRRect(
-                                        borderRadius: const BorderRadius.all(
-                                          Radius.circular(7),
-                                        ),
-                                        child: Image.network(
-                                          folders[index].imageUrl ?? '',
-                                          errorBuilder: (ctx, _, __) {
-                                            return Flexible(
-                                              child: ColoredBox(
-                                                color: grey100,
-                                                child: Center(
-                                                  child: SvgPicture.asset(
-                                                    width: 46,
-                                                    height: 46,
-                                                    'assets/images/folder_big.svg',
-                                                  ),
-                                                ),
+                                    ClipRRect(
+                                      borderRadius: const BorderRadius.all(
+                                        Radius.circular(7),
+                                      ),
+                                      child: Image.network(
+                                        folders[index].imageUrl ?? '',
+                                        fit: BoxFit.fitHeight,
+                                        errorBuilder: (ctx, _, __) {
+                                          return ColoredBox(
+                                            color: grey100,
+                                            child: Center(
+                                              child: SvgPicture.asset(
+                                                width: 46,
+                                                height: 46,
+                                                'assets/images/folder_big.svg',
                                               ),
-                                            );
-                                          },
-                                        ),
+                                            ),
+                                          );
+                                        },
                                       ),
                                     ),
                                     if (lockPrivate)
@@ -164,28 +162,53 @@ class _MyFolderPageState extends State<MyFolderPage> {
                                   ],
                                 ),
                               ),
-                              const SizedBox(
-                                height: 18,
+                              Stack(
+                                children: [
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const SizedBox(
+                                        height: 18,
+                                      ),
+                                      Text(
+                                        folders[index].name ?? '',
+                                        style: const TextStyle(
+                                          color: Color(0xFF13181E),
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        height: 6,
+                                      ),
+                                      Text(
+                                        '링크 ${addCommasFrom(folders[index].linkCount)}개',
+                                        style: const TextStyle(
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.w500,
+                                          color: Color(0xFF62666C),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Align(
+                                    alignment: Alignment.topRight,
+                                    child: isNullImage
+                                        ? const SizedBox.shrink()
+                                        : Container(
+                                            margin:
+                                                const EdgeInsets.only(top: 8),
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(8),
+                                              child: SvgPicture.asset(
+                                                'assets/images/more.svg',
+                                              ),
+                                            ),
+                                          ),
+                                  ),
+                                ],
                               ),
-                              Text(
-                                folders[index].name ?? '',
-                                style: const TextStyle(
-                                  color: Color(0xFF13181E),
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 15,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 6,
-                              ),
-                              Text(
-                                '링크 ${addCommasFrom(folders[index].linkCount)}개',
-                                style: const TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w500,
-                                  color: Color(0xFF62666C),
-                                ),
-                              )
                             ],
                           ),
                         );
