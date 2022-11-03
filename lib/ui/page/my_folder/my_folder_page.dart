@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_positional_boolean_parameters
+
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/ui/page/my_folder/folder_visible_state.dart';
@@ -214,10 +216,14 @@ class _MyFolderPageState extends State<MyFolderPage> {
                             ? const SizedBox.shrink()
                             : Container(
                                 margin: const EdgeInsets.only(top: 8),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8),
-                                  child: SvgPicture.asset(
-                                    'assets/images/more.svg',
+                                child: InkWell(
+                                  onTap: () =>
+                                      showFolderOptionsDialog(folders[index]),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8),
+                                    child: SvgPicture.asset(
+                                      'assets/images/more.svg',
+                                    ),
                                   ),
                                 ),
                               ),
@@ -332,9 +338,12 @@ class _MyFolderPageState extends State<MyFolderPage> {
                     if (isNullImage)
                       const SizedBox.shrink()
                     else
-                      Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: SvgPicture.asset('assets/images/more.svg'),
+                      InkWell(
+                        onTap: () => showFolderOptionsDialog(folders[index]),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: SvgPicture.asset('assets/images/more.svg'),
+                        ),
                       ),
                   ],
                 ),
@@ -547,10 +556,143 @@ class _MyFolderPageState extends State<MyFolderPage> {
       2. 다이얼로그 닫기
       3. 화면 업데이트 (리스트 재조회) */
   void saveEmptyFolder(
-      BuildContext context, String text, FolderVisibleState folderPrivate) {
+    BuildContext context,
+    String text,
+    FolderVisibleState folderPrivate,
+  ) {
     Log.i('폴더 저장');
     Navigator.pop(context);
   }
 
   void doNothing() {}
+
+  Future<bool?> showFolderOptionsDialog(Folder folder) async {
+    final lockPrivate = folder.private ?? false;
+    return showModalBottomSheet<bool?>(
+      backgroundColor: Colors.transparent,
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return Wrap(
+          children: [
+            StatefulBuilder(
+              builder: (context, setState) {
+                return DecoratedBox(
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20),
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                      top: 29,
+                    ),
+                    child: Column(
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.only(left: 30, right: 20),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                '폴더 옵션',
+                                style: TextStyle(
+                                  color: grey800,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              InkWell(
+                                onTap: () => Navigator.pop(context),
+                                child: const Icon(
+                                  Icons.close_rounded,
+                                  size: 19,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          margin: const EdgeInsets.only(
+                            top: 17,
+                            left: 6,
+                            right: 6,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              InkWell(
+                                onTap: () => changeFolderVisible(folder),
+                                child: Container(
+                                  decoration: const BoxDecoration(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(10),
+                                    ),
+                                    color: grey100,
+                                  ),
+                                  padding: const EdgeInsets.only(
+                                    top: 14,
+                                    bottom: 14,
+                                    left: 24,
+                                  ),
+                                  child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      lockPrivate ? '공개로 전환' : '비공개로 전환',
+                                      style: const TextStyle(
+                                        color: primary600,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              InkWell(
+                                onTap: () => deleteFolder(folder),
+                                child: Container(
+                                  decoration: const BoxDecoration(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(10),
+                                    ),
+                                    color: Colors.transparent,
+                                  ),
+                                  padding: const EdgeInsets.only(
+                                    top: 14,
+                                    bottom: 14,
+                                    left: 24,
+                                  ),
+                                  child: const Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      '폴더 삭제',
+                                      style: TextStyle(
+                                        color: Color(0xFF13181E),
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void changeFolderVisible(Folder folder) {}
+
+  void deleteFolder(Folder folder) {}
 }
