@@ -129,7 +129,6 @@ class _SignUpJobViewState extends State<SignUpJobView> {
         child: TextFormField(
           controller: _textController,
           style: const TextStyle(
-            fontFamily: 'Pretendard',
             fontSize: 17,
             fontWeight: FontWeight.w500,
           ),
