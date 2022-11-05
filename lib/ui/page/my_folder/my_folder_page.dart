@@ -510,7 +510,7 @@ class MyFolderPage extends StatelessWidget {
                           ),
                         ),
                         Container(
-                          margin: const EdgeInsets.only(top: 50),
+                          margin: const EdgeInsets.only(top: 50, bottom: 20),
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               minimumSize: const Size.fromHeight(55),
@@ -620,6 +620,7 @@ class MyFolderPage extends StatelessWidget {
                             top: 17,
                             left: 6,
                             right: 6,
+                            bottom: 20,
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,

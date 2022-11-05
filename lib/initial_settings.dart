@@ -20,7 +20,8 @@ Future<void> initSqflite() async {
     seq integer primary key autoincrement, 
     name varchar(20) not null, 
     visible boolean not null default 1,
-    imageLink varchar(2000) 
+    imageLink varchar(2000),
+    time timestamp default current_timestamp not null 
   );
   ''';
 

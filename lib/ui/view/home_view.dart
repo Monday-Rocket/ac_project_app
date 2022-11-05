@@ -12,13 +12,6 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
 
-  final List<Widget> _widgetOptions = <Widget>[
-    const HomePage(),
-    const UploadPage(),
-    const MyFolderPage(),
-    const MyPage(),
-  ];
-
   int index = 0;
 
   @override
@@ -43,9 +36,17 @@ class _HomeViewState extends State<HomeView> {
         label: '마이페이지',
       ),
     ];
+
+    final widgetOptions = <Widget>[
+      const HomePage(),
+      const UploadPage(),
+      const MyFolderPage(),
+      const MyPage(),
+    ];
+
     return Scaffold(
       body: SafeArea(
-        child: _widgetOptions[index],
+        child: widgetOptions[index],
       ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
