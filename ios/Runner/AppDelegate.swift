@@ -39,7 +39,7 @@ import Flutter
         forSecurityApplicationGroupIdentifier: "group.com.mr.acProjectApp.Share"
       )
     
-    return fileContainer?.appendingPathExtension("share.db").path
+    return fileContainer?.path
   }
   
 }
