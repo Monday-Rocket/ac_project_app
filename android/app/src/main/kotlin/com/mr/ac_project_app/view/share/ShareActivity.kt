@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mr.ac_project_app.view.folder.NewFolderActivity
 import com.mr.ac_project_app.R
 import com.mr.ac_project_app.databinding.ActivityShareBinding
+import com.mr.ac_project_app.model.FolderModel
 import com.mr.ac_project_app.model.SaveType
 import com.mr.ac_project_app.ui.RecyclerViewAdapter
 import com.mr.ac_project_app.utils.toDp
@@ -21,9 +22,8 @@ import com.mr.ac_project_app.view.SaveSuccessActivity
 class ShareActivity : ComponentActivity() {
 
     private lateinit var binding: ActivityShareBinding
-
-
     private val viewModel: ShareViewModel by viewModels()
+    private val modelList = arrayListOf<FolderModel>()
 
     companion object {
         const val SHARED_PREF = "share_pref"
@@ -46,7 +46,6 @@ class ShareActivity : ComponentActivity() {
         binding.folderPlusButton.setOnClickListener {
             val intent = Intent(this@ShareActivity, NewFolderActivity::class.java)
             intent.putExtra("link", viewModel.savedLink.value)
-            intent.putExtra("linkSeq", viewModel.linkSeq.value)
             intent.putExtra("imageLink", viewModel.imageLink.value)
             startActivity(intent)
             finish()
@@ -62,24 +61,22 @@ class ShareActivity : ComponentActivity() {
             )
         )
         binding.folderList.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
-
+        modelList.addAll(viewModel.getFoldersFromDB())
         binding.folderList.adapter = RecyclerViewAdapter(
-            viewModel.modelList
+            modelList
         ) { position ->
 
-            val folder = viewModel.modelList[position].addImageUrl(viewModel.imageLink.value ?: "")
-            viewModel.saveLinkWithFolder(folder, viewModel.linkSeq.value)
+            val folder = modelList[position].changeImageUrl(viewModel.imageLink.value ?: "")
+            viewModel.saveLinkWithFolder(folder)
 
             val intent = Intent(this@ShareActivity, SaveSuccessActivity::class.java)
             intent.putExtra("folder", folder)
+            intent.putExtra("link", viewModel.savedLink.value)
             intent.putExtra("saveType", SaveType.Selected)
-            intent.putExtra("linkSeq", viewModel.linkSeq.value)
             startActivity(intent)
             overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit)
             finish()
         }
-
-        viewModel.modelList.addAll(viewModel.getFoldersFromDB())
     }
 
     override fun onResume() {

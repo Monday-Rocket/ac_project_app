@@ -1,6 +1,7 @@
 package com.mr.ac_project_app.view.comment
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -30,7 +31,12 @@ class CommentActivity : FragmentActivity(), ConfirmDialogInterface {
         binding = ActivityCommentBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val saveType = intent.getSerializableExtra("saveType") as SaveType
+        @Suppress("DEPRECATION")
+        val saveType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getSerializableExtra("saveType", SaveType::class.java)
+        } else {
+            intent.getSerializableExtra("saveType") as SaveType
+        }
 
         binding.background.setOnClickListener {
             showCancelDialog()
@@ -44,9 +50,8 @@ class CommentActivity : FragmentActivity(), ConfirmDialogInterface {
 
         binding.saveCommentButton.setOnClickListener {
 
-
-            val linkSeq = intent.getLongExtra("linkSeq", -1L)
-            viewModel.addComment(linkSeq, binding.commentTextField.text.toString())
+            val link = intent.getStringExtra("link") ?: ""
+            viewModel.addComment(link, binding.commentTextField.text.toString())
 
             val saveText = if (saveType == SaveType.New) "새" else "선택한"
             val contentText = "$saveText 폴더에 링크와 코멘트가 담겼어요"

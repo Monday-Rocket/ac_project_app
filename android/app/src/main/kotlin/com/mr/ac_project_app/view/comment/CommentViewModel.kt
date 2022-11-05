@@ -1,10 +1,13 @@
 package com.mr.ac_project_app.view.comment
 
 import android.app.Application
-import android.content.ContentValues
+import android.content.Context
+import android.content.SharedPreferences
 import androidx.lifecycle.AndroidViewModel
-import com.mr.ac_project_app.data.ShareContract
+import com.mr.ac_project_app.R
 import com.mr.ac_project_app.data.ShareDbHelper
+import com.mr.ac_project_app.utils.convert
+import org.json.JSONObject
 
 class CommentViewModel(application: Application): AndroidViewModel(application) {
 
@@ -14,14 +17,22 @@ class CommentViewModel(application: Application): AndroidViewModel(application) 
         dbHelper = ShareDbHelper(context = getApplication<Application>().applicationContext)
     }
 
-    fun addComment(linkSeq: Long, comment: String) {
-        val db = dbHelper.writableDatabase
-
-        val values = ContentValues().apply {
-            put(ShareContract.LinkTempEntry.comment, comment)
+    fun addComment(link: String, comment: String) {
+        val newLinks = getNewLinks()
+        with(newLinks.edit()) {
+            val json = JSONObject(newLinks.getString(link, "")!!)
+            json.put("comment", comment)
+            putString(link, json.convert())
+            apply()
         }
-
-        db.update(ShareContract.LinkTempEntry.table, values, "${ShareContract.LinkTempEntry.seq} = ?", arrayOf("$linkSeq"))
-        db.close()
     }
+
+    private fun getNewLinks(): SharedPreferences {
+        val context = getApplication<Application>().applicationContext
+        return context.getSharedPreferences(
+            context.getString(R.string.preference_new_links),
+            Context.MODE_PRIVATE
+        )
+    }
+
 }
