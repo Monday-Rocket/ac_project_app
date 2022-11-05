@@ -11,7 +11,6 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  final textController = TextEditingController();
 
   final List<Widget> _widgetOptions = <Widget>[
     const HomePage(),

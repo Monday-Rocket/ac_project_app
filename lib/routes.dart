@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:ac_project_app/cubits/login/login_cubit.dart';
+import 'package:ac_project_app/cubits/my_folder/folder_view_type_cubit.dart';
+import 'package:ac_project_app/cubits/my_folder/get_folders_cubit.dart';
 import 'package:ac_project_app/cubits/sign_up/job_cubit.dart';
 import 'package:ac_project_app/cubits/sign_up/job_list_cubit.dart';
 import 'package:ac_project_app/cubits/sign_up/nickname_cubit.dart';
@@ -8,6 +10,7 @@ import 'package:ac_project_app/cubits/sign_up/sign_up_cubit.dart';
 import 'package:ac_project_app/cubits/url_data_cubit.dart';
 import 'package:ac_project_app/ui/view/home_view.dart';
 import 'package:ac_project_app/ui/view/login_view.dart';
+import 'package:ac_project_app/ui/view/my_link_view.dart';
 import 'package:ac_project_app/ui/view/sign_up_job_view.dart';
 import 'package:ac_project_app/ui/view/sign_up_nickname_view.dart';
 import 'package:ac_project_app/ui/view/sign_up_view.dart';
@@ -17,10 +20,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class Routes {
   static const login = '/login';
-  static const home = '/home';
   static const signUp = '/signUp';
   static const signUpNickname = '/signUpNickname';
   static const singUpJob = '/signUpJob';
+
+  static const home = '/home';
+  static const myLinks = '/myLinks';
 }
 
 class Pages {
@@ -39,13 +44,13 @@ class Pages {
         );
       case Routes.home:
         return MultiPlatformPageRoute.create(
-          builder: (_) => MultiBlocProvider(
-            providers: [
-              BlocProvider(
-                create: (_) => UrlDataCubit([]),
-              ),
-            ],
-            child: const HomeView(),
+          builder: (_) => const HomeView(),
+        );
+      case Routes.myLinks:
+        return MultiPlatformPageRoute.create(
+          builder: (_) => const MyLinkView(),
+          settings: RouteSettings(
+            arguments: arguments,
           ),
         );
       case Routes.signUp:

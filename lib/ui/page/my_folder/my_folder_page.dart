@@ -1,6 +1,9 @@
 // ignore_for_file: avoid_positional_boolean_parameters
 
 import 'package:ac_project_app/const/colors.dart';
+import 'package:ac_project_app/cubits/my_folder/folder_view_type_cubit.dart';
+import 'package:ac_project_app/cubits/my_folder/folders_state.dart';
+import 'package:ac_project_app/cubits/my_folder/get_folders_cubit.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/ui/page/my_folder/folder_visible_state.dart';
 import 'package:ac_project_app/ui/widget/custom_reorderable_list_view.dart';
@@ -8,115 +11,131 @@ import 'package:ac_project_app/ui/widget/text/custom_font.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:ac_project_app/util/number_commas.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class MyFolderPage extends StatefulWidget {
+class MyFolderPage extends StatelessWidget {
   const MyFolderPage({super.key});
 
   @override
-  State<MyFolderPage> createState() => _MyFolderPageState();
-}
-
-class _MyFolderPageState extends State<MyFolderPage> {
-  bool listIconState = true;
-
-  final _textController = TextEditingController();
-
-  final _formKey = GlobalKey();
-
-  @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 105,
-            height: 105,
-            margin: const EdgeInsetsDirectional.only(top: 45, bottom: 6),
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.lightGreenAccent,
-            ),
-          ),
-          const Text(
-            '테스트',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 28,
-              color: Color(0xff0e0e0e),
-            ),
-          ),
-          Container(
-            margin: const EdgeInsetsDirectional.only(
-              top: 50,
-              start: 20,
-              end: 20,
-              bottom: 6,
-            ),
-            child: Row(
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<FolderViewTypeCubit>(
+          create: (_) => FolderViewTypeCubit(),
+        ),
+        BlocProvider<GetFoldersCubit>(
+          create: (_) => GetFoldersCubit(),
+        ),
+      ],
+      child: BlocBuilder<FolderViewTypeCubit, FolderViewType>(
+        builder: (context, folderViewType) {
+          return Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Flexible(
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      color: grey100,
-                      borderRadius: BorderRadius.all(Radius.circular(7)),
-                    ),
-                    margin: const EdgeInsets.only(right: 6),
-                    child: TextField(
-                      textAlignVertical: TextAlignVertical.center,
-                      cursorColor: Colors.black,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                        isDense: true,
-                        contentPadding:
-                            const EdgeInsets.symmetric(horizontal: 10),
-                        suffixIcon: Image.asset(
-                          'assets/images/folder_search_icon.png',
+                Container(
+                  width: 105,
+                  height: 105,
+                  margin: const EdgeInsetsDirectional.only(top: 45, bottom: 6),
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.lightGreenAccent,
+                  ),
+                ),
+                const Text(
+                  '테스트',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 28,
+                    color: Color(0xff0e0e0e),
+                  ),
+                ),
+                Container(
+                  margin: const EdgeInsetsDirectional.only(
+                    top: 50,
+                    start: 20,
+                    end: 20,
+                    bottom: 6,
+                  ),
+                  child: Row(
+                    children: [
+                      Flexible(
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            color: grey100,
+                            borderRadius: BorderRadius.all(Radius.circular(7)),
+                          ),
+                          margin: const EdgeInsets.only(right: 6),
+                          child: TextField(
+                            textAlignVertical: TextAlignVertical.center,
+                            cursorColor: Colors.black,
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                              isDense: true,
+                              contentPadding:
+                              const EdgeInsets.symmetric(horizontal: 10),
+                              suffixIcon: Image.asset(
+                                'assets/images/folder_search_icon.png',
+                              ),
+                            ),
+                          ),
                         ),
                       ),
-                    ),
+                      InkWell(
+                        onTap: () {
+                          context.read<FolderViewTypeCubit>().toggle();
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(6),
+                          child: context.watch<FolderViewTypeCubit>().state ==
+                              FolderViewType.list
+                              ? SvgPicture.asset('assets/images/list_icon.svg')
+                              : SvgPicture.asset('assets/images/grid_icon.svg'),
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () => showAddFolderDialog(context),
+                        child: Padding(
+                          padding: const EdgeInsets.all(6),
+                          child: SvgPicture.asset('assets/images/btn_add.svg'),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                InkWell(
-                  onTap: () {
-                    setState(() {
-                      listIconState = !listIconState;
-                    });
+                BlocBuilder<GetFoldersCubit, FoldersState>(
+                  builder: (context, state) {
+                    if (state is LoadingState) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    } else if (state is ErrorState) {
+                      return const Center(
+                        child: Icon(Icons.close),
+                      );
+                    } else if (state is LoadedState) {
+                      final folders = state.folders;
+                      if (folderViewType == FolderViewType.list) {
+                        return buildListView(folders, context);
+                      } else {
+                        return buildGridView(folders, context);
+                      }
+                    } else {
+                      return const SizedBox.shrink();
+                    }
                   },
-                  child: Padding(
-                    padding: const EdgeInsets.all(6),
-                    child: listIconState
-                        ? SvgPicture.asset('assets/images/list_icon.svg')
-                        : SvgPicture.asset('assets/images/grid_icon.svg'),
-                  ),
-                ),
-                InkWell(
-                  onTap: showAddFolderDialog,
-                  child: Padding(
-                    padding: const EdgeInsets.all(6),
-                    child: SvgPicture.asset('assets/images/btn_add.svg'),
-                  ),
-                ),
+                )
               ],
             ),
-          ),
-          Builder(
-            builder: (context) {
-              if (listIconState) {
-                return buildListView();
-              } else {
-                return buildGridView();
-              }
-            },
-          )
-        ],
+          );
+        },
       ),
     );
   }
 
-  Flexible buildGridView() {
+  Flexible buildGridView(List<Folder> folders, BuildContext context) {
     return Flexible(
       child: Container(
         margin: const EdgeInsets.symmetric(
@@ -217,8 +236,10 @@ class _MyFolderPageState extends State<MyFolderPage> {
                             : Container(
                                 margin: const EdgeInsets.only(top: 8),
                                 child: InkWell(
-                                  onTap: () =>
-                                      showFolderOptionsDialog(folders[index]),
+                                  onTap: () => showFolderOptionsDialog(
+                                    folders[index],
+                                    context,
+                                  ),
                                   child: Padding(
                                     padding: const EdgeInsets.all(8),
                                     child: SvgPicture.asset(
@@ -239,7 +260,7 @@ class _MyFolderPageState extends State<MyFolderPage> {
     );
   }
 
-  Widget buildListView() {
+  Widget buildListView(List<Folder> folders, BuildContext context) {
     return Expanded(
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 24),
@@ -339,7 +360,8 @@ class _MyFolderPageState extends State<MyFolderPage> {
                       const SizedBox.shrink()
                     else
                       InkWell(
-                        onTap: () => showFolderOptionsDialog(folders[index]),
+                        onTap: () =>
+                            showFolderOptionsDialog(folders[index], context),
                         child: Padding(
                           padding: const EdgeInsets.all(8),
                           child: SvgPicture.asset('assets/images/more.svg'),
@@ -351,41 +373,16 @@ class _MyFolderPageState extends State<MyFolderPage> {
             );
           },
           onReorder: (int oldIndex, int newIndex) {
-            setState(() {
-              Log.i('old: $oldIndex, new: $newIndex');
-              final item = folders.removeAt(oldIndex);
-              folders.insert(newIndex, item);
-            });
+            Log.i('old: $oldIndex, new: $newIndex');
+            final item = folders.removeAt(oldIndex);
+            folders.insert(newIndex, item);
           },
         ),
       ),
     );
   }
 
-  final isSelected = [true, false];
-  final folders = [
-    Folder(
-      name: '미분류',
-      private: true,
-      linkCount: 20,
-    ),
-    Folder(
-      imageUrl:
-          'https://play-lh.googleusercontent.com/Kbu0747Cx3rpzHcSbtM1zDriGFG74zVbtkPmVnOKpmLCS59l7IuKD5M3MKbaq_nEaZM',
-      name: '디자인',
-      private: true,
-      linkCount: 30,
-    ),
-    Folder(
-      imageUrl:
-          'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Apple_logo_black.svg/1667px-Apple_logo_black.svg.png',
-      name: 'Apple',
-      private: false,
-      linkCount: 12345,
-    ),
-  ];
-
-  Future<bool?> showAddFolderDialog() async {
+  Future<bool?> showAddFolderDialog(BuildContext context) async {
     return showModalBottomSheet<bool>(
       backgroundColor: Colors.transparent,
       context: context,
@@ -397,6 +394,7 @@ class _MyFolderPageState extends State<MyFolderPage> {
           children: [
             StatefulBuilder(
               builder: (context, setState) {
+                final textController = TextEditingController();
                 return DecoratedBox(
                   decoration: const BoxDecoration(
                     color: Colors.white,
@@ -436,10 +434,10 @@ class _MyFolderPageState extends State<MyFolderPage> {
                             Container(
                               margin: const EdgeInsets.only(top: 60),
                               child: Form(
-                                key: _formKey,
+                                key: GlobalKey(),
                                 child: TextFormField(
                                   autofocus: true,
-                                  controller: _textController,
+                                  controller: textController,
                                   style: const TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.w500,
@@ -454,7 +452,7 @@ class _MyFolderPageState extends State<MyFolderPage> {
                                         : InkWell(
                                             onTap: () {
                                               setState(() {
-                                                _textController.text = '';
+                                                textController.text = '';
                                               });
                                             },
                                             child: const Icon(
@@ -526,7 +524,7 @@ class _MyFolderPageState extends State<MyFolderPage> {
                                 ? doNothing
                                 : () => saveEmptyFolder(
                                       context,
-                                      _textController.text,
+                                      textController.text,
                                       folderPrivate,
                                     ),
                             child: const Text(
@@ -566,7 +564,10 @@ class _MyFolderPageState extends State<MyFolderPage> {
 
   void doNothing() {}
 
-  Future<bool?> showFolderOptionsDialog(Folder folder) async {
+  Future<bool?> showFolderOptionsDialog(
+    Folder folder,
+    BuildContext context,
+  ) async {
     final lockPrivate = folder.private ?? false;
     return showModalBottomSheet<bool?>(
       backgroundColor: Colors.transparent,
