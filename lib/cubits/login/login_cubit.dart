@@ -1,4 +1,5 @@
 import 'package:ac_project_app/cubits/login/login_type.dart';
+import 'package:ac_project_app/models/result.dart';
 import 'package:ac_project_app/models/user/user.dart';
 import 'package:ac_project_app/provider/api/user/user_api.dart';
 import 'package:ac_project_app/provider/login/apple_login.dart';
@@ -6,7 +7,7 @@ import 'package:ac_project_app/provider/login/google_login.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class LoginCubit extends Cubit<User?> {
+class LoginCubit extends Cubit<Result<User>?> {
   LoginCubit(super.initialState);
 
   void initialize() {
@@ -28,13 +29,16 @@ class LoginCubit extends Cubit<User?> {
   Future<void> sendResult(bool isSuccess) async {
     if (isSuccess) {
       final user = await UserApi().postUsers();
-      user.when(
-        success: emit,
-        error: Log.e,
+
+      emit(
+        user.when(
+          success: Result.success,
+          error: Result.error,
+        ),
       );
     } else {
-      // TODO 실패 화면 띄워야 함
       Log.e('login fail');
+      emit(const Result.error('login failed'));
     }
   }
 }

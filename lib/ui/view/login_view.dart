@@ -6,6 +6,7 @@ import 'package:ac_project_app/const/resource.dart';
 import 'package:ac_project_app/const/strings.dart';
 import 'package:ac_project_app/cubits/login/login_cubit.dart';
 import 'package:ac_project_app/cubits/login/login_type.dart';
+import 'package:ac_project_app/models/result.dart';
 import 'package:ac_project_app/models/user/user.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/text/custom_font.dart';
@@ -46,24 +47,60 @@ class _LoginViewState extends State<LoginView> {
     super.initState();
   }
 
-  Future<void> _moveToSignUpPage(User? user) async {
-    if (user == null) {
-      Log.d('first');
-    } else if (user.isNew ?? false) {
-      // 1. 서비스 이용 동의
-      // 2. 가입 화면으로 이동
-      final result = await getServiceApproval(user);
-      if (result != true) {
-        // 초기화
-        if (!mounted) return;
-        context.read<LoginCubit>().initialize();
-      } else {
-        // 회원가입 이동
-        if (!mounted) return;
-        unawaited(Navigator.pushNamed(context, Routes.signUpNickname));
-      }
+  Future<void> _moveToSignUpPage(Result<User>? result) async {
+    if (result == null) {
+      Log.d('initialized login view');
     } else {
-      unawaited(goHomeScreen(context));
+      await result.when(
+        success: (user) async {
+          if (user.isNew ?? false) {
+            // 1. 서비스 이용 동의
+            // 2. 가입 화면으로 이동
+            final result = await getServiceApproval(user);
+            if (result != true) {
+              // 초기화
+              if (!mounted) return;
+              context.read<LoginCubit>().initialize();
+            } else {
+              // 회원가입 이동
+              if (!mounted) return;
+              unawaited(Navigator.pushNamed(context, Routes.signUpNickname));
+            }
+          } else {
+            unawaited(goHomeScreen(context));
+          }
+        },
+        error: (msg) {
+          ScaffoldMessenger.of(context).showMaterialBanner(
+            MaterialBanner(
+              backgroundColor: Colors.black,
+              content: Text(
+                msg,
+                style: const TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+              actions: [
+                InkWell(
+                  onTap: () {
+                    ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
+                    context.read<LoginCubit>().initialize();
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Text(
+                      '확인',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      );
     }
   }
 
@@ -134,7 +171,7 @@ class _LoginViewState extends State<LoginView> {
                                 style: ElevatedButton.styleFrom(
                                   minimumSize: const Size.fromHeight(55),
                                   backgroundColor:
-                                      allChecked ? purpleMain : purpleUnchecked,
+                                      allChecked ? primary800 : secondary,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
@@ -200,12 +237,12 @@ class _LoginViewState extends State<LoginView> {
                           ? const Icon(
                               Icons.check,
                               size: 18,
-                              color: purpleMain,
+                              color: primary800,
                             )
                           : const Icon(
                               Icons.check,
                               size: 18,
-                              color: greyUncheckedIcon,
+                              color: grey300,
                             ),
                     ),
                   ),
@@ -239,12 +276,12 @@ class _LoginViewState extends State<LoginView> {
                       ? const Icon(
                           Icons.keyboard_arrow_down_sharp,
                           size: 20,
-                          color: greyArrow,
+                          color: grey500,
                         )
                       : const Icon(
                           Icons.keyboard_arrow_right_sharp,
                           size: 20,
-                          color: greyArrow,
+                          color: grey500,
                         ),
                 ),
               ),
@@ -260,7 +297,7 @@ class _LoginViewState extends State<LoginView> {
           duration: const Duration(milliseconds: 150),
           decoration: const BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(5)),
-            color: blueBack,
+            color: grey100,
           ),
           child: thirdOpened
               ? Scrollbar(
@@ -275,7 +312,7 @@ class _LoginViewState extends State<LoginView> {
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w400,
-                          color: greyApproveText,
+                          color: grey600,
                         ),
                       ),
                     ),
@@ -310,12 +347,12 @@ class _LoginViewState extends State<LoginView> {
                           ? const Icon(
                               Icons.check,
                               size: 18,
-                              color: purpleMain,
+                              color: primary800,
                             )
                           : const Icon(
                               Icons.check,
                               size: 18,
-                              color: greyUncheckedIcon,
+                              color: grey300,
                             ),
                     ),
                   ),
@@ -350,12 +387,12 @@ class _LoginViewState extends State<LoginView> {
                         ? const Icon(
                             Icons.keyboard_arrow_down_sharp,
                             size: 20,
-                            color: greyArrow,
+                            color: grey500,
                           )
                         : const Icon(
                             Icons.keyboard_arrow_right_sharp,
                             size: 20,
-                            color: greyArrow,
+                            color: grey500,
                           ),
                   ),
                 ),
@@ -371,7 +408,7 @@ class _LoginViewState extends State<LoginView> {
           duration: const Duration(milliseconds: 150),
           decoration: const BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(5)),
-            color: blueBack,
+            color: grey100,
           ),
           child: secondOpened
               ? Scrollbar(
@@ -386,7 +423,7 @@ class _LoginViewState extends State<LoginView> {
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w400,
-                          color: greyApproveText,
+                          color: grey600,
                         ),
                       ),
                     ),
@@ -415,7 +452,7 @@ class _LoginViewState extends State<LoginView> {
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
               decoration: BoxDecoration(
-                color: firstCheck ? purpleMain : greyUnchecked,
+                color: firstCheck ? primary800 : grey100,
                 borderRadius: const BorderRadius.all(
                   Radius.circular(8),
                 ),
@@ -435,7 +472,7 @@ class _LoginViewState extends State<LoginView> {
                     : const Icon(
                         Icons.check,
                         size: 18,
-                        color: greyUncheckedIcon,
+                        color: grey300,
                       ),
               ),
             ),

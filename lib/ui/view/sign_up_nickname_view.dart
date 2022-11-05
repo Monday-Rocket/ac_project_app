@@ -77,7 +77,7 @@ class _SignUpNicknameViewState extends State<SignUpNicknameView> {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         minimumSize: const Size.fromHeight(55),
-        backgroundColor: _isButtonEnabled ? purpleMain : purpleUnchecked,
+        backgroundColor: _isButtonEnabled ? primary800 : secondary,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
@@ -124,9 +124,9 @@ class _SignUpNicknameViewState extends State<SignUpNicknameView> {
               color: Colors.grey,
             ),
             hintText: '사용하실 닉네임을 입력해주세요',
-            hoverColor: purpleMain,
+            hoverColor: primary800,
             focusedBorder: const UnderlineInputBorder(
-              borderSide: BorderSide(color: purpleMain),
+              borderSide: BorderSide(color: primary800),
             ),
             errorStyle: const TextStyle(
               color: redError,
@@ -137,7 +137,7 @@ class _SignUpNicknameViewState extends State<SignUpNicknameView> {
             suffixIcon: _isButtonEnabled
                 ? const Icon(
                     Icons.check,
-                    color: purpleMain,
+                    color: primary800,
                   )
                 : null,
           ),

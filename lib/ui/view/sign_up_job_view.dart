@@ -75,7 +75,7 @@ class _SignUpJobViewState extends State<SignUpJobView> {
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size.fromHeight(55),
-                  backgroundColor: purpleMain,
+                  backgroundColor: primary800,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -129,13 +129,12 @@ class _SignUpJobViewState extends State<SignUpJobView> {
         child: TextFormField(
           controller: _textController,
           style: const TextStyle(
-            fontFamily: 'Pretendard',
             fontSize: 17,
             fontWeight: FontWeight.w500,
           ),
           decoration: InputDecoration(
             focusedBorder: const UnderlineInputBorder(
-              borderSide: BorderSide(color: purpleMain),
+              borderSide: BorderSide(color: primary800),
             ),
             suffix: IconButton(
               iconSize: 24,
