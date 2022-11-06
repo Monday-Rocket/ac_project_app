@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/sign_up/job_cubit.dart';
 import 'package:ac_project_app/cubits/sign_up/job_list_cubit.dart';
@@ -9,27 +11,8 @@ import 'package:ac_project_app/util/logger.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class SignUpJobView extends StatefulWidget {
+class SignUpJobView extends StatelessWidget {
   const SignUpJobView({super.key});
-
-  @override
-  State<SignUpJobView> createState() => _SignUpJobViewState();
-}
-
-class _SignUpJobViewState extends State<SignUpJobView> {
-  final textHint = '직업을 선택해주세요';
-  late TextEditingController _textController;
-  late Future<List<JobGroup>> futureJobs;
-
-  @override
-  void initState() {
-    _textController = TextEditingController(text: textHint);
-
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      futureJobs = context.read<JobListCubit>().getJobList();
-    });
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,61 +22,78 @@ class _SignUpJobViewState extends State<SignUpJobView> {
     final nickname = arg['nickname'] as String?;
     final user = arg['user'] as User?;
 
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: const Icon(Icons.arrow_back_ios_new),
-          color: Colors.black,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) => JobCubit(),
         ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
-      body: SafeArea(
-        child: Container(
-          margin: const EdgeInsets.fromLTRB(24, 16, 24, 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '$nickname님의\n직업을 선택해주세요',
-                    style: const TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
+        BlocProvider(
+          create: (_) => JobListCubit(),
+        ),
+        BlocProvider(
+          create: (_) => SignUpCubit(),
+        ),
+      ],
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: const Icon(Icons.arrow_back_ios_new),
+            color: Colors.black,
+          ),
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+        ),
+        body: SafeArea(
+          child: Container(
+            margin: const EdgeInsets.fromLTRB(24, 16, 24, 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '$nickname님의\n직업을 선택해주세요',
+                      style: const TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  buildJobInput(),
-                ],
-              ),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size.fromHeight(55),
-                  backgroundColor: primary800,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+                    buildJobInput(),
+                  ],
                 ),
-                onPressed: context.watch<JobCubit>().state != null
-                    ? () async => processSignUp(context, user, nickname)
-                    : null,
-                child: const Text(
-                  '가입완료',
-                  style: TextStyle(
-                    fontFamily: 'Pretendard',
-                    fontSize: 17,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  textWidthBasis: TextWidthBasis.parent,
+                BlocBuilder<JobCubit, JobGroup?>(
+                  builder: (context, jobGroup) {
+                    return ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size.fromHeight(55),
+                        backgroundColor: primary800,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      onPressed: jobGroup != null
+                          ? () async => processSignUp(context, user, nickname)
+                          : null,
+                      child: const Text(
+                        '가입완료',
+                        style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textWidthBasis: TextWidthBasis.parent,
+                      ),
+                    );
+                  },
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -122,48 +122,56 @@ class _SignUpJobViewState extends State<SignUpJobView> {
   }
 
   Widget buildJobInput() {
-    return Container(
-      alignment: Alignment.centerLeft,
-      margin: const EdgeInsets.only(top: 24),
-      child: GestureDetector(
-        child: TextFormField(
-          controller: _textController,
-          style: const TextStyle(
-            fontSize: 17,
-            fontWeight: FontWeight.w500,
-          ),
-          decoration: InputDecoration(
-            focusedBorder: const UnderlineInputBorder(
-              borderSide: BorderSide(color: primary800),
-            ),
-            suffix: IconButton(
-              iconSize: 24,
-              onPressed: () {
-                context.read<JobCubit>().updateJob(null);
-                changeText();
+    return BlocBuilder<JobListCubit, List<JobGroup>>(
+      builder: (context, jobs) {
+        if (jobs.isEmpty) {
+          return const SizedBox.shrink();
+        }
+        final textController = context.read<JobListCubit>().getTextController();
+        return Container(
+          alignment: Alignment.centerLeft,
+          margin: const EdgeInsets.only(top: 24),
+          child: GestureDetector(
+            child: TextFormField(
+              controller: textController,
+              style: const TextStyle(
+                fontSize: 17,
+                fontWeight: FontWeight.w500,
+              ),
+              decoration: InputDecoration(
+                focusedBorder: const UnderlineInputBorder(
+                  borderSide: BorderSide(color: primary800),
+                ),
+                suffix: IconButton(
+                  iconSize: 24,
+                  onPressed: () {
+                    context.read<JobCubit>().updateJob(null);
+                    changeText(context, textController);
+                  },
+                  icon: const Icon(Icons.close_rounded),
+                ),
+              ),
+              readOnly: true,
+              onTap: () async {
+                unawaited(
+                  getJobResult(context, jobs).then((result) {
+                    context.read<JobCubit>().updateJob(result);
+                    changeText(context, textController);
+                  }),
+                );
               },
-              icon: const Icon(Icons.close_rounded),
             ),
           ),
-          readOnly: true,
-          onTap: () async {
-            final result = await getJobResult();
-
-            if (!mounted) return;
-            context.read<JobCubit>().updateJob(result);
-            changeText();
-          },
-        ),
-      ),
+        );
+      },
     );
   }
 
-  Future<JobGroup?> getJobResult() async {
-    final jobs = await futureJobs;
+  Future<JobGroup?> getJobResult(
+      BuildContext context, List<JobGroup> jobs) async {
     return showModalBottomSheet<JobGroup?>(
       backgroundColor: Colors.transparent,
       context: context,
-      isDismissible: false,
       builder: (BuildContext context) {
         return Wrap(
           children: [
@@ -182,9 +190,9 @@ class _SignUpJobViewState extends State<SignUpJobView> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          textHint,
-                          style: const TextStyle(
+                        const Text(
+                          '직업을 선택해주세요',
+                          style: TextStyle(
                             fontFamily: 'Pretendard',
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -196,7 +204,7 @@ class _SignUpJobViewState extends State<SignUpJobView> {
                   ),
                 );
               },
-            ),
+            )
           ],
         );
       },
@@ -249,8 +257,8 @@ class _SignUpJobViewState extends State<SignUpJobView> {
     );
   }
 
-  void changeText() {
-    _textController.text =
+  void changeText(BuildContext context, TextEditingController textController) {
+    textController.text =
         context.read<JobCubit>().getJob()?.name ?? '직업을 선택해주세요';
   }
 }

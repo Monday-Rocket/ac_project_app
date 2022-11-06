@@ -12,7 +12,7 @@ import 'package:http/http.dart' as http;
 
 class CustomClient extends http.BaseClient {
   static const baseUrl =
-      'http://ac-project-api.ap-northeast-2.elasticbeanstalk.com/';
+      'https://fe9665db-ca48-4591-8a53-683a48b40f40.mock.pstmn.io';
   final http.Client _inner = http.Client();
 
   @override
