@@ -1,41 +1,15 @@
 import 'package:ac_project_app/const/colors.dart';
+import 'package:ac_project_app/cubits/home_view_cubit.dart';
 import 'package:ac_project_app/ui/page/my_folder/my_folder_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class HomeView extends StatefulWidget {
+class HomeView extends StatelessWidget {
   const HomeView({super.key});
 
   @override
-  State<HomeView> createState() => _HomeViewState();
-}
-
-class _HomeViewState extends State<HomeView> {
-
-  int index = 0;
-
-  @override
   Widget build(BuildContext context) {
-    final icons = getBottomIcons();
-
-    final bottomItems = [
-      BottomNavigationBarItem(
-        icon: icons[0],
-        label: '홈',
-      ),
-      BottomNavigationBarItem(
-        icon: icons[1],
-        label: '업로드',
-      ),
-      BottomNavigationBarItem(
-        icon: icons[2],
-        label: '마이폴더',
-      ),
-      BottomNavigationBarItem(
-        icon: icons[3],
-        label: '마이페이지',
-      ),
-    ];
 
     final widgetOptions = <Widget>[
       const HomePage(),
@@ -44,31 +18,59 @@ class _HomeViewState extends State<HomeView> {
       const MyPage(),
     ];
 
-    return Scaffold(
-      body: SafeArea(
-        child: widgetOptions[index],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: primary600,
-        selectedFontSize: 9,
-        selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500),
-        unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w400),
-        unselectedItemColor: grey200,
-        unselectedFontSize: 9,
-        showUnselectedLabels: true,
-        items: bottomItems,
-        currentIndex: index,
-        onTap: (i) {
-          setState(() {
-            index = i;
-          });
+    return BlocProvider(
+      create: (_) => HomeViewCubit(),
+      child: BlocBuilder<HomeViewCubit, int>(
+        builder: (context, index) {
+
+          final icons = getBottomIcons(index);
+
+          final bottomItems = [
+            BottomNavigationBarItem(
+              icon: icons[0],
+              label: '홈',
+            ),
+            BottomNavigationBarItem(
+              icon: icons[1],
+              label: '업로드',
+            ),
+            BottomNavigationBarItem(
+              icon: icons[2],
+              label: '마이폴더',
+            ),
+            BottomNavigationBarItem(
+              icon: icons[3],
+              label: '마이페이지',
+            ),
+          ];
+
+
+          return Scaffold(
+            body: SafeArea(
+              child: widgetOptions[index],
+            ),
+            bottomNavigationBar: BottomNavigationBar(
+              type: BottomNavigationBarType.fixed,
+              selectedItemColor: primary600,
+              selectedFontSize: 9,
+              selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500),
+              unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w400),
+              unselectedItemColor: grey200,
+              unselectedFontSize: 9,
+              showUnselectedLabels: true,
+              items: bottomItems,
+              currentIndex: index,
+              onTap: (i) {
+                context.read<HomeViewCubit>().moveTo(i);
+              },
+            ),
+          );
         },
       ),
     );
   }
 
-  List<SvgPicture> getBottomIcons() {
+  List<SvgPicture> getBottomIcons(int index) {
     final enabledIcons = [
       SvgPicture.asset('assets/images/ic_home.svg'),
       SvgPicture.asset('assets/images/ic_upload.svg'),

@@ -7,7 +7,7 @@ import 'package:ac_project_app/util/logger.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SignUpCubit extends Cubit<String?> {
-  SignUpCubit(super.initialState);
+  SignUpCubit(): super(null);
 
   final UserApi _userApi = UserApi();
 

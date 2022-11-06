@@ -17,7 +17,7 @@ class LoadedState extends FoldersState {
   final List<Folder> folders;
 
   @override
-  List<Object> get props => [folders];
+  List<Object> get props => folders;
 }
 class ErrorState extends FoldersState {
   @override

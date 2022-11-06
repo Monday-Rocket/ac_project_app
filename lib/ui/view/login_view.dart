@@ -6,114 +6,125 @@ import 'package:ac_project_app/const/resource.dart';
 import 'package:ac_project_app/const/strings.dart';
 import 'package:ac_project_app/cubits/login/login_cubit.dart';
 import 'package:ac_project_app/cubits/login/login_type.dart';
-import 'package:ac_project_app/models/result.dart';
+import 'package:ac_project_app/cubits/login/user_state.dart';
 import 'package:ac_project_app/models/user/user.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/text/custom_font.dart';
-import 'package:ac_project_app/util/logger.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class LoginView extends StatefulWidget {
+class LoginView extends StatelessWidget {
   const LoginView({super.key});
 
   @override
-  State<LoginView> createState() => _LoginViewState();
-}
-
-class _LoginViewState extends State<LoginView> {
-  static const google = 'Google';
-  static const apple = 'Apple';
-  static const loginText = '로 로그인';
-
-  bool firstCheck = false;
-  bool secondCheck = false;
-  bool thirdCheck = false;
-
-  bool secondOpened = false;
-  bool thirdOpened = false;
-
-  ScrollController secondController = ScrollController();
-  ScrollController thirdController = ScrollController();
-
-  @override
-  void initState() {
-    BlocProvider.of<LoginCubit>(context).stream.listen(_moveToSignUpPage);
-    // 바로 사용 동의 화면 볼 때 사용
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   _moveToSignUpPage(SignUpType.newUser);
-    // });
-
-    super.initState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => LoginCubit(),
+      child: Scaffold(
+        body: SafeArea(
+          child: Center(
+            child: BlocBuilder<LoginCubit, UserState>(
+              builder: (context, state) {
+                if (state is LoadingState) {
+                  return const CircularProgressIndicator();
+                } else if (state is ErrorState) {
+                  showErrorBanner(context);
+                  return const Icon(
+                    Icons.close,
+                    color: Colors.red,
+                  );
+                } else if (state is LoadedState) {
+                  _moveToSignUpPage(context, state.user);
+                }
+                return Column(
+                  children: [
+                    buildAppImage(),
+                    buildLoginButtons(context),
+                  ],
+                );
+              },
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
-  Future<void> _moveToSignUpPage(Result<User>? result) async {
-    if (result == null) {
-      Log.d('initialized login view');
-    } else {
-      await result.when(
-        success: (user) async {
-          if (user.isNew ?? false) {
-            // 1. 서비스 이용 동의
-            // 2. 가입 화면으로 이동
-            final result = await getServiceApproval(user);
+  void showErrorBanner(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      ScaffoldMessenger.of(context).showMaterialBanner(
+        MaterialBanner(
+          backgroundColor: Colors.black,
+          content: const Text(
+            '로그인 실패',
+            style: TextStyle(
+              color: Colors.white,
+            ),
+          ),
+          actions: [
+            InkWell(
+              onTap: () {
+                ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
+                context.read<LoginCubit>().initialize();
+              },
+              child: const Padding(
+                padding: EdgeInsets.all(16),
+                child: Text(
+                  '확인',
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    });
+  }
+
+  Future<void> _moveToSignUpPage(BuildContext context, User user) async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (user.isNew ?? false) {
+        // 1. 서비스 이용 동의
+        // 2. 가입 화면으로 이동
+        unawaited(
+          getServiceApproval(context, user).then((result) {
             if (result != true) {
               // 초기화
-              if (!mounted) return;
+
               context.read<LoginCubit>().initialize();
             } else {
               // 회원가입 이동
-              if (!mounted) return;
+
               unawaited(Navigator.pushNamed(context, Routes.signUpNickname));
             }
-          } else {
-            unawaited(goHomeScreen(context));
-          }
-        },
-        error: (msg) {
-          ScaffoldMessenger.of(context).showMaterialBanner(
-            MaterialBanner(
-              backgroundColor: Colors.black,
-              content: Text(
-                msg,
-                style: const TextStyle(
-                  color: Colors.white,
-                ),
-              ),
-              actions: [
-                InkWell(
-                  onTap: () {
-                    ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
-                    context.read<LoginCubit>().initialize();
-                  },
-                  child: const Padding(
-                    padding: EdgeInsets.all(16),
-                    child: Text(
-                      '확인',
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
-      );
-    }
+          }),
+        );
+      } else {
+        unawaited(goHomeScreen(context));
+      }
+    });
   }
 
-  Future<bool?> getServiceApproval(User user) async {
+  Future<bool?> getServiceApproval(BuildContext context, User user) async {
     return showModalBottomSheet<bool?>(
       backgroundColor: Colors.transparent,
       context: context,
       isScrollControlled: true,
       builder: (BuildContext context) {
+        var firstCheck = false;
+        var secondCheck = false;
+        var thirdCheck = false;
+
+        var secondOpened = false;
+        var thirdOpened = false;
         return Wrap(
           children: [
             StatefulBuilder(
               builder: (context, setState) {
+                final secondController = ScrollController();
+                final thirdController = ScrollController();
                 return DecoratedBox(
                   decoration: const BoxDecoration(
                     color: Colors.white,
@@ -152,12 +163,288 @@ class _LoginViewState extends State<LoginView> {
                             ],
                           ),
                         ),
-                        buildFirstCheckBox(setState),
+                        Row(
+                          children: [
+                            Center(
+                              child: InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    firstCheck = !firstCheck;
+                                  });
+                                },
+                                child: AnimatedContainer(
+                                  duration: const Duration(milliseconds: 200),
+                                  decoration: BoxDecoration(
+                                    color: firstCheck ? primary800 : grey100,
+                                    borderRadius: const BorderRadius.all(
+                                      Radius.circular(8),
+                                    ),
+                                    border: Border.all(
+                                      width: 0,
+                                      color: Colors.transparent,
+                                    ),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(2),
+                                    child: firstCheck
+                                        ? const Icon(
+                                            Icons.check,
+                                            size: 18,
+                                            color: Colors.white,
+                                          )
+                                        : const Icon(
+                                            Icons.check,
+                                            size: 18,
+                                            color: grey300,
+                                          ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 11),
+                              child: const Text('전체 동의').bold().fontSize(17),
+                            ),
+                          ],
+                        ),
                         const SizedBox(
                           height: 28,
                         ),
-                        buildSecondCheckBox(setState),
-                        buildThirdCheckBox(setState),
+                        Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          secondCheck = !secondCheck;
+                                        });
+                                      },
+                                      child: AnimatedContainer(
+                                        duration:
+                                            const Duration(milliseconds: 200),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(2),
+                                          child: secondCheck
+                                              ? const Icon(
+                                                  Icons.check,
+                                                  size: 18,
+                                                  color: primary800,
+                                                )
+                                              : const Icon(
+                                                  Icons.check,
+                                                  size: 18,
+                                                  color: grey300,
+                                                ),
+                                        ),
+                                      ),
+                                    ),
+                                    InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          secondOpened = !secondOpened;
+                                        });
+                                      },
+                                      child: Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 11),
+                                        child: const Text('개인정보 처리방침 (필수)')
+                                            .weight(FontWeight.w500)
+                                            .fontSize(15),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Center(
+                                  child: InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        secondOpened = !secondOpened;
+                                      });
+                                    },
+                                    child: AnimatedContainer(
+                                      duration:
+                                          const Duration(milliseconds: 200),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(2),
+                                        child: secondOpened
+                                            ? const Icon(
+                                                Icons.keyboard_arrow_down_sharp,
+                                                size: 20,
+                                                color: grey500,
+                                              )
+                                            : const Icon(
+                                                Icons
+                                                    .keyboard_arrow_right_sharp,
+                                                size: 20,
+                                                color: grey500,
+                                              ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 15,
+                            ),
+                            AnimatedContainer(
+                              height: secondOpened ? 140 : 0,
+                              duration: const Duration(milliseconds: 150),
+                              decoration: const BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(5)),
+                                color: grey100,
+                              ),
+                              child: secondOpened
+                                  ? Scrollbar(
+                                      controller: secondController,
+                                      child: SingleChildScrollView(
+                                        controller: secondController,
+                                        padding: EdgeInsets.zero,
+                                        child: const Padding(
+                                          padding: EdgeInsets.only(
+                                            left: 24,
+                                            top: 14,
+                                            right: 24,
+                                          ),
+                                          child: Text(
+                                            firstCheckText,
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w400,
+                                              color: grey600,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  : const SizedBox.shrink(),
+                            ),
+                            AnimatedContainer(
+                              height: secondOpened ? 15 : 0,
+                              duration: const Duration(milliseconds: 150),
+                            ),
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          thirdCheck = !thirdCheck;
+                                        });
+                                      },
+                                      child: AnimatedContainer(
+                                        duration:
+                                            const Duration(milliseconds: 200),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(2),
+                                          child: thirdCheck
+                                              ? const Icon(
+                                                  Icons.check,
+                                                  size: 18,
+                                                  color: primary800,
+                                                )
+                                              : const Icon(
+                                                  Icons.check,
+                                                  size: 18,
+                                                  color: grey300,
+                                                ),
+                                        ),
+                                      ),
+                                    ),
+                                    InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          thirdOpened = !thirdOpened;
+                                        });
+                                      },
+                                      child: Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 11),
+                                        child: const Text('서비스 이용방침 (필수)')
+                                            .weight(FontWeight.w500)
+                                            .fontSize(15),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      thirdOpened = !thirdOpened;
+                                    });
+                                  },
+                                  child: AnimatedContainer(
+                                    duration: const Duration(milliseconds: 200),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(2),
+                                      child: thirdOpened
+                                          ? const Icon(
+                                              Icons.keyboard_arrow_down_sharp,
+                                              size: 20,
+                                              color: grey500,
+                                            )
+                                          : const Icon(
+                                              Icons.keyboard_arrow_right_sharp,
+                                              size: 20,
+                                              color: grey500,
+                                            ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            AnimatedContainer(
+                              height: thirdOpened ? 15 : 0,
+                              duration: const Duration(milliseconds: 150),
+                            ),
+                            AnimatedContainer(
+                              height: thirdOpened ? 140 : 0,
+                              duration: const Duration(milliseconds: 150),
+                              decoration: const BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(5)),
+                                color: grey100,
+                              ),
+                              child: thirdOpened
+                                  ? Scrollbar(
+                                      controller: thirdController,
+                                      child: SingleChildScrollView(
+                                        controller: thirdController,
+                                        padding: EdgeInsets.zero,
+                                        child: const Padding(
+                                          padding: EdgeInsets.only(
+                                            left: 24,
+                                            top: 14,
+                                            right: 24,
+                                          ),
+                                          child: Text(
+                                            secondCheckText,
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w400,
+                                              color: grey600,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  : const SizedBox.shrink(),
+                            ),
+                          ],
+                        ),
                         const SizedBox(
                           height: 28,
                         ),
@@ -214,294 +501,6 @@ class _LoginViewState extends State<LoginView> {
     );
   }
 
-  Widget buildThirdCheckBox(StateSetter setState) {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                InkWell(
-                  onTap: () {
-                    setState(() {
-                      thirdCheck = !thirdCheck;
-                    });
-                  },
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    child: Padding(
-                      padding: const EdgeInsets.all(2),
-                      child: thirdCheck
-                          ? const Icon(
-                              Icons.check,
-                              size: 18,
-                              color: primary800,
-                            )
-                          : const Icon(
-                              Icons.check,
-                              size: 18,
-                              color: grey300,
-                            ),
-                    ),
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    setState(() {
-                      thirdOpened = !thirdOpened;
-                    });
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 11),
-                    child: const Text('서비스 이용방침 (필수)')
-                        .weight(FontWeight.w500)
-                        .fontSize(15),
-                  ),
-                ),
-              ],
-            ),
-            InkWell(
-              onTap: () {
-                setState(() {
-                  thirdOpened = !thirdOpened;
-                });
-              },
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                child: Padding(
-                  padding: const EdgeInsets.all(2),
-                  child: thirdOpened
-                      ? const Icon(
-                          Icons.keyboard_arrow_down_sharp,
-                          size: 20,
-                          color: grey500,
-                        )
-                      : const Icon(
-                          Icons.keyboard_arrow_right_sharp,
-                          size: 20,
-                          color: grey500,
-                        ),
-                ),
-              ),
-            ),
-          ],
-        ),
-        AnimatedContainer(
-          height: thirdOpened ? 15 : 0,
-          duration: const Duration(milliseconds: 150),
-        ),
-        AnimatedContainer(
-          height: thirdOpened ? 140 : 0,
-          duration: const Duration(milliseconds: 150),
-          decoration: const BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(5)),
-            color: grey100,
-          ),
-          child: thirdOpened
-              ? Scrollbar(
-                  controller: thirdController,
-                  child: SingleChildScrollView(
-                    controller: thirdController,
-                    padding: EdgeInsets.zero,
-                    child: const Padding(
-                      padding: EdgeInsets.only(left: 24, top: 14, right: 24),
-                      child: Text(
-                        secondCheckText,
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w400,
-                          color: grey600,
-                        ),
-                      ),
-                    ),
-                  ),
-                )
-              : const SizedBox.shrink(),
-        ),
-      ],
-    );
-  }
-
-  Widget buildSecondCheckBox(StateSetter setState) {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                InkWell(
-                  onTap: () {
-                    setState(() {
-                      secondCheck = !secondCheck;
-                    });
-                  },
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    child: Padding(
-                      padding: const EdgeInsets.all(2),
-                      child: secondCheck
-                          ? const Icon(
-                              Icons.check,
-                              size: 18,
-                              color: primary800,
-                            )
-                          : const Icon(
-                              Icons.check,
-                              size: 18,
-                              color: grey300,
-                            ),
-                    ),
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    setState(() {
-                      secondOpened = !secondOpened;
-                    });
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 11),
-                    child: const Text('개인정보 처리방침 (필수)')
-                        .weight(FontWeight.w500)
-                        .fontSize(15),
-                  ),
-                ),
-              ],
-            ),
-            Center(
-              child: InkWell(
-                onTap: () {
-                  setState(() {
-                    secondOpened = !secondOpened;
-                  });
-                },
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  child: Padding(
-                    padding: const EdgeInsets.all(2),
-                    child: secondOpened
-                        ? const Icon(
-                            Icons.keyboard_arrow_down_sharp,
-                            size: 20,
-                            color: grey500,
-                          )
-                        : const Icon(
-                            Icons.keyboard_arrow_right_sharp,
-                            size: 20,
-                            color: grey500,
-                          ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(
-          height: 15,
-        ),
-        AnimatedContainer(
-          height: secondOpened ? 140 : 0,
-          duration: const Duration(milliseconds: 150),
-          decoration: const BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(5)),
-            color: grey100,
-          ),
-          child: secondOpened
-              ? Scrollbar(
-                  controller: secondController,
-                  child: SingleChildScrollView(
-                    controller: secondController,
-                    padding: EdgeInsets.zero,
-                    child: const Padding(
-                      padding: EdgeInsets.only(left: 24, top: 14, right: 24),
-                      child: Text(
-                        firstCheckText,
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w400,
-                          color: grey600,
-                        ),
-                      ),
-                    ),
-                  ),
-                )
-              : const SizedBox.shrink(),
-        ),
-        AnimatedContainer(
-          height: secondOpened ? 15 : 0,
-          duration: const Duration(milliseconds: 150),
-        ),
-      ],
-    );
-  }
-
-  Row buildFirstCheckBox(StateSetter setState) {
-    return Row(
-      children: [
-        Center(
-          child: InkWell(
-            onTap: () {
-              setState(() {
-                firstCheck = !firstCheck;
-              });
-            },
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              decoration: BoxDecoration(
-                color: firstCheck ? primary800 : grey100,
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(8),
-                ),
-                border: Border.all(
-                  width: 0,
-                  color: Colors.transparent,
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(2),
-                child: firstCheck
-                    ? const Icon(
-                        Icons.check,
-                        size: 18,
-                        color: Colors.white,
-                      )
-                    : const Icon(
-                        Icons.check,
-                        size: 18,
-                        color: grey300,
-                      ),
-              ),
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(left: 11),
-          child: const Text('전체 동의').bold().fontSize(17),
-        ),
-      ],
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: Column(
-            children: [
-              buildAppImage(),
-              buildLoginButtons(context),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   Align buildLoginButtons(BuildContext context) {
     return Align(
       alignment: Alignment.bottomCenter,
@@ -551,7 +550,7 @@ class _LoginViewState extends State<LoginView> {
                   Padding(
                     padding: const EdgeInsets.only(left: 8),
                     child: const Text(
-                      google,
+                      'Google',
                       style: TextStyle(
                         fontSize: 20,
                         color: greyLoginText,
@@ -559,7 +558,7 @@ class _LoginViewState extends State<LoginView> {
                     ).bold().roboto(),
                   ),
                   const Text(
-                    loginText,
+                    '로 로그인',
                     style: TextStyle(
                       fontSize: 20,
                       color: greyLoginText,
@@ -598,7 +597,7 @@ class _LoginViewState extends State<LoginView> {
                   Padding(
                     padding: const EdgeInsets.only(left: 8),
                     child: const Text(
-                      apple,
+                      'Apple',
                       style: TextStyle(
                         fontSize: 20,
                         color: Colors.white,
@@ -606,7 +605,7 @@ class _LoginViewState extends State<LoginView> {
                     ).bold().roboto(),
                   ),
                   const Text(
-                    loginText,
+                    '로 로그인',
                     style: TextStyle(
                       fontSize: 20,
                       color: Colors.white,

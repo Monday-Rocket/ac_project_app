@@ -5,18 +5,18 @@ import 'dart:convert';
 import 'package:ac_project_app/models/net/api_result.dart';
 import 'package:ac_project_app/models/result.dart';
 import 'package:ac_project_app/util/logger.dart';
+import 'package:ac_project_app/util/stringfy.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 
 class CustomClient extends http.BaseClient {
   static const baseUrl =
-      'http://ac-project-api.ap-northeast-2.elasticbeanstalk.com/';
+      'https://fe9665db-ca48-4591-8a53-683a48b40f40.mock.pstmn.io';
   final http.Client _inner = http.Client();
 
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
-
     final idToken = await FirebaseAuth.instance.currentUser?.getIdToken();
 
     await Clipboard.setData(ClipboardData(text: idToken));
@@ -41,7 +41,7 @@ class CustomClient extends http.BaseClient {
   Future<Result<dynamic>> postUri(
     String uri, {
     Map<String, String>? headers,
-    Map<String, dynamic>? body,
+    dynamic body,
     Encoding? encoding,
   }) async {
     return _makeResult(
@@ -57,7 +57,7 @@ class CustomClient extends http.BaseClient {
   Future<Result<dynamic>> putUri(
     String uri, {
     Map<String, String>? headers,
-    Map<String, dynamic>? body,
+    dynamic body,
     Encoding? encoding,
   }) async {
     return _makeResult(
@@ -73,7 +73,7 @@ class CustomClient extends http.BaseClient {
   Future<Result<dynamic>> patchUri(
     String uri, {
     Map<String, String>? headers,
-    Map<String, dynamic>? body,
+    dynamic body,
     Encoding? encoding,
   }) async {
     return _makeResult(
@@ -103,10 +103,13 @@ class CustomClient extends http.BaseClient {
     return Result.error(errorMessage);
   }
 
-  String? makeBody(Map<String, dynamic>? body) {
-    if (body != null) {
+  String? makeBody(dynamic body) {
+    if (body != null && body is Map<String, dynamic>) {
       return jsonEncode(body);
+    } else if (body != null && body is List) {
+      return stringifyMessage(body);
+    } else {
+      return null;
     }
-    return null;
   }
 }
