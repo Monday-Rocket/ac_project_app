@@ -3,7 +3,7 @@ description: 비사이드 12기 먼데이 로켓팀 프로젝트
 
 publish_to: 'none'
 
-version: 1.0.5+1
+version: 1.0.6+6
 
 environment:
   sdk: ">=2.17.6 <3.0.0"
@@ -37,6 +37,7 @@ dependencies:
   logger: ^1.1.0
   path_provider: ^2.0.11
   intl: ^0.17.0
+  path:
 
   ## SVG
   flutter_svg: ^1.1.6

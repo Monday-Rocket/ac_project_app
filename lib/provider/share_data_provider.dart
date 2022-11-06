@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:ac_project_app/util/logger.dart';
 import 'package:flutter/services.dart';
+import 'package:path/path.dart' as path;
 import 'package:sqflite/sqflite.dart';
 
 class ShareDataProvider {
@@ -30,7 +31,7 @@ class ShareDataProvider {
       if (Platform.isAndroid) {
         return '${await getDatabasesPath()}/share.db';
       } else {
-        return await _platform.invokeMethod('getShareDBUrl') as String;
+        return path.join(await _platform.invokeMethod('getShareDBUrl') as String, 'share.db');
       }
     } on PlatformException catch (e) {
       Log.e(e.message);
@@ -38,3 +39,4 @@ class ShareDataProvider {
     }
   }
 }
+
