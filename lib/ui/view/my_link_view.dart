@@ -19,7 +19,8 @@ class MyLinkView extends StatelessWidget {
                     children: [
                       const Text(
                         '디자인',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 30),
                       ),
                       Container(
                         margin: const EdgeInsets.only(left: 8),
