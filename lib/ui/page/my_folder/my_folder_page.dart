@@ -5,6 +5,7 @@ import 'package:ac_project_app/cubits/my_folder/folder_view_type_cubit.dart';
 import 'package:ac_project_app/cubits/my_folder/folders_state.dart';
 import 'package:ac_project_app/cubits/my_folder/get_folders_cubit.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
+import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/page/my_folder/folder_visible_state.dart';
 import 'package:ac_project_app/ui/widget/custom_reorderable_list_view.dart';
 import 'package:ac_project_app/ui/widget/text/custom_font.dart';
@@ -74,7 +75,7 @@ class MyFolderPage extends StatelessWidget {
                             focusedBorder: InputBorder.none,
                             isDense: true,
                             contentPadding:
-                            const EdgeInsets.symmetric(horizontal: 10),
+                                const EdgeInsets.symmetric(horizontal: 10),
                             suffixIcon: Image.asset(
                               'assets/images/folder_search_icon.png',
                             ),
@@ -89,7 +90,7 @@ class MyFolderPage extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.all(6),
                         child: context.watch<FolderViewTypeCubit>().state ==
-                            FolderViewType.list
+                                FolderViewType.list
                             ? SvgPicture.asset('assets/images/list_icon.svg')
                             : SvgPicture.asset('assets/images/grid_icon.svg'),
                       ),
@@ -150,106 +151,117 @@ class MyFolderPage extends StatelessWidget {
             final lockPrivate = folders[index].private ?? true;
             final isNullImage = folders[index].imageUrl == null ||
                 (folders[index].imageUrl?.isEmpty ?? true);
-            return GridTile(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  AspectRatio(
-                    aspectRatio: 1,
-                    child: Stack(
-                      children: [
-                        ClipRRect(
-                          borderRadius: const BorderRadius.all(
-                            Radius.circular(7),
-                          ),
-                          child: Image.network(
-                            folders[index].imageUrl ?? '',
-                            fit: BoxFit.fitHeight,
-                            errorBuilder: (ctx, _, __) {
-                              return ColoredBox(
-                                color: grey100,
-                                child: Center(
-                                  child: SvgPicture.asset(
-                                    width: 46,
-                                    height: 46,
-                                    'assets/images/folder_big.svg',
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                        if (lockPrivate)
-                          Align(
-                            alignment: Alignment.topRight,
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                top: 10,
-                                right: 10,
-                              ),
-                              child: SvgPicture.asset(
-                                'assets/images/ic_lock.svg',
-                              ),
-                            ),
-                          )
-                        else
-                          const SizedBox.shrink(),
-                      ],
-                    ),
-                  ),
-                  Stack(
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+            return InkWell(
+              onTap: () {
+                Navigator.pushNamed(
+                  context,
+                  Routes.myLinks,
+                  arguments: {
+                    'folder': folders[index],
+                  },
+                );
+              },
+              child: GridTile(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AspectRatio(
+                      aspectRatio: 1,
+                      child: Stack(
                         children: [
-                          const SizedBox(
-                            height: 18,
-                          ),
-                          Text(
-                            folders[index].name ?? '',
-                            style: const TextStyle(
-                              color: Color(0xFF13181E),
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15,
+                          ClipRRect(
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(7),
+                            ),
+                            child: Image.network(
+                              folders[index].imageUrl ?? '',
+                              fit: BoxFit.fitHeight,
+                              errorBuilder: (ctx, _, __) {
+                                return ColoredBox(
+                                  color: grey100,
+                                  child: Center(
+                                    child: SvgPicture.asset(
+                                      width: 46,
+                                      height: 46,
+                                      'assets/images/folder_big.svg',
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
                           ),
-                          const SizedBox(
-                            height: 6,
-                          ),
-                          Text(
-                            '링크 ${addCommasFrom(folders[index].linkCount)}개',
-                            style: const TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w500,
-                              color: Color(0xFF62666C),
-                            ),
-                          ),
+                          if (lockPrivate)
+                            Align(
+                              alignment: Alignment.topRight,
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                  top: 10,
+                                  right: 10,
+                                ),
+                                child: SvgPicture.asset(
+                                  'assets/images/ic_lock.svg',
+                                ),
+                              ),
+                            )
+                          else
+                            const SizedBox.shrink(),
                         ],
                       ),
-                      Align(
-                        alignment: Alignment.topRight,
-                        child: isNullImage
-                            ? const SizedBox.shrink()
-                            : Container(
-                                margin: const EdgeInsets.only(top: 8),
-                                child: InkWell(
-                                  onTap: () => showFolderOptionsDialog(
-                                    folders[index],
-                                    context,
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8),
-                                    child: SvgPicture.asset(
-                                      'assets/images/more.svg',
+                    ),
+                    Stack(
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(
+                              height: 18,
+                            ),
+                            Text(
+                              folders[index].name ?? '',
+                              style: const TextStyle(
+                                color: Color(0xFF13181E),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 6,
+                            ),
+                            Text(
+                              '링크 ${addCommasFrom(folders[index].linkCount)}개',
+                              style: const TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w500,
+                                color: Color(0xFF62666C),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Align(
+                          alignment: Alignment.topRight,
+                          child: isNullImage
+                              ? const SizedBox.shrink()
+                              : Container(
+                                  margin: const EdgeInsets.only(top: 8),
+                                  child: InkWell(
+                                    onTap: () => showFolderOptionsDialog(
+                                      folders[index],
+                                      context,
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8),
+                                      child: SvgPicture.asset(
+                                        'assets/images/more.svg',
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                      ),
-                    ],
-                  ),
-                ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             );
           }),
@@ -274,98 +286,110 @@ class MyFolderPage extends StatelessWidget {
             return ListTile(
               contentPadding: EdgeInsets.zero,
               key: Key('$index'),
-              title: Container(
-                margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 4),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          width: 63 + 6,
-                          height: 63,
-                          margin: const EdgeInsets.only(right: 30),
-                          child: Stack(
-                            children: [
-                              ClipRRect(
-                                borderRadius: const BorderRadius.all(
-                                  Radius.circular(20),
-                                ),
-                                child: Image.network(
-                                  folders[index].imageUrl ?? '',
-                                  width: 63,
-                                  height: 63,
-                                  fit: BoxFit.contain,
-                                  errorBuilder: (context, _, __) {
-                                    return Container(
-                                      width: 63,
-                                      height: 63,
-                                      color: grey100,
-                                      child: Center(
-                                        child: SvgPicture.asset(
-                                          'assets/images/folder.svg',
-                                          width: 24,
-                                          height: 24,
+              title: InkWell(
+                onTap: () {
+                  Navigator.pushNamed(
+                    context,
+                    Routes.myLinks,
+                    arguments: {
+                      'folder': folders[index],
+                    },
+                  );
+                },
+                child: Container(
+                  margin:
+                      const EdgeInsets.symmetric(vertical: 20, horizontal: 4),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            width: 63 + 6,
+                            height: 63,
+                            margin: const EdgeInsets.only(right: 30),
+                            child: Stack(
+                              children: [
+                                ClipRRect(
+                                  borderRadius: const BorderRadius.all(
+                                    Radius.circular(20),
+                                  ),
+                                  child: Image.network(
+                                    folders[index].imageUrl ?? '',
+                                    width: 63,
+                                    height: 63,
+                                    fit: BoxFit.contain,
+                                    errorBuilder: (context, _, __) {
+                                      return Container(
+                                        width: 63,
+                                        height: 63,
+                                        color: grey100,
+                                        child: Center(
+                                          child: SvgPicture.asset(
+                                            'assets/images/folder.svg',
+                                            width: 24,
+                                            height: 24,
+                                          ),
                                         ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                                if (lockPrivate)
+                                  Align(
+                                    alignment: Alignment.bottomRight,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(bottom: 3),
+                                      child: SvgPicture.asset(
+                                        'assets/images/ic_lock.svg',
                                       ),
-                                    );
-                                  },
+                                    ),
+                                  )
+                                else
+                                  const SizedBox.shrink(),
+                              ],
+                            ),
+                          ),
+                          Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                folders[index].name!,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  color: Color(0xFF13181E),
                                 ),
                               ),
-                              if (lockPrivate)
-                                Align(
-                                  alignment: Alignment.bottomRight,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(bottom: 3),
-                                    child: SvgPicture.asset(
-                                      'assets/images/ic_lock.svg',
-                                    ),
-                                  ),
-                                )
-                              else
-                                const SizedBox.shrink(),
+                              const SizedBox(
+                                height: 6,
+                              ),
+                              Text(
+                                '링크 ${addCommasFrom(folders[index].linkCount)}개',
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                  color: Color(0xFF62666C),
+                                ),
+                              )
                             ],
+                          )
+                        ],
+                      ),
+                      if (isNullImage)
+                        const SizedBox.shrink()
+                      else
+                        InkWell(
+                          onTap: () =>
+                              showFolderOptionsDialog(folders[index], context),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: SvgPicture.asset('assets/images/more.svg'),
                           ),
                         ),
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              folders[index].name!,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                                color: Color(0xFF13181E),
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 6,
-                            ),
-                            Text(
-                              '링크 ${addCommasFrom(folders[index].linkCount)}개',
-                              style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                                color: Color(0xFF62666C),
-                              ),
-                            )
-                          ],
-                        )
-                      ],
-                    ),
-                    if (isNullImage)
-                      const SizedBox.shrink()
-                    else
-                      InkWell(
-                        onTap: () =>
-                            showFolderOptionsDialog(folders[index], context),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8),
-                          child: SvgPicture.asset('assets/images/more.svg'),
-                        ),
-                      ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             );
