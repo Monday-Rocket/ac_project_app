@@ -8,6 +8,7 @@ import androidx.lifecycle.AndroidViewModel
 import com.mr.ac_project_app.R
 import com.mr.ac_project_app.data.ShareContract
 import com.mr.ac_project_app.data.ShareDbHelper
+import com.mr.ac_project_app.data.SharedPrefHelper
 import com.mr.ac_project_app.utils.convert
 import org.json.JSONObject
 
@@ -21,7 +22,7 @@ class NewFolderViewModel(application: Application): AndroidViewModel(application
 
     fun saveNewFolder(name: String, link: String, visible: Boolean, imageLink: String) {
 
-        val newFolders = getNewFolders()
+        val newFolders = SharedPrefHelper.getNewFolders(getApplication<Application>().applicationContext)
         with(newFolders.edit()) {
             val json = JSONObject()
             json.put("name", name)
@@ -58,14 +59,6 @@ class NewFolderViewModel(application: Application): AndroidViewModel(application
         val context = getApplication<Application>().applicationContext
         return context.getSharedPreferences(
             context.getString(R.string.preference_new_links),
-            Context.MODE_PRIVATE
-        )
-    }
-
-    private fun getNewFolders(): SharedPreferences {
-        val context = getApplication<Application>().applicationContext
-        return context.getSharedPreferences(
-            context.getString(R.string.preference_new_folders),
             Context.MODE_PRIVATE
         )
     }

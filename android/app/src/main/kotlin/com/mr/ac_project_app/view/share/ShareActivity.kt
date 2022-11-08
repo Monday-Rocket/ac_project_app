@@ -27,7 +27,6 @@ class ShareActivity : ComponentActivity() {
 
     companion object {
         const val SHARED_PREF = "share_pref"
-        const val SHARE_LIST_ID = "sharedDataList"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

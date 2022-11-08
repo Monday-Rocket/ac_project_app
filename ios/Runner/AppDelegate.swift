@@ -14,9 +14,13 @@ import Flutter
     localPathChannel.setMethodCallHandler({
       (call: FlutterMethodCall, result: @escaping FlutterResult) -> Void in
       
-      if (call.method == "getShareData") {
+      if (call.method == "getNewLinks") {
         let sharedDefault = UserDefaults(suiteName: "group.com.mr.acProjectApp.Share")!
-        let data = sharedDefault.object(forKey: "shareDataList") as! [String]? ?? []
+        let data = sharedDefault.object(forKey: "new_links") as! String? ?? ""
+        result(data)
+      } else if (call.method == "getNewFolders") {
+        let sharedDefault = UserDefaults(suiteName: "group.com.mr.acProjectApp.Share")!
+        let data = sharedDefault.object(forKey: "new_folders") as! String? ?? ""
         result(data)
       } else if (call.method == "getShareDBUrl") {
         let dbUrl = self.getShareDBUrl() ?? ""

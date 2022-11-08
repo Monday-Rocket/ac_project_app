@@ -19,7 +19,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" id="ual-lW-pEE">
-                                <rect key="frame" x="0.0" y="587" width="414" height="309"/>
+                                <rect key="frame" x="-1" y="587" width="414" height="309"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" heightSizable="YES"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="HJZ-Dr-si8" customClass="ShadowView" customModule="Extension" customModuleProvider="target">
@@ -171,12 +171,6 @@
                                     <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="hid-p6-z53" secondAttribute="trailing" constant="20" symbolic="YES" id="wYz-Oo-Anf"/>
                                     <constraint firstItem="hid-p6-z53" firstAttribute="leading" secondItem="ual-lW-pEE" secondAttribute="leading" constant="24" id="zjY-W8-29R"/>
                                 </constraints>
-                                <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
-                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                        <integer key="value" value="16"/>
-                                    </userDefinedRuntimeAttribute>
-                                </userDefinedRuntimeAttributes>
                             </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="1Xd-am-t49"/>
@@ -188,6 +182,7 @@
                     <connections>
                         <outlet property="btnTest" destination="p7f-yK-ZWm" id="cvu-sn-BtC"/>
                         <outlet property="checkImageView" destination="HJZ-Dr-si8" id="SoA-lF-EtK"/>
+                        <outlet property="layoutView" destination="ual-lW-pEE" id="Ft6-B8-s4H"/>
                         <outlet property="linksTableView" destination="6Qj-Mz-AGQ" id="zQ4-9S-Cd6"/>
                     </connections>
                 </viewController>
@@ -203,7 +198,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="838"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4Xh-EY-Oxr">
+                            <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4Xh-EY-Oxr">
                                 <rect key="frame" x="0.0" y="514" width="414" height="324"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="새로운 폴더" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eIA-y4-2YF">
@@ -225,7 +220,7 @@
                                         <buttonConfiguration key="configuration" style="plain" image="chevron.backward" catalog="system"/>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="right" contentVerticalAlignment="fill" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iJ5-iD-HYY">
-                                        <rect key="frame" x="342" y="25.5" width="52" height="33.5"/>
+                                        <rect key="frame" x="342" y="25.5" width="52" height="33"/>
                                         <state key="normal" title="Button"/>
                                         <buttonConfiguration key="configuration" style="plain" title="완료">
                                             <fontDescription key="titleFontDescription" type="system" weight="medium" pointSize="16"/>
@@ -288,6 +283,12 @@
                                     <constraint firstItem="eIA-y4-2YF" firstAttribute="centerX" secondItem="4Xh-EY-Oxr" secondAttribute="centerX" id="woh-Mz-f25"/>
                                     <constraint firstItem="e2k-wC-juN" firstAttribute="centerY" secondItem="dt9-Vr-7dA" secondAttribute="centerY" id="xgA-p0-y43"/>
                                 </constraints>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                        <integer key="value" value="30"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
+                                </userDefinedRuntimeAttributes>
                             </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="jZn-Q6-36G"/>
@@ -431,7 +432,7 @@
                                         </subviews>
                                     </stackView>
                                     <stackView opaque="NO" contentMode="scaleToFill" spacing="7" translatesAutoresizingMaskIntoConstraints="NO" id="S0r-5G-CQ0">
-                                        <rect key="frame" x="24" y="248" width="369" height="56"/>
+                                        <rect key="frame" x="24" y="248.5" width="369" height="56"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CZr-r3-TNF">
                                                 <rect key="frame" x="0.0" y="0.0" width="181" height="56"/>
