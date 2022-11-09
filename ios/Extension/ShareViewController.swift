@@ -1,9 +1,9 @@
-  //
-  //  ShareViewController.swift
-  //  sharetest
-  //
-  //  Created by 유재선 on 2022/09/18.
-  //
+//
+//  ShareViewController.swift
+//  sharetest
+//
+//  Created by 유재선 on 2022/09/18.
+//
 
 import UIKit
 import Social
@@ -23,6 +23,8 @@ class ShareViewController: UIViewController {
   var dataArray : [Folder] = []
   
   let dbHelper = DBHelper.shared
+  var link: String?
+  var linkImageUrl: String?
   
   
   override func viewDidLoad() {
@@ -30,34 +32,18 @@ class ShareViewController: UIViewController {
     
     self.linksTableView.delegate = self
     self.linksTableView.dataSource = self
+    self.layoutView?.layer.cornerRadius = 30
+//    self.btnTest.
     
-    layoutView?.layer.cornerRadius = 30
-    
-//    saveUrl()
+    self.loadFolders()
+    self.saveUrl()
   }
   
-  
-  fileprivate func saveLinkWithoutFolder(_ text: String) {
-    let sharedDefault = UserDefaults(suiteName: "group.com.mr.acProjectApp.Share.new_links")!
-    let jsonData = [
-      "image_link": "",
-      "title": "",
-      "created_at": ""
-    ]
-    var jsonString = ""
-    
-    do {
-      let temp = try JSONSerialization.data(withJSONObject: jsonData, options: .prettyPrinted)
-      jsonString = String(data: temp, encoding: .utf8) ?? ""
-    } catch {
-      NSLog("🚨 json error")
-    }
-    
-    sharedDefault.set(jsonString, forKey: text)
-    self.hideExtensionWithCompletionHandler()
+  private func loadFolders() {
+    dataArray = dbHelper.readData()
   }
   
-  func saveUrl() {
+  private func saveUrl() {
     if let extensionItem = self.extensionContext?.inputItems[0] as? NSExtensionItem {
       if let itemProviders = extensionItem.attachments{
         for itemProvider in itemProviders{
@@ -65,21 +51,67 @@ class ShareViewController: UIViewController {
             itemProvider.loadItem(forTypeIdentifier: UTType.url.identifier, options: nil){
               (data, error) in
               let text = (data as! NSURL).absoluteString!
-              
+              NSLog("❇️ link: \(text)")
               self.saveLinkWithoutFolder(text)
             }
           } else if itemProvider.hasItemConformingToTypeIdentifier(UTType.plainText.identifier) {
             itemProvider.loadItem(forTypeIdentifier: UTType.plainText.identifier, options: nil) {
               (data, error) in
               let text = data as! String
-              
+              NSLog("❇️ link: \(text)")
               self.saveLinkWithoutFolder(text)
             }
           }
         }
       }
     }
+  }
+  
+  override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+    if let viewController = segue.destination as? NewFolderViewController {
+      viewController.link = self.link
+      viewController.imageLink = self.linkImageUrl
+    }
+  }
+  
+  private func saveLinkWithoutFolder(_ link: String) {
     
+    // 링크가 아니면 저장 안함
+    guard (link.starts(with: "http://") || link.starts(with: "https://")) else {
+      return
+    }
+    
+    self.link = link
+    var title: String? = ""
+    
+    OpenGraph.fetch(url: URL(string: link)!, completion: { result in
+      switch result {
+        case .success(let og):
+          title = og[.title] ?? ""
+          self.linkImageUrl = (og[.image] ?? "")
+          let date = Date.ISOStringFromDate(date: Date())
+          let jsonData = [
+            "image_link": self.linkImageUrl,
+            "title": title,
+            "created_at": date
+          ]
+          var jsonString = ""
+          
+          do {
+            let temp = try JSONSerialization.data(withJSONObject: jsonData, options: .withoutEscapingSlashes)
+            jsonString = String(data: temp, encoding: .utf8) ?? ""
+          } catch {
+            NSLog("🚨 json error")
+          }
+          
+          NSLog("❇️ \(jsonString)")
+          let sharedDefault = UserDefaults(suiteName: "group.com.mr.acProjectApp.Share.new_links")!
+          sharedDefault.set(jsonString, forKey: jsonString)
+          break
+        case .failure(let error):
+          NSLog("🚨 open graph error: \(error.localizedDescription)")
+      }
+    })
   }
   
   func hideExtensionWithCompletionHandler() {
@@ -100,8 +132,6 @@ extension ShareViewController: UITableViewDelegate, UITableViewDataSource {
     guard let cell = self.linksTableView.dequeueReusableCell(withIdentifier: "tableViewCell") as? CustomTableViewCell
     else { fatalError("can't get cell") }
     
-    
-     
     do{
       let url : String? = String(dataArray[indexPath.row].name)
       if(url != nil){
@@ -130,13 +160,13 @@ class CustomTableViewCell: UITableViewCell {
   
   override func awakeFromNib() {
     super.awakeFromNib()
-      // Initialization code
+    // Initialization code
   }
   
   override func setSelected(_ selected: Bool, animated: Bool) {
     super.setSelected(selected, animated: animated)
     
-      // Configure the view for the selected state
+    // Configure the view for the selected state
   }
   
 }

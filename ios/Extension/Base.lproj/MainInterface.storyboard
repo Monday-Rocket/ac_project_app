@@ -19,7 +19,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" id="ual-lW-pEE">
-                                <rect key="frame" x="-1" y="587" width="414" height="309"/>
+                                <rect key="frame" x="-2" y="587" width="414" height="308"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" heightSizable="YES"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="HJZ-Dr-si8" customClass="ShadowView" customModule="Extension" customModuleProvider="target">
@@ -302,6 +302,7 @@
                     <navigationItem key="navigationItem" id="BVG-30-g9N"/>
                     <connections>
                         <outlet property="insertFolderButton" destination="Sg0-pJ-FCw" id="i6O-X6-L0f"/>
+                        <outlet property="layoutView" destination="4Xh-EY-Oxr" id="WXg-zn-bvj"/>
                         <outlet property="newFolderNameField" destination="kSq-r6-dAB" id="nE6-sI-uOA"/>
                         <outlet property="newFolderVisible" destination="e2k-wC-juN" id="yre-re-xql"/>
                         <outlet property="preButton" destination="gOW-VO-Eo1" id="G8P-9K-xs3"/>
@@ -432,7 +433,7 @@
                                         </subviews>
                                     </stackView>
                                     <stackView opaque="NO" contentMode="scaleToFill" spacing="7" translatesAutoresizingMaskIntoConstraints="NO" id="S0r-5G-CQ0">
-                                        <rect key="frame" x="24" y="248.5" width="369" height="56"/>
+                                        <rect key="frame" x="24" y="248" width="369" height="56"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CZr-r3-TNF">
                                                 <rect key="frame" x="0.0" y="0.0" width="181" height="56"/>

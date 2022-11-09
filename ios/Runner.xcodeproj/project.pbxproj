@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		0F10F66228FEDA5B0093EAAB /* ShadowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F10F66128FEDA5B0093EAAB /* ShadowView.swift */; };
 		0F10F6642906B8CC0093EAAB /* DBHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F10F6632906B8CC0093EAAB /* DBHelper.swift */; };
-		0F10F666290E68C10093EAAB /* NewFolderViewControll.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F10F665290E68C10093EAAB /* NewFolderViewControll.swift */; };
+		0F10F666290E68C10093EAAB /* NewFolderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F10F665290E68C10093EAAB /* NewFolderViewController.swift */; };
 		0F872D5128D6D1F0002954CC /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0F872D5028D6D1F0002954CC /* GoogleService-Info.plist */; };
 		0F872E3E28D875E3002954CC /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F872E3D28D875E3002954CC /* ShareViewController.swift */; };
 		0F872E4128D875E3002954CC /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0F872E3F28D875E3002954CC /* MainInterface.storyboard */; };
@@ -24,6 +24,8 @@
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
+		AE08C895291B94540019B578 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE08C894291B94540019B578 /* Utils.swift */; };
+		AE08C898291B99AD0019B578 /* Folder.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE08C897291B99AD0019B578 /* Folder.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,7 +65,7 @@
 /* Begin PBXFileReference section */
 		0F10F66128FEDA5B0093EAAB /* ShadowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShadowView.swift; sourceTree = "<group>"; };
 		0F10F6632906B8CC0093EAAB /* DBHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DBHelper.swift; sourceTree = "<group>"; };
-		0F10F665290E68C10093EAAB /* NewFolderViewControll.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewFolderViewControll.swift; sourceTree = "<group>"; };
+		0F10F665290E68C10093EAAB /* NewFolderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewFolderViewController.swift; sourceTree = "<group>"; };
 		0F872D5028D6D1F0002954CC /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		0F872E3B28D875E3002954CC /* Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = Extension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		0F872E3D28D875E3002954CC /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
@@ -86,6 +88,8 @@
 		97C146FD1CF9000F007C117D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		97C147001CF9000F007C117D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		97C147021CF9000F007C117D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AE08C894291B94540019B578 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
+		AE08C897291B99AD0019B578 /* Folder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Folder.swift; sourceTree = "<group>"; };
 		AE66222428DCA79100E5DE18 /* Extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Extension.entitlements; sourceTree = "<group>"; };
 		AE66222828DCB16400E5DE18 /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
 		FA8A6BAF1A9D06BD8C855795 /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
@@ -115,6 +119,7 @@
 		0F872E3C28D875E3002954CC /* Extension */ = {
 			isa = PBXGroup;
 			children = (
+				AE08C896291B999A0019B578 /* data */,
 				AE66222428DCA79100E5DE18 /* Extension.entitlements */,
 				0F872E3F28D875E3002954CC /* MainInterface.storyboard */,
 				0F10F6632906B8CC0093EAAB /* DBHelper.swift */,
@@ -122,7 +127,8 @@
 				0F872E3D28D875E3002954CC /* ShareViewController.swift */,
 				0F872E4228D875E3002954CC /* Info.plist */,
 				0F8AD1BF28FC39E30006B1D6 /* Images.xcassets */,
-				0F10F665290E68C10093EAAB /* NewFolderViewControll.swift */,
+				0F10F665290E68C10093EAAB /* NewFolderViewController.swift */,
+				AE08C894291B94540019B578 /* Utils.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -182,6 +188,14 @@
 				74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */,
 			);
 			path = Runner;
+			sourceTree = "<group>";
+		};
+		AE08C896291B999A0019B578 /* data */ = {
+			isa = PBXGroup;
+			children = (
+				AE08C897291B99AD0019B578 /* Folder.swift */,
+			);
+			path = data;
 			sourceTree = "<group>";
 		};
 		B0F7507DCC206DB6EBB05ADC /* Pods */ = {
@@ -386,10 +400,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0F10F666290E68C10093EAAB /* NewFolderViewControll.swift in Sources */,
+				AE08C895291B94540019B578 /* Utils.swift in Sources */,
+				0F10F666290E68C10093EAAB /* NewFolderViewController.swift in Sources */,
 				0F10F66228FEDA5B0093EAAB /* ShadowView.swift in Sources */,
 				0F10F6642906B8CC0093EAAB /* DBHelper.swift in Sources */,
 				0F872E3E28D875E3002954CC /* ShareViewController.swift in Sources */,
+				AE08C898291B99AD0019B578 /* Folder.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

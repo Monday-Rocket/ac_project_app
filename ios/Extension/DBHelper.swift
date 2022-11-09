@@ -9,11 +9,6 @@ import Foundation
 import SQLite3
 
 
-struct Folder: Codable{
-    var name : String
-    var visible : Int
-    var image_link : String?
-}
 
 class DBHelper {
     
