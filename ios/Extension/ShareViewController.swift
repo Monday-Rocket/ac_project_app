@@ -16,8 +16,9 @@ class ShareViewController: UIViewController {
   
   @IBOutlet weak var layoutView: UIView?
   @IBOutlet weak var checkImageView: UIImageView!
-  @IBOutlet weak var btnTest: UIButton!
+  @IBOutlet weak var closeButton: UIButton!
   
+  @IBOutlet weak var backgroundView: UIView!
   @IBOutlet weak var linksTableView: UITableView!
   
   var dataArray : [Folder] = []
@@ -33,11 +34,18 @@ class ShareViewController: UIViewController {
     self.linksTableView.delegate = self
     self.linksTableView.dataSource = self
     self.layoutView?.layer.cornerRadius = 30
-//    self.btnTest.
+    
+    self.backgroundView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.hideExtensionWithCompletionHandler(_:))))
     
     self.loadFolders()
     self.saveUrl()
   }
+  
+  @IBAction func closeWindow(_ sender: Any) {
+    self.hideExtensionWithCompletionHandler()
+  }
+  
+  
   
   private func loadFolders() {
     dataArray = dbHelper.readData()
@@ -114,7 +122,7 @@ class ShareViewController: UIViewController {
     })
   }
   
-  func hideExtensionWithCompletionHandler() {
+  @objc func hideExtensionWithCompletionHandler(_ sender: UITapGestureRecognizer? = nil) {
     UIView.animate(withDuration: 0.3, animations: {
       self.navigationController?.view.transform = CGAffineTransform(translationX: 0, y:self.navigationController!.view.frame.size.height)
     }, completion: { _ in
@@ -133,15 +141,12 @@ extension ShareViewController: UITableViewDelegate, UITableViewDataSource {
     else { fatalError("can't get cell") }
     
     do{
-      let url : String? = String(dataArray[indexPath.row].name)
-      if(url != nil){
-        cell.imageLinkView.image = UIImage(data : try Data(contentsOf: URL(string : String(dataArray[indexPath.row].name))!))
-        
-      }
-      cell.nameView.text = String(dataArray[indexPath.row].name)
-      if dataArray[indexPath.row].visible == 1 {
-        
-      }
+      let item = dataArray[indexPath.row]
+      let url = item.image_link ?? ""
+      cell.imageLinkView.image = UIImage(data : try Data(contentsOf: URL(string : url)!))
+      cell.nameView.text = item.name
+      cell.visibleView.image = item.visible == 1 ? nil : UIImage(named: "ic_lock")
+      
     }
     catch {
     }

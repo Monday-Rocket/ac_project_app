@@ -12,39 +12,108 @@ import UniformTypeIdentifiers
 
 class NewFolderViewController : UIViewController {
   
+  @IBOutlet weak var backgroundView: UIView!
   @IBOutlet weak var layoutView: UIView!
-  @IBOutlet weak var insertFolderButton : UIButton?
-  @IBOutlet weak var newFolderNameField : UITextField?
-  @IBOutlet weak var newFolderVisible : UISwitch?
-  @IBOutlet weak var preButton : UIButton?
+  
+  @IBOutlet weak var newFolderNameField : UITextField!
+  @IBOutlet weak var backButton: UIButton!
+  @IBOutlet weak var visibleToggleButton: UIImageView!
+
+  @IBOutlet weak var firstSaveButton : UIButton?
+  @IBOutlet weak var secondSaveButton: UIButton!
+  
   var link: String?
   var imageLink: String?
+  var newFolderVisible = false
   
   let dbHelper = DBHelper.shared
-  
+
   
   override func viewDidLoad() {
     super.viewDidLoad()
     
+    // MARK: - 상단 Round
     layoutView?.layer.cornerRadius = 30
     
-    NSLog("link: \(link ?? ""), image: \(imageLink ?? "")")
+    // MARK: - 배경 누를 때 팝업
+    self.backgroundView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.showConfirmDialog(_:))))
+    
+    self.firstSaveButton?.tintColor = UIColor.secondary
+    self.setNameTextField()
+    
+    self.visibleToggleButton.isUserInteractionEnabled = true
+    self.visibleToggleButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.onTogglePressed(_:))))
+    
+    NSLog("❇️ link: \(link ?? ""), image: \(imageLink ?? "")")
+  }
+  
+  @objc func onTogglePressed(_ sender: UILongPressGestureRecognizer) {
+    if newFolderVisible {
+      newFolderVisible = false
+      visibleToggleButton.image = UIImage(named: "toggle_off")
+    } else {
+      newFolderVisible = true
+      visibleToggleButton.image = UIImage(named: "toggle_on")
+    }
+    
+  }
+  
+  fileprivate func setNameTextField() {
+    newFolderNameField.addTarget(self, action: #selector(self.onFolderNameChange(_:)), for: .editingChanged)
+    newFolderNameField.textColor = UIColor.grey800
+    newFolderNameField.tintColor = UIColor.primary600
+    
+    
+    let border = CALayer()
+    border.frame = CGRect(
+      x: 0,
+      y: newFolderNameField.frame.size.height + 9,
+      width: newFolderNameField.frame.size.width - 24,
+      height: 2
+    )
+    border.backgroundColor = UIColor.primary600.cgColor
+    newFolderNameField.layer.addSublayer(border)
+  }
+  
+  @objc func onFolderNameChange(_ sender: Any?) {
+    let text = self.newFolderNameField?.text ?? ""
+    self.firstSaveButton?.tintColor = text.isEmpty ? UIColor.secondary : UIColor.primary600
+  }
+  
+  @objc func showConfirmDialog(_ sender: UITapGestureRecognizer? = nil) {
+    //    UIView.animate(withDuration: 0.3, animations: {
+    //      self.navigationController?.view.transform = CGAffineTransform(translationX: 0, y:self.navigationController!.view.frame.size.height)
+    //    }, completion: { _ in
+    //      self.extensionContext?.completeRequest(returningItems: nil, completionHandler: nil)
+    //    })
   }
   
   
+  @IBAction func onBackButtonPressed(_ sender: UIButton) {
+    self.navigationController?.popViewController(animated: true)
+  }
   
-  @IBAction func insertFolder () {
+  @IBAction func onCompletePressed(_ sender: Any) {
+    self.saveFolder(sender)
+  }
+  
+  @IBAction func saveFolder(_ sender: Any) {
     
-    NSLog("\(String(describing: newFolderVisible!.isOn))   \(String(describing: newFolderNameField!.text!))")
+    NSLog("\(String(describing: newFolderVisible))   \(String(describing: newFolderNameField!.text!))")
     
-    
-    let visible = newFolderVisible!.isOn ?  1 : 0
+    let visible = newFolderVisible ?  1 : 0
     
     if(newFolderNameField?.text != nil){
-      dbHelper.insertData(name:newFolderNameField!.text!, visible: visible, image_link: "'www.naver.com'")
-      
+      let result = dbHelper.insertData(name:newFolderNameField!.text!, visible: visible, image_link: imageLink)
+      NSLog("❇️ new folder save result: \(result)")
     }
-    
-    NSLog("db data : \(dbHelper.readData()) ")
+  }
+  
+  private func hideExtensionWithCompletionHandler() {
+    UIView.animate(withDuration: 0.3, animations: {
+      self.navigationController?.view.transform = CGAffineTransform(translationX: 0, y:self.navigationController!.view.frame.size.height)
+    }, completion: { _ in
+      self.extensionContext?.completeRequest(returningItems: nil, completionHandler: nil)
+    })
   }
 }
