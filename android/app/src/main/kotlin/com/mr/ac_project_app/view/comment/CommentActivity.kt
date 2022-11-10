@@ -31,12 +31,7 @@ class CommentActivity : FragmentActivity(), ConfirmDialogInterface {
         binding = ActivityCommentBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        @Suppress("DEPRECATION")
-        val saveType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getSerializableExtra("saveType", SaveType::class.java)
-        } else {
-            intent.getSerializableExtra("saveType") as SaveType
-        }
+        val saveType = intent.getSerializableExtra("saveType") as SaveType
 
         binding.background.setOnClickListener {
             showCancelDialog()

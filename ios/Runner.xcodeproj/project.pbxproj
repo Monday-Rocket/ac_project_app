@@ -34,8 +34,11 @@
 		AE83E34C291CB70C00A43A2D /* FolderSaveSuccessViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE83E34B291CB70C00A43A2D /* FolderSaveSuccessViewController.swift */; };
 		AE83E34E291CB8FB00A43A2D /* SaveType.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE83E34D291CB8FB00A43A2D /* SaveType.swift */; };
 		AE83E351291CC6AA00A43A2D /* PaddingLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE83E350291CC6AA00A43A2D /* PaddingLabel.swift */; };
+		AEDF4C8D291D8226000FC3D7 /* CustomeUIButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEDF4C8C291D8226000FC3D7 /* CustomeUIButton.swift */; };
 		AEE60AF1291BD98B006FF3F8 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEE60AF0291BD98B006FF3F8 /* Color.swift */; };
 		AEFAAC81291D586A00ED5DDC /* UserDefaultsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEFAAC80291D586A00ED5DDC /* UserDefaultsHelper.swift */; };
+		AEFAAC84291D6E1600ED5DDC /* CommentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEFAAC83291D6E1600ED5DDC /* CommentViewController.swift */; };
+		AEFAAC86291D791700ED5DDC /* PaddingTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEFAAC85291D791700ED5DDC /* PaddingTextField.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -110,8 +113,11 @@
 		AE83E34B291CB70C00A43A2D /* FolderSaveSuccessViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderSaveSuccessViewController.swift; sourceTree = "<group>"; };
 		AE83E34D291CB8FB00A43A2D /* SaveType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveType.swift; sourceTree = "<group>"; };
 		AE83E350291CC6AA00A43A2D /* PaddingLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaddingLabel.swift; sourceTree = "<group>"; };
+		AEDF4C8C291D8226000FC3D7 /* CustomeUIButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomeUIButton.swift; sourceTree = "<group>"; };
 		AEE60AF0291BD98B006FF3F8 /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		AEFAAC80291D586A00ED5DDC /* UserDefaultsHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsHelper.swift; sourceTree = "<group>"; };
+		AEFAAC83291D6E1600ED5DDC /* CommentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentViewController.swift; sourceTree = "<group>"; };
+		AEFAAC85291D791700ED5DDC /* PaddingTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaddingTextField.swift; sourceTree = "<group>"; };
 		FA8A6BAF1A9D06BD8C855795 /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -141,8 +147,8 @@
 			children = (
 				AEFAAC82291D5A1700ED5DDC /* DataHelper */,
 				AE83E34F291CC68E00A43A2D /* Custom */,
-				AEE60AEF291BD974006FF3F8 /* res */,
-				AE08C896291B999A0019B578 /* data */,
+				AEE60AEF291BD974006FF3F8 /* Resources */,
+				AE08C896291B999A0019B578 /* Data */,
 				AE66222428DCA79100E5DE18 /* Extension.entitlements */,
 				0F872E3F28D875E3002954CC /* MainInterface.storyboard */,
 				0F10F66128FEDA5B0093EAAB /* ShadowView.swift */,
@@ -153,6 +159,7 @@
 				AE08C894291B94540019B578 /* Utils.swift */,
 				AE83E349291CA20100A43A2D /* Assets.xcassets */,
 				AE83E34B291CB70C00A43A2D /* FolderSaveSuccessViewController.swift */,
+				AEFAAC83291D6E1600ED5DDC /* CommentViewController.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -214,13 +221,13 @@
 			path = Runner;
 			sourceTree = "<group>";
 		};
-		AE08C896291B999A0019B578 /* data */ = {
+		AE08C896291B999A0019B578 /* Data */ = {
 			isa = PBXGroup;
 			children = (
 				AE08C897291B99AD0019B578 /* Folder.swift */,
 				AE83E34D291CB8FB00A43A2D /* SaveType.swift */,
 			);
-			path = data;
+			path = Data;
 			sourceTree = "<group>";
 		};
 		AE83E33E291C777F00A43A2D /* Fonts */ = {
@@ -238,17 +245,19 @@
 			isa = PBXGroup;
 			children = (
 				AE83E350291CC6AA00A43A2D /* PaddingLabel.swift */,
+				AEFAAC85291D791700ED5DDC /* PaddingTextField.swift */,
+				AEDF4C8C291D8226000FC3D7 /* CustomeUIButton.swift */,
 			);
 			path = Custom;
 			sourceTree = "<group>";
 		};
-		AEE60AEF291BD974006FF3F8 /* res */ = {
+		AEE60AEF291BD974006FF3F8 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
 				AE83E33E291C777F00A43A2D /* Fonts */,
 				AEE60AF0291BD98B006FF3F8 /* Color.swift */,
 			);
-			path = res;
+			path = Resources;
 			sourceTree = "<group>";
 		};
 		AEFAAC82291D5A1700ED5DDC /* DataHelper */ = {
@@ -468,6 +477,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AE08C895291B94540019B578 /* Utils.swift in Sources */,
+				AEFAAC86291D791700ED5DDC /* PaddingTextField.swift in Sources */,
 				0F10F666290E68C10093EAAB /* NewFolderViewController.swift in Sources */,
 				AEE60AF1291BD98B006FF3F8 /* Color.swift in Sources */,
 				AE83E34C291CB70C00A43A2D /* FolderSaveSuccessViewController.swift in Sources */,
@@ -475,6 +485,8 @@
 				0F10F6642906B8CC0093EAAB /* DBHelper.swift in Sources */,
 				AE83E351291CC6AA00A43A2D /* PaddingLabel.swift in Sources */,
 				AEFAAC81291D586A00ED5DDC /* UserDefaultsHelper.swift in Sources */,
+				AEFAAC84291D6E1600ED5DDC /* CommentViewController.swift in Sources */,
+				AEDF4C8D291D8226000FC3D7 /* CustomeUIButton.swift in Sources */,
 				0F872E3E28D875E3002954CC /* ShareViewController.swift in Sources */,
 				AE83E34E291CB8FB00A43A2D /* SaveType.swift in Sources */,
 				AE08C898291B99AD0019B578 /* Folder.swift in Sources */,

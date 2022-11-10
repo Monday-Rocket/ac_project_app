@@ -17,6 +17,7 @@ class FolderSaveSuccessViewController: UIViewController {
   @IBOutlet weak var visibleImageView: UIImageView!
   @IBOutlet weak var folderImageView: UIImageView!
   
+  @IBOutlet weak var closeButton: UIButton!
   @IBOutlet weak var titleTextView: UILabel!
   
   var folder: Folder?
@@ -55,6 +56,17 @@ class FolderSaveSuccessViewController: UIViewController {
     visibleImageView.image = folder?.visible == 1 ? nil : UIImage(named: "ic_lock")
     
     titleTextView.text = saveType == SaveType.New ? "새 폴더에 저장 완료!" : "선택한 폴더에 저장 완료!"
+  }
+  
+  @IBAction func onClose(_ sender: Any) {
+    self.hideExtensionWithCompletionHandler()
+  }
+  
+  override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+    if let viewController = segue.destination as? CommentViewController {
+      viewController.link = self.link
+      viewController.saveType = self.saveType
+    }
   }
   
   @objc func hideExtensionWithCompletionHandler(_ sender: UITapGestureRecognizer? = nil) {

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="mre-9g-jvc">
-    <device id="retina6_72" orientation="portrait" appearance="light"/>
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
@@ -28,11 +28,11 @@
             <objects>
                 <viewController id="j1y-V4-xli" customClass="ShareViewController" customModule="Extension" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" opaque="NO" contentMode="scaleToFill" id="wbc-yd-nQP">
-                        <rect key="frame" x="0.0" y="0.0" width="430" height="932"/>
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" id="ual-lW-pEE">
-                                <rect key="frame" x="-2" y="579" width="432" height="353"/>
+                                <rect key="frame" x="-2" y="529" width="395" height="323"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" heightSizable="YES"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="HJZ-Dr-si8" customClass="ShadowView" customModule="Extension" customModuleProvider="target">
@@ -67,7 +67,7 @@
                                         </userDefinedRuntimeAttributes>
                                     </imageView>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7Fr-Ql-ywt">
-                                        <rect key="frame" x="24" y="67" width="384" height="1"/>
+                                        <rect key="frame" x="24" y="67" width="347" height="1"/>
                                         <color key="backgroundColor" red="0.96078431372549022" green="0.96862745098039216" blue="0.98039215686274506" alpha="1" colorSpace="calibratedRGB"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="1" id="mus-K0-2nk"/>
@@ -80,13 +80,13 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="폴더 선택" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hid-p6-z53">
-                                        <rect key="frame" x="24" y="87.999999999999943" width="60" height="18.666666666666671"/>
+                                        <rect key="frame" x="24" y="88" width="60" height="18.666666666666671"/>
                                         <fontDescription key="fontDescription" name="Pretendard-Medium" family="Pretendard" pointSize="16"/>
                                         <color key="textColor" name="grey800"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QtK-qM-Rgq">
-                                        <rect key="frame" x="384" y="87.999999999999943" width="24" height="24"/>
+                                        <rect key="frame" x="347" y="88" width="24" height="24"/>
                                         <accessibility key="accessibilityConfiguration">
                                             <accessibilityTraits key="traits" button="YES" image="YES"/>
                                         </accessibility>
@@ -104,7 +104,7 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="p7f-yK-ZWm">
-                                        <rect key="frame" x="388" y="32" width="24" height="24"/>
+                                        <rect key="frame" x="351" y="32" width="24" height="24"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="24" id="Udb-xp-fyC"/>
                                             <constraint firstAttribute="width" constant="24" id="a9d-To-RZt"/>
@@ -121,7 +121,7 @@
                                         </connections>
                                     </button>
                                     <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="26V-wP-wEK">
-                                        <rect key="frame" x="24" y="122.99999999999994" width="408" height="115"/>
+                                        <rect key="frame" x="24" y="123" width="371" height="115"/>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="115" id="hfD-gm-yoa"/>
@@ -243,14 +243,14 @@
             <objects>
                 <viewController id="3Gm-6F-0i7" customClass="NewFolderViewController" customModule="Extension" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" id="bbN-6D-tlw">
-                        <rect key="frame" x="0.0" y="0.0" width="430" height="932"/>
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4Xh-EY-Oxr">
-                                <rect key="frame" x="0.0" y="603" width="430" height="329"/>
+                                <rect key="frame" x="0.0" y="523" width="393" height="329"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="새로운 폴더" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eIA-y4-2YF">
-                                        <rect key="frame" x="169.66666666666666" y="30" width="90.999999999999972" height="24"/>
+                                        <rect key="frame" x="151" y="30" width="91" height="24"/>
                                         <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
                                         <color key="textColor" name="grey900"/>
                                         <nil key="highlightedColor"/>
@@ -262,23 +262,22 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <textField toolTip="새로운 폴더 이름" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="새로운 폴더 이름" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="kSq-r6-dAB">
-                                        <rect key="frame" x="24" y="114" width="382" height="23"/>
+                                        <rect key="frame" x="24" y="114" width="345" height="23"/>
                                         <fontDescription key="fontDescription" name="Pretendard-Regular" family="Pretendard" pointSize="18"/>
                                         <textInputTraits key="textInputTraits" autocapitalizationType="words" enablesReturnKeyAutomatically="YES" smartDashesType="yes" textContentType="name"/>
                                     </textField>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Sg0-pJ-FCw">
-                                        <rect key="frame" x="24" y="236" width="382" height="56"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Sg0-pJ-FCw">
+                                        <rect key="frame" x="24" y="236" width="345" height="56"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="56" id="5lo-8N-29P"/>
                                         </constraints>
                                         <color key="tintColor" name="secondary"/>
                                         <state key="normal" title="Button"/>
                                         <buttonConfiguration key="configuration" style="filled" title="폴더에 저장하기" cornerStyle="large">
-                                            <fontDescription key="titleFontDescription" type="boldSystem" pointSize="16"/>
+                                            <fontDescription key="titleFontDescription" name="Pretendard-Bold" family="Pretendard" pointSize="16"/>
                                         </buttonConfiguration>
                                         <connections>
                                             <action selector="saveFolder:" destination="3Gm-6F-0i7" eventType="touchUpInside" id="02d-Za-TrS"/>
-                                            <segue destination="X46-ny-z55" kind="show" id="pB0-dU-knD"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="o71-Kz-ZJU">
@@ -297,7 +296,7 @@
                                         <rect key="frame" x="107.66666666666667" y="162" width="40.000000000000014" height="24"/>
                                     </imageView>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1To-gm-Ap5">
-                                        <rect key="frame" x="360" y="27.666666666666629" width="48" height="29"/>
+                                        <rect key="frame" x="323" y="27.666666666666629" width="48" height="29"/>
                                         <color key="tintColor" name="grey300"/>
                                         <state key="normal" title="Button"/>
                                         <buttonConfiguration key="configuration" style="plain" title="완료" buttonSize="mini">
@@ -305,7 +304,6 @@
                                         </buttonConfiguration>
                                         <connections>
                                             <action selector="onCompletePressed:" destination="3Gm-6F-0i7" eventType="touchUpInside" id="Wmc-gm-mzq"/>
-                                            <segue destination="X46-ny-z55" kind="show" id="A7E-gs-B1M"/>
                                         </connections>
                                     </button>
                                 </subviews>
@@ -337,7 +335,7 @@
                                 </userDefinedRuntimeAttributes>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MUp-UR-8Dp">
-                                <rect key="frame" x="0.0" y="59" width="430" height="544"/>
+                                <rect key="frame" x="0.0" y="59" width="393" height="464"/>
                                 <color key="backgroundColor" white="1" alpha="0.01" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
                         </subviews>
@@ -362,56 +360,60 @@
                         <outlet property="newFolderNameField" destination="kSq-r6-dAB" id="nE6-sI-uOA"/>
                         <outlet property="secondSaveButton" destination="1To-gm-Ap5" id="Dyq-cA-1bj"/>
                         <outlet property="visibleToggleButton" destination="Xoa-fc-uU0" id="8fR-JD-jjg"/>
+                        <segue destination="X46-ny-z55" kind="show" identifier="saveSuccessSegue" id="9Bv-zS-hgp"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="k58-mv-jR2" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1959" y="435"/>
+            <point key="canvasLocation" x="1961" y="455"/>
         </scene>
-        <!--View Controller-->
+        <!--Comment View Controller-->
         <scene sceneID="Tdu-m4-cjc">
             <objects>
-                <viewController id="zL7-qk-DKt" sceneMemberID="viewController">
+                <viewController id="zL7-qk-DKt" customClass="CommentViewController" customModule="Extension" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="dTJ-RH-V7D">
-                        <rect key="frame" x="0.0" y="0.0" width="430" height="932"/>
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Law-zM-wQM">
-                                <rect key="frame" x="0.0" y="531" width="414" height="365"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7AI-Vk-dwF">
+                                <rect key="frame" x="0.0" y="59.000000000000028" width="393" height="458.66666666666674"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Law-zM-wQM">
+                                <rect key="frame" x="0.0" y="517.66666666666663" width="393" height="334.33333333333337"/>
                                 <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="코멘트 작성" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cNZ-qT-3Sv">
-                                        <rect key="frame" x="169" y="30" width="92.333333333333314" height="24"/>
-                                        <fontDescription key="fontDescription" name="Pretendard-Bold" family="Pretendard" pointSize="20"/>
-                                        <color key="textColor" name="grey900"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SDS-qk-tWb">
-                                        <rect key="frame" x="388" y="31" width="22" height="22"/>
+                                        <rect key="frame" x="349" y="32" width="24" height="24"/>
                                         <accessibility key="accessibilityConfiguration">
                                             <accessibilityTraits key="traits" button="YES" image="YES"/>
                                         </accessibility>
                                         <constraints>
-                                            <constraint firstAttribute="width" constant="22" id="jyy-3P-kIa"/>
-                                            <constraint firstAttribute="height" constant="22" id="oSl-hL-cXz"/>
+                                            <constraint firstAttribute="width" constant="24" id="854-NJ-wif"/>
+                                            <constraint firstAttribute="height" constant="24" id="dEg-ak-scC"/>
                                         </constraints>
                                         <state key="normal" title="Button"/>
-                                        <buttonConfiguration key="configuration" style="plain" image="xmark" catalog="system" title="">
+                                        <buttonConfiguration key="configuration" style="plain" image="btn_x_primary" title="">
                                             <color key="baseForegroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                         </buttonConfiguration>
+                                        <connections>
+                                            <action selector="onClosePressed:" destination="zL7-qk-DKt" eventType="touchDown" id="AgK-EG-8H4"/>
+                                        </connections>
                                     </button>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="링크 코멘트" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="m2V-06-wi1">
-                                        <rect key="frame" x="24" y="94" width="73.666666666666671" height="18.666666666666671"/>
+                                        <rect key="frame" x="24" y="96" width="74" height="19.333333333333329"/>
                                         <fontDescription key="fontDescription" name="Pretendard-Medium" family="Pretendard" pointSize="16"/>
                                         <color key="textColor" name="grey800"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Sgx-z8-LBO">
-                                        <rect key="frame" x="24" y="126.66666666666663" width="382" height="80"/>
+                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" placeholder="저장한 링크에 대해 간단하게 메모해보세요" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Sgx-z8-LBO" customClass="PaddingTextField" customModule="Extension" customModuleProvider="target">
+                                        <rect key="frame" x="24" y="129.33333333333337" width="345" height="80"/>
                                         <color key="backgroundColor" name="grey100"/>
+                                        <color key="tintColor" name="grey400"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="80" id="1EU-QO-ZH1"/>
                                         </constraints>
-                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <color key="textColor" name="grey700"/>
+                                        <fontDescription key="fontDescription" name="Pretendard-Regular" family="Pretendard" pointSize="14"/>
                                         <textInputTraits key="textInputTraits"/>
                                         <userDefinedRuntimeAttributes>
                                             <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBound" value="YES"/>
@@ -420,34 +422,40 @@
                                             </userDefinedRuntimeAttribute>
                                         </userDefinedRuntimeAttributes>
                                     </textField>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9cb-T9-j3v">
-                                        <rect key="frame" x="24" y="238.66666666666663" width="382" height="56"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9cb-T9-j3v">
+                                        <rect key="frame" x="24" y="241.33333333333337" width="345" height="56"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="56" id="a6w-YQ-7HJ"/>
                                         </constraints>
+                                        <color key="tintColor" name="secondary"/>
                                         <state key="normal" title="Button"/>
                                         <buttonConfiguration key="configuration" style="filled" title="작성완료" cornerStyle="large">
-                                            <fontDescription key="titleFontDescription" type="boldSystem" pointSize="16"/>
-                                            <color key="baseForegroundColor" red="0.96078431369999995" green="0.96862745100000003" blue="0.98039215690000003" alpha="1" colorSpace="calibratedRGB"/>
-                                            <color key="baseBackgroundColor" red="0.4039215686" green="0.0" blue="0.91764705879999997" alpha="1" colorSpace="calibratedRGB"/>
+                                            <fontDescription key="titleFontDescription" name="Pretendard-Bold" family="Pretendard" pointSize="16"/>
                                         </buttonConfiguration>
                                     </button>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="코멘트 작성" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cNZ-qT-3Sv">
+                                        <rect key="frame" x="151" y="32" width="91.333333333333314" height="24"/>
+                                        <fontDescription key="fontDescription" name="Pretendard-Bold" family="Pretendard" pointSize="20"/>
+                                        <color key="textColor" name="grey900"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
                                 </subviews>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
-                                    <constraint firstItem="m2V-06-wi1" firstAttribute="top" secondItem="cNZ-qT-3Sv" secondAttribute="bottom" constant="40" id="OiZ-HL-r9K"/>
-                                    <constraint firstItem="9cb-T9-j3v" firstAttribute="leading" secondItem="Law-zM-wQM" secondAttribute="leading" constant="24" id="ROD-aW-MHG"/>
-                                    <constraint firstItem="cNZ-qT-3Sv" firstAttribute="top" secondItem="Law-zM-wQM" secondAttribute="top" constant="30" id="W7A-oh-XGJ"/>
-                                    <constraint firstItem="m2V-06-wi1" firstAttribute="leading" secondItem="Law-zM-wQM" secondAttribute="leading" constant="24" id="d4b-Dz-dLf"/>
+                                    <constraint firstAttribute="trailing" secondItem="Sgx-z8-LBO" secondAttribute="trailing" constant="24" id="1dJ-Xx-2ob"/>
+                                    <constraint firstAttribute="trailing" secondItem="9cb-T9-j3v" secondAttribute="trailing" constant="24" id="57F-Zy-DgZ"/>
+                                    <constraint firstItem="m2V-06-wi1" firstAttribute="leading" secondItem="Law-zM-wQM" secondAttribute="leading" constant="24" id="6fo-Fe-H4K"/>
+                                    <constraint firstItem="Sgx-z8-LBO" firstAttribute="leading" secondItem="Law-zM-wQM" secondAttribute="leading" constant="24" id="9Be-SF-v8B"/>
+                                    <constraint firstAttribute="bottom" secondItem="9cb-T9-j3v" secondAttribute="bottom" constant="37" id="BPL-xg-nie"/>
+                                    <constraint firstItem="cNZ-qT-3Sv" firstAttribute="top" secondItem="Law-zM-wQM" secondAttribute="top" constant="32" id="HXj-si-UbW"/>
+                                    <constraint firstItem="9cb-T9-j3v" firstAttribute="leading" secondItem="Law-zM-wQM" secondAttribute="leading" constant="24" id="JfW-eD-Tgm"/>
+                                    <constraint firstItem="SDS-qk-tWb" firstAttribute="top" secondItem="Law-zM-wQM" secondAttribute="top" constant="32" id="SOk-jy-KcD"/>
+                                    <constraint firstItem="m2V-06-wi1" firstAttribute="top" secondItem="cNZ-qT-3Sv" secondAttribute="bottom" constant="40" id="YUN-Dw-Whz"/>
                                     <constraint firstItem="SDS-qk-tWb" firstAttribute="centerY" secondItem="cNZ-qT-3Sv" secondAttribute="centerY" id="dWh-7B-awv"/>
-                                    <constraint firstItem="cNZ-qT-3Sv" firstAttribute="centerX" secondItem="Law-zM-wQM" secondAttribute="centerX" id="dtO-9I-QrF"/>
-                                    <constraint firstAttribute="height" constant="331" id="eMr-PT-ezX"/>
+                                    <constraint firstAttribute="trailing" secondItem="SDS-qk-tWb" secondAttribute="trailing" constant="20" id="hzg-WG-gnk"/>
                                     <constraint firstItem="Sgx-z8-LBO" firstAttribute="top" secondItem="m2V-06-wi1" secondAttribute="bottom" constant="14" id="lZt-PM-Vmz"/>
-                                    <constraint firstAttribute="trailing" secondItem="9cb-T9-j3v" secondAttribute="trailing" constant="24" id="n7I-1o-Mri"/>
                                     <constraint firstItem="9cb-T9-j3v" firstAttribute="top" secondItem="Sgx-z8-LBO" secondAttribute="bottom" constant="32" id="pVw-Ta-0pu"/>
-                                    <constraint firstAttribute="trailing" secondItem="SDS-qk-tWb" secondAttribute="trailing" constant="20" id="u2N-a3-WWO"/>
-                                    <constraint firstItem="Sgx-z8-LBO" firstAttribute="leading" secondItem="Law-zM-wQM" secondAttribute="leading" constant="24" id="x6H-0O-bw5"/>
-                                    <constraint firstAttribute="trailing" secondItem="Sgx-z8-LBO" secondAttribute="trailing" constant="24" id="z6r-uH-bR9"/>
+                                    <constraint firstItem="cNZ-qT-3Sv" firstAttribute="centerX" secondItem="Law-zM-wQM" secondAttribute="centerX" id="wQi-Fy-lTd"/>
                                 </constraints>
                             </view>
                         </subviews>
@@ -455,30 +463,42 @@
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="Law-zM-wQM" firstAttribute="leading" secondItem="6t7-ih-aqc" secondAttribute="leading" id="Lnp-AG-4J5"/>
-                            <constraint firstItem="Law-zM-wQM" firstAttribute="bottom" secondItem="6t7-ih-aqc" secondAttribute="bottom" id="OIE-JQ-wBN"/>
-                            <constraint firstItem="6t7-ih-aqc" firstAttribute="trailing" secondItem="Law-zM-wQM" secondAttribute="trailing" id="Sdq-FO-fLh"/>
+                            <constraint firstItem="Law-zM-wQM" firstAttribute="leading" secondItem="6t7-ih-aqc" secondAttribute="leading" id="1w1-zJ-bxg"/>
+                            <constraint firstItem="6t7-ih-aqc" firstAttribute="trailing" secondItem="Law-zM-wQM" secondAttribute="trailing" id="3M0-Es-U4f"/>
+                            <constraint firstItem="7AI-Vk-dwF" firstAttribute="leading" secondItem="6t7-ih-aqc" secondAttribute="leading" id="ScP-Aw-Kmk"/>
+                            <constraint firstItem="Law-zM-wQM" firstAttribute="centerX" secondItem="dTJ-RH-V7D" secondAttribute="centerX" id="UqO-S9-rUA"/>
+                            <constraint firstAttribute="bottom" secondItem="Law-zM-wQM" secondAttribute="bottom" id="eQK-c9-Joh"/>
+                            <constraint firstItem="7AI-Vk-dwF" firstAttribute="top" secondItem="6t7-ih-aqc" secondAttribute="top" id="je4-Wa-zrX"/>
+                            <constraint firstItem="6t7-ih-aqc" firstAttribute="trailing" secondItem="7AI-Vk-dwF" secondAttribute="trailing" id="kHL-Q0-QJC"/>
+                            <constraint firstItem="Law-zM-wQM" firstAttribute="top" secondItem="7AI-Vk-dwF" secondAttribute="bottom" id="mbh-gy-fni"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="2yw-WT-R9A"/>
+                    <connections>
+                        <outlet property="backgroundView" destination="7AI-Vk-dwF" id="7kw-Je-g5R"/>
+                        <outlet property="closeButton" destination="SDS-qk-tWb" id="KVp-CO-InK"/>
+                        <outlet property="commentTextField" destination="Sgx-z8-LBO" id="Oao-PN-sU6"/>
+                        <outlet property="layoutView" destination="Law-zM-wQM" id="CHa-Vc-0oq"/>
+                        <outlet property="saveCommentButton" destination="9cb-T9-j3v" id="fIe-iT-vdC"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kEE-C1-Vhz" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4085" y="373"/>
+            <point key="canvasLocation" x="3773" y="55"/>
         </scene>
         <!--Folder Save Success View Controller-->
         <scene sceneID="i2B-du-A3y">
             <objects>
                 <viewController id="X46-ny-z55" customClass="FolderSaveSuccessViewController" customModule="Extension" sceneMemberID="viewController">
                     <view key="view" opaque="NO" contentMode="scaleToFill" id="OwB-ve-8Ls">
-                        <rect key="frame" x="0.0" y="0.0" width="430" height="932"/>
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2tU-tH-q3K">
-                                <rect key="frame" x="0.0" y="568" width="430" height="364"/>
+                                <rect key="frame" x="0.0" y="488" width="393" height="364"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="BmU-qZ-2dX">
-                                        <rect key="frame" x="100.66666666666669" y="30" width="229" height="28"/>
+                                        <rect key="frame" x="82" y="30" width="229" height="28"/>
                                         <subviews>
                                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="check" translatesAutoresizingMaskIntoConstraints="NO" id="n5j-la-mOo">
                                                 <rect key="frame" x="0.0" y="0.0" width="28" height="28"/>
@@ -492,22 +512,25 @@
                                         </subviews>
                                     </stackView>
                                     <stackView opaque="NO" contentMode="scaleToFill" spacing="7" translatesAutoresizingMaskIntoConstraints="NO" id="S0r-5G-CQ0">
-                                        <rect key="frame" x="24" y="254" width="382" height="56"/>
+                                        <rect key="frame" x="24" y="254" width="345" height="56"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CZr-r3-TNF">
-                                                <rect key="frame" x="0.0" y="0.0" width="187.66666666666666" height="56"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="169" height="56"/>
                                                 <state key="normal" title="Button"/>
                                                 <buttonConfiguration key="configuration" style="filled" title="코멘트 남기기" cornerStyle="large">
-                                                    <fontDescription key="titleFontDescription" type="boldSystem" pointSize="16"/>
+                                                    <fontDescription key="titleFontDescription" name="Pretendard-Bold" family="Pretendard" pointSize="16"/>
                                                     <color key="baseForegroundColor" red="0.4039215686" green="0.0" blue="0.91764705879999997" alpha="1" colorSpace="calibratedRGB"/>
                                                     <color key="baseBackgroundColor" red="0.95294117647058818" green="0.94509803921568625" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                                 </buttonConfiguration>
+                                                <connections>
+                                                    <segue destination="zL7-qk-DKt" kind="show" id="xhN-AW-8X0"/>
+                                                </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NXf-4R-4sm">
-                                                <rect key="frame" x="194.66666666666663" y="0.0" width="187.33333333333337" height="56"/>
+                                                <rect key="frame" x="176" y="0.0" width="169" height="56"/>
                                                 <state key="normal" title="Button"/>
                                                 <buttonConfiguration key="configuration" style="filled" title="앱에서 보기" cornerStyle="large">
-                                                    <fontDescription key="titleFontDescription" type="boldSystem" pointSize="16"/>
+                                                    <fontDescription key="titleFontDescription" name="Pretendard-Bold" family="Pretendard" pointSize="16"/>
                                                     <color key="baseBackgroundColor" red="0.4039215686" green="0.0" blue="0.91764705879999997" alpha="1" colorSpace="calibratedRGB"/>
                                                 </buttonConfiguration>
                                             </button>
@@ -517,7 +540,7 @@
                                         </constraints>
                                     </stackView>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kCf-F8-jUv">
-                                        <rect key="frame" x="386" y="30" width="24" height="24"/>
+                                        <rect key="frame" x="349" y="30" width="24" height="24"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="24" id="BV9-t2-OTd"/>
                                             <constraint firstAttribute="width" constant="24" id="unD-xe-2S1"/>
@@ -530,11 +553,12 @@
                                             </backgroundConfiguration>
                                         </buttonConfiguration>
                                         <connections>
+                                            <action selector="onClose:" destination="X46-ny-z55" eventType="touchDown" id="qMb-Os-fnm"/>
                                             <action selector="saveUrl" destination="j1y-V4-xli" eventType="touchDown" id="55u-RX-GdN"/>
                                         </connections>
                                     </button>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="I3T-es-uVz">
-                                        <rect key="frame" x="165" y="90" width="100" height="100"/>
+                                        <rect key="frame" x="146.66666666666666" y="90" width="100" height="100"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="100" id="Joj-6x-gwH"/>
                                             <constraint firstAttribute="width" constant="100" id="g1P-A7-kuR"/>
@@ -547,7 +571,7 @@
                                         </userDefinedRuntimeAttributes>
                                     </imageView>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="F91-Km-a1f" customClass="PaddingLabel" customModule="Extension" customModuleProvider="target">
-                                        <rect key="frame" x="185.66666666666666" y="196" width="58.666666666666657" height="26"/>
+                                        <rect key="frame" x="167.33333333333334" y="196" width="58.666666666666657" height="26"/>
                                         <color key="backgroundColor" name="grey100"/>
                                         <fontDescription key="fontDescription" name="Pretendard-Medium" family="Pretendard" pointSize="14"/>
                                         <color key="textColor" name="grey700"/>
@@ -572,7 +596,7 @@
                                         </userDefinedRuntimeAttributes>
                                     </label>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="CH7-FT-9aY">
-                                        <rect key="frame" x="241" y="166" width="20" height="20"/>
+                                        <rect key="frame" x="222.66666666666666" y="166" width="20" height="20"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="20" id="YLt-FW-D5E"/>
                                             <constraint firstAttribute="height" constant="20" id="hTA-eL-qTc"/>
@@ -598,16 +622,18 @@
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Qpm-8P-7Sg">
-                                <rect key="frame" x="0.0" y="59" width="430" height="509"/>
+                                <rect key="frame" x="0.0" y="59" width="393" height="429"/>
                                 <color key="backgroundColor" white="1" alpha="0.01" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="CGP-hw-9Om"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="CGP-hw-9Om" firstAttribute="trailing" secondItem="Qpm-8P-7Sg" secondAttribute="trailing" id="CCf-HL-ePT"/>
                             <constraint firstItem="2tU-tH-q3K" firstAttribute="leading" secondItem="CGP-hw-9Om" secondAttribute="leading" id="CqH-wX-cIe"/>
                             <constraint firstAttribute="bottom" secondItem="2tU-tH-q3K" secondAttribute="bottom" id="Nvs-jy-KE5"/>
+                            <constraint firstItem="2tU-tH-q3K" firstAttribute="centerX" secondItem="OwB-ve-8Ls" secondAttribute="centerX" id="OZa-Hi-wgf"/>
                             <constraint firstItem="2tU-tH-q3K" firstAttribute="top" secondItem="Qpm-8P-7Sg" secondAttribute="bottom" id="QL8-cx-e0U"/>
                             <constraint firstItem="CGP-hw-9Om" firstAttribute="bottom" secondItem="S0r-5G-CQ0" secondAttribute="bottom" constant="20" id="R09-W3-mm8"/>
                             <constraint firstItem="Qpm-8P-7Sg" firstAttribute="top" secondItem="CGP-hw-9Om" secondAttribute="top" id="T8M-RC-ReS"/>
@@ -618,6 +644,7 @@
                     <navigationItem key="navigationItem" id="Bgy-Op-srH"/>
                     <connections>
                         <outlet property="backgroundView" destination="Qpm-8P-7Sg" id="m8H-am-HMK"/>
+                        <outlet property="closeButton" destination="kCf-F8-jUv" id="rG1-nc-l7n"/>
                         <outlet property="folderImageView" destination="I3T-es-uVz" id="soD-gx-Oug"/>
                         <outlet property="folderNameTextView" destination="F91-Km-a1f" id="bMN-yZ-zfR"/>
                         <outlet property="layoutView" destination="2tU-tH-q3K" id="JcN-a5-uHv"/>
@@ -665,12 +692,14 @@
         <image name="check" width="28" height="28"/>
         <image name="ic_back" width="24" height="24"/>
         <image name="toggle_off" width="40" height="24"/>
-        <image name="xmark" catalog="system" width="128" height="113"/>
         <namedColor name="grey100">
             <color red="0.96078431372549022" green="0.96862745098039216" blue="0.98039215686274506" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <namedColor name="grey300">
             <color red="0.81176470588235294" green="0.83137254901960789" blue="0.87058823529411766" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <namedColor name="grey400">
+            <color red="0.69019607843137254" green="0.72156862745098038" blue="0.75686274509803919" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <namedColor name="grey700">
             <color red="0.25882352941176473" green="0.28235294117647058" blue="0.32156862745098042" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

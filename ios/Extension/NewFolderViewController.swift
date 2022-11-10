@@ -19,7 +19,7 @@ class NewFolderViewController : UIViewController {
   @IBOutlet weak var backButton: UIButton!
   @IBOutlet weak var visibleToggleButton: UIImageView!
 
-  @IBOutlet weak var firstSaveButton : UIButton?
+  @IBOutlet weak var firstSaveButton : UIButton!
   @IBOutlet weak var secondSaveButton: UIButton!
   
   var link: String?
@@ -40,8 +40,6 @@ class NewFolderViewController : UIViewController {
     
     self.firstSaveButton?.tintColor = UIColor.secondary
     self.secondSaveButton?.tintColor = UIColor.grey300
-    self.firstSaveButton?.isEnabled = false
-    self.secondSaveButton?.isEnabled = false
     
     self.setNameTextField()
     
@@ -59,6 +57,7 @@ class NewFolderViewController : UIViewController {
         visible: newFolderVisible ? 0 : 1,
         image_link: imageLink
       )
+      viewController.saveType = SaveType.New
     }
   }
   
@@ -96,8 +95,6 @@ class NewFolderViewController : UIViewController {
     
     self.firstSaveButton?.tintColor = text.isEmpty ? UIColor.secondary : UIColor.primary600
     self.secondSaveButton?.tintColor = text.isEmpty ? UIColor.grey300 : UIColor.grey800
-    self.firstSaveButton?.isEnabled = !text.isEmpty
-    self.secondSaveButton?.isEnabled = !text.isEmpty
     
   }
   
@@ -126,11 +123,13 @@ class NewFolderViewController : UIViewController {
     
     let visible = newFolderVisible ? 0 : 1
     
-    if self.link != nil {
+    if self.link != nil, !(folderName?.isEmpty ?? true) {
       let result = dbHelper.insertData(name: folderName!, visible: visible, image_link: imageLink)
       UserDefaultsHelper.saveNewFolder(self.link!, folderName!, self.newFolderVisible)
       
       NSLog("❇️ new folder save result: \(result)")
+      
+      performSegue(withIdentifier: "saveSuccessSegue", sender: self)
     }
   }
   
