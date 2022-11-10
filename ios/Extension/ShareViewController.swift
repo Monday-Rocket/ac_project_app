@@ -19,7 +19,8 @@ class ShareViewController: UIViewController {
   @IBOutlet weak var closeButton: UIButton!
   
   @IBOutlet weak var backgroundView: UIView!
-  @IBOutlet weak var linksTableView: UITableView!
+  
+  @IBOutlet weak var folderListView: UICollectionView!
   
   var dataArray : [Folder] = []
   
@@ -31,8 +32,8 @@ class ShareViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     
-    self.linksTableView.delegate = self
-    self.linksTableView.dataSource = self
+    self.folderListView.delegate = self
+    self.folderListView.dataSource = self
     self.layoutView?.layer.cornerRadius = 30
     
     self.backgroundView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.hideExtensionWithCompletionHandler(_:))))
@@ -131,47 +132,97 @@ class ShareViewController: UIViewController {
   }
 }
 
-extension ShareViewController: UITableViewDelegate, UITableViewDataSource {
-  func tableView(_ linksTableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+extension ShareViewController: UICollectionViewDataSource, UICollectionViewDelegate {
+  func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
     self.dataArray.count
   }
   
-  func tableView(_ linksTableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-    guard let cell = self.linksTableView.dequeueReusableCell(withIdentifier: "tableViewCell") as? CustomTableViewCell
-    else { fatalError("can't get cell") }
+  func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
     
-    do{
-      let item = dataArray[indexPath.row]
-      let url = item.image_link ?? ""
-      cell.imageLinkView.image = UIImage(data : try Data(contentsOf: URL(string : url)!))
-      cell.nameView.text = item.name
-      cell.visibleView.image = item.visible == 1 ? nil : UIImage(named: "ic_lock")
-      
+    let width: CGFloat = 95
+    let height: CGFloat = 115
+    
+    return CGSize(width: width, height: height)
+  }
+  
+  func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    guard let cell = self.folderListView.dequeueReusableCell(
+      withReuseIdentifier: "customCell",
+      for: indexPath) as? CustomListViewCell else { fatalError("cell init error!") }
+    
+    let item = dataArray[indexPath.row]
+    
+    cell.folderNameView.text = item.name
+    cell.visibleView.image = item.visible == 1 ? nil : UIImage(named: "ic_lock")
+    
+    let url = item.image_link ?? ""
+    
+    do {
+      cell.imageView.image = UIImage(data : try Data(contentsOf: URL(string : url)!))
     }
     catch {
+      cell.imageView.image = UIImage(named: "empty_image_folder")
     }
+    cell.imageView.contentMode = .scaleAspectFill
     
     return cell
   }
-  
-  
 }
 
 
-class CustomTableViewCell: UITableViewCell {
-  @IBOutlet weak var imageLinkView: UIImageView!
-  @IBOutlet weak var nameView: UILabel!
+class CustomListViewCell: UICollectionViewCell {
+  
+  @IBOutlet weak var imageView: UIImageView!
+  @IBOutlet weak var folderNameView: UILabel!
   @IBOutlet weak var visibleView: UIImageView!
   
-  override func awakeFromNib() {
+  override class func awakeFromNib() {
     super.awakeFromNib()
-    // Initialization code
   }
-  
-  override func setSelected(_ selected: Bool, animated: Bool) {
-    super.setSelected(selected, animated: animated)
-    
-    // Configure the view for the selected state
-  }
-  
 }
+
+
+//extension ShareViewController: UITableViewDelegate, UITableViewDataSource {
+//  func tableView(_ linksTableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+//    self.dataArray.count
+//  }
+//
+//  func tableView(_ linksTableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+//    guard let cell = self.linksTableView.dequeueReusableCell(withIdentifier: "tableViewCell") as? CustomTableViewCell
+//    else { fatalError("can't get cell") }
+//
+//    do{
+//      let item = dataArray[indexPath.row]
+//      let url = item.image_link ?? ""
+//      cell.imageLinkView.image = UIImage(data : try Data(contentsOf: URL(string : url)!))
+//      cell.nameView.text = item.name
+//      cell.visibleView.image = item.visible == 1 ? nil : UIImage(named: "ic_lock")
+//
+//    }
+//    catch {
+//    }
+//
+//    return cell
+//  }
+//
+//
+//}
+//
+//
+//class CustomTableViewCell: UITableViewCell {
+//  @IBOutlet weak var imageLinkView: UIImageView!
+//  @IBOutlet weak var nameView: UILabel!
+//  @IBOutlet weak var visibleView: UIImageView!
+//
+//  override func awakeFromNib() {
+//    super.awakeFromNib()
+//    // Initialization code
+//  }
+//
+//  override func setSelected(_ selected: Bool, animated: Bool) {
+//    super.setSelected(selected, animated: animated)
+//
+//    // Configure the view for the selected state
+//  }
+//
+//}
