@@ -27,12 +27,12 @@
         <scene sceneID="ceB-am-kn3">
             <objects>
                 <viewController id="j1y-V4-xli" customClass="ShareViewController" customModule="Extension" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" opaque="NO" contentMode="scaleToFill" ambiguous="YES" id="wbc-yd-nQP">
+                    <view key="view" opaque="NO" contentMode="scaleToFill" id="wbc-yd-nQP">
                         <rect key="frame" x="0.0" y="0.0" width="430" height="932"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" ambiguous="YES" id="ual-lW-pEE">
-                                <rect key="frame" x="-1" y="580" width="431" height="353"/>
+                            <view contentMode="scaleToFill" id="ual-lW-pEE">
+                                <rect key="frame" x="-2" y="579" width="432" height="353"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" heightSizable="YES"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="HJZ-Dr-si8" customClass="ShadowView" customModule="Extension" customModuleProvider="target">
@@ -67,7 +67,7 @@
                                         </userDefinedRuntimeAttributes>
                                     </imageView>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7Fr-Ql-ywt">
-                                        <rect key="frame" x="24" y="67" width="383" height="1"/>
+                                        <rect key="frame" x="24" y="67" width="384" height="1"/>
                                         <color key="backgroundColor" red="0.96078431372549022" green="0.96862745098039216" blue="0.98039215686274506" alpha="1" colorSpace="calibratedRGB"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="1" id="mus-K0-2nk"/>
@@ -80,13 +80,13 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="폴더 선택" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hid-p6-z53">
-                                        <rect key="frame" x="24" y="88.000000000000057" width="60" height="18.666666666666671"/>
+                                        <rect key="frame" x="24" y="87.999999999999943" width="60" height="18.666666666666671"/>
                                         <fontDescription key="fontDescription" name="Pretendard-Medium" family="Pretendard" pointSize="16"/>
                                         <color key="textColor" name="grey800"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QtK-qM-Rgq">
-                                        <rect key="frame" x="383" y="88.000000000000057" width="24" height="24"/>
+                                        <rect key="frame" x="384" y="87.999999999999943" width="24" height="24"/>
                                         <accessibility key="accessibilityConfiguration">
                                             <accessibilityTraits key="traits" button="YES" image="YES"/>
                                         </accessibility>
@@ -104,7 +104,7 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="p7f-yK-ZWm">
-                                        <rect key="frame" x="387" y="32" width="24" height="24"/>
+                                        <rect key="frame" x="388" y="32" width="24" height="24"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="24" id="Udb-xp-fyC"/>
                                             <constraint firstAttribute="width" constant="24" id="a9d-To-RZt"/>
@@ -121,7 +121,7 @@
                                         </connections>
                                     </button>
                                     <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="26V-wP-wEK">
-                                        <rect key="frame" x="24" y="123.00000000000006" width="407" height="115"/>
+                                        <rect key="frame" x="24" y="122.99999999999994" width="408" height="115"/>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="115" id="hfD-gm-yoa"/>
@@ -304,6 +304,7 @@
                                             <fontDescription key="titleFontDescription" name="Pretendard-Medium" family="Pretendard" pointSize="16"/>
                                         </buttonConfiguration>
                                         <connections>
+                                            <action selector="onCompletePressed:" destination="3Gm-6F-0i7" eventType="touchUpInside" id="Wmc-gm-mzq"/>
                                             <segue destination="X46-ny-z55" kind="show" id="A7E-gs-B1M"/>
                                         </connections>
                                     </button>
@@ -474,7 +475,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2tU-tH-q3K">
-                                <rect key="frame" x="0.0" y="577" width="430" height="355"/>
+                                <rect key="frame" x="0.0" y="568" width="430" height="364"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="BmU-qZ-2dX">
                                         <rect key="frame" x="100.66666666666669" y="30" width="229" height="28"/>
@@ -491,7 +492,7 @@
                                         </subviews>
                                     </stackView>
                                     <stackView opaque="NO" contentMode="scaleToFill" spacing="7" translatesAutoresizingMaskIntoConstraints="NO" id="S0r-5G-CQ0">
-                                        <rect key="frame" x="24" y="245" width="382" height="56"/>
+                                        <rect key="frame" x="24" y="254" width="382" height="56"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CZr-r3-TNF">
                                                 <rect key="frame" x="0.0" y="0.0" width="187.66666666666666" height="56"/>
@@ -546,7 +547,7 @@
                                         </userDefinedRuntimeAttributes>
                                     </imageView>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="F91-Km-a1f" customClass="PaddingLabel" customModule="Extension" customModuleProvider="target">
-                                        <rect key="frame" x="197.66666666666666" y="196" width="34.666666666666657" height="17"/>
+                                        <rect key="frame" x="185.66666666666666" y="196" width="58.666666666666657" height="26"/>
                                         <color key="backgroundColor" name="grey100"/>
                                         <fontDescription key="fontDescription" name="Pretendard-Medium" family="Pretendard" pointSize="14"/>
                                         <color key="textColor" name="grey700"/>
@@ -597,7 +598,7 @@
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Qpm-8P-7Sg">
-                                <rect key="frame" x="0.0" y="59" width="430" height="518"/>
+                                <rect key="frame" x="0.0" y="59" width="430" height="509"/>
                                 <color key="backgroundColor" white="1" alpha="0.01" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
                         </subviews>
@@ -648,10 +649,10 @@
     </scenes>
     <designables>
         <designable name="F91-Km-a1f">
-            <size key="intrinsicContentSize" width="34.666666666666664" height="17"/>
+            <size key="intrinsicContentSize" width="58.666666666666664" height="26"/>
         </designable>
         <designable name="HJZ-Dr-si8">
-            <size key="intrinsicContentSize" width="28" height="28"/>
+            <size key="intrinsicContentSize" width="40" height="40"/>
         </designable>
     </designables>
     <inferredMetricsTieBreakers>

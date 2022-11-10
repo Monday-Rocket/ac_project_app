@@ -120,12 +120,16 @@ class NewFolderViewController : UIViewController {
   
   @IBAction func saveFolder(_ sender: Any) {
     
-    NSLog("\(String(describing: newFolderVisible))   \(String(describing: newFolderNameField!.text!))")
+    let folderName = self.newFolderNameField?.text!
+    
+    NSLog("\(String(describing: newFolderVisible)) \(String(describing: folderName))")
     
     let visible = newFolderVisible ? 0 : 1
     
-    if(newFolderNameField?.text != nil){
-      let result = dbHelper.insertData(name:newFolderNameField!.text!, visible: visible, image_link: imageLink)
+    if self.link != nil {
+      let result = dbHelper.insertData(name: folderName!, visible: visible, image_link: imageLink)
+      UserDefaultsHelper.saveNewFolder(self.link!, folderName!, self.newFolderVisible)
+      
       NSLog("❇️ new folder save result: \(result)")
     }
   }

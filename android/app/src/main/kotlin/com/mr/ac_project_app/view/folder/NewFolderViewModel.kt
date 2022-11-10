@@ -10,6 +10,7 @@ import com.mr.ac_project_app.data.ShareContract
 import com.mr.ac_project_app.data.ShareDbHelper
 import com.mr.ac_project_app.data.SharedPrefHelper
 import com.mr.ac_project_app.utils.convert
+import com.mr.ac_project_app.utils.getCurrentDateTime
 import org.json.JSONObject
 
 class NewFolderViewModel(application: Application): AndroidViewModel(application) {
@@ -22,16 +23,22 @@ class NewFolderViewModel(application: Application): AndroidViewModel(application
 
     fun saveNewFolder(name: String, link: String, visible: Boolean, imageLink: String) {
 
-        val newFolders = SharedPrefHelper.getNewFolders(getApplication<Application>().applicationContext)
+        val context = getApplication<Application>().applicationContext
+
+        val newFolders = SharedPrefHelper.getNewFolders(context)
         with(newFolders.edit()) {
             val json = JSONObject()
             json.put("name", name)
             json.put("visible", visible)
-            putString(link, json.convert())
+            json.put("created_at", getCurrentDateTime())
+
+            val set = HashSet(newFolders.getStringSet("new_folders", HashSet())!!)
+            set.add(json.convert())
+            putStringSet("new_folders", set)
             apply()
         }
 
-        val newLinks = getNewLinks()
+        val newLinks = SharedPrefHelper.getNewLinks(context)
         with(newLinks.edit()) {
             val savedData = newLinks.getString(link, "")!!
             val json = JSONObject(savedData)

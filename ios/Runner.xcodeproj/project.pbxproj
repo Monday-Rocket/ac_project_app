@@ -35,6 +35,7 @@
 		AE83E34E291CB8FB00A43A2D /* SaveType.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE83E34D291CB8FB00A43A2D /* SaveType.swift */; };
 		AE83E351291CC6AA00A43A2D /* PaddingLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE83E350291CC6AA00A43A2D /* PaddingLabel.swift */; };
 		AEE60AF1291BD98B006FF3F8 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEE60AF0291BD98B006FF3F8 /* Color.swift */; };
+		AEFAAC81291D586A00ED5DDC /* UserDefaultsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEFAAC80291D586A00ED5DDC /* UserDefaultsHelper.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -110,6 +111,7 @@
 		AE83E34D291CB8FB00A43A2D /* SaveType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveType.swift; sourceTree = "<group>"; };
 		AE83E350291CC6AA00A43A2D /* PaddingLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaddingLabel.swift; sourceTree = "<group>"; };
 		AEE60AF0291BD98B006FF3F8 /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
+		AEFAAC80291D586A00ED5DDC /* UserDefaultsHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsHelper.swift; sourceTree = "<group>"; };
 		FA8A6BAF1A9D06BD8C855795 /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -137,12 +139,12 @@
 		0F872E3C28D875E3002954CC /* Extension */ = {
 			isa = PBXGroup;
 			children = (
+				AEFAAC82291D5A1700ED5DDC /* DataHelper */,
 				AE83E34F291CC68E00A43A2D /* Custom */,
 				AEE60AEF291BD974006FF3F8 /* res */,
 				AE08C896291B999A0019B578 /* data */,
 				AE66222428DCA79100E5DE18 /* Extension.entitlements */,
 				0F872E3F28D875E3002954CC /* MainInterface.storyboard */,
-				0F10F6632906B8CC0093EAAB /* DBHelper.swift */,
 				0F10F66128FEDA5B0093EAAB /* ShadowView.swift */,
 				0F872E3D28D875E3002954CC /* ShareViewController.swift */,
 				0F872E4228D875E3002954CC /* Info.plist */,
@@ -247,6 +249,15 @@
 				AEE60AF0291BD98B006FF3F8 /* Color.swift */,
 			);
 			path = res;
+			sourceTree = "<group>";
+		};
+		AEFAAC82291D5A1700ED5DDC /* DataHelper */ = {
+			isa = PBXGroup;
+			children = (
+				0F10F6632906B8CC0093EAAB /* DBHelper.swift */,
+				AEFAAC80291D586A00ED5DDC /* UserDefaultsHelper.swift */,
+			);
+			path = DataHelper;
 			sourceTree = "<group>";
 		};
 		B0F7507DCC206DB6EBB05ADC /* Pods */ = {
@@ -463,6 +474,7 @@
 				0F10F66228FEDA5B0093EAAB /* ShadowView.swift in Sources */,
 				0F10F6642906B8CC0093EAAB /* DBHelper.swift in Sources */,
 				AE83E351291CC6AA00A43A2D /* PaddingLabel.swift in Sources */,
+				AEFAAC81291D586A00ED5DDC /* UserDefaultsHelper.swift in Sources */,
 				0F872E3E28D875E3002954CC /* ShareViewController.swift in Sources */,
 				AE83E34E291CB8FB00A43A2D /* SaveType.swift in Sources */,
 				AE08C898291B99AD0019B578 /* Folder.swift in Sources */,

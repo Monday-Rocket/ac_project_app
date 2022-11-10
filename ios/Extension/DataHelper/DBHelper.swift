@@ -102,7 +102,7 @@ time TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
   }
   
   func readData() -> [Folder] {
-    let query: String = "SELECT * FROM folder;"
+    let query: String = "SELECT * FROM folder ORDER BY TIME DESC;"
     var statement: OpaquePointer? = nil
     // 아래는 [MyModel]? 이 되면 값이 안 들어간다.
     // Nil을 인식하지 못하는 것으로..
@@ -126,10 +126,10 @@ time TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
     return result
   }
   
-  func updateData(name: String, visible: Int, image_link : String?) {
+  func updateData(name: String, visible: Int, imageLink : String?) {
     var statement: OpaquePointer?
     
-    let queryString = "UPDATE folder SET name = '\(name)', visible = \(visible), image_link = '\(String(describing: image_link))' WHERE name == '\(name)'"
+    let queryString = "UPDATE folder SET name = '\(name)', visible = \(visible), image_link = '\(imageLink ?? "")' WHERE name == '\(name)'"
     
     // 쿼리 준비.
     if sqlite3_prepare(db, queryString, -1, &statement, nil) != SQLITE_OK {
@@ -144,6 +144,25 @@ time TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
     }
     
     NSLog("Update has been successfully done")
+  }
+  
+  func updateFolderImage(_ name: String, _ imageLink: String?) {
+    var statement: OpaquePointer?
+    
+    let queryString = "UPDATE folder SET image_link = '\(imageLink ?? "")' WHERE name == '\(name)'"
+    
+    // 쿼리 준비.
+    if sqlite3_prepare(db, queryString, -1, &statement, nil) != SQLITE_OK {
+      onSQLErrorPrintErrorMessage(db)
+      return
+    }
+    // 쿼리 실행.
+    if sqlite3_step(statement) != SQLITE_DONE {
+      onSQLErrorPrintErrorMessage(db)
+      return
+    }
+    
+    NSLog("Update folder Image has been successfully done")
   }
   
   private func onSQLErrorPrintErrorMessage(_ db: OpaquePointer?) {
