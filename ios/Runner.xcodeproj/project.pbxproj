@@ -35,6 +35,10 @@
 		AE83E34E291CB8FB00A43A2D /* SaveType.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE83E34D291CB8FB00A43A2D /* SaveType.swift */; };
 		AE83E351291CC6AA00A43A2D /* PaddingLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE83E350291CC6AA00A43A2D /* PaddingLabel.swift */; };
 		AEDF4C8D291D8226000FC3D7 /* CustomeUIButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEDF4C8C291D8226000FC3D7 /* CustomeUIButton.swift */; };
+		AEDF4C91291D9C25000FC3D7 /* FolderSaveCancelDialogViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEDF4C90291D9C25000FC3D7 /* FolderSaveCancelDialogViewController.swift */; };
+		AEDF4C93291D9C4D000FC3D7 /* Dialog.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AEDF4C92291D9C4D000FC3D7 /* Dialog.storyboard */; };
+		AEDF4C96291DA5B3000FC3D7 /* LinkSavedDialogViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEDF4C95291DA5B3000FC3D7 /* LinkSavedDialogViewController.swift */; };
+		AEDF4C98291DA623000FC3D7 /* CommentSaveCancelDialogViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEDF4C97291DA623000FC3D7 /* CommentSaveCancelDialogViewController.swift */; };
 		AEE60AF1291BD98B006FF3F8 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEE60AF0291BD98B006FF3F8 /* Color.swift */; };
 		AEFAAC81291D586A00ED5DDC /* UserDefaultsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEFAAC80291D586A00ED5DDC /* UserDefaultsHelper.swift */; };
 		AEFAAC84291D6E1600ED5DDC /* CommentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEFAAC83291D6E1600ED5DDC /* CommentViewController.swift */; };
@@ -114,6 +118,10 @@
 		AE83E34D291CB8FB00A43A2D /* SaveType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveType.swift; sourceTree = "<group>"; };
 		AE83E350291CC6AA00A43A2D /* PaddingLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaddingLabel.swift; sourceTree = "<group>"; };
 		AEDF4C8C291D8226000FC3D7 /* CustomeUIButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomeUIButton.swift; sourceTree = "<group>"; };
+		AEDF4C90291D9C25000FC3D7 /* FolderSaveCancelDialogViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderSaveCancelDialogViewController.swift; sourceTree = "<group>"; };
+		AEDF4C92291D9C4D000FC3D7 /* Dialog.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Dialog.storyboard; sourceTree = "<group>"; };
+		AEDF4C95291DA5B3000FC3D7 /* LinkSavedDialogViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkSavedDialogViewController.swift; sourceTree = "<group>"; };
+		AEDF4C97291DA623000FC3D7 /* CommentSaveCancelDialogViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentSaveCancelDialogViewController.swift; sourceTree = "<group>"; };
 		AEE60AF0291BD98B006FF3F8 /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		AEFAAC80291D586A00ED5DDC /* UserDefaultsHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsHelper.swift; sourceTree = "<group>"; };
 		AEFAAC83291D6E1600ED5DDC /* CommentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentViewController.swift; sourceTree = "<group>"; };
@@ -145,6 +153,7 @@
 		0F872E3C28D875E3002954CC /* Extension */ = {
 			isa = PBXGroup;
 			children = (
+				AEDF4C94291DA56E000FC3D7 /* Dialog */,
 				AEFAAC82291D5A1700ED5DDC /* DataHelper */,
 				AE83E34F291CC68E00A43A2D /* Custom */,
 				AEE60AEF291BD974006FF3F8 /* Resources */,
@@ -160,6 +169,7 @@
 				AE83E349291CA20100A43A2D /* Assets.xcassets */,
 				AE83E34B291CB70C00A43A2D /* FolderSaveSuccessViewController.swift */,
 				AEFAAC83291D6E1600ED5DDC /* CommentViewController.swift */,
+				AEDF4C92291D9C4D000FC3D7 /* Dialog.storyboard */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -249,6 +259,16 @@
 				AEDF4C8C291D8226000FC3D7 /* CustomeUIButton.swift */,
 			);
 			path = Custom;
+			sourceTree = "<group>";
+		};
+		AEDF4C94291DA56E000FC3D7 /* Dialog */ = {
+			isa = PBXGroup;
+			children = (
+				AEDF4C90291D9C25000FC3D7 /* FolderSaveCancelDialogViewController.swift */,
+				AEDF4C95291DA5B3000FC3D7 /* LinkSavedDialogViewController.swift */,
+				AEDF4C97291DA623000FC3D7 /* CommentSaveCancelDialogViewController.swift */,
+			);
+			path = Dialog;
 			sourceTree = "<group>";
 		};
 		AEE60AEF291BD974006FF3F8 /* Resources */ = {
@@ -375,6 +395,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AEDF4C93291D9C4D000FC3D7 /* Dialog.storyboard in Resources */,
 				AE83E342291C77B500A43A2D /* Pretendard-Thin.otf in Resources */,
 				AE83E344291C77B500A43A2D /* Pretendard-Bold.otf in Resources */,
 				AE83E343291C77B500A43A2D /* Pretendard-Regular.otf in Resources */,
@@ -479,7 +500,9 @@
 				AE08C895291B94540019B578 /* Utils.swift in Sources */,
 				AEFAAC86291D791700ED5DDC /* PaddingTextField.swift in Sources */,
 				0F10F666290E68C10093EAAB /* NewFolderViewController.swift in Sources */,
+				AEDF4C98291DA623000FC3D7 /* CommentSaveCancelDialogViewController.swift in Sources */,
 				AEE60AF1291BD98B006FF3F8 /* Color.swift in Sources */,
+				AEDF4C91291D9C25000FC3D7 /* FolderSaveCancelDialogViewController.swift in Sources */,
 				AE83E34C291CB70C00A43A2D /* FolderSaveSuccessViewController.swift in Sources */,
 				0F10F66228FEDA5B0093EAAB /* ShadowView.swift in Sources */,
 				0F10F6642906B8CC0093EAAB /* DBHelper.swift in Sources */,
@@ -489,6 +512,7 @@
 				AEDF4C8D291D8226000FC3D7 /* CustomeUIButton.swift in Sources */,
 				0F872E3E28D875E3002954CC /* ShareViewController.swift in Sources */,
 				AE83E34E291CB8FB00A43A2D /* SaveType.swift in Sources */,
+				AEDF4C96291DA5B3000FC3D7 /* LinkSavedDialogViewController.swift in Sources */,
 				AE08C898291B99AD0019B578 /* Folder.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
