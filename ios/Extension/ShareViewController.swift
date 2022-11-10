@@ -27,6 +27,7 @@ class ShareViewController: UIViewController {
   let dbHelper = DBHelper.shared
   var link: String?
   var linkImageUrl: String?
+  var selectedFolder: Folder?
   
   
   override func viewDidLoad() {
@@ -45,7 +46,6 @@ class ShareViewController: UIViewController {
   @IBAction func closeWindow(_ sender: Any) {
     self.hideExtensionWithCompletionHandler()
   }
-  
   
   
   private func loadFolders() {
@@ -77,9 +77,16 @@ class ShareViewController: UIViewController {
   }
   
   override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+    
     if let viewController = segue.destination as? NewFolderViewController {
       viewController.link = self.link
       viewController.imageLink = self.linkImageUrl
+    }
+    
+    if let viewController = segue.destination as? FolderSaveSuccessViewController {
+      viewController.link = self.link
+      viewController.folder = self.selectedFolder
+      viewController.saveType = SaveType.Selected
     }
   }
   
@@ -96,6 +103,7 @@ class ShareViewController: UIViewController {
     OpenGraph.fetch(url: URL(string: link)!, completion: { result in
       switch result {
         case .success(let og):
+          NSLog("🌏 \(String(describing: og[.imageUrl])) \(String(describing: og[.imageSecure_url])) \(String(describing: og[.image]))")
           title = og[.title] ?? ""
           self.linkImageUrl = (og[.image] ?? "")
           let date = Date.ISOStringFromDate(date: Date())
@@ -145,6 +153,12 @@ extension ShareViewController: UICollectionViewDataSource, UICollectionViewDeleg
     return CGSize(width: width, height: height)
   }
   
+  func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    let item = dataArray[indexPath.item]
+    self.selectedFolder = item
+    performSegue(withIdentifier: "folderSaveSuccess", sender: self)
+  }
+  
   func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
     guard let cell = self.folderListView.dequeueReusableCell(
       withReuseIdentifier: "customCell",
@@ -155,7 +169,11 @@ extension ShareViewController: UICollectionViewDataSource, UICollectionViewDeleg
     cell.folderNameView.text = item.name
     cell.visibleView.image = item.visible == 1 ? nil : UIImage(named: "ic_lock")
     
-    let url = item.image_link ?? ""
+    cell.imageView.contentMode = .scaleAspectFill
+    guard let url = item.image_link, !item.image_link!.isEmpty else {
+      cell.imageView.image = UIImage(named: "empty_image_folder")
+      return cell
+    }
     
     do {
       cell.imageView.image = UIImage(data : try Data(contentsOf: URL(string : url)!))
@@ -163,7 +181,6 @@ extension ShareViewController: UICollectionViewDataSource, UICollectionViewDeleg
     catch {
       cell.imageView.image = UIImage(named: "empty_image_folder")
     }
-    cell.imageView.contentMode = .scaleAspectFill
     
     return cell
   }

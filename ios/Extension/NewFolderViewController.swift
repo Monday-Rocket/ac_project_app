@@ -39,6 +39,10 @@ class NewFolderViewController : UIViewController {
     self.backgroundView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.showConfirmDialog(_:))))
     
     self.firstSaveButton?.tintColor = UIColor.secondary
+    self.secondSaveButton?.tintColor = UIColor.grey300
+    self.firstSaveButton?.isEnabled = false
+    self.secondSaveButton?.isEnabled = false
+    
     self.setNameTextField()
     
     self.visibleToggleButton.isUserInteractionEnabled = true
@@ -46,6 +50,18 @@ class NewFolderViewController : UIViewController {
     
     NSLog("❇️ link: \(link ?? ""), image: \(imageLink ?? "")")
   }
+  
+  override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+    if let viewController = segue.destination as? FolderSaveSuccessViewController {
+      viewController.link = self.link
+      viewController.folder = Folder(
+        name: newFolderNameField.text!,
+        visible: newFolderVisible ? 0 : 1,
+        image_link: imageLink
+      )
+    }
+  }
+  
   
   @objc func onTogglePressed(_ sender: UILongPressGestureRecognizer) {
     if newFolderVisible {
@@ -77,7 +93,12 @@ class NewFolderViewController : UIViewController {
   
   @objc func onFolderNameChange(_ sender: Any?) {
     let text = self.newFolderNameField?.text ?? ""
+    
     self.firstSaveButton?.tintColor = text.isEmpty ? UIColor.secondary : UIColor.primary600
+    self.secondSaveButton?.tintColor = text.isEmpty ? UIColor.grey300 : UIColor.grey800
+    self.firstSaveButton?.isEnabled = !text.isEmpty
+    self.secondSaveButton?.isEnabled = !text.isEmpty
+    
   }
   
   @objc func showConfirmDialog(_ sender: UITapGestureRecognizer? = nil) {
@@ -101,7 +122,7 @@ class NewFolderViewController : UIViewController {
     
     NSLog("\(String(describing: newFolderVisible))   \(String(describing: newFolderNameField!.text!))")
     
-    let visible = newFolderVisible ?  1 : 0
+    let visible = newFolderVisible ? 0 : 1
     
     if(newFolderNameField?.text != nil){
       let result = dbHelper.insertData(name:newFolderNameField!.text!, visible: visible, image_link: imageLink)
