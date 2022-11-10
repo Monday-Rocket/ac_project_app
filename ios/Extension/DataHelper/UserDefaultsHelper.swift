@@ -99,7 +99,30 @@ class UserDefaultsHelper {
       NSLog("🚨 saved data error")
       return
     }
+  }
+  
+  static func saveComment(_ link: String, _ comment: String) {
+    let linkStorage = UserDefaults(suiteName: "group.com.mr.acProjectApp.Share.new_links")!
     
-    
+    do {
+      if let savedData = linkStorage.string(forKey: link) {
+        var jsonData = try JSONSerialization.jsonObject(with: Data(savedData.utf8), options: []) as! Dictionary<String, Any>
+        jsonData["comment"] = comment
+        
+        do {
+          let temp = try JSONSerialization.data(withJSONObject: jsonData, options: .withoutEscapingSlashes)
+          let jsonString = String(data: temp, encoding: .utf8) ?? ""
+          NSLog("❇️ \(jsonString)")
+          
+          linkStorage.set(jsonString, forKey: link)
+        } catch {
+          NSLog("🚨 json error")
+          return
+        }
+      }
+    } catch {
+      NSLog("🚨 saved data error")
+      return
+    }
   }
 }

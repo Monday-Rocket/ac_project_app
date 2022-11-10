@@ -432,6 +432,9 @@
                                         <buttonConfiguration key="configuration" style="filled" title="작성완료" cornerStyle="large">
                                             <fontDescription key="titleFontDescription" name="Pretendard-Bold" family="Pretendard" pointSize="16"/>
                                         </buttonConfiguration>
+                                        <connections>
+                                            <action selector="onSavePressed:" destination="zL7-qk-DKt" eventType="touchDown" id="NT8-W5-3Id"/>
+                                        </connections>
                                     </button>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="코멘트 작성" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cNZ-qT-3Sv">
                                         <rect key="frame" x="151" y="32" width="91.333333333333314" height="24"/>

@@ -33,6 +33,13 @@ class CommentViewController: UIViewController {
     
   }
   
+  @IBAction func onSavePressed(_ sender: Any) {
+    guard let comment = self.commentTextField.text, let savedLink = self.link else {
+      return
+    }
+    UserDefaultsHelper.saveComment(savedLink, comment)
+  }
+  
   @IBAction func onClosePressed(_ sender: Any) {
     self.hideExtensionWithCompletionHandler()
   }
