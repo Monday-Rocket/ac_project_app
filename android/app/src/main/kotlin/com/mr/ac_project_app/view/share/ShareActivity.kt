@@ -25,10 +25,6 @@ class ShareActivity : ComponentActivity() {
     private val viewModel: ShareViewModel by viewModels()
     private val modelList = arrayListOf<FolderModel>()
 
-    companion object {
-        const val SHARED_PREF = "share_pref"
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityShareBinding.inflate(layoutInflater)

@@ -15,12 +15,10 @@ import Flutter
       (call: FlutterMethodCall, result: @escaping FlutterResult) -> Void in
       
       if (call.method == "getNewLinks") {
-        let sharedDefault = UserDefaults(suiteName: "group.com.mr.acProjectApp.Share")!
-        let data = sharedDefault.object(forKey: "new_links") as! String? ?? ""
+        let data = self.getNewLinks()
         result(data)
       } else if (call.method == "getNewFolders") {
-        let sharedDefault = UserDefaults(suiteName: "group.com.mr.acProjectApp.Share")!
-        let data = sharedDefault.object(forKey: "new_folders") as! String? ?? ""
+        let data = self.getNewFolders()
         result(data)
       } else if (call.method == "getShareDBUrl") {
         let dbUrl = self.getShareDBUrl() ?? ""
@@ -33,6 +31,26 @@ import Flutter
     
     GeneratedPluginRegistrant.register(with: self)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+  }
+  
+  func getNewLinks() -> [String] {
+    let linkStorage = UserDefaults(suiteName: "group.com.mr.acProjectApp.Share.new_links")!
+    let keyList = linkStorage.dictionaryRepresentation().keys.sorted()
+    
+    var result: [String] = []
+    
+    for keyData in keyList {
+      if keyData.description.contains("http") {
+        result.append(keyData.description)
+      }
+    }
+    
+    return result
+  }
+  
+  func getNewFolders() -> [Any] {
+    let folderStorage = UserDefaults(suiteName: "group.com.mr.acProjectApp.Share.new_folders")!
+    return folderStorage.array(forKey: "new_folders") ?? []
   }
   
   func getShareDBUrl() -> String? {

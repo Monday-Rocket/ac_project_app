@@ -42,6 +42,10 @@ class ShareViewController: UIViewController {
     
     self.loadFolders()
     self.getLink()
+    
+    
+    NSLog(UserDefaultsHelper.getNewLinks().description)
+    NSLog(UserDefaultsHelper.getNewFolders().description)
   }
   
   @IBAction func closeWindow(_ sender: Any) {

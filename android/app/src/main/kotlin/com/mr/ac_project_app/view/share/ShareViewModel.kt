@@ -156,11 +156,6 @@ class ShareViewModel(application: Application) : AndroidViewModel(application) {
             )
         )
         db.close()
-
-        for (folder in folders) {
-            Log.i(LinkPoolApp.TAG, folder.toString())
-        }
-
         return folders
     }
 

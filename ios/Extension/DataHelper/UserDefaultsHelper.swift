@@ -8,6 +8,27 @@
 import Foundation
 
 class UserDefaultsHelper {
+  
+  static func getNewLinks() -> [String] {
+    let linkStorage = UserDefaults(suiteName: "group.com.mr.acProjectApp.Share.new_links")!
+    let keyList = linkStorage.dictionaryRepresentation().keys.sorted()
+    
+    var result: [String] = []
+    
+    for keyData in keyList {
+      if keyData.description.contains("http") {
+        result.append(keyData.description)
+      }
+    }
+    
+    return result
+  }
+  
+  static func getNewFolders() -> [Any] {
+    let folderStorage = UserDefaults(suiteName: "group.com.mr.acProjectApp.Share.new_folders")!
+    return folderStorage.array(forKey: "new_folders") ?? []
+  }
+  
   static func saveLinkWithFolder(_ item: Folder, _ title: String?, _ imageUrl: String?, _ link: String, _ dbHelper: DBHelper) {
     
     // 1. 링크 UserDefaults에 저장

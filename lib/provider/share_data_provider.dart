@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:ac_project_app/util/logger.dart';
@@ -8,18 +9,28 @@ import 'package:sqflite/sqflite.dart';
 class ShareDataProvider {
   static const _platform = MethodChannel('share_data_provider');
 
-  static Future<List<String>> getShareDataList() async {
+
+  static Future<void> getNewLinks() async {
     try {
-      final data =
-      await _platform.invokeMethod('getShareData') as List<Object?>;
+      final linkList = await _platform.invokeMethod('getNewLinks') as List<Object?>;
 
-      final result = <String>[];
+      for (final linkData in linkList) {
+        Log.i(linkData);
+      }
+    } on PlatformException catch (e) {
+      Log.e(e.message);
+      rethrow;
+    }
+  }
 
-      for (final item in data) {
-        result.add(item.toString());
+  static Future<void> getNewFolders() async {
+    try {
+      final folderList = await _platform.invokeMethod('getNewFolders') as List<Object?>? ?? [];
+
+      for (final folder in folderList) {
+        Log.i(folder);
       }
 
-      return result;
     } on PlatformException catch (e) {
       Log.e(e.message);
       rethrow;

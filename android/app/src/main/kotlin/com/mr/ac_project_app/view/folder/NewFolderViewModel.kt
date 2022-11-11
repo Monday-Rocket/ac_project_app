@@ -2,10 +2,7 @@ package com.mr.ac_project_app.view.folder
 
 import android.app.Application
 import android.content.ContentValues
-import android.content.Context
-import android.content.SharedPreferences
 import androidx.lifecycle.AndroidViewModel
-import com.mr.ac_project_app.R
 import com.mr.ac_project_app.data.ShareContract
 import com.mr.ac_project_app.data.ShareDbHelper
 import com.mr.ac_project_app.data.SharedPrefHelper
@@ -60,13 +57,5 @@ class NewFolderViewModel(application: Application): AndroidViewModel(application
         )
         db.close()
 
-    }
-
-    private fun getNewLinks(): SharedPreferences {
-        val context = getApplication<Application>().applicationContext
-        return context.getSharedPreferences(
-            context.getString(R.string.preference_new_links),
-            Context.MODE_PRIVATE
-        )
     }
 }

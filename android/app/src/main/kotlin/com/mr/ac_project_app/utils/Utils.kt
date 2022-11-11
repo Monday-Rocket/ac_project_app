@@ -4,6 +4,8 @@ import android.content.Context
 import android.util.DisplayMetrics
 import org.json.JSONObject
 import org.threeten.bp.LocalDateTime
+import org.threeten.bp.ZoneId
+import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.format.DateTimeFormatter
 
 fun toDp(dp: Float, context: Context): Float {
@@ -16,5 +18,6 @@ fun JSONObject.convert(): String {
 }
 
 fun getCurrentDateTime(): String? {
-    return LocalDateTime.now().format(DateTimeFormatter.ISO_INSTANT)
+    val now = ZonedDateTime.of(LocalDateTime.now(), ZoneId.systemDefault())
+    return now.format(DateTimeFormatter.ISO_INSTANT)
 }
