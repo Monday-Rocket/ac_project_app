@@ -106,7 +106,7 @@ class MyFolderPage extends StatelessWidget {
                 ),
               ),
               BlocBuilder<GetFoldersCubit, FoldersState>(
-                builder: (context, state) {
+                builder: (getFolderContext, state) {
                   if (state is LoadingState) {
                     return const Center(
                       child: CircularProgressIndicator(),
@@ -174,22 +174,21 @@ class MyFolderPage extends StatelessWidget {
                             borderRadius: const BorderRadius.all(
                               Radius.circular(7),
                             ),
-                            child: Image.network(
-                              folders[index].imageUrl ?? '',
-                              fit: BoxFit.fitHeight,
-                              errorBuilder: (ctx, _, __) {
-                                return ColoredBox(
-                                  color: grey100,
-                                  child: Center(
-                                    child: SvgPicture.asset(
-                                      width: 46,
-                                      height: 46,
-                                      'assets/images/folder_big.svg',
+                            child: folders[index].imageUrl != null
+                                ? Image.network(
+                                    folders[index].imageUrl!,
+                                    fit: BoxFit.fitHeight,
+                                  )
+                                : ColoredBox(
+                                    color: grey100,
+                                    child: Center(
+                                      child: SvgPicture.asset(
+                                        width: 46,
+                                        height: 46,
+                                        'assets/images/folder_big.svg',
+                                      ),
                                     ),
                                   ),
-                                );
-                              },
-                            ),
                           ),
                           if (lockPrivate)
                             Align(
@@ -314,26 +313,25 @@ class MyFolderPage extends StatelessWidget {
                                   borderRadius: const BorderRadius.all(
                                     Radius.circular(20),
                                   ),
-                                  child: Image.network(
-                                    folders[index].imageUrl ?? '',
-                                    width: 63,
-                                    height: 63,
-                                    fit: BoxFit.contain,
-                                    errorBuilder: (context, _, __) {
-                                      return Container(
-                                        width: 63,
-                                        height: 63,
-                                        color: grey100,
-                                        child: Center(
-                                          child: SvgPicture.asset(
-                                            'assets/images/folder.svg',
-                                            width: 24,
-                                            height: 24,
+                                  child: folders[index].imageUrl != null
+                                      ? Image.network(
+                                          folders[index].imageUrl!,
+                                          width: 63,
+                                          height: 63,
+                                          fit: BoxFit.contain,
+                                        )
+                                      : Container(
+                                          width: 63,
+                                          height: 63,
+                                          color: grey100,
+                                          child: Center(
+                                            child: SvgPicture.asset(
+                                              'assets/images/folder.svg',
+                                              width: 24,
+                                              height: 24,
+                                            ),
                                           ),
                                         ),
-                                      );
-                                    },
-                                  ),
                                 ),
                                 if (lockPrivate)
                                   Align(
@@ -412,11 +410,11 @@ class MyFolderPage extends StatelessWidget {
       builder: (BuildContext context) {
         var isEmptyName = true;
         var folderPrivate = FolderVisibleState.visible;
+        final textController = TextEditingController();
         return Wrap(
           children: [
             StatefulBuilder(
               builder: (context, setState) {
-                final textController = TextEditingController();
                 return DecoratedBox(
                   decoration: const BoxDecoration(
                     color: Colors.white,

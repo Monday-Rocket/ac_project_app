@@ -2,20 +2,19 @@ package com.mr.ac_project_app.view.share
 
 import android.app.Application
 import android.content.ContentValues
-import android.content.Context
-import android.content.SharedPreferences
 import android.database.Cursor
 import android.text.TextUtils
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.mr.ac_project_app.LinkPoolApp
-import com.mr.ac_project_app.R
 import com.mr.ac_project_app.data.ShareContract
 import com.mr.ac_project_app.data.ShareDbHelper
+import com.mr.ac_project_app.data.SharedPrefHelper
 import com.mr.ac_project_app.model.FolderModel
 import com.mr.ac_project_app.model.FolderType
 import com.mr.ac_project_app.utils.convert
+import com.mr.ac_project_app.utils.getCurrentDateTime
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -90,12 +89,13 @@ class ShareViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     private fun saveLinkWithoutFolder(savedLink: String, title: String, imageLink: String) {
-        val newLinks = getNewLinks()
+        val newLinks = SharedPrefHelper.getNewLinks(getApplication<Application>().applicationContext)
         with(newLinks.edit()) {
             if (newLinks.getString(savedLink, null) == null) {
                 val json = JSONObject()
                 json.put("image_link", imageLink)
                 json.put("title", title)
+                json.put("created_at", getCurrentDateTime())
                 val result = json.convert()
                 putString(savedLink, result)
                 apply()
@@ -104,12 +104,13 @@ class ShareViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun saveLinkWithFolder(folder: FolderModel) {
-        val newLinks = getNewLinks()
+        val newLinks = SharedPrefHelper.getNewLinks(getApplication<Application>().applicationContext)
         with(newLinks.edit()) {
             val json = JSONObject()
             json.put("title", title.value)
             json.put("folder_name", folder.name)
             json.put("image_link", imageLink)
+            json.put("created_at", getCurrentDateTime())
             putString(savedLink.value, json.convert())
             apply()
         }
@@ -125,14 +126,6 @@ class ShareViewModel(application: Application) : AndroidViewModel(application) {
             arrayOf(folder.name)
         )
         db.close()
-    }
-
-    private fun getNewLinks(): SharedPreferences {
-        val context = getApplication<Application>().applicationContext
-        return context.getSharedPreferences(
-            context.getString(R.string.preference_new_links),
-            Context.MODE_PRIVATE
-        )
     }
 
     fun getFoldersFromDB(): MutableList<FolderModel> {
@@ -163,11 +156,6 @@ class ShareViewModel(application: Application) : AndroidViewModel(application) {
             )
         )
         db.close()
-
-        for (folder in folders) {
-            Log.i(LinkPoolApp.TAG, folder.toString())
-        }
-
         return folders
     }
 

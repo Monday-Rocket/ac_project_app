@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:ac_project_app/ui/view/home_view.dart';
 import 'package:ac_project_app/ui/view/login_view.dart';
 import 'package:ac_project_app/ui/view/my_link_view.dart';
@@ -20,67 +18,44 @@ class Routes {
 class Pages {
   static Route<dynamic>? getPages(RouteSettings settings) {
     final arguments = settings.arguments;
-    final router = MultiPlatformPageRoute(arguments);
+    final router = PageRouter(arguments);
     switch (settings.name) {
       case Routes.login:
         /*
           TODO 다른 로그인 추가 예정
          */
-        return router.create(
-          builder: (_) => const LoginView(),
-        );
+        return router.create(child: const LoginView());
       case Routes.home:
-        return router.create(
-          builder: (_) => const HomeView(),
-        );
+        return router.create(child: const HomeView());
       case Routes.myLinks:
-        return router.create(
-          builder: (_) => const MyLinkView(),
-        );
+        return router.create(child: const MyLinkView());
       case Routes.signUpNickname:
-        return router.create(
-          builder: (_) => const SignUpNicknameView(),
-        );
+        return router.create(child: const SignUpNicknameView());
       case Routes.singUpJob:
-        return router.create(
-          builder: (_) => const SignUpJobView(),
-        );
+        return router.create(child: const SignUpJobView());
       default:
         return null;
     }
   }
 }
 
-class MultiPlatformPageRoute {
-  MultiPlatformPageRoute(this.arguments);
+class PageRouter {
+  PageRouter(this.arguments);
 
   final Object? arguments;
 
   PageRoute<dynamic> create({
-    required Widget Function(BuildContext) builder,
+    required Widget child,
     bool? maintainState = true,
-    bool? fullscreenDialog = true,
+    bool? fullscreenDialog = false,
   }) {
-    if (Platform.isAndroid) {
-      return MaterialPageRoute(
-        builder: builder,
-        settings: RouteSettings(
-          arguments: arguments,
-        ),
-        maintainState: maintainState!,
-        fullscreenDialog: fullscreenDialog!,
-      );
-    } else if (Platform.isIOS) {
-      return CupertinoPageRoute(
-        builder: builder,
-        settings: RouteSettings(
-          arguments: arguments,
-        ),
-        maintainState: maintainState!,
-        fullscreenDialog: fullscreenDialog!,
-      );
-    } else {
-      throw Exception('Platform 미지원');
-    }
+    return MaterialPageRoute(
+      builder: (context) => child,
+      settings: RouteSettings(
+        arguments: arguments,
+      ),
+      maintainState: maintainState!,
+      fullscreenDialog: fullscreenDialog!,
+    );
   }
 }

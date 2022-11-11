@@ -12,125 +12,194 @@ import UniformTypeIdentifiers
 import OpenGraph
 
 class ShareViewController: UIViewController {
+  
+  
+  @IBOutlet weak var layoutView: UIView?
+  @IBOutlet weak var checkImageView: UIImageView!
+  @IBOutlet weak var closeButton: UIButton!
+  
+  @IBOutlet weak var backgroundView: UIView!
+  
+  @IBOutlet weak var folderListView: UICollectionView!
+  
+  var dataArray : [Folder] = []
+  
+  let dbHelper = DBHelper.shared
+  var link: String?
+  var linkImageUrl: String?
+  var selectedFolder: Folder?
+  var titleText: String?
+  
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    
+    self.folderListView.delegate = self
+    self.folderListView.dataSource = self
+    self.layoutView?.layer.cornerRadius = 30
+    
+    self.backgroundView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.hideExtensionWithCompletionHandler(_:))))
+    
+    self.loadFolders()
+    self.getLink()
     
     
-    @IBOutlet weak var checkImageView: UIImageView!
-    @IBOutlet weak var btnTest: UIButton!
-
-    @IBOutlet weak var linksTableView: UITableView!
-
-    var dataArray : [Folder] = []
-
-    let dbHelper = DBHelper.shared
-
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        self.linksTableView.delegate = self
-        self.linksTableView.dataSource = self
-
-    }
-
-
-    func saveUrl(){
-
-
-            if let extensionItem = self.extensionContext?.inputItems[0] as? NSExtensionItem {
-                if let itemProviders = extensionItem.attachments{
-                    for itemProvider in itemProviders{
-                        if itemProvider.hasItemConformingToTypeIdentifier(UTType.url.identifier){
-                            itemProvider.loadItem(forTypeIdentifier: UTType.url.identifier, options: nil){
-                                (data, error) in
-                                let text = (data as! NSURL).absoluteString!
-
-                                let sharedDefault = UserDefaults(suiteName: "group.com.mr.acProjectApp.Share")!
-                                var savedData = sharedDefault.object(forKey: "shareDataList") as! [String]? ?? []
-                                savedData.append(text)
-                                sharedDefault.set(savedData, forKey: "shareDataList")
-
-                                self.hideExtensionWithCompletionHandler()
-                            }
-                        } else if itemProvider.hasItemConformingToTypeIdentifier(UTType.plainText.identifier) {
-                            itemProvider.loadItem(forTypeIdentifier: UTType.plainText.identifier, options: nil) {
-                                (data, error) in
-                                let text = data as! String
-
-                                let sharedDefault = UserDefaults(suiteName: "group.com.mr.acProjectApp.Share")!
-                                var savedData = sharedDefault.object(forKey: "shareDataList") as! [String]? ?? []
-                                savedData.append(text)
-                                sharedDefault.set(savedData, forKey: "shareDataList")
-
-                                self.hideExtensionWithCompletionHandler()
-                            }
-                        }
-                    }
-                }
+    NSLog(UserDefaultsHelper.getNewLinks().description)
+    NSLog(UserDefaultsHelper.getNewFolders().description)
+  }
+  
+  @IBAction func closeWindow(_ sender: Any) {
+    self.hideExtensionWithCompletionHandler()
+  }
+  
+  
+  private func loadFolders() {
+    dataArray = dbHelper.readData()
+  }
+  
+  private func getLink() {
+    if let extensionItem = self.extensionContext?.inputItems[0] as? NSExtensionItem {
+      if let itemProviders = extensionItem.attachments{
+        for itemProvider in itemProviders{
+          if itemProvider.hasItemConformingToTypeIdentifier(UTType.url.identifier){
+            itemProvider.loadItem(forTypeIdentifier: UTType.url.identifier, options: nil){
+              (data, error) in
+              let text = (data as? NSURL)?.absoluteString ?? ""
+              NSLog("❇️ link: \(text)")
+              self.saveLink(text)
             }
-
+          } else if itemProvider.hasItemConformingToTypeIdentifier(UTType.plainText.identifier) {
+            itemProvider.loadItem(forTypeIdentifier: UTType.plainText.identifier, options: nil) {
+              (data, error) in
+              let text = data as? String ?? ""
+              NSLog("❇️ link: \(text)")
+              self.saveLink(text)
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+    
+    if let viewController = segue.destination as? NewFolderViewController {
+      viewController.link = self.link
+      viewController.imageLink = self.linkImageUrl
     }
     
-    func hideExtensionWithCompletionHandler() {
-        UIView.animate(withDuration: 0.3, animations: {
-            self.navigationController?.view.transform = CGAffineTransform(translationX: 0, y:self.navigationController!.view.frame.size.height)
-        }, completion: { _ in
-            self.extensionContext?.completeRequest(returningItems: nil, completionHandler: nil)
-        })
+    if let viewController = segue.destination as? FolderSaveSuccessViewController {
+      viewController.link = self.link
+      viewController.folder = self.selectedFolder
+      viewController.saveType = SaveType.Selected
+    }
+  }
+  
+  private func saveLink(_ link: String) {
+    
+    // 링크가 아니면 저장 안함
+    guard (link.starts(with: "http://") || link.starts(with: "https://")) && !link.isEmpty else {
+      return
     }
     
-    func sharedDirectoryURL() -> URL {
-        let fileManager = FileManager.default
-        return fileManager.containerURL(forSecurityApplicationGroupIdentifier: "group.com.mr.acProjectApp.Share")!
-    }
-
+    self.link = link
+    
+    OpenGraph.fetch(url: URL(string: link)!, completion: { result in
+      switch result {
+        case .success(let og):
+          NSLog("🌏 \(String(describing: og[.imageUrl])) \(String(describing: og[.imageSecure_url])) \(String(describing: og[.image]))")
+          self.titleText = og[.title] ?? ""
+          self.linkImageUrl = (og[.image] ?? "")
+          UserDefaultsHelper.saveLinkWithoutFolder(link, self.linkImageUrl, self.titleText)
+          break
+        case .failure(let error):
+          NSLog("🚨 open graph error: \(error.localizedDescription)")
+      }
+    })
+  }
+  
+  @objc func hideExtensionWithCompletionHandler(_ sender: UITapGestureRecognizer? = nil) {
+    UIView.animate(withDuration: 0.3, animations: {
+      self.navigationController?.view.transform = CGAffineTransform(translationX: 0, y:self.navigationController!.view.frame.size.height)
+    }, completion: { _ in
+      self.extensionContext?.completeRequest(returningItems: nil, completionHandler: nil)
+    })
+  }
 }
 
-extension ShareViewController: UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ linksTableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        self.dataArray.count
+extension ShareViewController: UICollectionViewDataSource, UICollectionViewDelegate {
+  func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    self.dataArray.count
+  }
+  
+  func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    
+    let width: CGFloat = 95
+    let height: CGFloat = 115
+    
+    return CGSize(width: width, height: height)
+  }
+  
+  func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    
+    guard self.link != nil else {
+      return
     }
-
-    func tableView(_ linksTableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = self.linksTableView.dequeueReusableCell(withIdentifier: "tableViewCell") as? CustomTableViewCell
-        else { fatalError("can't get cell") }
-
-
-
-        do{
-            let url : String? = String(dataArray[indexPath.row].name)
-            if(url != nil){
-                cell.imageLinkView.image = UIImage(data : try Data(contentsOf: URL(string : String(dataArray[indexPath.row].name))!))
-
-            }
-            cell.nameView.text = String(dataArray[indexPath.row].name)
-            if dataArray[indexPath.row].visible == 1 {
-
-            }
-        }
-        catch {
-        }
-
-        return cell
+    // , (comma)로 guard 조건 추가할 때 Optional 체크 안하는지 확인 필요
+    guard (self.link!.starts(with: "http://") || self.link!.starts(with: "https://")) else {
+      return
     }
-
-
+    
+    var item = dataArray[indexPath.item]
+    item.image_link = self.linkImageUrl
+    self.selectedFolder = item
+    
+    UserDefaultsHelper.saveLinkWithFolder(item, self.titleText, self.linkImageUrl, self.link!, self.dbHelper)
+    
+    performSegue(withIdentifier: "folderSaveSuccess", sender: self)
+  }
+  
+  func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    guard let cell = self.folderListView.dequeueReusableCell(
+      withReuseIdentifier: "customCell",
+      for: indexPath) as? CustomListViewCell else { fatalError("cell init error!") }
+    
+    let item = dataArray[indexPath.row]
+    
+    cell.folderNameView.text = item.name
+    cell.visibleView.image = item.visible == 1 ? nil : UIImage(named: "ic_lock")
+    
+    cell.imageView.contentMode = .scaleAspectFill
+    guard let imageUrl = item.image_link, !item.image_link!.isEmpty else {
+      cell.imageView.image = UIImage(named: "empty_image_folder")
+      return cell
+    }
+    
+    do {
+      NSLog("🌱 \(imageUrl)")
+      let url = URL(string : imageUrl)
+      if url != nil {
+        cell.imageView.image = UIImage(data : try Data(contentsOf: url!))
+      } else {
+        cell.imageView.image = UIImage(named: "empty_image_folder")
+      }
+    }
+    catch {
+      cell.imageView.image = UIImage(named: "empty_image_folder")
+    }
+    
+    return cell
+  }
 }
 
 
-class CustomTableViewCell: UITableViewCell {
-    @IBOutlet weak var imageLinkView: UIImageView!
-    @IBOutlet weak var nameView: UILabel!
-    @IBOutlet weak var visibleView: UIImageView!
-
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
-    }
-
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
-    }
-
+class CustomListViewCell: UICollectionViewCell {
+  
+  @IBOutlet weak var imageView: UIImageView!
+  @IBOutlet weak var folderNameView: UILabel!
+  @IBOutlet weak var visibleView: UIImageView!
+  
+  override class func awakeFromNib() {
+    super.awakeFromNib()
+  }
 }

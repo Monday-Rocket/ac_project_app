@@ -5,6 +5,8 @@
 	<key>com.apple.security.application-groups</key>
 	<array>
 		<string>group.com.mr.acProjectApp.Share</string>
+		<string>group.com.mr.acProjectApp.Share.new_links</string>
+		<string>group.com.mr.acProjectApp.Share.new_folders</string>
 	</array>
 </dict>
 </plist>
