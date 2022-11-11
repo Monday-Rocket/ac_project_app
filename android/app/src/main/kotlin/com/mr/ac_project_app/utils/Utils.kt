@@ -17,7 +17,7 @@ fun JSONObject.convert(): String {
     return this.toString().replace("\\", "")
 }
 
-fun getCurrentDateTime(): String? {
+fun getCurrentDateTime(): String {
     val now = ZonedDateTime.of(LocalDateTime.now(), ZoneId.systemDefault())
-    return now.format(DateTimeFormatter.ISO_INSTANT)
+    return now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")).plus("Z")
 }
