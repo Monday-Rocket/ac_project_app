@@ -26,6 +26,7 @@
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
 		AE08C895291B94540019B578 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE08C894291B94540019B578 /* Utils.swift */; };
 		AE08C898291B99AD0019B578 /* Folder.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE08C897291B99AD0019B578 /* Folder.swift */; };
+		AE62B8F6291DC5440018002C /* LabelExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE62B8F5291DC5440018002C /* LabelExtension.swift */; };
 		AE83E342291C77B500A43A2D /* Pretendard-Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = AE83E33F291C77B500A43A2D /* Pretendard-Thin.otf */; };
 		AE83E343291C77B500A43A2D /* Pretendard-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = AE83E340291C77B500A43A2D /* Pretendard-Regular.otf */; };
 		AE83E344291C77B500A43A2D /* Pretendard-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = AE83E341291C77B500A43A2D /* Pretendard-Bold.otf */; };
@@ -107,6 +108,7 @@
 		97C147021CF9000F007C117D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AE08C894291B94540019B578 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		AE08C897291B99AD0019B578 /* Folder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Folder.swift; sourceTree = "<group>"; };
+		AE62B8F5291DC5440018002C /* LabelExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelExtension.swift; sourceTree = "<group>"; };
 		AE66222428DCA79100E5DE18 /* Extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Extension.entitlements; sourceTree = "<group>"; };
 		AE66222828DCB16400E5DE18 /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
 		AE83E33F291C77B500A43A2D /* Pretendard-Thin.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Pretendard-Thin.otf"; path = "../../../../assets/fonts/Pretendard/Pretendard-Thin.otf"; sourceTree = "<group>"; };
@@ -257,6 +259,7 @@
 				AE83E350291CC6AA00A43A2D /* PaddingLabel.swift */,
 				AEFAAC85291D791700ED5DDC /* PaddingTextField.swift */,
 				AEDF4C8C291D8226000FC3D7 /* CustomeUIButton.swift */,
+				AE62B8F5291DC5440018002C /* LabelExtension.swift */,
 			);
 			path = Custom;
 			sourceTree = "<group>";
@@ -497,6 +500,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AE62B8F6291DC5440018002C /* LabelExtension.swift in Sources */,
 				AE08C895291B94540019B578 /* Utils.swift in Sources */,
 				AEFAAC86291D791700ED5DDC /* PaddingTextField.swift in Sources */,
 				0F10F666290E68C10093EAAB /* NewFolderViewController.swift in Sources */,

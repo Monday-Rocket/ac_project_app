@@ -29,7 +29,7 @@ class CommentViewController: UIViewController {
     
     self.saveCommentButton?.tintColor = .secondary
     
-    self.backgroundView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.hideExtensionWithCompletionHandler(_:))))
+    self.backgroundView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.showCancelDialog(_:))))
     
   }
   
@@ -38,10 +38,41 @@ class CommentViewController: UIViewController {
       return
     }
     UserDefaultsHelper.saveComment(savedLink, comment)
+    
+    self.showSuccessDialog()
+  }
+  
+  func showSuccessDialog() {
+    let sb = UIStoryboard.init(name: "Dialog", bundle: nil)
+    
+    let dialogVC = sb.instantiateViewController(withIdentifier: "LinkSavedDialog") as! LinkSavedDialogViewController
+    
+    dialogVC.modalPresentationStyle = .overCurrentContext
+    dialogVC.modalTransitionStyle = .crossDissolve
+    dialogVC.contentText = saveType == SaveType.New ? "새 폴더에 링크와 코멘트가 담겼어요" : "선택한 폴더에 링크와 코멘트가 담겼어요"
+    dialogVC.confirmButtonCompletionClosure = {
+      self.hideExtensionWithCompletionHandler()
+    }
+    
+    self.present(dialogVC, animated: true, completion: nil)
   }
   
   @IBAction func onClosePressed(_ sender: Any) {
     self.hideExtensionWithCompletionHandler()
+  }
+  
+  @objc func showCancelDialog(_ sender: Any) {
+    let sb = UIStoryboard.init(name: "Dialog", bundle: nil)
+    
+    let dialogVC = sb.instantiateViewController(withIdentifier: "CommentSaveCancelDialog") as! CommentSaveCancelDialogViewController
+    
+    dialogVC.modalPresentationStyle = .overCurrentContext
+    dialogVC.modalTransitionStyle = .crossDissolve
+    dialogVC.confirmButtonCompletionClosure = {
+      self.hideExtensionWithCompletionHandler()
+    }
+    
+    self.present(dialogVC, animated: true, completion: nil)
   }
   
   @objc func hideExtensionWithCompletionHandler(_ sender: UITapGestureRecognizer? = nil) {

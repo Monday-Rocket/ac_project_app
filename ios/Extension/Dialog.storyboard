@@ -18,14 +18,22 @@
         </array>
     </customFonts>
     <scenes>
-        <!--Folder Saved Dialog View Controller-->
+        <!--Folder Save Cancel Dialog View Controller-->
         <scene sceneID="s0d-6b-0kx">
             <objects>
-                <viewController storyboardIdentifier="FolderSavedDialog" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Y6W-OH-hqX" customClass="FolderSavedDialogViewController" customModule="Extension" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="FolderSaveCancelDialog" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Y6W-OH-hqX" customClass="FolderSaveCancelDialogViewController" customModule="Extension" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="5EZ-qb-Rvc">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="H9v-lx-jH8">
+                                <rect key="frame" x="0.0" y="59" width="393" height="759"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain"/>
+                                <connections>
+                                    <action selector="onClosePressed:" destination="Y6W-OH-hqX" eventType="touchDown" id="HXN-8X-cyM"/>
+                                </connections>
+                            </button>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="QlE-Xg-gVj">
                                 <rect key="frame" x="54" y="298" width="285" height="256"/>
                                 <subviews>
@@ -46,8 +54,8 @@
                                         <color key="textColor" name="grey500"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yZR-AR-ncB">
-                                        <rect key="frame" x="20" y="188" width="245" height="48"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yZR-AR-ncB">
+                                        <rect key="frame" x="20" y="183.66666666666669" width="245" height="52.333333333333343"/>
                                         <color key="tintColor" name="primary600"/>
                                         <state key="normal" title="Button"/>
                                         <buttonConfiguration key="configuration" style="filled" title="다음에 만들기">
@@ -72,6 +80,7 @@
                                 </subviews>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
+                                    <constraint firstItem="yZR-AR-ncB" firstAttribute="top" secondItem="BPR-yp-fGE" secondAttribute="bottom" constant="33" id="CRE-fB-ptr"/>
                                     <constraint firstItem="CBu-jp-ngX" firstAttribute="top" secondItem="QlE-Xg-gVj" secondAttribute="top" constant="28" id="Dn5-oB-ocM"/>
                                     <constraint firstItem="BPR-yp-fGE" firstAttribute="top" secondItem="yBc-fU-d6j" secondAttribute="bottom" constant="10" id="GcM-7E-1vb"/>
                                     <constraint firstAttribute="bottom" secondItem="yZR-AR-ncB" secondAttribute="bottom" constant="20" id="Jv6-px-ud6"/>
@@ -95,12 +104,20 @@
                             </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="vDu-zF-Fre"/>
-                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="backgroundColor" red="0.098039215686274508" green="0.12156862745098039" blue="0.15686274509803921" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="QlE-Xg-gVj" firstAttribute="centerX" secondItem="5EZ-qb-Rvc" secondAttribute="centerX" id="7Mo-9Q-itU"/>
+                            <constraint firstItem="H9v-lx-jH8" firstAttribute="top" secondItem="vDu-zF-Fre" secondAttribute="top" id="8og-Nh-ya1"/>
                             <constraint firstItem="QlE-Xg-gVj" firstAttribute="centerY" secondItem="5EZ-qb-Rvc" secondAttribute="centerY" id="CAV-7n-98i"/>
+                            <constraint firstItem="H9v-lx-jH8" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" id="OLE-k9-Opw"/>
+                            <constraint firstItem="vDu-zF-Fre" firstAttribute="trailing" secondItem="H9v-lx-jH8" secondAttribute="trailing" id="XYe-GY-k49"/>
+                            <constraint firstItem="vDu-zF-Fre" firstAttribute="bottom" secondItem="H9v-lx-jH8" secondAttribute="bottom" id="jTq-pb-uqj"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="button" destination="yZR-AR-ncB" id="prl-fn-ZXv"/>
+                        <outlet property="contentLabel" destination="BPR-yp-fGE" id="DBD-9R-H3h"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ief-a0-LHa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -114,6 +131,14 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Mis-FD-nLP">
+                                <rect key="frame" x="0.0" y="59" width="393" height="759"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain"/>
+                                <connections>
+                                    <action selector="onClosePressed:" destination="ha9-U2-s0H" eventType="touchDown" id="Y5n-6o-FVT"/>
+                                </connections>
+                            </button>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="OXm-vi-LqM">
                                 <rect key="frame" x="54" y="334.66666666666669" width="285" height="183.00000000000006"/>
                                 <subviews>
@@ -133,7 +158,7 @@
                                         <rect key="frame" x="20" y="115" width="245" height="48"/>
                                         <color key="tintColor" name="primary600"/>
                                         <state key="normal" title="Button"/>
-                                        <buttonConfiguration key="configuration" style="filled" title="다음에 만들기">
+                                        <buttonConfiguration key="configuration" style="filled" title="확인하기">
                                             <fontDescription key="titleFontDescription" name="Pretendard-Bold" family="Pretendard" pointSize="16"/>
                                         </buttonConfiguration>
                                         <connections>
@@ -177,12 +202,19 @@
                             </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="GUO-wE-g9X"/>
-                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="backgroundColor" red="0.098039215690000001" green="0.1215686275" blue="0.15686274510000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
+                            <constraint firstItem="Mis-FD-nLP" firstAttribute="top" secondItem="GUO-wE-g9X" secondAttribute="top" id="2DN-tn-YAN"/>
                             <constraint firstItem="OXm-vi-LqM" firstAttribute="centerX" secondItem="5GA-Qi-Pch" secondAttribute="centerX" id="71I-vs-JCO"/>
+                            <constraint firstItem="Mis-FD-nLP" firstAttribute="bottom" secondItem="GUO-wE-g9X" secondAttribute="bottom" id="9pT-qr-zm4"/>
+                            <constraint firstItem="Mis-FD-nLP" firstAttribute="trailing" secondItem="GUO-wE-g9X" secondAttribute="trailing" id="DCO-aL-SkA"/>
+                            <constraint firstItem="Mis-FD-nLP" firstAttribute="leading" secondItem="GUO-wE-g9X" secondAttribute="leading" id="PjG-cv-kR4"/>
                             <constraint firstItem="OXm-vi-LqM" firstAttribute="centerY" secondItem="5GA-Qi-Pch" secondAttribute="centerY" id="xI9-8a-v9i"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="button" destination="1aw-2C-2PE" id="8zG-Fu-t7C"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Bjz-09-43t" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -196,6 +228,14 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hSv-Ca-U9J">
+                                <rect key="frame" x="0.0" y="59" width="393" height="759"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain"/>
+                                <connections>
+                                    <action selector="onClosePressed:" destination="Fu9-qK-hfr" eventType="touchDown" id="4ub-rd-fix"/>
+                                </connections>
+                            </button>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jkM-zq-S6h">
                                 <rect key="frame" x="54" y="298" width="285" height="256"/>
                                 <subviews>
@@ -216,8 +256,8 @@
                                         <color key="textColor" name="grey500"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8TQ-QP-NNN">
-                                        <rect key="frame" x="20" y="188" width="245" height="48"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8TQ-QP-NNN">
+                                        <rect key="frame" x="20" y="183.66666666666669" width="245" height="52.333333333333343"/>
                                         <color key="tintColor" name="primary600"/>
                                         <state key="normal" title="Button"/>
                                         <buttonConfiguration key="configuration" style="filled" title="다음에 만들기">
@@ -250,6 +290,7 @@
                                     <constraint firstItem="I0c-W5-fU8" firstAttribute="centerX" secondItem="jkM-zq-S6h" secondAttribute="centerX" id="PBX-UM-7zk"/>
                                     <constraint firstItem="8TQ-QP-NNN" firstAttribute="leading" secondItem="jkM-zq-S6h" secondAttribute="leading" constant="20" id="WRf-gP-gIU"/>
                                     <constraint firstAttribute="trailing" secondItem="8TQ-QP-NNN" secondAttribute="trailing" constant="20" id="btw-hi-Wuq"/>
+                                    <constraint firstItem="8TQ-QP-NNN" firstAttribute="top" secondItem="koQ-lt-TtH" secondAttribute="bottom" constant="33" id="cE0-WZ-781"/>
                                     <constraint firstAttribute="width" constant="285" id="i0K-9o-qW2"/>
                                     <constraint firstItem="koQ-lt-TtH" firstAttribute="top" secondItem="I0c-W5-fU8" secondAttribute="bottom" constant="10" id="iOb-As-XLI"/>
                                     <constraint firstAttribute="trailing" secondItem="H3A-nq-9Dm" secondAttribute="trailing" constant="14" id="knw-hI-2wt"/>
@@ -265,18 +306,27 @@
                             </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="ta5-GM-kkh"/>
-                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="backgroundColor" red="0.098039215690000001" green="0.1215686275" blue="0.15686274510000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="jkM-zq-S6h" firstAttribute="centerY" secondItem="Am0-Hq-Zgk" secondAttribute="centerY" id="5Cr-Sl-icm"/>
+                            <constraint firstItem="hSv-Ca-U9J" firstAttribute="top" secondItem="ta5-GM-kkh" secondAttribute="top" id="RXY-Wf-VGn"/>
+                            <constraint firstItem="hSv-Ca-U9J" firstAttribute="bottom" secondItem="ta5-GM-kkh" secondAttribute="bottom" id="V4f-iK-PbB"/>
                             <constraint firstItem="jkM-zq-S6h" firstAttribute="centerX" secondItem="Am0-Hq-Zgk" secondAttribute="centerX" id="bnn-FE-ZDh"/>
+                            <constraint firstItem="ta5-GM-kkh" firstAttribute="trailing" secondItem="hSv-Ca-U9J" secondAttribute="trailing" id="mJF-SO-DD6"/>
+                            <constraint firstItem="hSv-Ca-U9J" firstAttribute="leading" secondItem="ta5-GM-kkh" secondAttribute="leading" id="ysj-kz-Pzk"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="button" destination="8TQ-QP-NNN" id="Xry-rH-5pt"/>
+                        <outlet property="contentLabel" destination="koQ-lt-TtH" id="1L9-AX-TJU"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="H8I-vl-iKG" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1185" y="-25"/>
         </scene>
     </scenes>
+    <color key="tintColor" name="primary600"/>
     <resources>
         <image name="btn_x_primary" width="24" height="24"/>
         <image name="ic_comments" width="48" height="48"/>

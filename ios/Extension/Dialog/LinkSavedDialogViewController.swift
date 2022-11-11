@@ -10,6 +10,13 @@ import UIKit
 class LinkSavedDialogViewController: UIViewController {
   var confirmButtonCompletionClosure: (() -> Void)?
   var cancelButtonClosure: (() -> Void)?
+  var contentText: String?
+  
+  @IBOutlet weak var button: UIButton!
+  
+  override func viewDidLoad() {
+    self.button.tintColor = .primary600
+  }
   
   @IBAction func onButtonPressed(_ sender: Any) {
     if let callback = confirmButtonCompletionClosure {
@@ -20,6 +27,6 @@ class LinkSavedDialogViewController: UIViewController {
   }
   
   @IBAction func onClosePressed(_ sender: Any) {
-    self.dismiss(animated: true, completion: nil)
+    self.onButtonPressed(sender)
   }
 }

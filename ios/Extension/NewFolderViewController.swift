@@ -83,7 +83,7 @@ class NewFolderViewController : UIViewController {
     border.frame = CGRect(
       x: 0,
       y: newFolderNameField.frame.size.height + 9,
-      width: newFolderNameField.frame.size.width - 24,
+      width: newFolderNameField.frame.size.width,
       height: 2
     )
     border.backgroundColor = UIColor.primary600.cgColor
@@ -99,11 +99,17 @@ class NewFolderViewController : UIViewController {
   }
   
   @objc func showConfirmDialog(_ sender: UITapGestureRecognizer? = nil) {
-    //    UIView.animate(withDuration: 0.3, animations: {
-    //      self.navigationController?.view.transform = CGAffineTransform(translationX: 0, y:self.navigationController!.view.frame.size.height)
-    //    }, completion: { _ in
-    //      self.extensionContext?.completeRequest(returningItems: nil, completionHandler: nil)
-    //    })
+    let sb = UIStoryboard.init(name: "Dialog", bundle: nil)
+    
+    let dialogVC = sb.instantiateViewController(withIdentifier: "FolderSaveCancelDialog") as! FolderSaveCancelDialogViewController
+    
+    dialogVC.modalPresentationStyle = .overCurrentContext
+    dialogVC.modalTransitionStyle = .crossDissolve
+    dialogVC.confirmButtonCompletionClosure = {
+      self.hideExtensionWithCompletionHandler()
+    }
+    
+    self.present(dialogVC, animated: true, completion: nil)
   }
   
   
