@@ -92,17 +92,18 @@ class LoginView extends StatelessWidget {
           getServiceApproval(context, user).then((result) {
             if (result != true) {
               // 초기화
-
               context.read<LoginCubit>().initialize();
             } else {
               // 회원가입 이동
-
               unawaited(Navigator.pushNamed(context, Routes.signUpNickname));
             }
           }),
         );
       } else {
-        unawaited(goHomeScreen(context));
+        unawaited(Navigator.pushReplacementNamed(
+          context,
+          Routes.home,
+        ));
       }
     });
   }
@@ -491,13 +492,6 @@ class LoginView extends StatelessWidget {
           ],
         );
       },
-    );
-  }
-
-  Future<Object?> goHomeScreen(BuildContext context) {
-    return Navigator.pushNamed(
-      context,
-      Routes.home,
     );
   }
 
