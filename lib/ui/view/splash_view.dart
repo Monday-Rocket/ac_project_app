@@ -20,7 +20,7 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
   void initState() {
     setAnimationController();
     Future.delayed(const Duration(milliseconds: 1500), () {
-      Navigator.popAndPushNamed(context, Routes.login);
+      Navigator.pushReplacementNamed(context, Routes.login);
     });
     super.initState();
   }
