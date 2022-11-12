@@ -519,11 +519,12 @@ class LoginView extends StatelessWidget {
   }
 
   Expanded buildAppImage() {
-    return const Expanded(
+    return Expanded(
       child: Center(
-        child: Icon(
-          Icons.apple,
-          size: 140,
+        child: Image.asset(
+          'assets/images/login_app_icon.png',
+          width: 137,
+          height: 137,
         ),
       ),
     );

@@ -34,3 +34,4 @@ const error_10 = Color(0x1AF4406B);
 const disabled = Color(0xFFF3F1FF);
 const secondary = Color(0xFFC8BFFF);
 
+const splashColor = Color(0xFF7058FF);

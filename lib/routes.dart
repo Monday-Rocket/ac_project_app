@@ -3,10 +3,13 @@ import 'package:ac_project_app/ui/view/login_view.dart';
 import 'package:ac_project_app/ui/view/my_link_view.dart';
 import 'package:ac_project_app/ui/view/sign_up_job_view.dart';
 import 'package:ac_project_app/ui/view/sign_up_nickname_view.dart';
+import 'package:ac_project_app/ui/view/splash_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Routes {
+  static const splash = '/splash';
+
   static const login = '/login';
   static const signUpNickname = '/signUpNickname';
   static const singUpJob = '/signUpJob';
@@ -20,10 +23,9 @@ class Pages {
     final arguments = settings.arguments;
     final router = PageRouter(arguments);
     switch (settings.name) {
+      case Routes.splash:
+        return router.create(child: const SplashView());
       case Routes.login:
-        /*
-          TODO 다른 로그인 추가 예정
-         */
         return router.create(child: const LoginView());
       case Routes.home:
         return router.create(child: const HomeView());
