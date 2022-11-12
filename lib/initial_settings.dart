@@ -8,7 +8,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:sqflite/sqflite.dart';
 
 Future<void> initSqflite() async {
@@ -51,7 +50,7 @@ Future<void> initSettings() async {
       statusBarBrightness: Brightness.light,
     ),
   );
-  KakaoSdk.init(nativeAppKey: dotenv.env['kakao.api.key']);
+
   if (Firebase.apps.isEmpty) {
     await Firebase.initializeApp(
       name: 'ac_project',
