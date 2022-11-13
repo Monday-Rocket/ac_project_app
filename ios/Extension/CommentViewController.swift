@@ -31,6 +31,11 @@ class CommentViewController: UIViewController {
     
     self.backgroundView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.showCancelDialog(_:))))
     
+    // MARK: - 키보드 처리
+    setKeyboardObserver()
+  }
+  
+  @IBAction func didEndOnExit(_ sender: Any) {
   }
   
   @IBAction func onSavePressed(_ sender: Any) {

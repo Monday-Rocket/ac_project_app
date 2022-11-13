@@ -48,7 +48,7 @@
         <activity
             android:name="com.mr.ac_project_app.view.share.ShareActivity"
             android:exported="true"
-            android:theme="@style/Theme.Transparent">
+            android:theme="@style/TransparentCompat">
 <!--            <intent-filter>-->
 <!--                <action android:name="android.intent.action.MAIN" />-->
 <!--                <category android:name="android.intent.category.LAUNCHER" />-->
@@ -65,15 +65,15 @@
         <activity
             android:name=".view.SaveSuccessActivity"
             android:exported="false"
-            android:theme="@style/Theme.Transparent"/>
+            android:theme="@style/TransparentCompat"/>
 
         <activity android:name=".view.folder.NewFolderActivity"
             android:exported="false"
-            android:theme="@style/Theme.Transparent"/>
+            android:theme="@style/TransparentCompat"/>
 
         <activity android:name=".view.comment.CommentActivity"
             android:exported="false"
-            android:theme="@style/Theme.Transparent"/>
+            android:theme="@style/TransparentCompat"/>
 
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->

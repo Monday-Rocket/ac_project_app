@@ -35,6 +35,7 @@
 		AE83E34C291CB70C00A43A2D /* FolderSaveSuccessViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE83E34B291CB70C00A43A2D /* FolderSaveSuccessViewController.swift */; };
 		AE83E34E291CB8FB00A43A2D /* SaveType.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE83E34D291CB8FB00A43A2D /* SaveType.swift */; };
 		AE83E351291CC6AA00A43A2D /* PaddingLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE83E350291CC6AA00A43A2D /* PaddingLabel.swift */; };
+		AEB8CBF52920B0CF00886882 /* TextFieldExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEB8CBF42920B0CF00886882 /* TextFieldExtension.swift */; };
 		AEDF4C8D291D8226000FC3D7 /* CustomeUIButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEDF4C8C291D8226000FC3D7 /* CustomeUIButton.swift */; };
 		AEDF4C91291D9C25000FC3D7 /* FolderSaveCancelDialogViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEDF4C90291D9C25000FC3D7 /* FolderSaveCancelDialogViewController.swift */; };
 		AEDF4C93291D9C4D000FC3D7 /* Dialog.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AEDF4C92291D9C4D000FC3D7 /* Dialog.storyboard */; };
@@ -119,6 +120,7 @@
 		AE83E34B291CB70C00A43A2D /* FolderSaveSuccessViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderSaveSuccessViewController.swift; sourceTree = "<group>"; };
 		AE83E34D291CB8FB00A43A2D /* SaveType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveType.swift; sourceTree = "<group>"; };
 		AE83E350291CC6AA00A43A2D /* PaddingLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaddingLabel.swift; sourceTree = "<group>"; };
+		AEB8CBF42920B0CF00886882 /* TextFieldExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldExtension.swift; sourceTree = "<group>"; };
 		AEDF4C8C291D8226000FC3D7 /* CustomeUIButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomeUIButton.swift; sourceTree = "<group>"; };
 		AEDF4C90291D9C25000FC3D7 /* FolderSaveCancelDialogViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderSaveCancelDialogViewController.swift; sourceTree = "<group>"; };
 		AEDF4C92291D9C4D000FC3D7 /* Dialog.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Dialog.storyboard; sourceTree = "<group>"; };
@@ -260,6 +262,7 @@
 				AEFAAC85291D791700ED5DDC /* PaddingTextField.swift */,
 				AEDF4C8C291D8226000FC3D7 /* CustomeUIButton.swift */,
 				AE62B8F5291DC5440018002C /* LabelExtension.swift */,
+				AEB8CBF42920B0CF00886882 /* TextFieldExtension.swift */,
 			);
 			path = Custom;
 			sourceTree = "<group>";
@@ -511,6 +514,7 @@
 				0F10F66228FEDA5B0093EAAB /* ShadowView.swift in Sources */,
 				0F10F6642906B8CC0093EAAB /* DBHelper.swift in Sources */,
 				AE83E351291CC6AA00A43A2D /* PaddingLabel.swift in Sources */,
+				AEB8CBF52920B0CF00886882 /* TextFieldExtension.swift in Sources */,
 				AEFAAC81291D586A00ED5DDC /* UserDefaultsHelper.swift in Sources */,
 				AEFAAC84291D6E1600ED5DDC /* CommentViewController.swift in Sources */,
 				AEDF4C8D291D8226000FC3D7 /* CustomeUIButton.swift in Sources */,

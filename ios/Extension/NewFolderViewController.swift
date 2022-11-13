@@ -22,6 +22,8 @@ class NewFolderViewController : UIViewController {
   @IBOutlet weak var firstSaveButton : UIButton!
   @IBOutlet weak var secondSaveButton: UIButton!
   
+  var keyHeight: CGFloat?
+  
   var link: String?
   var imageLink: String?
   var newFolderVisible = false
@@ -47,6 +49,11 @@ class NewFolderViewController : UIViewController {
     self.visibleToggleButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.onTogglePressed(_:))))
     
     NSLog("❇️ link: \(link ?? ""), image: \(imageLink ?? "")")
+    
+    // MARK: - 키보드 처리
+    setKeyboardObserver()
+    
+    self.newFolderNameField.returnKeyType = .done
   }
   
   override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -61,6 +68,8 @@ class NewFolderViewController : UIViewController {
     }
   }
   
+  @IBAction func didEndOnExit(_ sender: Any) {
+  }
   
   @objc func onTogglePressed(_ sender: UILongPressGestureRecognizer) {
     if newFolderVisible {
