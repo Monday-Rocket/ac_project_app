@@ -10,7 +10,6 @@ class HomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     final widgetOptions = <Widget>[
       const HomePage(),
       const UploadPage(),
@@ -22,28 +21,38 @@ class HomeView extends StatelessWidget {
       create: (_) => HomeViewCubit(),
       child: BlocBuilder<HomeViewCubit, int>(
         builder: (context, index) {
-
           final icons = getBottomIcons(index);
 
           final bottomItems = [
             BottomNavigationBarItem(
-              icon: icons[0],
+              icon: Padding(
+                padding: const EdgeInsets.all(2),
+                child: icons[0],
+              ),
               label: '홈',
             ),
             BottomNavigationBarItem(
-              icon: icons[1],
+              icon: Padding(
+                padding: const EdgeInsets.all(2),
+                child: icons[1],
+              ),
               label: '업로드',
             ),
             BottomNavigationBarItem(
-              icon: icons[2],
+              icon: Padding(
+                padding: const EdgeInsets.all(2),
+                child: icons[2],
+              ),
               label: '마이폴더',
             ),
             BottomNavigationBarItem(
-              icon: icons[3],
+              icon: Padding(
+                padding: const EdgeInsets.all(2),
+                child: icons[3],
+              ),
               label: '마이페이지',
             ),
           ];
-
 
           return Scaffold(
             body: SafeArea(
@@ -54,7 +63,8 @@ class HomeView extends StatelessWidget {
               selectedItemColor: primary600,
               selectedFontSize: 10,
               selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500),
-              unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w400),
+              unselectedLabelStyle:
+                  const TextStyle(fontWeight: FontWeight.w400),
               unselectedItemColor: grey400,
               unselectedFontSize: 10,
               showUnselectedLabels: true,

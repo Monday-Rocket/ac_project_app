@@ -31,103 +31,98 @@ class MyFolderPage extends StatelessWidget {
       ],
       child: BlocBuilder<FolderViewTypeCubit, FolderViewType>(
         builder: (context, folderViewType) {
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 105,
-                height: 105,
-                margin: const EdgeInsetsDirectional.only(top: 45, bottom: 6),
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.lightGreenAccent,
+          return GestureDetector(
+            onTap: () => FocusScope.of(context).unfocus(),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 105,
+                  height: 105,
+                  margin: const EdgeInsetsDirectional.only(top: 45, bottom: 6),
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.lightGreenAccent,
+                  ),
                 ),
-              ),
-              const Text(
-                '테스트',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 28,
-                  color: Color(0xff0e0e0e),
+                const Text(
+                  '테스트',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 28,
+                    color: Color(0xff0e0e0e),
+                  ),
                 ),
-              ),
-              Container(
-                margin: const EdgeInsetsDirectional.only(
-                  top: 50,
-                  start: 20,
-                  end: 20,
-                  bottom: 6,
-                ),
-                child: Row(
-                  children: [
-                    Flexible(
-                      child: Container(
-                        decoration: const BoxDecoration(
-                          color: grey100,
-                          borderRadius: BorderRadius.all(Radius.circular(7)),
-                        ),
-                        margin: const EdgeInsets.only(right: 6),
-                        child: TextField(
-                          textAlignVertical: TextAlignVertical.center,
-                          cursorColor: Colors.black,
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                            isDense: true,
-                            contentPadding:
-                                const EdgeInsets.symmetric(horizontal: 10),
-                            suffixIcon: Image.asset(
-                              'assets/images/folder_search_icon.png',
+                Container(
+                  margin: const EdgeInsetsDirectional.only(
+                    top: 50,
+                    start: 20,
+                    end: 20,
+                    bottom: 6,
+                  ),
+                  child: Row(
+                    children: [
+                      Flexible(
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            color: grey100,
+                            borderRadius: BorderRadius.all(Radius.circular(7)),
+                          ),
+                          margin: const EdgeInsets.only(right: 6),
+                          child: TextField(
+                            textAlignVertical: TextAlignVertical.center,
+                            cursorColor: grey800,
+                            style: const TextStyle(
+                                color: grey800,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400),
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                              isDense: true,
+                              contentPadding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
+                              prefixIcon: Image.asset(
+                                'assets/images/folder_search_icon.png',
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        context.read<FolderViewTypeCubit>().toggle();
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.all(6),
-                        child: context.watch<FolderViewTypeCubit>().state ==
-                                FolderViewType.list
-                            ? SvgPicture.asset('assets/images/list_icon.svg')
-                            : SvgPicture.asset('assets/images/grid_icon.svg'),
+                      InkWell(
+                        onTap: () => showAddFolderDialog(context),
+                        child: Padding(
+                          padding: const EdgeInsets.all(6),
+                          child: SvgPicture.asset('assets/images/btn_add.svg'),
+                        ),
                       ),
-                    ),
-                    InkWell(
-                      onTap: () => showAddFolderDialog(context),
-                      child: Padding(
-                        padding: const EdgeInsets.all(6),
-                        child: SvgPicture.asset('assets/images/btn_add.svg'),
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              BlocBuilder<GetFoldersCubit, FoldersState>(
-                builder: (getFolderContext, state) {
-                  if (state is LoadingState) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  } else if (state is ErrorState) {
-                    return const Center(
-                      child: Icon(Icons.close),
-                    );
-                  } else if (state is LoadedState) {
-                    final folders = state.folders;
-                    if (folderViewType == FolderViewType.list) {
-                      return buildListView(folders, context);
+                BlocBuilder<GetFoldersCubit, FoldersState>(
+                  builder: (getFolderContext, state) {
+                    if (state is LoadingState) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    } else if (state is ErrorState) {
+                      return const Center(
+                        child: Icon(Icons.close),
+                      );
+                    } else if (state is LoadedState) {
+                      final folders = state.folders;
+                      if (folderViewType == FolderViewType.list) {
+                        return buildListView(folders, context);
+                      } else {
+                        return buildGridView(folders, context);
+                      }
                     } else {
-                      return buildGridView(folders, context);
+                      return const SizedBox.shrink();
                     }
-                  } else {
-                    return const SizedBox.shrink();
-                  }
-                },
-              )
-            ],
+                  },
+                )
+              ],
+            ),
           );
         },
       ),
@@ -275,6 +270,7 @@ class MyFolderPage extends StatelessWidget {
         margin: const EdgeInsets.symmetric(horizontal: 24),
         child: CustomReorderableListView.separated(
           shrinkWrap: true,
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           itemCount: folders.length,
           separatorBuilder: (ctx, index) =>
               const Divider(thickness: 1, height: 1),

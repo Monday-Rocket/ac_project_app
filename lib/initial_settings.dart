@@ -13,7 +13,6 @@ import 'package:sqflite/sqflite.dart';
 Future<void> initSqflite() async {
   final path = await ShareDataProvider.getShareDBUrl();
 
-  Log.i('DB Path: $path');
   const folderDDL = '''
   create table folder( 
     seq integer primary key autoincrement, 

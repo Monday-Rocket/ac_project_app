@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:ac_project_app/util/logger.dart';
@@ -9,28 +8,20 @@ import 'package:sqflite/sqflite.dart';
 class ShareDataProvider {
   static const _platform = MethodChannel('share_data_provider');
 
-
-  static Future<void> getNewLinks() async {
+  static Future<List<dynamic>> getNewLinks() async {
     try {
-      final linkList = await _platform.invokeMethod('getNewLinks') as List<Object?>;
-
-      for (final linkData in linkList) {
-        Log.i(linkData);
-      }
+      return await _platform.invokeMethod('getNewLinks') as List<dynamic>? ??
+          [];
     } on PlatformException catch (e) {
       Log.e(e.message);
       rethrow;
     }
   }
 
-  static Future<void> getNewFolders() async {
+  static Future<List<dynamic>> getNewFolders() async {
     try {
-      final folderList = await _platform.invokeMethod('getNewFolders') as List<Object?>? ?? [];
-
-      for (final folder in folderList) {
-        Log.i(folder);
-      }
-
+      return await _platform.invokeMethod('getNewFolders') as List<dynamic>? ??
+          [];
     } on PlatformException catch (e) {
       Log.e(e.message);
       rethrow;
@@ -42,7 +33,10 @@ class ShareDataProvider {
       if (Platform.isAndroid) {
         return '${await getDatabasesPath()}/share.db';
       } else {
-        return path.join(await _platform.invokeMethod('getShareDBUrl') as String, 'share.db');
+        return path.join(
+          await _platform.invokeMethod('getShareDBUrl') as String,
+          'share.db',
+        );
       }
     } on PlatformException catch (e) {
       Log.e(e.message);
@@ -50,4 +44,3 @@ class ShareDataProvider {
     }
   }
 }
-

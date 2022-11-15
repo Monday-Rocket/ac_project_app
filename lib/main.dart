@@ -29,7 +29,10 @@ class MultiPlatformApp {
       initialRoute: Routes.splash,
       onGenerateRoute: Pages.getPages,
       themeMode: ThemeMode.light,
-      theme: ThemeData(fontFamily: 'Pretendard'),
+      theme: ThemeData(
+        fontFamily: 'Pretendard',
+        brightness: Brightness.light,
+      ),
     );
   }
 }

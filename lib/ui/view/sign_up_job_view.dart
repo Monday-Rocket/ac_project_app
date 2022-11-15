@@ -226,35 +226,29 @@ class SignUpJobView extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Flex(
-            direction: Axis.vertical,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Flexible(
-                child: ListView.builder(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  shrinkWrap: true,
-                  itemCount: jobs.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return TextButton(
-                      style: TextButton.styleFrom(
-                        alignment: Alignment.centerLeft,
-                      ),
-                      onPressed: () {
-                        Navigator.pop(context, jobs[index]);
-                      },
-                      child: Text(
-                        jobs[index].name ?? '',
-                        style: const TextStyle(
-                          color: Colors.black,
-                        ),
-                        textAlign: TextAlign.start,
-                      ),
-                    );
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              shrinkWrap: true,
+              itemCount: jobs.length,
+              itemBuilder: (BuildContext context, int index) {
+                return TextButton(
+                  style: TextButton.styleFrom(
+                    alignment: Alignment.centerLeft,
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context, jobs[index]);
                   },
-                ),
-              ),
-            ],
+                  child: Text(
+                    jobs[index].name ?? '',
+                    style: const TextStyle(
+                      color: Colors.black,
+                    ),
+                    textAlign: TextAlign.start,
+                  ),
+                );
+              },
+            ),
           ),
           const SizedBox(
             height: 24,

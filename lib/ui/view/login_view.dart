@@ -29,10 +29,6 @@ class LoginView extends StatelessWidget {
                   return const CircularProgressIndicator();
                 } else if (state is ErrorState) {
                   showErrorBanner(context);
-                  return const Icon(
-                    Icons.close,
-                    color: Colors.red,
-                  );
                 } else if (state is LoadedState) {
                   _moveToSignUpPage(context, state.user);
                 }
@@ -85,7 +81,7 @@ class LoginView extends StatelessWidget {
 
   Future<void> _moveToSignUpPage(BuildContext context, User user) async {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (user.isNew ?? false) {
+      if (user.is_new ?? false) {
         // 1. 서비스 이용 동의
         // 2. 가입 화면으로 이동
         unawaited(
