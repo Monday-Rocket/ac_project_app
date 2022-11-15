@@ -7,7 +7,6 @@ class FolderApi {
   final client = CustomClient();
 
   Future<Result<Folder>> postFolders(List<String> folderNames) async {
-
     final body = <Map<String, dynamic>>[];
 
     for (final name in folderNames) {
@@ -31,7 +30,8 @@ class FolderApi {
   Future<Result<Folder>> getMyFolders() async {
     final result = await client.getUri('/folders');
     return result.when(
-      success: (data) => Result.success(Folder.fromJson(data as Map<String, dynamic>)),
+      success: (data) =>
+          Result.success(Folder.fromJson(data as Map<String, dynamic>)),
       error: Result.error,
     );
   }
@@ -39,8 +39,11 @@ class FolderApi {
   Future<Result<Link>> getOthersFolder(int userId, String folderName) async {
     final result = await client.getUri('/folders/$userId/$folderName');
     return result.when(
-      success: (data) => Result.success(Link.fromJson(data as Map<String, dynamic>)),
+      success: (data) =>
+          Result.success(Link.fromJson(data as Map<String, dynamic>)),
       error: Result.error,
     );
   }
+
+  void add(Folder folder) {}
 }

@@ -55,9 +55,7 @@ class HomeView extends StatelessWidget {
           ];
 
           return Scaffold(
-            body: SafeArea(
-              child: widgetOptions[index],
-            ),
+            body: widgetOptions[index],
             bottomNavigationBar: BottomNavigationBar(
               type: BottomNavigationBarType.fixed,
               selectedItemColor: primary600,
