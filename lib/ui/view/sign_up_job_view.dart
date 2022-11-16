@@ -7,6 +7,7 @@ import 'package:ac_project_app/cubits/sign_up/sign_up_cubit.dart';
 import 'package:ac_project_app/models/user/detail_user.dart';
 import 'package:ac_project_app/models/user/user.dart';
 import 'package:ac_project_app/routes.dart';
+import 'package:ac_project_app/util/get_json_argument.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,9 +17,7 @@ class SignUpJobView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final arg =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>? ??
-            {};
+    final arg = getJsonArgument(context);
     final nickname = arg['nickname'] as String?;
     final user = arg['user'] as User?;
     final textController = TextEditingController(text: '직업을 선택해주세요');

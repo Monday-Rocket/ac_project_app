@@ -1,3 +1,5 @@
+import 'dart:collection';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:ac_project_app/util/logger.dart';
@@ -8,20 +10,50 @@ import 'package:sqflite/sqflite.dart';
 class ShareDataProvider {
   static const _platform = MethodChannel('share_data_provider');
 
-  static Future<List<dynamic>> getNewLinks() async {
+  static Future<List<Map<String, dynamic>>> getNewLinks() async {
     try {
-      return await _platform.invokeMethod('getNewLinks') as List<dynamic>? ??
-          [];
+      final newLinks = await _platform.invokeMethod('getNewLinks')
+          as LinkedHashMap<Object?, Object?>;
+
+      final links = <Map<String, dynamic>>[];
+      for (final url in newLinks.keys) {
+        final item =
+            jsonDecode(newLinks[url].toString()) as Map<String, dynamic>;
+        links.add({
+          'url': url,
+          'title': item['title'],
+          'comment': item['comment'],
+          'image': item['image_link'],
+          'folder_name': item['folder_name'],
+          'time': item['created_at']
+        });
+      }
+
+      return links;
     } on PlatformException catch (e) {
       Log.e(e.message);
       rethrow;
     }
   }
 
-  static Future<List<dynamic>> getNewFolders() async {
+  static Future<List<Map<String, dynamic>>> getNewFolders() async {
     try {
-      return await _platform.invokeMethod('getNewFolders') as List<dynamic>? ??
-          [];
+      final newFolders =
+          await _platform.invokeMethod('getNewFolders') as List<Object?>? ?? [];
+
+      final result = <Map<String, dynamic>>[];
+
+      for (final temp in newFolders) {
+        final json = jsonDecode(temp!.toString()) as Map<String, dynamic>;
+        final folder = {
+          'name': json['name'],
+          'visible': json['visible'],
+          'time': json['created_at']
+        };
+        result.add(folder);
+      }
+
+      return result;
     } on PlatformException catch (e) {
       Log.e(e.message);
       rethrow;

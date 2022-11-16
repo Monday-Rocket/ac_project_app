@@ -1,3 +1,5 @@
+import 'package:ac_project_app/util/get_json_argument.dart';
+import 'package:ac_project_app/util/logger.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -6,6 +8,11 @@ class MyLinkView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    final arg = getJsonArgument(context);
+    final folder = arg['folder'];
+    Log.i(folder);
+
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -20,7 +27,9 @@ class MyLinkView extends StatelessWidget {
                       const Text(
                         '디자인',
                         style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 30),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 30,
+                        ),
                       ),
                       Container(
                         margin: const EdgeInsets.only(left: 8),

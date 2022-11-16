@@ -139,7 +139,7 @@ class MyFolderPage extends StatelessWidget {
                             return const Expanded(
                               child: Center(
                                 child: Text(
-                                  '등록된 링크가 없습니다',
+                                  '등록된 폴더가 없습니다',
                                   style: TextStyle(
                                     color: grey300,
                                     fontSize: 16,
@@ -525,7 +525,13 @@ class MyFolderPage extends StatelessWidget {
         textColor: Colors.white,
         fontSize: 13,
       );
-      Navigator.pushNamed(context, Routes.myLinks, arguments: {});
+      Navigator.pushNamed(
+        context,
+        Routes.myLinks,
+        arguments: {
+          'folder': folder,
+        },
+      );
     });
   }
 

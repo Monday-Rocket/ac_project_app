@@ -2,6 +2,8 @@ import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/models/result.dart';
 import 'package:ac_project_app/provider/api/custom_client.dart';
+import 'package:ac_project_app/provider/share_data_provider.dart';
+import 'package:ac_project_app/util/logger.dart';
 
 class FolderApi {
   final client = CustomClient();
@@ -46,4 +48,16 @@ class FolderApi {
   }
 
   void add(Folder folder) {}
+
+  Future<void> bulkSave() async {
+    final newLinks = await ShareDataProvider.getNewLinks();
+    final newFolders = await ShareDataProvider.getNewFolders();
+
+    final body = {
+      'new_links': newLinks,
+      'new_folders': newFolders,
+    };
+
+    Log.i(body);
+  }
 }
