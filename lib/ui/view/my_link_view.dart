@@ -10,7 +10,9 @@ class MyLinkView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final folder = getArguments(context)['folder'] as Folder;
+    final arguments = getArguments(context);
+    final folder = arguments['folder'] as Folder;
+    final tabIndex = arguments['tabIndex'] as int;
     final selectedFolderName = folder.name ?? '';
     final visible = folder.visible ?? false;
     final linkCount = folder.linkCount ?? 0;
@@ -116,6 +118,7 @@ class MyLinkView extends StatelessWidget {
               margin: const EdgeInsets.only(top: 30 - 7, left: 12, right: 20),
               child: DefaultTabController(
                 length: 5,
+                initialIndex: tabIndex,
                 child: SizedBox(
                   height: 32,
                   child: Stack(
