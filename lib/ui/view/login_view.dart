@@ -459,6 +459,8 @@ class LoginView extends StatelessWidget {
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
+                                  disabledBackgroundColor: secondary,
+                                  disabledForegroundColor: Colors.white,
                                 ),
                                 onPressed: allChecked
                                     ? () => Navigator.pushNamed(
