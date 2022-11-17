@@ -177,7 +177,7 @@ class MyFolderPage extends StatelessWidget {
               const Divider(thickness: 1, height: 1),
           itemBuilder: (ctx, index) {
             final folder = folders[index];
-            final lockPrivate = folder.private ?? true;
+            final visible = folder.visible ?? true;
             final isNullImage =
                 folder.imageUrl == null || (folder.imageUrl?.isEmpty ?? true);
 
@@ -191,6 +191,7 @@ class MyFolderPage extends StatelessWidget {
                     Routes.myLinks,
                     arguments: {
                       'folder': folder,
+                      'tabIndex': index,
                     },
                   );
                 },
@@ -232,7 +233,7 @@ class MyFolderPage extends StatelessWidget {
                                           ),
                                         ),
                                 ),
-                                if (lockPrivate)
+                                if (!visible)
                                   Align(
                                     alignment: Alignment.bottomRight,
                                     child: Padding(
@@ -267,7 +268,7 @@ class MyFolderPage extends StatelessWidget {
                                 style: const TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w500,
-                                  color: Color(0xFF62666C),
+                                  color: greyText,
                                 ),
                               )
                             ],
@@ -495,7 +496,7 @@ class MyFolderPage extends StatelessWidget {
   void saveEmptyFolder(
     BuildContext context,
     String folderName,
-    FolderVisibleState folderPrivate,
+    FolderVisibleState visibleState,
   ) {
     if (folderName.isEmpty) {
       return;
@@ -503,7 +504,7 @@ class MyFolderPage extends StatelessWidget {
     // TODO 폴더 저장 API 호출
     final folder = Folder(
       name: folderName,
-      private: folderPrivate == FolderVisibleState.visible,
+      visible: visibleState == FolderVisibleState.invisible,
     );
 
     context.read<AddNewFolderCubit>().add(folder).then((result) {
@@ -517,7 +518,14 @@ class MyFolderPage extends StatelessWidget {
         textColor: Colors.white,
         fontSize: 13,
       );
-      Navigator.pushNamed(context, Routes.myLinks, arguments: {});
+      Navigator.pushNamed(
+        context,
+        Routes.myLinks,
+        arguments: {
+          'folder': folder,
+          'index': 1,
+        },
+      );
     });
   }
 
@@ -525,7 +533,7 @@ class MyFolderPage extends StatelessWidget {
     Folder folder,
     BuildContext context,
   ) async {
-    final lockPrivate = folder.private ?? false;
+    final visible = folder.visible ?? false;
     return showModalBottomSheet<bool?>(
       backgroundColor: Colors.transparent,
       context: context,
@@ -602,7 +610,7 @@ class MyFolderPage extends StatelessWidget {
                                     child: Align(
                                       alignment: Alignment.centerLeft,
                                       child: Text(
-                                        lockPrivate ? '공개로 전환' : '비공개로 전환',
+                                        visible ? '비공개로 전환' : '공개로 전환',
                                         style: const TextStyle(
                                           color: Color(0xFF13181E),
                                           fontWeight: FontWeight.w500,

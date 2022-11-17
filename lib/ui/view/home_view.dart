@@ -1,6 +1,8 @@
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/home_view_cubit.dart';
+import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/page/my_folder/my_folder_page.dart';
+import 'package:ac_project_app/ui/view/my_link_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -13,7 +15,17 @@ class HomeView extends StatelessWidget {
     final widgetOptions = <Widget>[
       const HomePage(),
       const UploadPage(),
-      const MyFolderPage(),
+      Navigator(
+        onGenerateRoute: (settings) {
+          if (settings.name == Routes.myLinks) {
+            return MaterialPageRoute(
+              builder: (_) => const MyLinkView(),
+              settings: settings,
+            );
+          }
+          return MaterialPageRoute(builder: (_) => const MyFolderPage());
+        },
+      ),
       const MyPage(),
     ];
 

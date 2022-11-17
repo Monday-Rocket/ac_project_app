@@ -21,35 +21,35 @@ class GetFoldersCubit extends Cubit<FoldersState> {
       folders = [
         Folder(
           name: '미분류',
-          private: true,
+          visible: false,
           linkCount: 20,
         ),
         Folder(
           imageUrl:
               'https://play-lh.googleusercontent.com/Kbu0747Cx3rpzHcSbtM1zDriGFG74zVbtkPmVnOKpmLCS59l7IuKD5M3MKbaq_nEaZM',
           name: '디자인1',
-          private: true,
+          visible: true,
           linkCount: 30,
         ),
         Folder(
           imageUrl:
               'https://play-lh.googleusercontent.com/Kbu0747Cx3rpzHcSbtM1zDriGFG74zVbtkPmVnOKpmLCS59l7IuKD5M3MKbaq_nEaZM',
           name: '디자인2',
-          private: true,
+          visible: false,
           linkCount: 30,
         ),
         Folder(
           imageUrl:
               'https://play-lh.googleusercontent.com/Kbu0747Cx3rpzHcSbtM1zDriGFG74zVbtkPmVnOKpmLCS59l7IuKD5M3MKbaq_nEaZM',
           name: '디자인3',
-          private: true,
+          visible: true,
           linkCount: 30,
         ),
         Folder(
           imageUrl:
               'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Apple_logo_black.svg/1667px-Apple_logo_black.svg.png',
           name: 'Apple',
-          private: false,
+          visible: false,
           linkCount: 12345,
         ),
       ];
