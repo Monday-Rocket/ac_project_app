@@ -12,6 +12,7 @@ import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/text/custom_font.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class LoginView extends StatelessWidget {
   const LoginView({super.key});
@@ -459,6 +460,8 @@ class LoginView extends StatelessWidget {
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
+                                  disabledBackgroundColor: secondary,
+                                  disabledForegroundColor: Colors.white,
                                 ),
                                 onPressed: allChecked
                                     ? () => Navigator.pushNamed(
@@ -511,10 +514,17 @@ class LoginView extends StatelessWidget {
   Expanded buildAppImage() {
     return Expanded(
       child: Center(
-        child: Image.asset(
-          'assets/images/login_app_icon.png',
-          width: 137,
-          height: 137,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset(
+              'assets/images/login_logo.png',
+            ),
+            const SizedBox(
+              height: 14,
+            ),
+            SvgPicture.asset('assets/images/login_logo_text.svg'),
+          ],
         ),
       ),
     );

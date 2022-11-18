@@ -10,6 +10,7 @@ import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/util/get_json_argument.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SignUpJobView extends StatelessWidget {
@@ -20,7 +21,7 @@ class SignUpJobView extends StatelessWidget {
     final arg = getJsonArgument(context);
     final nickname = arg['nickname'] as String?;
     final user = arg['user'] as User?;
-    final textController = TextEditingController(text: '직업을 선택해주세요');
+    final textController = TextEditingController();
     return MultiBlocProvider(
       providers: [
         BlocProvider(
@@ -41,6 +42,7 @@ class SignUpJobView extends StatelessWidget {
           ),
           backgroundColor: Colors.transparent,
           elevation: 0,
+          systemOverlayStyle: SystemUiOverlayStyle.dark,
         ),
         body: SafeArea(
           child: Container(
@@ -72,6 +74,8 @@ class SignUpJobView extends StatelessWidget {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
+                        disabledBackgroundColor: secondary,
+                        disabledForegroundColor: Colors.white,
                       ),
                       onPressed: jobGroup != null
                           ? () async => processSignUp(context, user, nickname)
@@ -108,9 +112,10 @@ class SignUpJobView extends StatelessWidget {
         );
     result.when(
       success: (data) {
-        Navigator.pushNamed(
+        Navigator.pushNamedAndRemoveUntil(
           context,
           Routes.home,
+          (_) => false,
         );
       },
       error: Log.e,
@@ -123,37 +128,64 @@ class SignUpJobView extends StatelessWidget {
   ) {
     return Container(
       alignment: Alignment.centerLeft,
-      margin: const EdgeInsets.only(top: 24),
-      child: GestureDetector(
-        child: TextFormField(
-          controller: textController,
-          style: const TextStyle(
-            fontSize: 17,
-            fontWeight: FontWeight.w500,
-          ),
-          decoration: InputDecoration(
-            focusedBorder: const UnderlineInputBorder(
-              borderSide: BorderSide(color: primary800),
+      margin: const EdgeInsets.only(top: 30),
+      child: Stack(
+        alignment: Alignment.centerRight,
+        children: [
+          TextFormField(
+            autofocus: true,
+            autofillHints: const ['직업을 선택해주세요'],
+            controller: textController,
+            style: const TextStyle(
+              fontSize: 17,
+              fontWeight: FontWeight.w500,
+              color: Color(0xFF13181E),
             ),
-            suffix: IconButton(
-              iconSize: 24,
-              onPressed: () {
-                context.read<JobCubit>().updateJob(null);
-                changeText(context, textController);
-              },
-              icon: const Icon(Icons.close_rounded),
+            decoration: const InputDecoration(
+              labelText: '직업',
+              labelStyle: TextStyle(
+                color: Color(0xFF9097A3),
+                fontWeight: FontWeight.w500,
+              ),
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: primaryTab, width: 2),
+              ),
+              hintText: '직업을 선택해주세요',
+              hintStyle: TextStyle(
+                color: Color(0xFFD0D1D2),
+                fontWeight: FontWeight.w500,
+                fontSize: 17,
+              ),
+              contentPadding: EdgeInsets.zero,
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: greyTab, width: 2),
+              ),
+            ),
+            readOnly: true,
+            onTap: () async {
+              unawaited(
+                getJobResult(context).then((result) {
+                  context.read<JobCubit>().updateJob(result);
+                  changeText(context, textController);
+                }),
+              );
+            },
+          ),
+          InkWell(
+            onTap: () {
+              context.read<JobCubit>().updateJob(null);
+              changeText(context, textController);
+            },
+            child: const Padding(
+              padding: EdgeInsets.all(8),
+              child: Icon(
+                Icons.close_rounded,
+                size: 20,
+                color: grey700,
+              ),
             ),
           ),
-          readOnly: true,
-          onTap: () async {
-            unawaited(
-              getJobResult(context).then((result) {
-                context.read<JobCubit>().updateJob(result);
-                changeText(context, textController);
-              }),
-            );
-          },
-        ),
+        ],
       ),
     );
   }
@@ -186,7 +218,6 @@ class SignUpJobView extends StatelessWidget {
                           const Text(
                             '직업을 선택해주세요',
                             style: TextStyle(
-                              fontFamily: 'Pretendard',
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
                             ),

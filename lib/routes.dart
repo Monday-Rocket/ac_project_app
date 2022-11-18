@@ -16,6 +16,11 @@ class Routes {
 
   static const home = '/home';
   static const myLinks = '/myLinks';
+
+  static const homePage = '/homePage';
+  static const uploadPage = '/uploadPage';
+  static const myFolderPage = '/myFolderPage';
+  static const myPage = '/myPage';
 }
 
 class Pages {
