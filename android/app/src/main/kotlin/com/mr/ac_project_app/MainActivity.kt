@@ -13,14 +13,12 @@ class MainActivity : FlutterActivity() {
                 "getNewLinks" -> {
                     val linkSharedPref = SharedPrefHelper.getNewLinks(context)
 
-                    val newLinkList = arrayListOf<String>()
+                    val newLinkMap = HashMap<String, String>()
                     for (link in linkSharedPref.all.keys) {
-                        if (link.contains("http")) {
-                            val linkData = linkSharedPref.getString(link, "") ?: ""
-                            newLinkList.add(linkData)
-                        }
+                        val linkData = linkSharedPref.getString(link, "") ?: ""
+                        newLinkMap[link] = linkData
                     }
-                    result.success(newLinkList)
+                    result.success(newLinkMap)
                 }
                 "getNewFolders" -> {
                     val folderSharedPref = SharedPrefHelper.getNewFolders(context)

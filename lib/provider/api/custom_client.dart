@@ -106,12 +106,15 @@ class CustomClient extends http.BaseClient {
   }
 
   String? makeBody(dynamic body) {
+    String? realBody;
     if (body != null && body is Map<String, dynamic>) {
-      return jsonEncode(body);
+      realBody = jsonEncode(body);
     } else if (body != null && body is List) {
-      return stringifyMessage(body);
+      realBody = stringifyMessage(body);
     } else {
-      return null;
+      realBody = null;
     }
+    Log.i(realBody);
+    return realBody;
   }
 }
