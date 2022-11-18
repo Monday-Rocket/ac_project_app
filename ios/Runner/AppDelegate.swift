@@ -23,6 +23,9 @@ import Flutter
       } else if (call.method == "getShareDBUrl") {
         let dbUrl = self.getShareDBUrl() ?? ""
         result(dbUrl)
+      } else if (call.method == "clearData") {
+        let clearResult = self.clearData()
+        result(clearResult)
       } else {
         result(FlutterMethodNotImplemented)
       }
@@ -63,6 +66,16 @@ import Flutter
       )
     
     return fileContainer?.path
+  }
+  
+  func clearData() -> Bool {
+    let folderStorage = UserDefaults(suiteName: "group.com.mr.acProjectApp.Share.new_folders")!
+    let linkStorage = UserDefaults(suiteName: "group.com.mr.acProjectApp.Share.new_links")!
+    
+    folderStorage.removeObject(forKey: "new_folders")
+    linkStorage.dictionaryRepresentation().keys.forEach(linkStorage.removeObject(forKey:))
+    
+    return true
   }
   
 }

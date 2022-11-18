@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
@@ -54,6 +55,22 @@ class ShareDataProvider {
       }
 
       return result;
+    } on PlatformException catch (e) {
+      Log.e(e.message);
+      rethrow;
+    }
+  }
+
+  static Future<void> clearLinksAndFolders() async {
+    try {
+      final result = await _platform.invokeMethod('clearData');
+      Log.i('bulk save clear data result: $result');
+
+      final folders = await getNewFolders();
+      final links = await getNewLinks();
+      Log.i(folders);
+      Log.i(links);
+
     } on PlatformException catch (e) {
       Log.e(e.message);
       rethrow;

@@ -27,6 +27,26 @@ class MainActivity : FlutterActivity() {
                     val linksJsonHashSet = folderSharedPref.getStringSet(context.getString(R.string.preference_new_folders), HashSet())
                     result.success(linksJsonHashSet!!.toList())
                 }
+                "clearData" -> {
+                    try {
+                        val linkSharedPref = SharedPrefHelper.getNewLinks(context)
+                        val folderSharedPref = SharedPrefHelper.getNewFolders(context)
+
+                        with(linkSharedPref.edit()) {
+                            clear()
+                            apply()
+                        }
+
+                        with(folderSharedPref.edit()) {
+                            clear()
+                            apply()
+                        }
+                        result.success(true)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        result.success(false)
+                    }
+                }
                 else -> {
                     result.notImplemented()
                 }

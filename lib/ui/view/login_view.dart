@@ -250,7 +250,7 @@ class LoginView extends StatelessWidget {
                                       child: Padding(
                                         padding:
                                             const EdgeInsets.only(left: 11),
-                                        child: const Text('개인정보 처리방침 (필수)')
+                                        child: const Text('개인정보 처리방침')
                                             .weight(FontWeight.w500)
                                             .fontSize(15),
                                       ),
@@ -371,7 +371,7 @@ class LoginView extends StatelessWidget {
                                       child: Padding(
                                         padding:
                                             const EdgeInsets.only(left: 11),
-                                        child: const Text('서비스 이용방침 (필수)')
+                                        child: const Text('서비스 이용방침')
                                             .weight(FontWeight.w500)
                                             .fontSize(15),
                                       ),

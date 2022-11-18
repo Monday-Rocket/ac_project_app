@@ -53,11 +53,22 @@ class FolderApi {
     final newLinks = await ShareDataProvider.getNewLinks();
     final newFolders = await ShareDataProvider.getNewFolders();
 
+    if (newLinks.isEmpty && newFolders.isEmpty) {
+      return;
+    }
+
     final body = {
       'new_links': newLinks,
       'new_folders': newFolders,
     };
 
-    Log.i(body);
+    final result = await client.postUri('/bulk', body: body);
+    result.when(
+      success: (_) {
+        Log.i('bulk save success');
+        ShareDataProvider.clearLinksAndFolders();
+      },
+      error: Result.error,
+    );
   }
 }
