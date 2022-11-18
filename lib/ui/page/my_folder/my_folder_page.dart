@@ -49,113 +49,123 @@ class MyFolderPage extends StatelessWidget {
                   width: width,
                   fit: BoxFit.fitWidth,
                 ),
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      width: 105,
-                      height: 105,
-                      margin:
-                          const EdgeInsetsDirectional.only(top: 90, bottom: 6),
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.lightGreenAccent,
-                      ),
-                    ),
-                    const Text(
-                      '테스트',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 28,
-                        color: Color(0xff0e0e0e),
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsetsDirectional.only(
-                        top: 50,
-                        start: 20,
-                        end: 20,
-                        bottom: 6,
-                      ),
-                      child: Row(
-                        children: [
-                          Flexible(
-                            child: Container(
-                              decoration: const BoxDecoration(
-                                color: grey100,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(7)),
-                              ),
-                              margin: const EdgeInsets.only(right: 6),
-                              child: TextField(
-                                textAlignVertical: TextAlignVertical.center,
-                                cursorColor: grey800,
-                                style: const TextStyle(
-                                  color: grey800,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                                decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  focusedBorder: InputBorder.none,
-                                  isDense: true,
-                                  contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 10,
-                                  ),
-                                  prefixIcon: Image.asset(
-                                    'assets/images/folder_search_icon.png',
-                                  ),
-                                ),
-                                onChanged: (value) {
-                                  context.read<GetFoldersCubit>().filter(value);
-                                },
-                              ),
-                            ),
+                BlocBuilder<GetFoldersCubit, FoldersState>(
+                  builder: (getFolderContext, state) {
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 105,
+                          height: 105,
+                          margin: const EdgeInsetsDirectional.only(
+                            top: 90,
+                            bottom: 6,
                           ),
-                          InkWell(
-                            onTap: () => showAddFolderDialog(context),
-                            child: Padding(
-                              padding: const EdgeInsets.all(6),
-                              child:
-                                  SvgPicture.asset('assets/images/btn_add.svg'),
-                            ),
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.lightGreenAccent,
                           ),
-                        ],
-                      ),
-                    ),
-                    BlocBuilder<GetFoldersCubit, FoldersState>(
-                      builder: (getFolderContext, state) {
-                        if (state is LoadingState) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        } else if (state is ErrorState) {
-                          return const Center(
-                            child: Icon(Icons.close),
-                          );
-                        } else if (state is LoadedState) {
-                          if (state.folders.isEmpty) {
-                            return const Expanded(
-                              child: Center(
-                                child: Text(
-                                  '등록된 링크가 없습니다',
-                                  style: TextStyle(
-                                    color: grey300,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
+                        ),
+                        const Text(
+                          '테스트',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 28,
+                            color: Color(0xff0e0e0e),
+                          ),
+                        ),
+                        Container(
+                          margin: const EdgeInsetsDirectional.only(
+                            top: 50,
+                            start: 20,
+                            end: 20,
+                            bottom: 6,
+                          ),
+                          child: Row(
+                            children: [
+                              Flexible(
+                                child: Container(
+                                  decoration: const BoxDecoration(
+                                    color: grey100,
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(7)),
+                                  ),
+                                  margin: const EdgeInsets.only(right: 6),
+                                  child: TextField(
+                                    textAlignVertical: TextAlignVertical.center,
+                                    cursorColor: grey800,
+                                    style: const TextStyle(
+                                      color: grey800,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                    decoration: InputDecoration(
+                                      border: InputBorder.none,
+                                      focusedBorder: InputBorder.none,
+                                      isDense: true,
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                        horizontal: 10,
+                                      ),
+                                      prefixIcon: Image.asset(
+                                        'assets/images/folder_search_icon.png',
+                                      ),
+                                    ),
+                                    onChanged: (value) {
+                                      context
+                                          .read<GetFoldersCubit>()
+                                          .filter(value);
+                                    },
                                   ),
                                 ),
                               ),
-                            );
-                          } else {
-                            return buildListView(state.folders, context);
-                          }
-                        } else {
-                          return const SizedBox.shrink();
-                        }
-                      },
-                    ),
-                  ],
+                              InkWell(
+                                onTap: () => showAddFolderDialog(context),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(6),
+                                  child: SvgPicture.asset(
+                                    'assets/images/btn_add.svg',
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Builder(
+                          builder: (context) {
+                            if (state is LoadingState) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            } else if (state is ErrorState) {
+                              return const Center(
+                                child: Icon(Icons.close),
+                              );
+                            } else if (state is LoadedState) {
+                              if (state.folders.isEmpty) {
+                                return const Expanded(
+                                  child: Center(
+                                    child: Text(
+                                      '등록된 폴더가 없습니다',
+                                      style: TextStyle(
+                                        color: grey300,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              } else {
+                                return buildListView(state.folders, context);
+                              }
+                            } else {
+                              return const SizedBox.shrink();
+                            }
+                          },
+                        ),
+                      ],
+                    );
+                  },
                 ),
               ],
             ),
@@ -190,7 +200,7 @@ class MyFolderPage extends StatelessWidget {
                     context,
                     Routes.myLinks,
                     arguments: {
-                      'folder': folder,
+                      'folders': folders,
                       'tabIndex': index,
                     },
                   );
@@ -213,7 +223,7 @@ class MyFolderPage extends StatelessWidget {
                                   borderRadius: const BorderRadius.all(
                                     Radius.circular(20),
                                   ),
-                                  child: folder.imageUrl != null
+                                  child: folder.imageUrl != null && (folder.imageUrl?.isNotEmpty ?? false)
                                       ? Image.network(
                                           folder.imageUrl!,
                                           width: 63,
@@ -301,10 +311,10 @@ class MyFolderPage extends StatelessWidget {
     );
   }
 
-  Future<bool?> showAddFolderDialog(BuildContext context) async {
+  Future<bool?> showAddFolderDialog(BuildContext parentContext) async {
     return showModalBottomSheet<bool>(
       backgroundColor: Colors.transparent,
-      context: context,
+      context: parentContext,
       isScrollControlled: true,
       builder: (BuildContext context) {
         var isEmptyName = true;
@@ -345,6 +355,7 @@ class MyFolderPage extends StatelessWidget {
                                   child: InkWell(
                                     onTap: () => saveEmptyFolder(
                                       context,
+                                      parentContext,
                                       textController.text,
                                       folderPrivate,
                                     ),
@@ -406,6 +417,7 @@ class MyFolderPage extends StatelessWidget {
                                       onFieldSubmitted: (value) {
                                         saveEmptyFolder(
                                           context,
+                                          parentContext,
                                           value,
                                           folderPrivate,
                                         );
@@ -462,6 +474,7 @@ class MyFolderPage extends StatelessWidget {
                                 ),
                                 onPressed: () => saveEmptyFolder(
                                   context,
+                                  parentContext,
                                   textController.text,
                                   folderPrivate,
                                 ),
@@ -495,19 +508,24 @@ class MyFolderPage extends StatelessWidget {
       3. 화면 업데이트 (리스트 재조회) */
   void saveEmptyFolder(
     BuildContext context,
+    BuildContext parentContext,
     String folderName,
     FolderVisibleState visibleState,
   ) {
     if (folderName.isEmpty) {
       return;
     }
-    // TODO 폴더 저장 API 호출
+
     final folder = Folder(
       name: folderName,
-      visible: visibleState == FolderVisibleState.invisible,
+      visible: visibleState == FolderVisibleState.visible,
+      linkCount: 0,
+      imageUrl: '',
     );
 
+    // TODO 폴더 저장 API 호출
     context.read<AddNewFolderCubit>().add(folder).then((result) {
+      // folder 저장 결과값으로 링크뷰에 이용
       Log.i('폴더 저장');
       Navigator.pop(context);
       Fluttertoast.showToast(
@@ -518,12 +536,15 @@ class MyFolderPage extends StatelessWidget {
         textColor: Colors.white,
         fontSize: 13,
       );
+
+      parentContext.read<GetFoldersCubit>().addFolder(folder);
+
       Navigator.pushNamed(
         context,
         Routes.myLinks,
         arguments: {
-          'folder': folder,
-          'index': 1,
+          'folders': parentContext.read<GetFoldersCubit>().getTotalFolders(),
+          'tabIndex': 1,
         },
       );
     });

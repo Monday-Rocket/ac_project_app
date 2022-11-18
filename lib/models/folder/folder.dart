@@ -11,8 +11,8 @@ class Folder {
   Map<String, dynamic> toJson() => _$FolderToJson(this);
 
   int? id;
-  String? imageUrl;
+  String? imageUrl = '';
   bool? visible = true;
   String? name;
-  int? linkCount;
+  int? linkCount = 0;
 }
