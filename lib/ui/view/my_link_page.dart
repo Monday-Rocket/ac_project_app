@@ -174,13 +174,16 @@ class MyLinkPage extends StatelessWidget {
                                   }
                                   return TabBar(
                                     isScrollable: true,
+                                    physics: const ClampingScrollPhysics(),
                                     unselectedLabelColor: grey700,
                                     labelColor: primaryTab,
                                     labelStyle: const TextStyle(
+                                      fontFamily: 'Pretendard',
                                       fontSize: 16,
                                       fontWeight: FontWeight.w800,
                                     ),
                                     unselectedLabelStyle: const TextStyle(
+                                      fontFamily: 'Pretendard',
                                       fontSize: 16,
                                       fontWeight: FontWeight.w800,
                                     ),
