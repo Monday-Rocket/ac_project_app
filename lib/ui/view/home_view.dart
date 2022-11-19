@@ -3,7 +3,7 @@ import 'package:ac_project_app/cubits/home_second_view_cubit.dart';
 import 'package:ac_project_app/cubits/home_view_cubit.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/page/my_folder/my_folder_page.dart';
-import 'package:ac_project_app/ui/view/my_link_view.dart';
+import 'package:ac_project_app/ui/view/my_link_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -73,7 +73,7 @@ class HomeView extends StatelessWidget {
                         if (settings.name == Routes.myLinks) {
                           context.read<HomeSecondViewCubit>().addSecondView();
                           return MaterialPageRoute(
-                            builder: (_) => const MyLinkView(),
+                            builder: (_) => const MyLinkPage(),
                             settings: settings,
                           );
                         }
