@@ -18,12 +18,10 @@ void main() {
   });
 
   test('유저 정보 수정', () async {
-    const id = 1;
     const nickname = 'test';
     const jobGroupId = 1;
 
     final result = await userApi.patchUsers(
-      id: id,
       nickname: nickname,
       jobGroupId: jobGroupId,
     );

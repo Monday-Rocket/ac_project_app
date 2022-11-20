@@ -9,6 +9,8 @@ import 'package:ac_project_app/cubits/my_folder/folder_view_type_cubit.dart';
 import 'package:ac_project_app/cubits/my_folder/folders_state.dart';
 import 'package:ac_project_app/cubits/my_folder/get_folders_cubit.dart';
 import 'package:ac_project_app/cubits/my_folder/transfer_folder_visible.dart';
+import 'package:ac_project_app/cubits/profile/get_profile_info_cubit.dart';
+import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/page/my_folder/folder_visible_state.dart';
@@ -36,10 +38,12 @@ class MyFolderPage extends StatelessWidget {
         BlocProvider<GetFoldersCubit>(
           create: (_) => GetFoldersCubit(),
         ),
+        BlocProvider<GetProfileInfoCubit>(
+          create: (_) => GetProfileInfoCubit(),
+        ),
       ],
       child: BlocBuilder<FolderViewTypeCubit, FolderViewType>(
         builder: (context, folderViewType) {
-          // TODO 유저 이미지
           return GestureDetector(
             onTap: () => FocusScope.of(context).unfocus(),
             child: Stack(
@@ -47,32 +51,49 @@ class MyFolderPage extends StatelessWidget {
                 Image.asset(
                   'assets/images/my_folder_back.png',
                   width: width,
-                  fit: BoxFit.fitWidth,
+                  fit: BoxFit.fill,
                 ),
                 BlocBuilder<GetFoldersCubit, FoldersState>(
                   builder: (getFolderContext, state) {
                     return Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Container(
-                          width: 105,
-                          height: 105,
-                          margin: const EdgeInsetsDirectional.only(
-                            top: 90,
-                            bottom: 6,
-                          ),
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.lightGreenAccent,
-                          ),
-                        ),
-                        const Text(
-                          '테스트',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 28,
-                            color: Color(0xff0e0e0e),
-                          ),
+                        BlocBuilder<GetProfileInfoCubit, ProfileState>(
+                          builder: (context, state) {
+                            if (state is ProfileLoadedState) {
+                              final profile = state.profile;
+                              return InkWell(
+                                onTap: () {
+                                  // FIXME Reload Image
+                                  context.read<GetProfileInfoCubit>().loadProfileData();
+                                },
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Container(
+                                      width: 105,
+                                      height: 105,
+                                      margin: const EdgeInsetsDirectional.only(
+                                        top: 90,
+                                        bottom: 6,
+                                      ),
+                                      child: Image.asset(profile.profileImage),
+                                    ),
+                                    Text(
+                                      profile.nickname,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 28,
+                                        color: Color(0xff0e0e0e),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            } else {
+                              return const SizedBox.shrink();
+                            }
+                          },
                         ),
                         Container(
                           margin: const EdgeInsetsDirectional.only(
@@ -223,7 +244,8 @@ class MyFolderPage extends StatelessWidget {
                                   borderRadius: const BorderRadius.all(
                                     Radius.circular(20),
                                   ),
-                                  child: folder.imageUrl != null && (folder.imageUrl?.isNotEmpty ?? false)
+                                  child: folder.imageUrl != null &&
+                                          (folder.imageUrl?.isNotEmpty ?? false)
                                       ? Image.network(
                                           folder.imageUrl!,
                                           width: 63,
