@@ -140,7 +140,7 @@ class ChangeProfileView extends StatelessWidget {
                                           }
                                           return ColorFiltered(
                                             colorFilter: const ColorFilter.mode(
-                                              Color(0x96FFFFFF),
+                                              Color(0x60FFFFFF),
                                               BlendMode.modulate,
                                             ),
                                             child:
