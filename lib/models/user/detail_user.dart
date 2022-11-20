@@ -6,7 +6,7 @@
 
 class DetailUser {
   DetailUser({
-    String? id,
+    int? id,
     String? nickname,
     JobGroup? jobGroup,
   }) {
@@ -16,16 +16,16 @@ class DetailUser {
   }
 
   DetailUser.fromJson(dynamic json) {
-    _id = json['id'] as String?;
+    _id = json['id'] as int?;
     _nickname = json['nickname'] as String?;
     _jobGroup =
         json['job_group'] != null ? JobGroup.fromJson(json['job_group']) : null;
   }
-  String? _id;
+  int? _id;
   String? _nickname;
   JobGroup? _jobGroup;
   DetailUser copyWith({
-    String? id,
+    int? id,
     String? nickname,
     JobGroup? jobGroup,
   }) =>
@@ -34,7 +34,7 @@ class DetailUser {
         nickname: nickname ?? _nickname,
         jobGroup: jobGroup ?? _jobGroup,
       );
-  String? get id => _id;
+  int? get id => _id;
   String? get nickname => _nickname;
   JobGroup? get jobGroup => _jobGroup;
 

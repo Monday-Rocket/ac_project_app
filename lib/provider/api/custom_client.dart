@@ -12,7 +12,7 @@ import 'package:http/http.dart' as http;
 
 class CustomClient extends http.BaseClient {
   static const baseUrl =
-      'https://fe9665db-ca48-4591-8a53-683a48b40f40.mock.pstmn.io';
+      'http://ac-project-api.ap-northeast-2.elasticbeanstalk.com';
   final http.Client _inner = http.Client();
 
   @override
@@ -89,8 +89,10 @@ class CustomClient extends http.BaseClient {
   Result<dynamic> _makeResult(http.Response response) {
     if (response.statusCode == 200) {
       final apiResult = ApiResult<dynamic>.fromJson(
-        jsonDecode(response.body) as Map<String, dynamic>,
+        jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>,
       );
+      // 결과 출력
+      Log.i(apiResult.toJson());
       if (apiResult.error == null) {
         return Result.success(apiResult.data);
       } else {
@@ -104,12 +106,15 @@ class CustomClient extends http.BaseClient {
   }
 
   String? makeBody(dynamic body) {
+    String? realBody;
     if (body != null && body is Map<String, dynamic>) {
-      return jsonEncode(body);
+      realBody = jsonEncode(body);
     } else if (body != null && body is List) {
-      return stringifyMessage(body);
+      realBody = stringifyMessage(body);
     } else {
-      return null;
+      realBody = null;
     }
+    Log.i(realBody);
+    return realBody;
   }
 }

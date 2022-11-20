@@ -12,6 +12,7 @@ import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/text/custom_font.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class LoginView extends StatelessWidget {
   const LoginView({super.key});
@@ -29,10 +30,6 @@ class LoginView extends StatelessWidget {
                   return const CircularProgressIndicator();
                 } else if (state is ErrorState) {
                   showErrorBanner(context);
-                  return const Icon(
-                    Icons.close,
-                    color: Colors.red,
-                  );
                 } else if (state is LoadedState) {
                   _moveToSignUpPage(context, state.user);
                 }
@@ -85,7 +82,7 @@ class LoginView extends StatelessWidget {
 
   Future<void> _moveToSignUpPage(BuildContext context, User user) async {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (user.isNew ?? false) {
+      if (user.is_new ?? false) {
         // 1. 서비스 이용 동의
         // 2. 가입 화면으로 이동
         unawaited(
@@ -253,7 +250,7 @@ class LoginView extends StatelessWidget {
                                       child: Padding(
                                         padding:
                                             const EdgeInsets.only(left: 11),
-                                        child: const Text('개인정보 처리방침 (필수)')
+                                        child: const Text('개인정보 처리방침')
                                             .weight(FontWeight.w500)
                                             .fontSize(15),
                                       ),
@@ -374,7 +371,7 @@ class LoginView extends StatelessWidget {
                                       child: Padding(
                                         padding:
                                             const EdgeInsets.only(left: 11),
-                                        child: const Text('서비스 이용방침 (필수)')
+                                        child: const Text('서비스 이용방침')
                                             .weight(FontWeight.w500)
                                             .fontSize(15),
                                       ),
@@ -463,6 +460,8 @@ class LoginView extends StatelessWidget {
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
+                                  disabledBackgroundColor: secondary,
+                                  disabledForegroundColor: Colors.white,
                                 ),
                                 onPressed: allChecked
                                     ? () => Navigator.pushNamed(
@@ -515,10 +514,17 @@ class LoginView extends StatelessWidget {
   Expanded buildAppImage() {
     return Expanded(
       child: Center(
-        child: Image.asset(
-          'assets/images/login_app_icon.png',
-          width: 137,
-          height: 137,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset(
+              'assets/images/login_logo.png',
+            ),
+            const SizedBox(
+              height: 14,
+            ),
+            SvgPicture.asset('assets/images/login_logo_text.svg'),
+          ],
         ),
       ),
     );

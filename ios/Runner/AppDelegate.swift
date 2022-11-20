@@ -23,6 +23,9 @@ import Flutter
       } else if (call.method == "getShareDBUrl") {
         let dbUrl = self.getShareDBUrl() ?? ""
         result(dbUrl)
+      } else if (call.method == "clearData") {
+        let clearResult = self.clearData()
+        result(clearResult)
       } else {
         result(FlutterMethodNotImplemented)
       }
@@ -33,19 +36,20 @@ import Flutter
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
   
-  func getNewLinks() -> [String] {
+  func getNewLinks() -> Dictionary<String, Any> {
     let linkStorage = UserDefaults(suiteName: "group.com.mr.acProjectApp.Share.new_links")!
     let keyList = linkStorage.dictionaryRepresentation().keys.sorted()
     
-    var result: [String] = []
+    var dict = Dictionary<String, Any>()
     
     for keyData in keyList {
-      if keyData.description.contains("http") {
-        result.append(keyData.description)
+      let key = keyData.description
+      if key.contains("http") {
+        dict[key] = linkStorage.object(forKey: keyData.description)
       }
     }
     
-    return result
+    return dict
   }
   
   func getNewFolders() -> [Any] {
@@ -62,6 +66,16 @@ import Flutter
       )
     
     return fileContainer?.path
+  }
+  
+  func clearData() -> Bool {
+    let folderStorage = UserDefaults(suiteName: "group.com.mr.acProjectApp.Share.new_folders")!
+    let linkStorage = UserDefaults(suiteName: "group.com.mr.acProjectApp.Share.new_links")!
+    
+    folderStorage.removeObject(forKey: "new_folders")
+    linkStorage.dictionaryRepresentation().keys.forEach(linkStorage.removeObject(forKey:))
+    
+    return true
   }
   
 }

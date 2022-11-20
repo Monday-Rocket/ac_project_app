@@ -1,10 +1,12 @@
+import 'dart:io';
+
 import 'package:logger/logger.dart';
 
 class Log {
-
   static final prettyPrinter = PrettyPrinter(
     printTime: true,
     methodCount: 0,
+    colors: Platform.isAndroid,
   );
 
   static void d(dynamic msg) {

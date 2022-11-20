@@ -2,6 +2,7 @@ import 'package:ac_project_app/models/job/topic.dart';
 import 'package:ac_project_app/models/user/detail_user.dart';
 import 'package:ac_project_app/models/user/user.dart';
 import 'package:ac_project_app/provider/api/user/user_api.dart';
+import 'package:ac_project_app/util/logger.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -10,14 +11,14 @@ void main() {
     final result = await userApi.postUsers();
     result.when(
       success: (data) {
-        expect(data, const User(id: '1', isNew: true));
+        expect(data, const User(id: 1, is_new: true));
       },
       error: fail,
     );
   });
 
   test('유저 정보 수정', () async {
-    const id = '1';
+    const id = 1;
     const nickname = 'test';
     const jobGroupId = 1;
 
@@ -32,7 +33,7 @@ void main() {
         expect(
           data,
           DetailUser(
-            id: '1',
+            id: 1,
             nickname: 'test',
             jobGroup: JobGroup(id: 1, name: '소프트웨어 엔지니어'),
           ),
@@ -49,7 +50,7 @@ void main() {
         expect(
           data,
           DetailUser(
-            id: '1',
+            id: 1,
             nickname: 'test',
             jobGroup: JobGroup(id: 1, name: '소프트웨어 엔지니어'),
           ),
@@ -63,6 +64,7 @@ void main() {
     final result = await userApi.getJobGroups();
     return result.when(
       success: (data) {
+        Log.i(data);
         expect(data, [
           JobGroup(
             id: 1,

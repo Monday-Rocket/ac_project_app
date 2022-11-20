@@ -13,19 +13,37 @@ class MainActivity : FlutterActivity() {
                 "getNewLinks" -> {
                     val linkSharedPref = SharedPrefHelper.getNewLinks(context)
 
-                    val newLinkList = arrayListOf<String>()
+                    val newLinkMap = HashMap<String, String>()
                     for (link in linkSharedPref.all.keys) {
-                        if (link.contains("http")) {
-                            val linkData = linkSharedPref.getString(link, "") ?: ""
-                            newLinkList.add(linkData)
-                        }
+                        val linkData = linkSharedPref.getString(link, "") ?: ""
+                        newLinkMap[link] = linkData
                     }
-                    result.success(newLinkList)
+                    result.success(newLinkMap)
                 }
                 "getNewFolders" -> {
                     val folderSharedPref = SharedPrefHelper.getNewFolders(context)
                     val linksJsonHashSet = folderSharedPref.getStringSet(context.getString(R.string.preference_new_folders), HashSet())
                     result.success(linksJsonHashSet!!.toList())
+                }
+                "clearData" -> {
+                    try {
+                        val linkSharedPref = SharedPrefHelper.getNewLinks(context)
+                        val folderSharedPref = SharedPrefHelper.getNewFolders(context)
+
+                        with(linkSharedPref.edit()) {
+                            clear()
+                            apply()
+                        }
+
+                        with(folderSharedPref.edit()) {
+                            clear()
+                            apply()
+                        }
+                        result.success(true)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        result.success(false)
+                    }
                 }
                 else -> {
                     result.notImplemented()

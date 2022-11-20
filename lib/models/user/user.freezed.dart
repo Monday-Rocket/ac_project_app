@@ -20,8 +20,8 @@ User _$UserFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$User {
-  String? get id => throw _privateConstructorUsedError;
-  bool? get isNew => throw _privateConstructorUsedError;
+  int? get id => throw _privateConstructorUsedError;
+  bool? get is_new => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -32,7 +32,7 @@ mixin _$User {
 abstract class $UserCopyWith<$Res> {
   factory $UserCopyWith(User value, $Res Function(User) then) =
       _$UserCopyWithImpl<$Res>;
-  $Res call({String? id, bool? isNew});
+  $Res call({int? id, bool? is_new});
 }
 
 /// @nodoc
@@ -46,16 +46,16 @@ class _$UserCopyWithImpl<$Res> implements $UserCopyWith<$Res> {
   @override
   $Res call({
     Object? id = freezed,
-    Object? isNew = freezed,
+    Object? is_new = freezed,
   }) {
     return _then(_value.copyWith(
       id: id == freezed
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String?,
-      isNew: isNew == freezed
-          ? _value.isNew
-          : isNew // ignore: cast_nullable_to_non_nullable
+              as int?,
+      is_new: is_new == freezed
+          ? _value.is_new
+          : is_new // ignore: cast_nullable_to_non_nullable
               as bool?,
     ));
   }
@@ -66,7 +66,7 @@ abstract class _$$_UserCopyWith<$Res> implements $UserCopyWith<$Res> {
   factory _$$_UserCopyWith(_$_User value, $Res Function(_$_User) then) =
       __$$_UserCopyWithImpl<$Res>;
   @override
-  $Res call({String? id, bool? isNew});
+  $Res call({int? id, bool? is_new});
 }
 
 /// @nodoc
@@ -81,16 +81,16 @@ class __$$_UserCopyWithImpl<$Res> extends _$UserCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = freezed,
-    Object? isNew = freezed,
+    Object? is_new = freezed,
   }) {
     return _then(_$_User(
       id: id == freezed
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String?,
-      isNew: isNew == freezed
-          ? _value.isNew
-          : isNew // ignore: cast_nullable_to_non_nullable
+              as int?,
+      is_new: is_new == freezed
+          ? _value.is_new
+          : is_new // ignore: cast_nullable_to_non_nullable
               as bool?,
     ));
   }
@@ -99,18 +99,18 @@ class __$$_UserCopyWithImpl<$Res> extends _$UserCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$_User implements _User {
-  const _$_User({required this.id, required this.isNew});
+  const _$_User({required this.id, required this.is_new});
 
   factory _$_User.fromJson(Map<String, dynamic> json) => _$$_UserFromJson(json);
 
   @override
-  final String? id;
+  final int? id;
   @override
-  final bool? isNew;
+  final bool? is_new;
 
   @override
   String toString() {
-    return 'User(id: $id, isNew: $isNew)';
+    return 'User(id: $id, is_new: $is_new)';
   }
 
   @override
@@ -119,7 +119,7 @@ class _$_User implements _User {
         (other.runtimeType == runtimeType &&
             other is _$_User &&
             const DeepCollectionEquality().equals(other.id, id) &&
-            const DeepCollectionEquality().equals(other.isNew, isNew));
+            const DeepCollectionEquality().equals(other.is_new, is_new));
   }
 
   @JsonKey(ignore: true)
@@ -127,7 +127,7 @@ class _$_User implements _User {
   int get hashCode => Object.hash(
       runtimeType,
       const DeepCollectionEquality().hash(id),
-      const DeepCollectionEquality().hash(isNew));
+      const DeepCollectionEquality().hash(is_new));
 
   @JsonKey(ignore: true)
   @override
@@ -143,15 +143,15 @@ class _$_User implements _User {
 }
 
 abstract class _User implements User {
-  const factory _User({required final String? id, required final bool? isNew}) =
+  const factory _User({required final int? id, required final bool? is_new}) =
       _$_User;
 
   factory _User.fromJson(Map<String, dynamic> json) = _$_User.fromJson;
 
   @override
-  String? get id;
+  int? get id;
   @override
-  bool? get isNew;
+  bool? get is_new;
   @override
   @JsonKey(ignore: true)
   _$$_UserCopyWith<_$_User> get copyWith => throw _privateConstructorUsedError;
