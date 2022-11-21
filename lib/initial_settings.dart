@@ -51,7 +51,7 @@ Future<void> initSettings() async {
       statusBarBrightness: Brightness.light,
     ),
   );
-  KakaoSdk.init(nativeAppKey: dotenv.env['kakao.api.key']);
+  //KakaoSdk.init(nativeAppKey: dotenv.env['kakao.api.key']);
   if (Firebase.apps.isEmpty) {
     await Firebase.initializeApp(
       name: 'ac_project',

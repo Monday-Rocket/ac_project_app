@@ -1,7 +1,10 @@
 import 'dart:io';
 
+import 'package:ac_project_app/ui/page/my_page/my_page.dart';
+import 'package:ac_project_app/ui/page/my_page/term_page.dart';
 import 'package:ac_project_app/ui/view/home_view.dart';
 import 'package:ac_project_app/ui/view/login_view.dart';
+import 'package:ac_project_app/ui/view/my_link/my_link_detail_view.dart';
 import 'package:ac_project_app/ui/view/my_link_view.dart';
 import 'package:ac_project_app/ui/view/sign_up_job_view.dart';
 import 'package:ac_project_app/ui/view/sign_up_nickname_view.dart';
@@ -15,6 +18,11 @@ class Routes {
 
   static const home = '/home';
   static const myLinks = '/myLinks';
+
+  static const myPage = '/myPage';
+  static const termPage = '/termPage';
+
+  static const myLinkDetail = '/myLinkDetail';
 }
 
 class Pages {
@@ -44,6 +52,18 @@ class Pages {
       case Routes.singUpJob:
         return router.create(
           builder: (_) => const SignUpJobView(),
+        );
+      case Routes.myPage:
+        return router.create(
+          builder: (_) => const MyPage(),
+        );
+      case Routes.termPage:
+        return router.create(
+          builder: (_) => const TermPage(),
+        );
+      case Routes.myLinkDetail:
+        return router.create(
+          builder: (_) => const MyLinkDetailView(),
         );
       default:
         return null;
