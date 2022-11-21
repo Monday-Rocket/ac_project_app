@@ -223,7 +223,11 @@ class MyLinkPage extends StatelessWidget {
                           ),
                         );
                       } else {
-                        return Container();
+                        return ListView.builder(
+                          itemBuilder: (_, index) {
+                            return Container();
+                          },
+                        );
                       }
                     },
                   ),

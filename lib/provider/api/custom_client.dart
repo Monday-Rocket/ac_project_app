@@ -94,6 +94,24 @@ class CustomClient extends http.BaseClient {
     );
   }
 
+  Future<Result<dynamic>> deleteUri(
+    String uri, {
+    Map<String, String>? headers,
+    dynamic body,
+    Encoding? encoding,
+  }) async {
+    final finalUrl = baseUrl + uri;
+    Log.i(finalUrl);
+    return _makeResult(
+      await super.delete(
+        Uri.parse(finalUrl),
+        headers: headers,
+        body: makeBody(body),
+        encoding: encoding,
+      ),
+    );
+  }
+
   Result<dynamic> _makeResult(http.Response response) {
     if (response.statusCode == 200) {
       final apiResult = ApiResult<dynamic>.fromJson(

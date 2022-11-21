@@ -213,8 +213,7 @@ class MyFolderPage extends StatelessWidget {
           itemBuilder: (ctx, index) {
             final folder = folders[index];
             final visible = folder.visible ?? true;
-            final isNullImage =
-                folder.thumbnail == null || (folder.thumbnail?.isEmpty ?? true);
+            final isNotClassified = folder.name == '미분류';
 
             return ListTile(
               contentPadding: EdgeInsets.zero,
@@ -312,7 +311,7 @@ class MyFolderPage extends StatelessWidget {
                           )
                         ],
                       ),
-                      if (isNullImage)
+                      if (isNotClassified)
                         const SizedBox.shrink()
                       else
                         InkWell(

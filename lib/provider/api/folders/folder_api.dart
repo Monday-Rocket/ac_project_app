@@ -41,7 +41,9 @@ class FolderApi {
           final folder =
               Folder.fromJson(data as LinkedHashMap<String, dynamic>);
           if (folder.name == 'unclassified') {
-            folder.name = '미분류';
+            folder
+              ..name = '미분류'
+              ..isClassified = false;
           }
           list.add(folder);
         }
@@ -83,6 +85,14 @@ class FolderApi {
         ShareDataProvider.clearLinksAndFolders();
       },
       error: Result.error,
+    );
+  }
+
+  Future<void> deleteFolder(Folder folder) async {
+    final result = await client.deleteUri('/folders/${folder.id}');
+    result.when(
+      success: (data) {},
+      error: (msg) {},
     );
   }
 }

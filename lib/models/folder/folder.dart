@@ -4,13 +4,14 @@ part 'folder.g.dart';
 
 @JsonSerializable()
 class Folder {
-  Folder(
-      {this.id,
-      this.thumbnail,
-      this.visible,
-      this.name,
-      this.links,
-      this.time});
+  Folder({
+    this.id,
+    this.thumbnail,
+    this.visible,
+    this.name,
+    this.links,
+    this.time,
+  });
 
   factory Folder.fromJson(Map<String, dynamic> json) => _$FolderFromJson(json);
 
@@ -24,4 +25,6 @@ class Folder {
 
   @JsonKey(name: 'created_date_time')
   String? time;
+
+  bool? isClassified = true;
 }
