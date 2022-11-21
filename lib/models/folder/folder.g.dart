@@ -8,16 +8,18 @@ part of 'folder.dart';
 
 Folder _$FolderFromJson(Map<String, dynamic> json) => Folder(
       id: json['id'] as int?,
-      imageUrl: json['imageUrl'] as String?,
+      thumbnail: json['thumbnail'] as String?,
       visible: json['visible'] as bool?,
       name: json['name'] as String?,
-      linkCount: json['linkCount'] as int?,
+      links: json['links'] as int?,
+      time: json['created_date_time'] as String?,
     );
 
 Map<String, dynamic> _$FolderToJson(Folder instance) => <String, dynamic>{
       'id': instance.id,
-      'imageUrl': instance.imageUrl,
+      'thumbnail': instance.thumbnail,
       'visible': instance.visible,
       'name': instance.name,
-      'linkCount': instance.linkCount,
+      'links': instance.links,
+      'created_date_time': instance.time,
     };

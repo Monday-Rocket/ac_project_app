@@ -30,9 +30,11 @@ class CustomClient extends http.BaseClient {
     String uri, {
     Map<String, String>? headers,
   }) async {
+    final finalUrl = baseUrl + uri;
+    Log.i(finalUrl);
     return _makeResult(
       await super.get(
-        Uri.parse(baseUrl + uri),
+        Uri.parse(finalUrl),
         headers: headers,
       ),
     );
@@ -44,9 +46,11 @@ class CustomClient extends http.BaseClient {
     dynamic body,
     Encoding? encoding,
   }) async {
+    final finalUrl = baseUrl + uri;
+    Log.i(finalUrl);
     return _makeResult(
       await super.post(
-        Uri.parse(baseUrl + uri),
+        Uri.parse(finalUrl),
         headers: headers,
         body: makeBody(body),
         encoding: encoding,
@@ -60,9 +64,11 @@ class CustomClient extends http.BaseClient {
     dynamic body,
     Encoding? encoding,
   }) async {
+    final finalUrl = baseUrl + uri;
+    Log.i(finalUrl);
     return _makeResult(
       await super.put(
-        Uri.parse(baseUrl + uri),
+        Uri.parse(finalUrl),
         headers: headers,
         body: makeBody(body),
         encoding: encoding,
@@ -76,9 +82,11 @@ class CustomClient extends http.BaseClient {
     dynamic body,
     Encoding? encoding,
   }) async {
+    final finalUrl = baseUrl + uri;
+    Log.i(finalUrl);
     return _makeResult(
       await super.patch(
-        Uri.parse(baseUrl + uri),
+        Uri.parse(finalUrl),
         headers: headers,
         body: makeBody(body),
         encoding: encoding,

@@ -4,15 +4,24 @@ part 'folder.g.dart';
 
 @JsonSerializable()
 class Folder {
-  Folder({this.id, this.imageUrl, this.visible, this.name, this.linkCount});
+  Folder(
+      {this.id,
+      this.thumbnail,
+      this.visible,
+      this.name,
+      this.links,
+      this.time});
 
   factory Folder.fromJson(Map<String, dynamic> json) => _$FolderFromJson(json);
 
   Map<String, dynamic> toJson() => _$FolderToJson(this);
 
   int? id;
-  String? imageUrl = '';
+  String? thumbnail = '';
   bool? visible = true;
   String? name;
-  int? linkCount = 0;
+  int? links = 0;
+
+  @JsonKey(name: 'created_date_time')
+  String? time;
 }

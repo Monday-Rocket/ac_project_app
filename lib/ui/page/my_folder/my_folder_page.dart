@@ -54,7 +54,7 @@ class MyFolderPage extends StatelessWidget {
                   fit: BoxFit.fill,
                 ),
                 BlocBuilder<GetFoldersCubit, FoldersState>(
-                  builder: (getFolderContext, state) {
+                  builder: (getFolderContext, folderState) {
                     return Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -65,7 +65,9 @@ class MyFolderPage extends StatelessWidget {
                               return InkWell(
                                 onTap: () {
                                   // FIXME Reload Image
-                                  context.read<GetProfileInfoCubit>().loadProfileData();
+                                  context
+                                      .read<GetProfileInfoCubit>()
+                                      .loadProfileData();
                                 },
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
@@ -154,16 +156,17 @@ class MyFolderPage extends StatelessWidget {
                         ),
                         Builder(
                           builder: (context) {
-                            if (state is LoadingState) {
+                            if (folderState is LoadingState) {
                               return const Center(
                                 child: CircularProgressIndicator(),
                               );
-                            } else if (state is ErrorState) {
+                            } else if (folderState is ErrorState) {
+                              Log.e(folderState.props[0]);
                               return const Center(
                                 child: Icon(Icons.close),
                               );
-                            } else if (state is LoadedState) {
-                              if (state.folders.isEmpty) {
+                            } else if (folderState is LoadedState) {
+                              if (folderState.folders.isEmpty) {
                                 return const Expanded(
                                   child: Center(
                                     child: Text(
@@ -177,7 +180,8 @@ class MyFolderPage extends StatelessWidget {
                                   ),
                                 );
                               } else {
-                                return buildListView(state.folders, context);
+                                return buildListView(
+                                    folderState.folders, context);
                               }
                             } else {
                               return const SizedBox.shrink();
@@ -210,7 +214,7 @@ class MyFolderPage extends StatelessWidget {
             final folder = folders[index];
             final visible = folder.visible ?? true;
             final isNullImage =
-                folder.imageUrl == null || (folder.imageUrl?.isEmpty ?? true);
+                folder.thumbnail == null || (folder.thumbnail?.isEmpty ?? true);
 
             return ListTile(
               contentPadding: EdgeInsets.zero,
@@ -244,10 +248,11 @@ class MyFolderPage extends StatelessWidget {
                                   borderRadius: const BorderRadius.all(
                                     Radius.circular(20),
                                   ),
-                                  child: folder.imageUrl != null &&
-                                          (folder.imageUrl?.isNotEmpty ?? false)
+                                  child: folder.thumbnail != null &&
+                                          (folder.thumbnail?.isNotEmpty ??
+                                              false)
                                       ? Image.network(
-                                          folder.imageUrl!,
+                                          folder.thumbnail!,
                                           width: 63,
                                           height: 63,
                                           fit: BoxFit.contain,
@@ -296,7 +301,7 @@ class MyFolderPage extends StatelessWidget {
                                 height: 6,
                               ),
                               Text(
-                                '링크 ${addCommasFrom(folder.linkCount)}개',
+                                '링크 ${addCommasFrom(folder.links)}개',
                                 style: const TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w500,
@@ -541,8 +546,8 @@ class MyFolderPage extends StatelessWidget {
     final folder = Folder(
       name: folderName,
       visible: visibleState == FolderVisibleState.visible,
-      linkCount: 0,
-      imageUrl: '',
+      links: 0,
+      thumbnail: '',
     );
 
     // TODO 폴더 저장 API 호출
