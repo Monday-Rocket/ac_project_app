@@ -1,16 +1,13 @@
-
-import 'package:ac_project_app/ui/view/my_link_view.dart';
-import 'package:ac_project_app/ui/view/my_link/my_link_detail_view.dart';
 import 'package:ac_project_app/ui/page/my_page/my_page.dart';
 import 'package:ac_project_app/ui/page/my_page/term_page.dart';
 import 'package:ac_project_app/ui/view/change_profile_view.dart';
 import 'package:ac_project_app/ui/view/home_view.dart';
 import 'package:ac_project_app/ui/view/login_view.dart';
+import 'package:ac_project_app/ui/view/my_link/my_link_detail_view.dart';
 import 'package:ac_project_app/ui/view/my_link_page.dart';
 import 'package:ac_project_app/ui/view/sign_up_job_view.dart';
 import 'package:ac_project_app/ui/view/sign_up_nickname_view.dart';
 import 'package:ac_project_app/ui/view/splash_view.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Routes {
@@ -50,21 +47,13 @@ class Pages {
       case Routes.signUpNickname:
         return router.create(child: const SignUpNicknameView());
       case Routes.singUpJob:
-        return router.create(
-          builder: (_) => const SignUpJobView(),
-        );
+        return router.create(child: const SignUpJobView());
       case Routes.myPage:
-        return router.create(
-          builder: (_) => const MyPage(),
-        );
+        return router.create(child: const MyPage());
       case Routes.termPage:
-        return router.create(
-          builder: (_) => const TermPage(),
-        );
+        return router.create(child: const TermPage());
       case Routes.myLinkDetail:
-        return router.create(
-          builder: (_) => const MyLinkDetailView(),
-        );
+        return router.create(child: const MyLinkDetailView());
       case Routes.profile:
         return router.create(child: const ChangeProfileView());
       default:
