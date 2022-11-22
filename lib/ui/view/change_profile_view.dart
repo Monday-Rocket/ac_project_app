@@ -113,48 +113,49 @@ class ChangeProfileView extends StatelessWidget {
                             ),
                           ),
                         ),
-                      ),
-                      Expanded(
-                        child: ColoredBox(
-                          color: grey100,
-                          child: Column(
-                            children: [
-                              Expanded(
-                                child: GridView.builder(
-                                  shrinkWrap: true,
-                                  padding: EdgeInsets.zero,
-                                  gridDelegate:
-                                      const SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 3,
-                                  ),
-                                  itemCount: imageList.length,
-                                  itemBuilder: (context, index) {
-                                    return InkWell(
-                                      onTap: () {
-                                        context
-                                            .read<GetProfileImagesCubit>()
-                                            .select(index);
-                                        context
-                                            .read<GetProfileInfoCubit>()
-                                            .selectImage(index);
-                                      },
-                                      child: Builder(
-                                        builder: (context) {
-                                          final profile = imageList[index];
-                                          if (profile.visible ?? false) {
-                                            return Image.asset(
-                                              profile.filePath,
-                                            );
-                                          }
-                                          return ColorFiltered(
-                                            colorFilter: const ColorFilter.mode(
-                                              Color(0x60FFFFFF),
-                                              BlendMode.modulate,
-                                            ),
-                                            child:
-                                                Image.asset(profile.filePath),
-                                          );
+                        Expanded(
+                          child: ColoredBox(
+                            color: grey100,
+                            child: Column(
+                              children: [
+                                Expanded(
+                                  child: GridView.builder(
+                                    shrinkWrap: true,
+                                    padding: EdgeInsets.zero,
+                                    gridDelegate:
+                                        const SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 3,
+                                    ),
+                                    itemCount: imageList.length,
+                                    itemBuilder: (context, index) {
+                                      return InkWell(
+                                        onTap: () {
+                                          context
+                                              .read<GetProfileImagesCubit>()
+                                              .select(index);
+                                          context
+                                              .read<GetProfileInfoCubit>()
+                                              .selectImage(index);
                                         },
+                                        child: Builder(
+                                          builder: (context) {
+                                            final profile = imageList[index];
+                                            if (profile.visible ?? false) {
+                                              return Image.asset(
+                                                profile.filePath,
+                                              );
+                                            }
+                                            return ColorFiltered(
+                                              colorFilter: const ColorFilter.mode(
+                                                Color(0x60FFFFFF),
+                                                BlendMode.modulate,
+                                              ),
+                                              child: Image.asset(
+                                                profile.filePath,
+                                              ),
+                                            );
+                                          },
+                                        ),
                                       );
                                     },
                                   ),
