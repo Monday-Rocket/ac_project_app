@@ -1,7 +1,7 @@
 import 'package:ac_project_app/const/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:metadata_fetch/metadata_fetch.dart';
 import 'package:http/http.dart' as http;
+import 'package:metadata_fetch/metadata_fetch.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MyLinkDetailView extends StatefulWidget {
@@ -44,7 +44,8 @@ class _MyLinkDetailViewState extends State<MyLinkDetailView> {
                       } else {
                         return InkWell(
                           onTap: () async {
-                            await launchUrl(Uri.parse('${snapshot.data['url']}'));
+                            await launchUrl(
+                                Uri.parse('${snapshot.data['url']}'));
                           },
                           child: Card(
                             shape: RoundedRectangleBorder(
@@ -54,6 +55,10 @@ class _MyLinkDetailViewState extends State<MyLinkDetailView> {
                             child: Column(
                               children: [
                                 ClipRRect(
+                                  borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(10),
+                                    topRight: Radius.circular(10),
+                                  ),
                                   child: Image.network(
                                     '${snapshot.data['image']}',
                                     fit: BoxFit.fitWidth,
@@ -61,26 +66,29 @@ class _MyLinkDetailViewState extends State<MyLinkDetailView> {
                                         MediaQuery.of(context).size.width - 48,
                                     height: 193,
                                   ),
-                                  borderRadius: const BorderRadius.only(
-                                    topLeft: Radius.circular(10),
-                                    topRight: Radius.circular(10),
-                                  ),
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.fromLTRB(19, 23, 19, 33),
+                                  padding:
+                                      const EdgeInsets.fromLTRB(19, 23, 19, 33),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      Text('${snapshot.data['description']}',
-                                      style: const TextStyle(
-                                        fontSize: 17,
-                                        fontFamily: 'Pretendard',
-                                        color: blackBold,
-                                        letterSpacing: -0.2,
-                                        fontWeight: FontWeight.w700,
-                                      ),),
-                                      const SizedBox(height: 7,),
-                                      Text('${snapshot.data['url']}',
+                                      Text(
+                                        '${snapshot.data['description']}',
+                                        style: const TextStyle(
+                                          fontSize: 17,
+                                          fontFamily: 'Pretendard',
+                                          color: blackBold,
+                                          letterSpacing: -0.2,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        height: 7,
+                                      ),
+                                      Text(
+                                        '${snapshot.data['url']}',
                                         style: const TextStyle(
                                           fontSize: 12,
                                           fontFamily: 'Pretendard',
@@ -99,7 +107,9 @@ class _MyLinkDetailViewState extends State<MyLinkDetailView> {
                       }
                     },
                   ),
-                  const SizedBox(height: 44,),
+                  const SizedBox(
+                    height: 44,
+                  ),
                   //date
                   const Text(
                     'Dec 10, 2021',
@@ -181,7 +191,6 @@ class _MyLinkDetailViewState extends State<MyLinkDetailView> {
   }
 
   Future<Map<String, String?>> _getOpenGraph(String link) async {
-
     final response = await http.get(Uri.parse(link));
 
     final document = MetadataFetch.responseToDocument(response);
@@ -190,5 +199,4 @@ class _MyLinkDetailViewState extends State<MyLinkDetailView> {
 
     return og.toMap();
   }
-
 }

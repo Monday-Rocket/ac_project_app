@@ -20,10 +20,11 @@ class ShareDataProvider {
       for (final url in newLinks.keys) {
         final item =
             jsonDecode(newLinks[url].toString()) as Map<String, dynamic>;
+        Log.i(item);
         links.add({
           'url': url,
           'title': item['title'],
-          'comment': item['comment'],
+          'describe': item['comment'],
           'image': item['image_link'],
           'folder_name': item['folder_name'],
           'time': item['created_at']
@@ -65,7 +66,6 @@ class ShareDataProvider {
     try {
       final result = await _platform.invokeMethod('clearData');
       Log.i('bulk save clear data result: $result');
-
     } on PlatformException catch (e) {
       Log.e(e.message);
       rethrow;

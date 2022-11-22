@@ -31,37 +31,33 @@ mixin _$User {
 /// @nodoc
 abstract class $UserCopyWith<$Res> {
   factory $UserCopyWith(User value, $Res Function(User) then) =
-      _$UserCopyWithImpl<$Res, User>;
-  @useResult
+      _$UserCopyWithImpl<$Res>;
   $Res call({int? id, bool? is_new});
 }
 
 /// @nodoc
-class _$UserCopyWithImpl<$Res, $Val extends User>
-    implements $UserCopyWith<$Res> {
+class _$UserCopyWithImpl<$Res> implements $UserCopyWith<$Res> {
   _$UserCopyWithImpl(this._value, this._then);
 
+  final User _value;
   // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
+  final $Res Function(User) _then;
 
-  @pragma('vm:prefer-inline')
   @override
   $Res call({
     Object? id = freezed,
     Object? is_new = freezed,
   }) {
     return _then(_value.copyWith(
-      id: freezed == id
+      id: id == freezed
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as int?,
-      is_new: freezed == is_new
+      is_new: is_new == freezed
           ? _value.is_new
           : is_new // ignore: cast_nullable_to_non_nullable
               as bool?,
-    ) as $Val);
+    ));
   }
 }
 
@@ -70,28 +66,29 @@ abstract class _$$_UserCopyWith<$Res> implements $UserCopyWith<$Res> {
   factory _$$_UserCopyWith(_$_User value, $Res Function(_$_User) then) =
       __$$_UserCopyWithImpl<$Res>;
   @override
-  @useResult
   $Res call({int? id, bool? is_new});
 }
 
 /// @nodoc
-class __$$_UserCopyWithImpl<$Res> extends _$UserCopyWithImpl<$Res, _$_User>
+class __$$_UserCopyWithImpl<$Res> extends _$UserCopyWithImpl<$Res>
     implements _$$_UserCopyWith<$Res> {
   __$$_UserCopyWithImpl(_$_User _value, $Res Function(_$_User) _then)
-      : super(_value, _then);
+      : super(_value, (v) => _then(v as _$_User));
 
-  @pragma('vm:prefer-inline')
+  @override
+  _$_User get _value => super._value as _$_User;
+
   @override
   $Res call({
     Object? id = freezed,
     Object? is_new = freezed,
   }) {
     return _then(_$_User(
-      id: freezed == id
+      id: id == freezed
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as int?,
-      is_new: freezed == is_new
+      is_new: is_new == freezed
           ? _value.is_new
           : is_new // ignore: cast_nullable_to_non_nullable
               as bool?,
@@ -121,17 +118,19 @@ class _$_User implements _User {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$_User &&
-            (identical(other.id, id) || other.id == id) &&
-            (identical(other.is_new, is_new) || other.is_new == is_new));
+            const DeepCollectionEquality().equals(other.id, id) &&
+            const DeepCollectionEquality().equals(other.is_new, is_new));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, is_new);
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(id),
+      const DeepCollectionEquality().hash(is_new));
 
   @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
   _$$_UserCopyWith<_$_User> get copyWith =>
       __$$_UserCopyWithImpl<_$_User>(this, _$identity);
 

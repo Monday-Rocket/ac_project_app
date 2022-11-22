@@ -6,7 +6,6 @@ import 'package:ac_project_app/cubits/sign_up/job_list_cubit.dart';
 import 'package:ac_project_app/cubits/sign_up/sign_up_cubit.dart';
 import 'package:ac_project_app/models/user/detail_user.dart';
 import 'package:ac_project_app/models/user/user.dart';
-import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/util/get_json_argument.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:flutter/material.dart';
@@ -114,8 +113,11 @@ class SignUpJobView extends StatelessWidget {
       success: (data) {
         Navigator.pushNamedAndRemoveUntil(
           context,
-          Routes.home,
+          data,
           (_) => false,
+          arguments: {
+            'index': 0,
+          },
         );
       },
       error: Log.e,

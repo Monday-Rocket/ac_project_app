@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:ac_project_app/cubits/my_folder/folders_state.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/provider/api/folders/folder_api.dart';
+import 'package:ac_project_app/provider/share_db.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class GetFoldersCubit extends Cubit<FoldersState> {
@@ -40,9 +43,19 @@ class GetFoldersCubit extends Cubit<FoldersState> {
     return folders;
   }
 
-  void transferVisible(Folder folder) {}
+  Future<bool> transferVisible(Folder folder) async {
+    final result = await folderApi.changeVisible(folder);
+    await ShareDB.changeVisible(folder);
+    unawaited(getFolders());
+    return result;
+  }
 
-  void deleteFolder(Folder folder) {}
+  Future<bool> delete(Folder folder) async {
+    final result = await folderApi.deleteFolder(folder);
+    await ShareDB.deleteFolder(folder);
+    unawaited(getFolders());
+    return result;
+  }
 
   void filter(String name) {
     if (name.isEmpty) {

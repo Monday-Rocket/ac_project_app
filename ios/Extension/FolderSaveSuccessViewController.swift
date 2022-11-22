@@ -36,7 +36,7 @@ class FolderSaveSuccessViewController: UIViewController {
     
     folderNameTextView.text = folder?.name
     
-    let imageLink = folder?.image_link ?? ""
+    let imageLink = folder?.imageLink ?? ""
     
     if (imageLink.isEmpty) {
       folderImageView.image = UIImage(named: "empty_image_folder")

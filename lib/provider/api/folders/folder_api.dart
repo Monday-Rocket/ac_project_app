@@ -88,11 +88,33 @@ class FolderApi {
     );
   }
 
-  Future<void> deleteFolder(Folder folder) async {
+  Future<bool> deleteFolder(Folder folder) async {
     final result = await client.deleteUri('/folders/${folder.id}');
-    result.when(
-      success: (data) {},
-      error: (msg) {},
+    return result.when(
+      success: (data) {
+        return true;
+      },
+      error: (msg) {
+        return false;
+      },
+    );
+  }
+
+  Future<bool> changeVisible(Folder folder) async {
+    final result = await client.patchUri(
+      '/folders/${folder.id}',
+      body: {
+        'visible': !folder.visible!,
+      },
+    );
+
+    return result.when(
+      success: (data) {
+        return true;
+      },
+      error: (msg) {
+        return false;
+      },
     );
   }
 }

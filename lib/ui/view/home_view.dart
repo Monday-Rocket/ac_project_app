@@ -4,7 +4,9 @@ import 'package:ac_project_app/cubits/home_view_cubit.dart';
 import 'package:ac_project_app/ui/page/home/home_page.dart';
 import 'package:ac_project_app/ui/page/my_folder/my_folder_page.dart';
 import 'package:ac_project_app/ui/page/my_page/my_page.dart';
+import 'package:ac_project_app/util/get_widget_arguments.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -13,10 +15,13 @@ class HomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
+    final args = getArguments(context);
+
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (_) => HomeViewCubit(),
+          create: (_) => HomeViewCubit((args['index'] as int?) ?? 0),
         ),
         BlocProvider(
           create: (_) => HomeSecondViewCubit(),

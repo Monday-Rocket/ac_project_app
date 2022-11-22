@@ -23,11 +23,7 @@ class Routes {
   static const termPage = '/termPage';
 
   static const myLinkDetail = '/myLinkDetail';
-  static const homePage = '/homePage';
-  static const uploadPage = '/uploadPage';
-  static const myFolderPage = '/myFolderPage';
   static const myPage = '/myPage';
-
   static const profile = '/profile';
 }
 

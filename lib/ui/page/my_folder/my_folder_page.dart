@@ -4,11 +4,9 @@ import 'dart:async';
 
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/my_folder/add_new_folder.dart';
-import 'package:ac_project_app/cubits/my_folder/delete_folder.dart';
 import 'package:ac_project_app/cubits/my_folder/folder_view_type_cubit.dart';
 import 'package:ac_project_app/cubits/my_folder/folders_state.dart';
 import 'package:ac_project_app/cubits/my_folder/get_folders_cubit.dart';
-import 'package:ac_project_app/cubits/my_folder/transfer_folder_visible.dart';
 import 'package:ac_project_app/cubits/profile/get_profile_info_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
@@ -181,7 +179,9 @@ class MyFolderPage extends StatelessWidget {
                                 );
                               } else {
                                 return buildListView(
-                                    folderState.folders, context);
+                                  folderState.folders,
+                                  context,
+                                );
                               }
                             } else {
                               return const SizedBox.shrink();
@@ -247,27 +247,30 @@ class MyFolderPage extends StatelessWidget {
                                   borderRadius: const BorderRadius.all(
                                     Radius.circular(20),
                                   ),
-                                  child: folder.thumbnail != null &&
-                                          (folder.thumbnail?.isNotEmpty ??
-                                              false)
-                                      ? Image.network(
-                                          folder.thumbnail!,
-                                          width: 63,
-                                          height: 63,
-                                          fit: BoxFit.contain,
-                                        )
-                                      : Container(
-                                          width: 63,
-                                          height: 63,
-                                          color: grey100,
-                                          child: Center(
-                                            child: SvgPicture.asset(
-                                              'assets/images/folder.svg',
-                                              width: 24,
-                                              height: 24,
+                                  child: ColoredBox(
+                                    color: grey100,
+                                    child: folder.thumbnail != null &&
+                                            (folder.thumbnail?.isNotEmpty ??
+                                                false)
+                                        ? Image.network(
+                                            folder.thumbnail!,
+                                            width: 63,
+                                            height: 63,
+                                            fit: BoxFit.contain,
+                                          )
+                                        : Container(
+                                            width: 63,
+                                            height: 63,
+                                            color: primary100,
+                                            child: Center(
+                                              child: SvgPicture.asset(
+                                                'assets/images/folder.svg',
+                                                width: 24,
+                                                height: 24,
+                                              ),
                                             ),
                                           ),
-                                        ),
+                                  ),
                                 ),
                                 if (!visible)
                                   Align(
@@ -578,12 +581,12 @@ class MyFolderPage extends StatelessWidget {
 
   Future<bool?> showFolderOptionsDialog(
     Folder folder,
-    BuildContext context,
+    BuildContext parentContext,
   ) async {
     final visible = folder.visible ?? false;
     return showModalBottomSheet<bool?>(
       backgroundColor: Colors.transparent,
-      context: context,
+      context: parentContext,
       isScrollControlled: true,
       builder: (BuildContext context) {
         return Wrap(
@@ -637,62 +640,59 @@ class MyFolderPage extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              BlocProvider(
-                                create: (_) => TransferFolderVisibleCubit(),
-                                child: InkWell(
-                                  onTap: () =>
-                                      changeFolderVisible(context, folder),
-                                  highlightColor: grey100,
-                                  child: Container(
-                                    decoration: const BoxDecoration(
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(10),
-                                      ),
+                              InkWell(
+                                onTap: () => changeFolderVisible(
+                                  parentContext,
+                                  folder,
+                                ),
+                                highlightColor: grey100,
+                                child: Container(
+                                  decoration: const BoxDecoration(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(10),
                                     ),
-                                    padding: const EdgeInsets.only(
-                                      top: 14,
-                                      bottom: 14,
-                                      left: 24,
-                                    ),
-                                    child: Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(
-                                        visible ? '비공개로 전환' : '공개로 전환',
-                                        style: const TextStyle(
-                                          color: blackBold,
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 16,
-                                        ),
+                                  ),
+                                  padding: const EdgeInsets.only(
+                                    top: 14,
+                                    bottom: 14,
+                                    left: 24,
+                                  ),
+                                  child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      visible ? '비공개로 전환' : '공개로 전환',
+                                      style: const TextStyle(
+                                        color: blackBold,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 16,
                                       ),
                                     ),
                                   ),
                                 ),
                               ),
-                              BlocProvider(
-                                create: (_) => DeleteFolderCubit(),
-                                child: InkWell(
-                                  onTap: () => deleteFolder(context, folder),
-                                  child: Container(
-                                    decoration: const BoxDecoration(
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(10),
-                                      ),
-                                      color: Colors.transparent,
+                              InkWell(
+                                onTap: () =>
+                                    deleteFolder(parentContext, folder),
+                                child: Container(
+                                  decoration: const BoxDecoration(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(10),
                                     ),
-                                    padding: const EdgeInsets.only(
-                                      top: 14,
-                                      bottom: 14,
-                                      left: 24,
-                                    ),
-                                    child: const Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(
-                                        '폴더 삭제',
-                                        style: TextStyle(
-                                          color: blackBold,
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 16,
-                                        ),
+                                    color: Colors.transparent,
+                                  ),
+                                  padding: const EdgeInsets.only(
+                                    top: 14,
+                                    bottom: 14,
+                                    left: 24,
+                                  ),
+                                  child: const Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      '폴더 삭제',
+                                      style: TextStyle(
+                                        color: blackBold,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 16,
                                       ),
                                     ),
                                   ),
@@ -714,8 +714,7 @@ class MyFolderPage extends StatelessWidget {
   }
 
   void changeFolderVisible(BuildContext context, Folder folder) {
-    // TODO 공개여부 변경 API
-    context.read<TransferFolderVisibleCubit>().change(folder).then((value) {
+    context.read<GetFoldersCubit>().transferVisible(folder).then((value) {
       Navigator.pop(context);
     });
   }
@@ -786,12 +785,10 @@ class MyFolderPage extends StatelessWidget {
                         ),
                       ),
                       onPressed: () {
-                        // TODO 삭제 API 호출 및 결과 리턴
-                        context
-                            .read<DeleteFolderCubit>()
-                            .delete(folder)
-                            .then((value) {
+                        final cubit = context.read<GetFoldersCubit>();
+                        cubit.delete(folder).then((value) {
                           Navigator.pop(context, true);
+                          cubit.getFolders();
                         });
                       },
                       child: const Text(

@@ -97,7 +97,8 @@ class HomePage extends StatelessWidget {
                                             ),
                                           ),
                                           Container(
-                                            margin: const EdgeInsets.only(left: 4),
+                                            margin:
+                                                const EdgeInsets.only(left: 4),
                                             decoration: const BoxDecoration(
                                               color: primary200,
                                               borderRadius: BorderRadius.all(
@@ -106,7 +107,8 @@ class HomePage extends StatelessWidget {
                                             ),
                                             child: const Center(
                                               child: Padding(
-                                                padding: EdgeInsets.symmetric(vertical: 3, horizontal: 4),
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 3, horizontal: 4),
                                                 child: Text(
                                                   '디자인',
                                                   style: TextStyle(
@@ -132,7 +134,9 @@ class HomePage extends StatelessWidget {
                                   )
                                 ],
                               ),
-                              const SizedBox(height: 17,),
+                              const SizedBox(
+                                height: 17,
+                              ),
                               const Text(
                                 '횟집 앞에서 두 마리의 강아지를 발견했다. 배낭에서 샌드위치를 꺼내다 가게 안쪽에서 회를 치던 아저씨와 눈이 마주쳤다. 무섭게 생긴 분이었다. 자초지정을 설명하고 가게 안쪽에서 회를 치던',
                                 style: TextStyle(
@@ -152,10 +156,11 @@ class HomePage extends StatelessWidget {
                                     constraints: const BoxConstraints(
                                       minWidth: double.infinity,
                                     ),
-                                    color: Colors.green,
+                                    color: grey100,
                                     child: Image.asset(
                                       'assets/images/profile/img_01_on.png',
                                       height: 160,
+                                      fit: BoxFit.contain,
                                     ),
                                   ),
                                 ),

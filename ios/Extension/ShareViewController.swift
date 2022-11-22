@@ -152,7 +152,7 @@ extension ShareViewController: UICollectionViewDataSource, UICollectionViewDeleg
     }
     
     var item = dataArray[indexPath.item]
-    item.image_link = self.linkImageUrl
+    item.imageLink = self.linkImageUrl
     self.selectedFolder = item
     
     UserDefaultsHelper.saveLinkWithFolder(item, self.titleText, self.linkImageUrl, self.link!, self.dbHelper)
@@ -171,7 +171,7 @@ extension ShareViewController: UICollectionViewDataSource, UICollectionViewDeleg
     cell.visibleView.image = item.visible == 1 ? nil : UIImage(named: "ic_lock")
     
     cell.imageView.contentMode = .scaleAspectFill
-    guard let imageUrl = item.image_link, !item.image_link!.isEmpty else {
+    guard let imageUrl = item.imageLink, !item.imageLink!.isEmpty else {
       cell.imageView.image = UIImage(named: "empty_image_folder")
       return cell
     }

@@ -36,8 +36,21 @@ extension UIColor {
   }
   
   // MARK: - GREY
+  
+  static var grey100: UIColor {
+    return UIColor(rgb: 0xF5F7FA)
+  }
+  
   static var grey300: UIColor {
     return UIColor(rgb: 0xCFD4DE)
+  }
+  
+  static var grey400: UIColor {
+    return UIColor(rgb: 0xB0B8C1)
+  }
+  
+  static var grey700: UIColor {
+    return UIColor(rgb: 0x424852)
   }
   
   static var grey800: UIColor {

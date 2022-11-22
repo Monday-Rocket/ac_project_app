@@ -62,7 +62,7 @@ class NewFolderViewController : UIViewController {
       viewController.folder = Folder(
         name: newFolderNameField.text!,
         visible: newFolderVisible ? 0 : 1,
-        image_link: imageLink
+        imageLink: imageLink
       )
       viewController.saveType = SaveType.New
     }
@@ -139,7 +139,7 @@ class NewFolderViewController : UIViewController {
     let visible = newFolderVisible ? 0 : 1
     
     if self.link != nil, !(folderName?.isEmpty ?? true) {
-      let result = dbHelper.insertData(name: folderName!, visible: visible, image_link: imageLink)
+      let result = dbHelper.insertData(name: folderName!, visible: visible, imageLink: imageLink)
       UserDefaultsHelper.saveNewFolder(self.link!, folderName!, self.newFolderVisible)
       
       NSLog("❇️ new folder save result: \(result)")

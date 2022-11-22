@@ -1,12 +1,13 @@
 import 'dart:async';
 
 import 'package:ac_project_app/initial_settings.dart';
+import 'package:ac_project_app/provider/share_db.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:flutter/material.dart';
 
 Future<void> main() async {
   await initSettings();
-  await initSqflite();
+  await ShareDB.initSqflite();
   runApp(const MyApp());
 }
 

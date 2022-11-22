@@ -10,5 +10,5 @@ import Foundation
 struct Folder: Codable {
   var name: String
   var visible: Int
-  var image_link: String?
+  var imageLink: String?
 }

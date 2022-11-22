@@ -76,10 +76,15 @@ class LoginView extends StatelessWidget {
           }),
         );
       } else {
-        unawaited(Navigator.pushReplacementNamed(
-          context,
-          Routes.home,
-        ));
+        unawaited(
+          Navigator.pushReplacementNamed(
+            context,
+            Routes.home,
+            arguments: {
+              'index': 0,
+            },
+          ),
+        );
       }
     });
   }

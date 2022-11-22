@@ -330,14 +330,9 @@ class MyLinkPage extends StatelessWidget {
                                 height: 116,
                                 fit: BoxFit.cover,
                                 errorBuilder: (_, __, ___) {
-                                  return SizedBox(
+                                  return const SizedBox(
                                     width: 159,
                                     height: 116,
-                                    child: Image.asset(
-                                      'assets/images/profile/img_01_on.png',
-                                      width: 105,
-                                      height: 105,
-                                    ),
                                   );
                                 },
                               ),

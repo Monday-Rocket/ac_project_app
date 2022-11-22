@@ -22,8 +22,11 @@ class GetProfileInfoCubit extends Cubit<ProfileState> {
     result.when(
       success: (user) {
         imageNumber = user.profileImg;
-        emit(ProfileLoadedState(
-            Profile(user.nickname, makeImagePath(user.profileImg))));
+        emit(
+          ProfileLoadedState(
+            Profile(user.nickname, makeImagePath(user.profileImg)),
+          ),
+        );
       },
       error: (msg) {
         emit(ProfileErrorState(msg));
@@ -44,7 +47,6 @@ class GetProfileInfoCubit extends Cubit<ProfileState> {
 
   Future<bool> updateProfileImage() async {
     final result = await profileApi.changeImage(profileImg: imageNumber);
-    // final result = await userApi.patchUsers(nickname: '강민', jobGroupId: 2, profileImg: imageNumber);
     return result.when(
       success: (data) {
         Log.i(data);

@@ -65,7 +65,9 @@ import Flutter
         forSecurityApplicationGroupIdentifier: "group.com.mr.acProjectApp.Share"
       )
     
-    return fileContainer?.path
+    let path = fileContainer?.path
+    NSLog("🍀 \(path!)")
+    return path
   }
   
   func clearData() -> Bool {
