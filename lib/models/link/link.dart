@@ -4,19 +4,27 @@ part 'link.g.dart';
 
 @JsonSerializable()
 class Link {
-  Link({this.url, this.image, this.folderId,});
+  Link({
+    this.id,
+    this.url,
+    this.title,
+    this.image,
+    this.describe,
+    this.folderId,
+    this.time,
+  });
 
-  factory Link.fromJson(Map<String, dynamic> json) =>
-      _$LinkFromJson(json);
+  factory Link.fromJson(Map<String, dynamic> json) => _$LinkFromJson(json);
 
   Map<String, dynamic> toJson() => _$LinkToJson(this);
 
+  int? id;
   String? url;
   String? title;
   String? image;
   String? describe;
   int? folderId;
 
-  @JsonKey(name: 'created_at')
+  @JsonKey(name: 'created_date_time')
   String? time;
 }

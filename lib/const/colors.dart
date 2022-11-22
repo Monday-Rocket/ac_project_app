@@ -11,6 +11,9 @@ const grey700 = Color(0xFF424852);
 const grey800 = Color(0xFF30343E);
 const grey900 = Color(0xFF191F28);
 
+const greyText = Color(0xFF62666C);
+const greyTab = Color(0xFFECEDEE);
+
 const primary100 = Color(0xFFF6F7FE);
 const primary200 = Color(0xFFD8D0FF);
 const primary400 = Color(0xFFA07EFF);
@@ -18,6 +21,8 @@ const primary600 = Color(0xFF804DFF);
 const primary700 = Color(0xFF741FFF);
 const primary800 = Color(0xFF701FFF);
 const primary1000 = Color(0xFF6200EA);
+
+const primaryTab = Color(0xFF741FFF);
 
 const secondary200 = Color(0xFFC0CAFF);
 const secondary400 = Color(0xFF8C9EFF);
@@ -35,3 +40,4 @@ const error_10 = Color(0x1AF4406B);
 const disabled = Color(0xFFF3F1FF);
 const secondary = Color(0xFFC8BFFF);
 
+const splashColor = Color(0xFF7058FF);

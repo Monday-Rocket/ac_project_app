@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:collection';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:ac_project_app/util/logger.dart';
@@ -8,18 +11,66 @@ import 'package:sqflite/sqflite.dart';
 class ShareDataProvider {
   static const _platform = MethodChannel('share_data_provider');
 
-  static Future<List<String>> getShareDataList() async {
+  static Future<List<Map<String, dynamic>>> getNewLinks() async {
     try {
-      final data =
-      await _platform.invokeMethod('getShareData') as List<Object?>;
+      final newLinks = await _platform.invokeMethod('getNewLinks')
+          as LinkedHashMap<Object?, Object?>;
 
-      final result = <String>[];
+      final links = <Map<String, dynamic>>[];
+      for (final url in newLinks.keys) {
+        final item =
+            jsonDecode(newLinks[url].toString()) as Map<String, dynamic>;
+        links.add({
+          'url': url,
+          'title': item['title'],
+          'comment': item['comment'],
+          'image': item['image_link'],
+          'folder_name': item['folder_name'],
+          'time': item['created_at']
+        });
+      }
 
-      for (final item in data) {
-        result.add(item.toString());
+      return links;
+    } on PlatformException catch (e) {
+      Log.e(e.message);
+      rethrow;
+    }
+  }
+
+  static Future<List<Map<String, dynamic>>> getNewFolders() async {
+    try {
+      final newFolders =
+          await _platform.invokeMethod('getNewFolders') as List<Object?>? ?? [];
+
+      final result = <Map<String, dynamic>>[];
+
+      for (final temp in newFolders) {
+        final json = jsonDecode(temp!.toString()) as Map<String, dynamic>;
+        final folder = {
+          'name': json['name'],
+          'visible': json['visible'],
+          'time': json['created_at']
+        };
+        result.add(folder);
       }
 
       return result;
+    } on PlatformException catch (e) {
+      Log.e(e.message);
+      rethrow;
+    }
+  }
+
+  static Future<void> clearLinksAndFolders() async {
+    try {
+      final result = await _platform.invokeMethod('clearData');
+      Log.i('bulk save clear data result: $result');
+
+      final folders = await getNewFolders();
+      final links = await getNewLinks();
+      Log.i(folders);
+      Log.i(links);
+
     } on PlatformException catch (e) {
       Log.e(e.message);
       rethrow;
@@ -31,7 +82,10 @@ class ShareDataProvider {
       if (Platform.isAndroid) {
         return '${await getDatabasesPath()}/share.db';
       } else {
-        return path.join(await _platform.invokeMethod('getShareDBUrl') as String, 'share.db');
+        return path.join(
+          await _platform.invokeMethod('getShareDBUrl') as String,
+          'share.db',
+        );
       }
     } on PlatformException catch (e) {
       Log.e(e.message);
@@ -39,4 +93,3 @@ class ShareDataProvider {
     }
   }
 }
-

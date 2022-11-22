@@ -3,7 +3,7 @@ description: 비사이드 12기 먼데이 로켓팀 프로젝트
 
 publish_to: 'none'
 
-version: 1.0.6+6
+version: 1.0.8+8
 
 environment:
   sdk: ">=2.17.6 <3.0.0"
@@ -26,7 +26,6 @@ dependencies:
   ## login
   sign_in_with_apple: ^4.1.0
   google_sign_in: ^5.4.1
-  kakao_flutter_sdk_user: ^1.2.1
   firebase_auth: ^4.0.2
 
   ## Utils
@@ -37,7 +36,9 @@ dependencies:
   logger: ^1.1.0
   path_provider: ^2.0.11
   intl: ^0.17.0
-  path:
+  path: ^1.8.2
+  fluttertoast: ^8.1.1
+  shimmer: ^2.0.0
 
   ## SVG
   flutter_svg: ^1.1.6
@@ -71,6 +72,7 @@ flutter:
 
   assets:
     - .env
+    - assets/images/profile/
     - assets/images/login/
     - assets/images/
 

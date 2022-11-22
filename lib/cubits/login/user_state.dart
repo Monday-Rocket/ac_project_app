@@ -7,10 +7,12 @@ class InitialState extends UserState {
   @override
   List<Object> get props => [];
 }
+
 class LoadingState extends UserState {
   @override
   List<Object> get props => [];
 }
+
 class LoadedState extends UserState {
   LoadedState(this.user);
 
@@ -19,8 +21,8 @@ class LoadedState extends UserState {
   @override
   List<Object> get props => [user];
 }
-class ErrorState extends UserState {
 
+class ErrorState extends UserState {
   ErrorState(this.message);
 
   final String message;

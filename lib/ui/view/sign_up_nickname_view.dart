@@ -4,6 +4,7 @@ import 'package:ac_project_app/cubits/sign_up/nickname_cubit.dart';
 import 'package:ac_project_app/models/user/user.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SignUpNicknameView extends StatelessWidget {
@@ -24,38 +25,58 @@ class SignUpNicknameView extends StatelessWidget {
       ],
       child: BlocBuilder<NicknameCubit, String?>(
         builder: (context, nickname) {
-          final cubit = context.read<ButtonStateCubit>();
-          return Scaffold(
-            appBar: AppBar(
-              leading: IconButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: const Icon(Icons.arrow_back_ios_new),
-                color: Colors.black,
-              ),
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-            ),
-            body: SafeArea(
-              child: Container(
-                margin: const EdgeInsets.fromLTRB(24, 16, 24, 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
+          return BlocBuilder<ButtonStateCubit, ButtonState>(
+            builder: (context, state) {
+              return Scaffold(
+                appBar: AppBar(
+                  leading: IconButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: const Icon(Icons.arrow_back_ios_new),
+                    color: Colors.black,
+                  ),
+                  backgroundColor: Colors.transparent,
+                  systemOverlayStyle: SystemUiOverlayStyle.dark,
+                  elevation: 0,
+                ),
+                body: SafeArea(
+                  child: Container(
+                    margin: const EdgeInsets.fromLTRB(24, 16, 24, 16),
+                    child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        buildTitleText(),
-                        buildNicknameField(context, cubit),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            buildTitleText(),
+                            Stack(
+                              alignment: Alignment.centerRight,
+                              children: [
+                                buildNicknameField(context, state),
+                                if (state == ButtonState.enabled)
+                                  const Padding(
+                                    padding: EdgeInsets.only(top: 40, right: 8),
+                                    child: Icon(
+                                      Icons.check_rounded,
+                                      color: primaryTab,
+                                      size: 20,
+                                    ),
+                                  )
+                                else
+                                  const SizedBox.shrink(),
+                              ],
+                            ),
+                          ],
+                        ),
+                        buildNextButton(context, user, nickname, state),
                       ],
                     ),
-                    buildNextButton(context, user, nickname, cubit),
-                  ],
+                  ),
                 ),
-              ),
-            ),
+              );
+            },
           );
         },
       ),
@@ -76,18 +97,20 @@ class SignUpNicknameView extends StatelessWidget {
   Widget buildNextButton(
     BuildContext context,
     User? user,
-    String? nickname, ButtonStateCubit cubit,
+    String? nickname,
+    ButtonState state,
   ) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         minimumSize: const Size.fromHeight(55),
-        backgroundColor:
-        cubit.state == ButtonState.enabled ? primary800 : secondary,
+        backgroundColor: state == ButtonState.enabled ? primary800 : secondary,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
+        disabledBackgroundColor: secondary,
+        disabledForegroundColor: Colors.white,
       ),
-      onPressed: cubit.state == ButtonState.enabled
+      onPressed: state == ButtonState.enabled
           ? () {
               Navigator.pushNamed(
                 context,
@@ -102,7 +125,6 @@ class SignUpNicknameView extends StatelessWidget {
       child: const Text(
         '확인',
         style: TextStyle(
-          fontFamily: 'Pretendard',
           fontSize: 17,
           fontWeight: FontWeight.bold,
         ),
@@ -111,41 +133,44 @@ class SignUpNicknameView extends StatelessWidget {
     );
   }
 
-  Widget buildNicknameField(BuildContext context, ButtonStateCubit cubit) {
+  Widget buildNicknameField(BuildContext context, ButtonState state) {
     final formKey = context.read<NicknameCubit>().formKey;
     return Container(
-      margin: const EdgeInsets.only(top: 24),
+      margin: const EdgeInsets.only(top: 30),
       child: Form(
         key: formKey,
         child: TextFormField(
           autofocus: true,
           style: const TextStyle(
-            fontFamily: 'Pretendard',
             fontSize: 17,
             fontWeight: FontWeight.w500,
+            color: Color(0xFF13181E),
           ),
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             labelText: '닉네임',
-            labelStyle: const TextStyle(
-              color: Colors.grey,
+            labelStyle: TextStyle(
+              color: Color(0xFF9097A3),
+              fontWeight: FontWeight.w500,
+            ),
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: primary800, width: 2),
             ),
             hintText: '사용하실 닉네임을 입력해주세요',
-            hoverColor: primary800,
-            focusedBorder: const UnderlineInputBorder(
-              borderSide: BorderSide(color: primary800),
+            hintStyle: TextStyle(
+              color: Color(0xFFD0D1D2),
+              fontSize: 17,
+              fontWeight: FontWeight.w500,
             ),
-            errorStyle: const TextStyle(
+            errorStyle: TextStyle(
               color: redError,
             ),
-            focusedErrorBorder: const UnderlineInputBorder(
-              borderSide: BorderSide(color: redError),
+            focusedErrorBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: redError, width: 2),
             ),
-            suffixIcon: cubit.state == ButtonState.enabled
-                ? const Icon(
-                    Icons.check,
-                    color: primary800,
-                  )
-                : null,
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: greyTab, width: 2),
+            ),
+            contentPadding: EdgeInsets.zero,
           ),
           validator: (value) {
             final regKr = RegExp(r'^[가-힣0-9a-zA-Z]{2,8}$', unicode: true);
@@ -161,6 +186,9 @@ class SignUpNicknameView extends StatelessWidget {
             context.read<NicknameCubit>().updateName(value);
           },
           onChanged: (String? value) {
+            if (value?.isEmpty ?? true) {
+              context.read<ButtonStateCubit>().disable();
+            }
             if (formKey.currentState != null) {
               if (!formKey.currentState!.validate()) {
                 context.read<ButtonStateCubit>().disable();

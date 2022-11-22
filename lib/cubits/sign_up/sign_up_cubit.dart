@@ -16,7 +16,6 @@ class SignUpCubit extends Cubit<String?> {
     Log.i('nickname: $nickname, job: ${job?.toJson()}');
 
     final result = await _userApi.patchUsers(
-      id: user?.id,
       nickname: nickname,
       jobGroupId: job?.id,
     );

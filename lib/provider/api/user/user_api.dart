@@ -19,15 +19,16 @@ class UserApi {
   }
 
   Future<Result<DetailUser>> patchUsers({
-    required String? id,
-    required String? nickname,
-    required int? jobGroupId,
+    String? nickname,
+    int? jobGroupId,
+    String? profileImg,
   }) async {
     final result = await client.patchUri(
-      '/users/$id',
+      '/users',
       body: {
         'nickname': nickname,
-        'jobGroupId': jobGroupId.toString(),
+        'job_group_id': jobGroupId.toString(),
+        'profile_img': profileImg
       },
     );
     return result.when(

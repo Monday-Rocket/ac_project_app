@@ -23,10 +23,13 @@ class MultiPlatformApp {
   static StatefulWidget create() {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: Routes.home,
+      initialRoute: Routes.profile,
       onGenerateRoute: Pages.getPages,
       themeMode: ThemeMode.light,
-      theme: ThemeData(fontFamily: 'Pretendard'),
+      theme: ThemeData(
+        fontFamily: 'Pretendard',
+        brightness: Brightness.light,
+      ),
     );
   }
 }

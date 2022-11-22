@@ -2,13 +2,12 @@ package com.mr.ac_project_app.view.folder
 
 import android.app.Application
 import android.content.ContentValues
-import android.content.Context
-import android.content.SharedPreferences
 import androidx.lifecycle.AndroidViewModel
-import com.mr.ac_project_app.R
 import com.mr.ac_project_app.data.ShareContract
 import com.mr.ac_project_app.data.ShareDbHelper
+import com.mr.ac_project_app.data.SharedPrefHelper
 import com.mr.ac_project_app.utils.convert
+import com.mr.ac_project_app.utils.getCurrentDateTime
 import org.json.JSONObject
 
 class NewFolderViewModel(application: Application): AndroidViewModel(application) {
@@ -21,16 +20,22 @@ class NewFolderViewModel(application: Application): AndroidViewModel(application
 
     fun saveNewFolder(name: String, link: String, visible: Boolean, imageLink: String) {
 
-        val newFolders = getNewFolders()
+        val context = getApplication<Application>().applicationContext
+
+        val newFolders = SharedPrefHelper.getNewFolders(context)
         with(newFolders.edit()) {
             val json = JSONObject()
             json.put("name", name)
             json.put("visible", visible)
-            putString(link, json.convert())
+            json.put("created_at", getCurrentDateTime())
+
+            val set = HashSet(newFolders.getStringSet("new_folders", HashSet())!!)
+            set.add(json.convert())
+            putStringSet("new_folders", set)
             apply()
         }
 
-        val newLinks = getNewLinks()
+        val newLinks = SharedPrefHelper.getNewLinks(context)
         with(newLinks.edit()) {
             val savedData = newLinks.getString(link, "")!!
             val json = JSONObject(savedData)
@@ -52,21 +57,5 @@ class NewFolderViewModel(application: Application): AndroidViewModel(application
         )
         db.close()
 
-    }
-
-    private fun getNewLinks(): SharedPreferences {
-        val context = getApplication<Application>().applicationContext
-        return context.getSharedPreferences(
-            context.getString(R.string.preference_new_links),
-            Context.MODE_PRIVATE
-        )
-    }
-
-    private fun getNewFolders(): SharedPreferences {
-        val context = getApplication<Application>().applicationContext
-        return context.getSharedPreferences(
-            context.getString(R.string.preference_new_folders),
-            Context.MODE_PRIVATE
-        )
     }
 }

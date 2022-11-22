@@ -8,16 +8,19 @@ part of 'folder.dart';
 
 Folder _$FolderFromJson(Map<String, dynamic> json) => Folder(
       id: json['id'] as int?,
-      imageUrl: json['imageUrl'] as String?,
-      private: json['private'] as bool?,
+      thumbnail: json['thumbnail'] as String?,
+      visible: json['visible'] as bool?,
       name: json['name'] as String?,
-      linkCount: json['linkCount'] as int?,
-    );
+      links: json['links'] as int?,
+      time: json['created_date_time'] as String?,
+    )..isClassified = json['isClassified'] as bool?;
 
 Map<String, dynamic> _$FolderToJson(Folder instance) => <String, dynamic>{
       'id': instance.id,
-      'imageUrl': instance.imageUrl,
-      'private': instance.private,
+      'thumbnail': instance.thumbnail,
+      'visible': instance.visible,
       'name': instance.name,
-      'linkCount': instance.linkCount,
+      'links': instance.links,
+      'created_date_time': instance.time,
+      'isClassified': instance.isClassified,
     };
