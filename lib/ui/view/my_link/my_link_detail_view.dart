@@ -75,7 +75,7 @@ class _MyLinkDetailViewState extends State<MyLinkDetailView> {
                                       style: const TextStyle(
                                         fontSize: 17,
                                         fontFamily: 'Pretendard',
-                                        color: Color(0xFF13181E),
+                                        color: blackBold,
                                         letterSpacing: -0.2,
                                         fontWeight: FontWeight.w700,
                                       ),),

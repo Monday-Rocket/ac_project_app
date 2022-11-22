@@ -1,11 +1,9 @@
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/home_second_view_cubit.dart';
 import 'package:ac_project_app/cubits/home_view_cubit.dart';
-import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/page/home/home_page.dart';
 import 'package:ac_project_app/ui/page/my_folder/my_folder_page.dart';
 import 'package:ac_project_app/ui/page/my_page/my_page.dart';
-import 'package:ac_project_app/ui/view/my_link_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -28,8 +26,6 @@ class HomeView extends StatelessWidget {
         builder: (context, second) {
           return BlocBuilder<HomeViewCubit, int>(
             builder: (context, index) {
-              final folderKey = context.read<HomeViewCubit>().myFolderKey;
-
               final icons = getBottomIcons(index);
 
               final bottomItems = [
@@ -66,25 +62,11 @@ class HomeView extends StatelessWidget {
               return Scaffold(
                 body: IndexedStack(
                   index: index,
-                  children: <Widget>[
-                    const HomePage(),
-                    const UploadPage(),
-                    Navigator(
-                      key: folderKey,
-                      onGenerateRoute: (settings) {
-                        if (settings.name == Routes.myLinks) {
-                          context.read<HomeSecondViewCubit>().addSecondView();
-                          return MaterialPageRoute(
-                            builder: (_) => const MyLinkPage(),
-                            settings: settings,
-                          );
-                        }
-                        return MaterialPageRoute(
-                          builder: (_) => const MyFolderPage(),
-                        );
-                      },
-                    ),
-                    const MyPage(),
+                  children: const <Widget>[
+                    HomePage(),
+                    UploadPage(),
+                    MyFolderPage(),
+                    MyPage(),
                   ],
                 ),
                 bottomNavigationBar: BottomNavigationBar(
@@ -100,15 +82,7 @@ class HomeView extends StatelessWidget {
                   showUnselectedLabels: true,
                   items: bottomItems,
                   currentIndex: index,
-                  onTap: (i) {
-                    if (index == 2 && i == 2 && second == 1) {
-                      if (folderKey.currentState?.canPop() ?? false) {
-                        folderKey.currentState?.pop();
-                      }
-                      context.read<HomeSecondViewCubit>().goBack();
-                    }
-                    context.read<HomeViewCubit>().moveTo(i);
-                  },
+                  onTap: context.read<HomeViewCubit>().moveTo,
                 ),
               );
             },

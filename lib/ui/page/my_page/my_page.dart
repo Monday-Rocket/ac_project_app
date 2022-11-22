@@ -1,11 +1,9 @@
 // ignore_for_file: avoid_positional_boolean_parameters
-import 'dart:io';
 
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/resource.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class LinkArguments {
@@ -19,34 +17,33 @@ class MyPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
+    return SafeArea(
+      child: Column(
         children: [
           Container(
             alignment: Alignment.center,
-            margin: EdgeInsets.only(top: 46, bottom: 6),
+            margin: const EdgeInsets.only(top: 46, bottom: 6),
             width: 100,
             height: 100,
             child: Stack(
               alignment: Alignment.bottomRight,
               children: [
                 Container(
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     shape: BoxShape.circle,
                     color: Colors.lightGreenAccent,
                   ),
                 ),
                 Container(
-                  child: SvgPicture.asset(
-                    'assets/images/ic_change.svg',
-                  ),
-                  padding: EdgeInsets.all(4),
+                  padding: const EdgeInsets.all(4),
                   width: 24,
                   height: 24,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     shape: BoxShape.circle,
                     color: Colors.white,
+                  ),
+                  child: SvgPicture.asset(
+                    'assets/images/ic_change.svg',
                   ),
                 ),
               ],
@@ -61,7 +58,7 @@ class MyPage extends StatelessWidget {
             ),
             textAlign: TextAlign.center,
           ),
-          SizedBox(
+          const SizedBox(
             height: 47,
           ),
           MenuList(context),
@@ -71,7 +68,6 @@ class MyPage extends StatelessWidget {
   }
 
   Widget MenuList(BuildContext context) {
-
     void showPopUp({
       required String title,
       required String content,
@@ -91,14 +87,14 @@ class MyPage extends StatelessWidget {
                 Container(
                   width: 285,
                   height: icon ? 217 : 183,
-                  padding: EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(16),
                   child: Column(
                     children: [
                       SizedBox(
                         height: icon ? 14 : 16,
                       ),
                       if (icon)
-                        Icon(
+                        const Icon(
                           Icons.error,
                           color: primary800,
                           size: 27,
@@ -108,32 +104,32 @@ class MyPage extends StatelessWidget {
                       ),
                       Text(
                         title,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontFamily: R_Font.PRETENDARD,
                           fontSize: 20,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       Text(content, textAlign: TextAlign.center),
-                      SizedBox(
+                      const SizedBox(
                         height: 32,
                       ),
                       ElevatedButton(
                         onPressed: () {
                           Navigator.of(context).pop(true);
                         },
-                        child: Text('확인'),
                         style: ElevatedButton.styleFrom(
-                          fixedSize: Size(245, 48),
+                          fixedSize: const Size(245, 48),
                           alignment: Alignment.center,
                           backgroundColor: primary600,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
+                        child: const Text('확인'),
                       ),
                     ],
                   ),
@@ -142,12 +138,13 @@ class MyPage extends StatelessWidget {
                   right: 5,
                   top: 5,
                   child: IconButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      icon: Icon(
-                        Icons.close,
-                      )),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: const Icon(
+                      Icons.close,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -164,8 +161,11 @@ class MyPage extends StatelessWidget {
       );
     }
 
-    Widget MenuItem(String menuName,
-        {bool arrow = true, Color color = grey900}) {
+    Widget MenuItem(
+      String menuName, {
+      bool arrow = true,
+      Color color = grey900,
+    }) {
       return InkWell(
         onTap: () {
           switch (menuName) {
@@ -214,7 +214,7 @@ class MyPage extends StatelessWidget {
           }
         },
         child: Container(
-          padding: EdgeInsets.symmetric(
+          padding: const EdgeInsets.symmetric(
             vertical: 20,
             horizontal: 24,
           ),
@@ -230,7 +230,7 @@ class MyPage extends StatelessWidget {
                   fontWeight: FontWeight.w500,
                 ),
               ),
-              if (arrow) Icon(Icons.arrow_forward_ios_rounded, size: 16),
+              if (arrow) const Icon(Icons.arrow_forward_ios_rounded, size: 16),
             ],
           ),
         ),

@@ -66,11 +66,6 @@ class ShareDataProvider {
       final result = await _platform.invokeMethod('clearData');
       Log.i('bulk save clear data result: $result');
 
-      final folders = await getNewFolders();
-      final links = await getNewLinks();
-      Log.i(folders);
-      Log.i(links);
-
     } on PlatformException catch (e) {
       Log.e(e.message);
       rethrow;

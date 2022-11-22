@@ -293,7 +293,7 @@ class MyFolderPage extends StatelessWidget {
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16,
-                                  color: Color(0xFF13181E),
+                                  color: blackBold,
                                 ),
                               ),
                               const SizedBox(
@@ -659,7 +659,7 @@ class MyFolderPage extends StatelessWidget {
                                       child: Text(
                                         visible ? '비공개로 전환' : '공개로 전환',
                                         style: const TextStyle(
-                                          color: Color(0xFF13181E),
+                                          color: blackBold,
                                           fontWeight: FontWeight.w500,
                                           fontSize: 16,
                                         ),
@@ -689,7 +689,7 @@ class MyFolderPage extends StatelessWidget {
                                       child: Text(
                                         '폴더 삭제',
                                         style: TextStyle(
-                                          color: Color(0xFF13181E),
+                                          color: blackBold,
                                           fontWeight: FontWeight.w500,
                                           fontSize: 16,
                                         ),

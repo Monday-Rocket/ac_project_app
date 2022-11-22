@@ -13,6 +13,7 @@ import 'package:ac_project_app/ui/widget/text/custom_font.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class LoginView extends StatelessWidget {
   const LoginView({super.key});
@@ -25,18 +26,18 @@ class LoginView extends StatelessWidget {
         body: SafeArea(
           child: Center(
             child: BlocBuilder<LoginCubit, UserState>(
-              builder: (context, state) {
+              builder: (loginContext, state) {
                 if (state is LoadingState) {
                   return const CircularProgressIndicator();
                 } else if (state is ErrorState) {
-                  showErrorBanner(context);
+                  showErrorBanner(loginContext);
                 } else if (state is LoadedState) {
-                  _moveToSignUpPage(context, state.user);
+                  _moveToSignUpPage(loginContext, state.user);
                 }
                 return Column(
                   children: [
                     buildAppImage(),
-                    buildLoginButtons(context),
+                    buildLoginButtons(loginContext),
                   ],
                 );
               },
@@ -48,36 +49,14 @@ class LoginView extends StatelessWidget {
   }
 
   void showErrorBanner(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      ScaffoldMessenger.of(context).showMaterialBanner(
-        MaterialBanner(
-          backgroundColor: Colors.black,
-          content: const Text(
-            '로그인 실패',
-            style: TextStyle(
-              color: Colors.white,
-            ),
-          ),
-          actions: [
-            InkWell(
-              onTap: () {
-                ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
-                context.read<LoginCubit>().initialize();
-              },
-              child: const Padding(
-                padding: EdgeInsets.all(16),
-                child: Text(
-                  '확인',
-                  style: TextStyle(
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
-    });
+    Fluttertoast.showToast(
+      msg: '                로그인 실패                ',
+      gravity: ToastGravity.TOP,
+      toastLength: Toast.LENGTH_LONG,
+      backgroundColor: grey900,
+      textColor: Colors.white,
+      fontSize: 13,
+    );
   }
 
   Future<void> _moveToSignUpPage(BuildContext context, User user) async {

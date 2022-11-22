@@ -11,6 +11,8 @@ const grey700 = Color(0xFF424852);
 const grey800 = Color(0xFF30343E);
 const grey900 = Color(0xFF191F28);
 
+const blackBold = Color(0xFF13181E);
+
 const greyText = Color(0xFF62666C);
 const greyTab = Color(0xFFECEDEE);
 

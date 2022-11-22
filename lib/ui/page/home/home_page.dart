@@ -170,7 +170,7 @@ class HomePage extends StatelessWidget {
                                       const Text(
                                         '전체 동의를 해주세요 여기엔 제목이',
                                         style: TextStyle(
-                                          color: Color(0xFF13181E),
+                                          color: blackBold,
                                           fontWeight: FontWeight.bold,
                                           fontSize: 16,
                                         ),
@@ -220,7 +220,7 @@ class HomePage extends StatelessWidget {
       child: DefaultTabController(
         length: jobs.length,
         child: SizedBox(
-          height: 32,
+          height: 36,
           child: Stack(
             children: [
               Align(

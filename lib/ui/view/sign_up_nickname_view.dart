@@ -144,7 +144,7 @@ class SignUpNicknameView extends StatelessWidget {
           style: const TextStyle(
             fontSize: 17,
             fontWeight: FontWeight.w500,
-            color: Color(0xFF13181E),
+            color: blackBold,
           ),
           decoration: const InputDecoration(
             labelText: '닉네임',

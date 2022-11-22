@@ -1,16 +1,23 @@
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/link/link.dart';
+import 'package:ac_project_app/models/link/searched_links.dart';
+import 'package:ac_project_app/models/result.dart';
 import 'package:ac_project_app/provider/api/custom_client.dart';
 
 class LinkApi {
   final client = CustomClient();
 
-  Future<void> getLinksFromSelectedFolder(Folder folder, int pageNum) async {
-    final result = await client
-        .getUri('/folders/${folder.id}/links?page_no=$pageNum%page_size=10');
-    result.when(
-      success: (data) {},
-      error: (msg) {},
+  Future<Result<SearchedLinks>> getLinksFromSelectedFolder(Folder folder, int pageNum) async {
+    final result = await client.getUri(
+      '/folders/${folder.id}/links?page_no=$pageNum&page_size=10',
+    );
+    return result.when(
+      success: (data) {
+        return Result.success(
+          SearchedLinks.fromJson(data as Map<String, dynamic>),
+        );
+      },
+      error: Result.error,
     );
   }
 
@@ -51,12 +58,16 @@ class LinkApi {
     );
   }
 
-  Future<void> getUnClassifiedLinks(int pageNum) async {
+  Future<Result<SearchedLinks>> getUnClassifiedLinks(int pageNum) async {
     final result =
-        await client.getUri('/links/unclassified?pageNo=$pageNum&pageSize=10');
-    result.when(
-      success: (data) {},
-      error: (msg) {},
+    await client.getUri('/links/unclassified?pageNo=$pageNum&pageSize=10');
+    return result.when(
+      success: (data) {
+        return Result.success(
+          SearchedLinks.fromJson(data as Map<String, dynamic>),
+        );
+      },
+      error: Result.error,
     );
   }
 
