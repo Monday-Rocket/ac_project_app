@@ -4,6 +4,7 @@ import 'package:ac_project_app/cubits/home_view_cubit.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/page/home/home_page.dart';
 import 'package:ac_project_app/ui/page/my_folder/my_folder_page.dart';
+import 'package:ac_project_app/ui/page/my_page/my_page.dart';
 import 'package:ac_project_app/ui/view/my_link_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -142,20 +143,6 @@ class HomeView extends StatelessWidget {
       }
     }
     return icons;
-  }
-}
-
-class MyPage extends StatefulWidget {
-  const MyPage({super.key});
-
-  @override
-  State<MyPage> createState() => _MyPageState();
-}
-
-class _MyPageState extends State<MyPage> {
-  @override
-  Widget build(BuildContext context) {
-    return Container();
   }
 }
 

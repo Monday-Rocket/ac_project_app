@@ -49,7 +49,6 @@ Future<void> initSettings() async {
       statusBarBrightness: Brightness.light,
     ),
   );
-
   if (Firebase.apps.isEmpty) {
     await Firebase.initializeApp(
       name: 'ac_project',

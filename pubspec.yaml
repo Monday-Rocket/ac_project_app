@@ -51,6 +51,9 @@ dependencies:
   flutter_signin_button: ^2.0.0
   freezed_annotation: ^2.1.0
 
+  webview_flutter: ^3.0.4
+  url_launcher: ^6.1.6
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -18,6 +18,7 @@ const primary100 = Color(0xFFF6F7FE);
 const primary200 = Color(0xFFD8D0FF);
 const primary400 = Color(0xFFA07EFF);
 const primary600 = Color(0xFF804DFF);
+const primary700 = Color(0xFF741FFF);
 const primary800 = Color(0xFF701FFF);
 const primary1000 = Color(0xFF6200EA);
 

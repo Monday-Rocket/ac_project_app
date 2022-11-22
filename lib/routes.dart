@@ -1,3 +1,8 @@
+
+import 'package:ac_project_app/ui/view/my_link_view.dart';
+import 'package:ac_project_app/ui/view/my_link/my_link_detail_view.dart';
+import 'package:ac_project_app/ui/page/my_page/my_page.dart';
+import 'package:ac_project_app/ui/page/my_page/term_page.dart';
 import 'package:ac_project_app/ui/view/change_profile_view.dart';
 import 'package:ac_project_app/ui/view/home_view.dart';
 import 'package:ac_project_app/ui/view/login_view.dart';
@@ -18,6 +23,9 @@ class Routes {
   static const home = '/home';
   static const myLinks = '/myLinks';
 
+  static const termPage = '/termPage';
+
+  static const myLinkDetail = '/myLinkDetail';
   static const homePage = '/homePage';
   static const uploadPage = '/uploadPage';
   static const myFolderPage = '/myFolderPage';
@@ -42,7 +50,21 @@ class Pages {
       case Routes.signUpNickname:
         return router.create(child: const SignUpNicknameView());
       case Routes.singUpJob:
-        return router.create(child: const SignUpJobView());
+        return router.create(
+          builder: (_) => const SignUpJobView(),
+        );
+      case Routes.myPage:
+        return router.create(
+          builder: (_) => const MyPage(),
+        );
+      case Routes.termPage:
+        return router.create(
+          builder: (_) => const TermPage(),
+        );
+      case Routes.myLinkDetail:
+        return router.create(
+          builder: (_) => const MyLinkDetailView(),
+        );
       case Routes.profile:
         return router.create(child: const ChangeProfileView());
       default:
