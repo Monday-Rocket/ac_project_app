@@ -79,7 +79,7 @@ class UserDefaultsHelper {
     
     let folderData = [
       "name": folderName,
-      "visible": visible,
+      "visible": !visible,
       "created_at": Date.ISOStringFromDate(date: Date())
     ] as [String : Any]
     

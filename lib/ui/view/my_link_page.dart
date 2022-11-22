@@ -68,7 +68,7 @@ class MyLinkPage extends StatelessWidget {
                   Container(
                     margin: const EdgeInsets.only(left: 24, top: 3),
                     child: Text(
-                      '콘텐츠 ${addCommasFrom(folder.linkCount)}개',
+                      '콘텐츠 ${addCommasFrom(folder.links)}개',
                       style: const TextStyle(
                         color: greyText,
                         fontWeight: FontWeight.w500,
@@ -212,7 +212,7 @@ class MyLinkPage extends StatelessWidget {
                   ),
                   Builder(
                     builder: (_) {
-                      if (folder.linkCount == 0) {
+                      if (folder.links == 0) {
                         return const Expanded(
                           child: Center(
                             child: Text(
@@ -226,7 +226,11 @@ class MyLinkPage extends StatelessWidget {
                           ),
                         );
                       } else {
-                        return Container();
+                        return ListView.builder(
+                          itemBuilder: (_, index) {
+                            return Container();
+                          },
+                        );
                       }
                     },
                   ),
@@ -244,35 +248,35 @@ class MyLinkPage extends StatelessWidget {
       Folder(
         name: '미분류',
         visible: false,
-        linkCount: 20,
+        links: 20,
       ),
       Folder(
-        imageUrl:
+        thumbnail:
             'https://play-lh.googleusercontent.com/Kbu0747Cx3rpzHcSbtM1zDriGFG74zVbtkPmVnOKpmLCS59l7IuKD5M3MKbaq_nEaZM',
         name: '디자인1',
         visible: true,
-        linkCount: 30,
+        links: 30,
       ),
       Folder(
-        imageUrl:
+        thumbnail:
             'https://play-lh.googleusercontent.com/Kbu0747Cx3rpzHcSbtM1zDriGFG74zVbtkPmVnOKpmLCS59l7IuKD5M3MKbaq_nEaZM',
         name: '디자인2',
         visible: false,
-        linkCount: 30,
+        links: 30,
       ),
       Folder(
-        imageUrl:
+        thumbnail:
             'https://play-lh.googleusercontent.com/Kbu0747Cx3rpzHcSbtM1zDriGFG74zVbtkPmVnOKpmLCS59l7IuKD5M3MKbaq_nEaZM',
         name: '디자인3',
         visible: true,
-        linkCount: 30,
+        links: 30,
       ),
       Folder(
-        imageUrl:
+        thumbnail:
             'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Apple_logo_black.svg/1667px-Apple_logo_black.svg.png',
         name: 'Apple',
         visible: false,
-        linkCount: 12345,
+        links: 12345,
       ),
     ];
   }

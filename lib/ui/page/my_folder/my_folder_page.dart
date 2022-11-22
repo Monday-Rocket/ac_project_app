@@ -9,6 +9,8 @@ import 'package:ac_project_app/cubits/my_folder/folder_view_type_cubit.dart';
 import 'package:ac_project_app/cubits/my_folder/folders_state.dart';
 import 'package:ac_project_app/cubits/my_folder/get_folders_cubit.dart';
 import 'package:ac_project_app/cubits/my_folder/transfer_folder_visible.dart';
+import 'package:ac_project_app/cubits/profile/get_profile_info_cubit.dart';
+import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/page/my_folder/folder_visible_state.dart';
@@ -36,10 +38,12 @@ class MyFolderPage extends StatelessWidget {
         BlocProvider<GetFoldersCubit>(
           create: (_) => GetFoldersCubit(),
         ),
+        BlocProvider<GetProfileInfoCubit>(
+          create: (_) => GetProfileInfoCubit(),
+        ),
       ],
       child: BlocBuilder<FolderViewTypeCubit, FolderViewType>(
         builder: (context, folderViewType) {
-          // TODO 유저 이미지
           return GestureDetector(
             onTap: () => FocusScope.of(context).unfocus(),
             child: Stack(
@@ -47,32 +51,51 @@ class MyFolderPage extends StatelessWidget {
                 Image.asset(
                   'assets/images/my_folder_back.png',
                   width: width,
-                  fit: BoxFit.fitWidth,
+                  fit: BoxFit.fill,
                 ),
                 BlocBuilder<GetFoldersCubit, FoldersState>(
-                  builder: (getFolderContext, state) {
+                  builder: (getFolderContext, folderState) {
                     return Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Container(
-                          width: 105,
-                          height: 105,
-                          margin: const EdgeInsetsDirectional.only(
-                            top: 90,
-                            bottom: 6,
-                          ),
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.lightGreenAccent,
-                          ),
-                        ),
-                        const Text(
-                          '테스트',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 28,
-                            color: Color(0xff0e0e0e),
-                          ),
+                        BlocBuilder<GetProfileInfoCubit, ProfileState>(
+                          builder: (context, state) {
+                            if (state is ProfileLoadedState) {
+                              final profile = state.profile;
+                              return InkWell(
+                                onTap: () {
+                                  // FIXME Reload Image
+                                  context
+                                      .read<GetProfileInfoCubit>()
+                                      .loadProfileData();
+                                },
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Container(
+                                      width: 105,
+                                      height: 105,
+                                      margin: const EdgeInsetsDirectional.only(
+                                        top: 90,
+                                        bottom: 6,
+                                      ),
+                                      child: Image.asset(profile.profileImage),
+                                    ),
+                                    Text(
+                                      profile.nickname,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 28,
+                                        color: Color(0xff0e0e0e),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            } else {
+                              return const SizedBox.shrink();
+                            }
+                          },
                         ),
                         Container(
                           margin: const EdgeInsetsDirectional.only(
@@ -133,16 +156,17 @@ class MyFolderPage extends StatelessWidget {
                         ),
                         Builder(
                           builder: (context) {
-                            if (state is LoadingState) {
+                            if (folderState is LoadingState) {
                               return const Center(
                                 child: CircularProgressIndicator(),
                               );
-                            } else if (state is ErrorState) {
+                            } else if (folderState is ErrorState) {
+                              Log.e(folderState.props[0]);
                               return const Center(
                                 child: Icon(Icons.close),
                               );
-                            } else if (state is LoadedState) {
-                              if (state.folders.isEmpty) {
+                            } else if (folderState is LoadedState) {
+                              if (folderState.folders.isEmpty) {
                                 return const Expanded(
                                   child: Center(
                                     child: Text(
@@ -156,7 +180,8 @@ class MyFolderPage extends StatelessWidget {
                                   ),
                                 );
                               } else {
-                                return buildListView(state.folders, context);
+                                return buildListView(
+                                    folderState.folders, context);
                               }
                             } else {
                               return const SizedBox.shrink();
@@ -188,8 +213,7 @@ class MyFolderPage extends StatelessWidget {
           itemBuilder: (ctx, index) {
             final folder = folders[index];
             final visible = folder.visible ?? true;
-            final isNullImage =
-                folder.imageUrl == null || (folder.imageUrl?.isEmpty ?? true);
+            final isNotClassified = folder.name == '미분류';
 
             return ListTile(
               contentPadding: EdgeInsets.zero,
@@ -223,9 +247,11 @@ class MyFolderPage extends StatelessWidget {
                                   borderRadius: const BorderRadius.all(
                                     Radius.circular(20),
                                   ),
-                                  child: folder.imageUrl != null && (folder.imageUrl?.isNotEmpty ?? false)
+                                  child: folder.thumbnail != null &&
+                                          (folder.thumbnail?.isNotEmpty ??
+                                              false)
                                       ? Image.network(
-                                          folder.imageUrl!,
+                                          folder.thumbnail!,
                                           width: 63,
                                           height: 63,
                                           fit: BoxFit.contain,
@@ -274,7 +300,7 @@ class MyFolderPage extends StatelessWidget {
                                 height: 6,
                               ),
                               Text(
-                                '링크 ${addCommasFrom(folder.linkCount)}개',
+                                '링크 ${addCommasFrom(folder.links)}개',
                                 style: const TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w500,
@@ -285,7 +311,7 @@ class MyFolderPage extends StatelessWidget {
                           )
                         ],
                       ),
-                      if (isNullImage)
+                      if (isNotClassified)
                         const SizedBox.shrink()
                       else
                         InkWell(
@@ -519,8 +545,8 @@ class MyFolderPage extends StatelessWidget {
     final folder = Folder(
       name: folderName,
       visible: visibleState == FolderVisibleState.visible,
-      linkCount: 0,
-      imageUrl: '',
+      links: 0,
+      thumbnail: '',
     );
 
     // TODO 폴더 저장 API 호출

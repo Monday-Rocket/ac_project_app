@@ -1,7 +1,7 @@
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/profile/get_profile_images_cubit.dart';
 import 'package:ac_project_app/cubits/profile/get_profile_info_cubit.dart';
-import 'package:ac_project_app/models/profile/profile.dart';
+import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/models/profile/profile_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -46,7 +46,12 @@ class ChangeProfileView extends StatelessWidget {
               actions: [
                 TextButton(
                   onPressed: context.watch<GetProfileImagesCubit>().selected
-                      ? () {}
+                      ? () => context
+                          .read<GetProfileInfoCubit>()
+                          .updateProfileImage()
+                          .then(
+                            (value) => Navigator.pop(context, value),
+                          )
                       : null,
                   style: TextButton.styleFrom(
                     disabledForegroundColor: grey400,
@@ -60,49 +65,52 @@ class ChangeProfileView extends StatelessWidget {
               ],
             ),
             body: SafeArea(
-              child: BlocBuilder<GetProfileInfoCubit, Profile>(
-                builder: (context, profile) {
-                  return Column(
-                    children: [
-                      Center(
-                        child: Container(
-                          margin: const EdgeInsets.symmetric(vertical: 30),
-                          child: Builder(
-                            builder: (_) {
-                              if (profile.nickname.isEmpty) {
-                                return const SizedBox.shrink();
-                              }
-                              return Column(
-                                children: [
-                                  Image.asset(
-                                    profile.profileImage,
-                                    width: 99,
-                                    height: 99,
-                                  ),
-                                  const SizedBox(
-                                    height: 11,
-                                  ),
-                                  Text(
-                                    profile.nickname,
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 28,
-                                      color: black1000,
+              child: BlocBuilder<GetProfileInfoCubit, ProfileState>(
+                builder: (context, state) {
+                  if (state is ProfileLoadedState) {
+                    final profile = state.profile;
+                    return Column(
+                      children: [
+                        Center(
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(vertical: 30),
+                            child: Builder(
+                              builder: (_) {
+                                if (profile.nickname.isEmpty) {
+                                  return const SizedBox.shrink();
+                                }
+                                return Column(
+                                  children: [
+                                    Image.asset(
+                                      profile.profileImage,
+                                      width: 99,
+                                      height: 99,
                                     ),
-                                  ),
-                                  const SizedBox(
-                                    height: 8,
-                                  ),
-                                  const Text(
-                                    '변경할 프로필 이미지를 선택해 주세요',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: grey500,
+                                    const SizedBox(
+                                      height: 11,
                                     ),
-                                  ),
-                                ],
-                              );
-                            },
+                                    Text(
+                                      profile.nickname,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 28,
+                                        color: black1000,
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      height: 8,
+                                    ),
+                                    const Text(
+                                      '변경할 프로필 이미지를 선택해 주세요',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: grey500,
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                            ),
                           ),
                         ),
                       ),
@@ -147,45 +155,53 @@ class ChangeProfileView extends StatelessWidget {
                                                 Image.asset(profile.filePath),
                                           );
                                         },
+                                      );
+                                    },
+                                  ),
+                                ),
+                                Container(
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 24),
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      minimumSize: const Size.fromHeight(55),
+                                      backgroundColor: context
+                                              .watch<GetProfileImagesCubit>()
+                                              .selected
+                                          ? primary600
+                                          : secondary,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
                                       ),
-                                    );
-                                  },
-                                ),
-                              ),
-                              Container(
-                                margin:
-                                    const EdgeInsets.symmetric(horizontal: 24),
-                                child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    minimumSize: const Size.fromHeight(55),
-                                    backgroundColor: context
-                                            .watch<GetProfileImagesCubit>()
-                                            .selected
-                                        ? primary600
-                                        : secondary,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
+                                      disabledBackgroundColor: secondary,
+                                      disabledForegroundColor: Colors.white,
                                     ),
-                                    disabledBackgroundColor: secondary,
-                                    disabledForegroundColor: Colors.white,
-                                  ),
-                                  onPressed: () {},
-                                  child: const Text(
-                                    '변경하기',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
+                                    onPressed: () => context
+                                        .read<GetProfileInfoCubit>()
+                                        .updateProfileImage()
+                                        .then(
+                                          (value) =>
+                                              Navigator.pop(context, value),
+                                        ),
+                                    child: const Text(
+                                      '변경하기',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      textWidthBasis: TextWidthBasis.parent,
                                     ),
-                                    textWidthBasis: TextWidthBasis.parent,
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  );
+                      ],
+                    );
+                  } else {
+                    return const SizedBox.shrink();
+                  }
                 },
               ),
             ),
