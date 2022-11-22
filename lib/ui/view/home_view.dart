@@ -2,6 +2,7 @@ import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/home_second_view_cubit.dart';
 import 'package:ac_project_app/cubits/home_view_cubit.dart';
 import 'package:ac_project_app/routes.dart';
+import 'package:ac_project_app/ui/page/home/home_page.dart';
 import 'package:ac_project_app/ui/page/my_folder/my_folder_page.dart';
 import 'package:ac_project_app/ui/view/my_link_page.dart';
 import 'package:flutter/material.dart';
@@ -180,20 +181,6 @@ class UploadPage extends StatefulWidget {
 }
 
 class _UploadPageState extends State<UploadPage> {
-  @override
-  Widget build(BuildContext context) {
-    return Container();
-  }
-}
-
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
-
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Container();
