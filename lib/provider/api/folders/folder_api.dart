@@ -63,7 +63,21 @@ class FolderApi {
     );
   }
 
-  void add(Folder folder) {}
+  Future<bool> add(Folder folder) async {
+    final result = await client.postUri(
+      '/folders',
+      body: {
+        'name': folder.name,
+        'visible': folder.visible,
+        'created_at': folder.time,
+      },
+    );
+
+    return result.when(
+      success: (_) => true,
+      error: (_) => false,
+    );
+  }
 
   Future<void> bulkSave() async {
     final newLinks = await ShareDataProvider.getNewLinks();

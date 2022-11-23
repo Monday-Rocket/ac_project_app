@@ -5,7 +5,7 @@ import 'dart:convert';
 import 'package:ac_project_app/models/net/api_result.dart';
 import 'package:ac_project_app/models/result.dart';
 import 'package:ac_project_app/util/logger.dart';
-import 'package:ac_project_app/util/stringfy.dart';
+import 'package:ac_project_app/util/string_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;

@@ -1,10 +1,8 @@
 import 'package:ac_project_app/util/logger.dart';
-import 'package:ac_project_app/util/stringfy.dart';
+import 'package:ac_project_app/util/string_utils.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-
 void main() {
-
   test(
     'list to string test',
     () {
@@ -14,5 +12,4 @@ void main() {
       Log.i(stringifyMessage(msg));
     },
   );
-
 }

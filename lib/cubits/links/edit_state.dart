@@ -1,0 +1,1 @@
+enum EditState { edit, view }

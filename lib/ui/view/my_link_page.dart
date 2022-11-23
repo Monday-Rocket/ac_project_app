@@ -1,8 +1,9 @@
 import 'package:ac_project_app/const/colors.dart';
-import 'package:ac_project_app/cubits/my_link/get_selected_folder_cubit.dart';
-import 'package:ac_project_app/cubits/my_link/link_list_state.dart';
-import 'package:ac_project_app/cubits/my_link/links_from_selected_folder_cubit.dart';
+import 'package:ac_project_app/cubits/folders/get_selected_folder_cubit.dart';
+import 'package:ac_project_app/cubits/links/link_list_state.dart';
+import 'package:ac_project_app/cubits/links/links_from_selected_folder_cubit.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
+import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/util/get_widget_arguments.dart';
 import 'package:ac_project_app/util/number_commas.dart';
 import 'package:flutter/material.dart';
@@ -156,11 +157,7 @@ class MyLinkPage extends StatelessWidget {
 
   Widget buildTabBar(List<Folder> folders, int tabIndex, Folder folder) {
     return Container(
-      margin: const EdgeInsets.only(
-        top: 30,
-        left: 12,
-        right: 20,
-      ),
+      margin: const EdgeInsets.only(top: 30, left: 12, right: 20),
       child: DefaultTabController(
         length: folders.length,
         initialIndex: tabIndex,
@@ -227,7 +224,10 @@ class MyLinkPage extends StatelessWidget {
                           color: primaryTab,
                           width: 2.5,
                         ),
-                        insets: EdgeInsets.symmetric(horizontal: 15),
+                        insets: EdgeInsets.only(
+                          left: 15,
+                          right: 15,
+                        ),
                       ),
                       tabs: tabs,
                       onTap: (index) {
@@ -262,83 +262,106 @@ class MyLinkPage extends StatelessWidget {
                 itemCount: links.length,
                 itemBuilder: (_, index) {
                   final link = links[index];
-                  return Container(
-                    margin: const EdgeInsets.symmetric(
-                      vertical: 18,
-                      horizontal: 24,
-                    ),
+                  return InkWell(
+                    onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        Routes.linkDetail,
+                        arguments: {
+                          'isMyLink': true,
+                          'link': link,
+                        },
+                      ).then((value) {
+                        if (value != null) {
+                          context
+                              .read<LinksFromSelectedFolderCubit>()
+                              .getSelectedLinks(folder, 0);
+                        }
+                      });
+                    },
                     child: Container(
-                      margin: const EdgeInsets.symmetric(vertical: 5),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          SizedBox(
-                            width: (width - 24 * 2) - 159 - 20,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      link.title ?? '',
+                      margin: const EdgeInsets.symmetric(
+                        vertical: 18,
+                        horizontal: 24,
+                      ),
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(vertical: 5),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            SizedBox(
+                              width: (width - 24 * 2) - 159 - 20,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        link.title ?? '',
+                                        maxLines: 1,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                          color: blackBold,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        height: 7,
+                                      ),
+                                      Text(
+                                        link.describe ?? '\n\n',
+                                        maxLines: 2,
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                          color: greyText,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Container(
+                                    margin: const EdgeInsets.only(top: 30),
+                                    child: Text(
+                                      link.url ?? '',
                                       maxLines: 1,
                                       style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
-                                        color: blackBold,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                    Text(
-                                      link.describe ?? '\n\n',
-                                      maxLines: 2,
-                                      style: const TextStyle(
                                         fontSize: 12,
-                                        color: greyText,
+                                        color: Color(0xFFC0C2C4),
                                         overflow: TextOverflow.ellipsis,
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                Container(
-                                  margin: const EdgeInsets.only(top: 30),
-                                  child: Text(
-                                    link.url ?? '',
-                                    maxLines: 1,
-                                    style: const TextStyle(
-                                      fontSize: 12,
-                                      color: Color(0xFFC0C2C4),
-                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          ClipRRect(
-                            borderRadius: const BorderRadius.all(
-                              Radius.circular(7),
-                            ),
-                            child: ColoredBox(
-                              color: grey100,
-                              child: Image.network(
-                                link.image ?? '',
-                                width: 159,
-                                height: 116,
-                                fit: BoxFit.cover,
-                                errorBuilder: (_, __, ___) {
-                                  return const SizedBox(
-                                    width: 159,
-                                    height: 116,
-                                  );
-                                },
+                                ],
                               ),
                             ),
-                          )
-                        ],
+                            ClipRRect(
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(7),
+                              ),
+                              child: ColoredBox(
+                                color: grey100,
+                                child: Image.network(
+                                  link.image ?? '',
+                                  width: 159,
+                                  height: 116,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (_, __, ___) {
+                                    return const SizedBox(
+                                      width: 159,
+                                      height: 116,
+                                    );
+                                  },
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   );

@@ -39,6 +39,8 @@ dependencies:
   path: ^1.8.2
   fluttertoast: ^8.1.1
   shimmer: ^2.0.0
+  share_plus: ^6.3.0
+  flutter_keyboard_visibility: ^5.4.0
 
   ## SVG
   flutter_svg: ^1.1.6

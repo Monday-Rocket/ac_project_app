@@ -3,10 +3,10 @@
 import 'dart:async';
 
 import 'package:ac_project_app/const/colors.dart';
-import 'package:ac_project_app/cubits/my_folder/add_new_folder.dart';
-import 'package:ac_project_app/cubits/my_folder/folder_view_type_cubit.dart';
-import 'package:ac_project_app/cubits/my_folder/folders_state.dart';
-import 'package:ac_project_app/cubits/my_folder/get_folders_cubit.dart';
+import 'package:ac_project_app/cubits/folders/add_new_folder.dart';
+import 'package:ac_project_app/cubits/folders/folder_view_type_cubit.dart';
+import 'package:ac_project_app/cubits/folders/folders_state.dart';
+import 'package:ac_project_app/cubits/folders/get_folders_cubit.dart';
 import 'package:ac_project_app/cubits/profile/get_profile_info_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
@@ -227,7 +227,7 @@ class MyFolderPage extends StatelessWidget {
                       'folders': folders,
                       'tabIndex': index,
                     },
-                  );
+                  ).then((_) => context.read<GetFoldersCubit>().getFolders());
                 },
                 child: Container(
                   margin:
@@ -341,6 +341,7 @@ class MyFolderPage extends StatelessWidget {
   }
 
   Future<bool?> showAddFolderDialog(BuildContext parentContext) async {
+    final textController = TextEditingController();
     return showModalBottomSheet<bool>(
       backgroundColor: Colors.transparent,
       context: parentContext,
@@ -348,7 +349,6 @@ class MyFolderPage extends StatelessWidget {
       builder: (BuildContext context) {
         var isEmptyName = true;
         var folderPrivate = FolderVisibleState.visible;
-        final textController = TextEditingController();
         return BlocProvider(
           create: (_) => AddNewFolderCubit(),
           child: Wrap(
@@ -410,6 +410,7 @@ class MyFolderPage extends StatelessWidget {
                                         fontWeight: FontWeight.w500,
                                         color: grey800,
                                       ),
+                                      cursorColor: primary600,
                                       decoration: InputDecoration(
                                         focusedBorder:
                                             const UnderlineInputBorder(
@@ -531,10 +532,6 @@ class MyFolderPage extends StatelessWidget {
     );
   }
 
-  /* TODO
-      1. 폴더 저장
-      2. 다이얼로그 닫기
-      3. 화면 업데이트 (리스트 재조회) */
   void saveEmptyFolder(
     BuildContext context,
     BuildContext parentContext,
@@ -548,14 +545,9 @@ class MyFolderPage extends StatelessWidget {
     final folder = Folder(
       name: folderName,
       visible: visibleState == FolderVisibleState.visible,
-      links: 0,
-      thumbnail: '',
     );
 
-    // TODO 폴더 저장 API 호출
     context.read<AddNewFolderCubit>().add(folder).then((result) {
-      // folder 저장 결과값으로 링크뷰에 이용
-      Log.i('폴더 저장');
       Navigator.pop(context);
       Fluttertoast.showToast(
         msg: '                새로운 폴더가 생성되었어요!                ',
@@ -566,16 +558,17 @@ class MyFolderPage extends StatelessWidget {
         fontSize: 13,
       );
 
-      parentContext.read<GetFoldersCubit>().addFolder(folder);
-
-      Navigator.pushNamed(
-        context,
-        Routes.myLinks,
-        arguments: {
-          'folders': parentContext.read<GetFoldersCubit>().getTotalFolders(),
-          'tabIndex': 1,
-        },
-      );
+      parentContext.read<GetFoldersCubit>().getFolders().then((_) {
+        final folders = parentContext.read<GetFoldersCubit>().folders;
+        Navigator.pushNamed(
+          context,
+          Routes.myLinks,
+          arguments: {
+            'folders': folders,
+            'tabIndex': folders.length - 1,
+          },
+        );
+      });
     });
   }
 

@@ -36,6 +36,12 @@ class ShareDB {
     await database.close();
   }
 
+  static Future<Database> _getDB() async {
+    final path = await ShareDataProvider.getShareDBUrl();
+    Log.i(path);
+    return openDatabase(path);
+  }
+
   static Future<void> changeVisible(Folder folder) async {
     final db = await _getDB();
     await db.rawUpdate(
@@ -45,15 +51,18 @@ class ShareDB {
     await db.close();
   }
 
-  static Future<Database> _getDB() async {
-    final path = await ShareDataProvider.getShareDBUrl();
-    Log.i(path);
-    return openDatabase(path);
-  }
-
   static Future<void> deleteFolder(Folder folder) async {
     final db = await _getDB();
     await db.delete('folder', where: 'name = ?', whereArgs: [folder.name]);
+    await db.close();
+  }
+
+  static Future<void> insert(Folder folder) async {
+    final db = await _getDB();
+    await db.rawInsert(
+      'INSERT into folder(name, visible) values(?, ?)',
+      [folder.name, if (folder.visible!) 1 else 0],
+    );
     await db.close();
   }
 }
