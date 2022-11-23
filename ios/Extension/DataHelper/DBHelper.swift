@@ -115,7 +115,12 @@ CREATE TABLE IF NOT EXISTS folder(
     while sqlite3_step(statement) == SQLITE_ROW {
       let name = String(cString: sqlite3_column_text(statement, 0)) // 결과의 0번째 테이블 값
       let visible =  sqlite3_column_int(statement, 1)// 결과의 1번째 테이블 값.
-      let imageLink = String(cString: sqlite3_column_text(statement, 2)) // 결과의 2번째 테이블 값.
+      
+      var imageLink = ""
+      
+      if let temp = sqlite3_column_text(statement, 2) {
+        imageLink = String(cString: temp) // 결과의 2번째 테이블 값.
+      }
       
       result.append(Folder(name: String(name), visible: Int(visible), imageLink: String(imageLink)))
     }
