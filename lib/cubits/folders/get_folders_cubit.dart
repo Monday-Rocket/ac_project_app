@@ -33,12 +33,6 @@ class GetFoldersCubit extends Cubit<FoldersState> {
     }
   }
 
-  void addFolder(Folder folder) {
-    emit(LoadingState());
-    folders.insert(1, folder);
-    emit(LoadedState(folders));
-  }
-
   List<Folder> getTotalFolders() {
     return folders;
   }

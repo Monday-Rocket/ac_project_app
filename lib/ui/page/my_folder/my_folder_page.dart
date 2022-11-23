@@ -561,7 +561,7 @@ class MyFolderPage extends StatelessWidget {
       parentContext.read<GetFoldersCubit>().getFolders().then((_) {
         final folders = parentContext.read<GetFoldersCubit>().folders;
         Navigator.pushNamed(
-          context,
+          parentContext,
           Routes.myLinks,
           arguments: {
             'folders': folders,
@@ -713,13 +713,14 @@ class MyFolderPage extends StatelessWidget {
   }
 
   void deleteFolder(BuildContext context, Folder folder) {
+    final width = MediaQuery.of(context).size.width;
     showDialog<bool?>(
       context: context,
       builder: (ctx) {
         return AlertDialog(
           backgroundColor: Colors.transparent,
           content: Container(
-            width: 285,
+            width: width - 45 * 2,
             decoration: const BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.all(

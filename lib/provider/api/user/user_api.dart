@@ -21,14 +21,13 @@ class UserApi {
   Future<Result<DetailUser>> patchUsers({
     String? nickname,
     int? jobGroupId,
-    String? profileImg,
   }) async {
     final result = await client.patchUri(
       '/users',
       body: {
         'nickname': nickname,
         'job_group_id': jobGroupId.toString(),
-        'profile_img': profileImg
+        'profile_img': '01',
       },
     );
     return result.when(

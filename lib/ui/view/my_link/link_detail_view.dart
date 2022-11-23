@@ -244,7 +244,10 @@ class LinkDetailView extends StatelessWidget {
                   ),
                 ),
                 InkWell(
-                  onTap: () => context.read<DetailEditCubit>().toggle(),
+                  onTap: () {
+                    FocusManager.instance.primaryFocus?.unfocus();
+                    context.read<DetailEditCubit>().toggle();
+                  },
                   child: Padding(
                     padding: const EdgeInsets.all(12),
                     child: SvgPicture.asset(
@@ -321,15 +324,6 @@ class LinkDetailView extends StatelessWidget {
                   );
                 }
               },
-            ),
-            Visibility(
-              visible: state == EditState.view,
-              child: Container(
-                margin: const EdgeInsets.only(top: 22, bottom: 40),
-                color: const Color(0xffecedee),
-                height: 1,
-                width: double.infinity,
-              ),
             ),
           ],
         ),

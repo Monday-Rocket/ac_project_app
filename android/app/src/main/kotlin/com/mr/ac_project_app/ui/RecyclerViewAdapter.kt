@@ -75,11 +75,15 @@ class RecyclerViewAdapter(private val modelList: ArrayList<FolderModel>, private
 
             oneImageView.clipToOutline = true
 
-            Glide.with(itemView)
-                .load(Uri.parse(folderModel.imageUrl))
-                .centerCrop()
-                .placeholder(R.drawable.folder_one)
-                .into(oneImageView)
+            try {
+                Glide.with(itemView)
+                    .load(Uri.parse(folderModel.imageUrl))
+                    .centerCrop()
+                    .placeholder(R.drawable.folder_one)
+                    .into(oneImageView)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
