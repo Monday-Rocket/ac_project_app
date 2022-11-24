@@ -65,26 +65,13 @@ class LinkDetailView extends StatelessWidget {
                     ],
                     systemOverlayStyle: SystemUiOverlayStyle.dark,
                   ),
-                  body: Builder(
-                    builder: (_) {
-                      if (state == EditState.view) {
-                        return buildBody(link, cubitContext, state);
-                      } else {
-                        return SingleChildScrollView(
-                          reverse: true,
-                          controller: scrollController,
-                          child: buildBody(link, cubitContext, state),
-                        );
-                      }
-                    },
-                  ),
+                  body: buildBody(link, cubitContext, state, scrollController),
                   bottomSheet: Builder(
                     builder: (_) {
                       if (state == EditState.edit) {
                         return Container(
-                          margin: EdgeInsets.only(
-                            top: 16,
-                            bottom: visible ? 16 : 37,
+                          margin: const EdgeInsets.only(
+                            bottom: 16,
                             left: 24,
                             right: 24,
                           ),
@@ -129,8 +116,10 @@ class LinkDetailView extends StatelessWidget {
     );
   }
 
-  Widget buildBody(Link link, BuildContext context, EditState state) {
-    return SafeArea(
+  Widget buildBody(Link link, BuildContext context, EditState state, ScrollController scrollController) {
+    return SingleChildScrollView(
+      controller: scrollController,
+      reverse: state == EditState.edit,
       child: Container(
         margin: const EdgeInsets.only(left: 24, right: 24, top: 14),
         child: Column(
@@ -243,10 +232,20 @@ class LinkDetailView extends StatelessWidget {
                     fontWeight: FontWeight.w400,
                   ),
                 ),
-                InkWell(
+                GestureDetector(
                   onTap: () {
                     FocusManager.instance.primaryFocus?.unfocus();
-                    context.read<DetailEditCubit>().toggle();
+                    Future.delayed(
+                      const Duration(milliseconds: 200),
+                      context.read<DetailEditCubit>().toggle,
+                    );
+                  },
+                  onDoubleTap: () {
+                    FocusManager.instance.primaryFocus?.unfocus();
+                    Future.delayed(
+                      const Duration(milliseconds: 200),
+                      context.read<DetailEditCubit>().toggle,
+                    );
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(12),
@@ -258,6 +257,7 @@ class LinkDetailView extends StatelessWidget {
               ],
             ),
             Container(
+              margin: const EdgeInsets.only(bottom: 22),
               color: const Color(0xffecedee),
               height: 1,
               width: double.infinity,
@@ -265,62 +265,59 @@ class LinkDetailView extends StatelessWidget {
             Builder(
               builder: (_) {
                 if (state == EditState.view) {
-                  return Expanded(
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        '0237198273921739eyJhbGciOiJSUzI1NiIsImtpZCI6ImY4MDljZmYxMTZlNWJhNzQwNzQ1YmZlZGE1OGUxNmU4MmYzZmQ4MDUiLCJ0eXAiOiJKV1QifQ.eyJuYW1lIjoi7KeE6rCV66-8IiwicGljdHVyZSI6Imh0dHBzOi8vbGgzLmdvb2dsZXVzZXJjb250ZW50LmNvbS9hL0FMbTV3dTJFV1BIM0dBUEpkbnJpOHpZMGhPNXlyS21GZ2M1cWhTSFBNcHhMPXM5Ni1jIiwiaXNzIjoiaHR0cHM6Ly9zZWN1cmV0b2tlbi5nb29nbGUuY29tL2FjLXByb2plY3QtZDA0ZWUiLCJhdWQiOiJhYy1wcm9qZWN0LWQwNGVlIiwiYXV0aF90aW1lIjoxNjY5MjYxNjQ2LCJ1c2VyX2lkIjoiREVRSVdoaXZOR1hJZjJFWVRFWVJkRjltcDA3MiIsInN1YiI6IkRFUUlXaGl2TkdYSWYyRVlURVlSZEY5bXAwNzIiLCJpYXQiOjE2NjkyNjUyMTcsImV4cCI6MTY2OTI2ODgxNywiZW1haWwiOiJsaW5rcG9vbHRlc3QyQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJmaXJlYmFzZSI6eyJpZGVudGl0aWVzIjp7Imdvb2dsZS5jb20iOlsiMTA3OTE3MjA3NTg3NTI3MTkzMDI2Il0sImVtYWlsIjpbImxpbmtwb29sdGVzdDJAZ21haWwuY29tIl19LCJzaWduX2luX3Byb3ZpZGVyIjoiZ29vZ2xlLmNvbSJ9fQ.CgvKqC5_zZYjNTa-q0jWm3BzPjLS09zhiSJQ2zEqUl1NK8pcE-ynk9Qucorqvo0uVeXLQPoidMwQ2lNYgNrNffLyXFM9ofhDPn0mXBN3F7P6UlVzBEFY3SPBkQ_wPOvShbw0qFHVGWnPM0kEt_VHq0l55Tmz7qypDRKk06Pflbm2lfPtzm8buhq_Z6435ZRQzffpVKmFMdB5RyYC1K-h2HdCpudTr3AVx9e44RQexVsAsa2qxOJm9OyAoPpTc4sv0CiTaUI_4T_iTytxt6ng4nMtW9E38NDH4VT498y8sKsY35jlmU9IMtq9N_5yTPo9hgA1j6P6WW55u46qi0YQ-w',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: grey700,
+                          letterSpacing: -0.1,
+                          height: 26 / 16,
+                        ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.only(top: 22, bottom: 47),
+                        color: const Color(0xffecedee),
+                        height: 1,
+                        width: double.infinity,
+                      ),
+                    ],
+                  );
+                } else {
+                  return Container(
+                    margin: const EdgeInsets.only(bottom: 80),
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(12)),
+                      color: grey100,
+                    ),
                     child: SingleChildScrollView(
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 22),
-                        child: Text(
-                          link.describe ?? '',
+                      padding: EdgeInsets.zero,
+                      child: Container(
+                        constraints: const BoxConstraints(
+                          minHeight: 120,
+                        ),
+                        child: TextField(
+                          controller:
+                              context.read<DetailEditCubit>().textController,
                           style: const TextStyle(
-                            fontSize: 16,
+                            fontSize: 14,
                             color: grey700,
-                            letterSpacing: -0.1,
-                            height: 26 / 16,
+                          ),
+                          cursorColor: primary600,
+                          keyboardType: TextInputType.multiline,
+                          maxLines: null,
+                          autofocus: true,
+                          decoration: const InputDecoration(
+                            border: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            isDense: true,
+                            contentPadding: EdgeInsets.all(17),
                           ),
                         ),
                       ),
                     ),
-                  );
-                } else {
-                  return Column(
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.only(top: 13, bottom: 50),
-                        decoration: const BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(5)),
-                          color: grey100,
-                        ),
-                        child: Scrollbar(
-                          child: SingleChildScrollView(
-                            padding: EdgeInsets.zero,
-                            child: Container(
-                              constraints: const BoxConstraints(
-                                minHeight: 120,
-                              ),
-                              child: TextField(
-                                controller: context
-                                    .read<DetailEditCubit>()
-                                    .textController,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: grey700,
-                                ),
-                                cursorColor: primary600,
-                                keyboardType: TextInputType.multiline,
-                                maxLines: null,
-                                autofocus: true,
-                                decoration: const InputDecoration(
-                                  border: InputBorder.none,
-                                  focusedBorder: InputBorder.none,
-                                  isDense: true,
-                                  contentPadding: EdgeInsets.all(17),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
                   );
                 }
               },

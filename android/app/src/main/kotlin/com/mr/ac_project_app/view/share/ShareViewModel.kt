@@ -109,7 +109,7 @@ class ShareViewModel(application: Application) : AndroidViewModel(application) {
             val json = JSONObject()
             json.put("title", title.value)
             json.put("folder_name", folder.name)
-            json.put("image_link", imageLink)
+            json.put("image_link", imageLink.value)
             json.put("created_at", getCurrentDateTime())
             putString(savedLink.value, json.convert())
             apply()

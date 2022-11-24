@@ -1,6 +1,8 @@
 package com.mr.ac_project_app.view.comment
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
@@ -9,6 +11,8 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.Window
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import androidx.activity.viewModels
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -62,6 +66,23 @@ class CommentActivity : FragmentActivity(), ConfirmDialogInterface {
         }
     }
 
+    override fun dispatchTouchEvent(event: MotionEvent?): Boolean {
+        if (event?.action == MotionEvent.ACTION_DOWN) {
+            val v = currentFocus
+            if (v is EditText) {
+                val outRect = Rect()
+                v.getGlobalVisibleRect(outRect)
+                if (!outRect.contains(event.rawX.toInt(), event.rawY.toInt())) {
+                    v.clearFocus()
+                    val imm: InputMethodManager =
+                        getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0)
+                }
+            }
+        }
+        return super.dispatchTouchEvent(event)
+    }
+
     private fun showCancelDialog() {
         val dialog = MessageDialog(
             title = "코멘트를 작성중이에요",
@@ -96,12 +117,16 @@ class CommentActivity : FragmentActivity(), ConfirmDialogInterface {
         binding.commentTextField.setOnTouchListener(object : View.OnTouchListener {
             override fun onTouch(v: View?, event: MotionEvent): Boolean {
                 val right = 2
-                if (event.action == MotionEvent.ACTION_UP && binding.commentTextField.text.toString() != "") {
-                    if (event.rawX >= binding.commentTextField.right - binding.commentTextField.compoundDrawables[right].bounds.width()
-                    ) {
-                        binding.commentTextField.setText("")
-                        return true
+                try {
+                    if (event.action == MotionEvent.ACTION_UP && binding.commentTextField.text.toString() != "") {
+                        if (event.rawX >= binding.commentTextField.right - binding.commentTextField.compoundDrawables[right].bounds.width()
+                        ) {
+                            binding.commentTextField.setText("")
+                            return true
+                        }
                     }
+                } catch (e: Exception) {
+                    return true;
                 }
                 return false
             }

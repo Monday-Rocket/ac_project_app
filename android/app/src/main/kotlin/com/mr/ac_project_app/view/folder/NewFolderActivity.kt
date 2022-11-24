@@ -1,7 +1,9 @@
 package com.mr.ac_project_app.view.folder
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
+import android.graphics.Rect
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -9,6 +11,8 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.Window
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.core.view.WindowInsetsCompat
@@ -93,6 +97,23 @@ class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
 
     }
 
+    override fun dispatchTouchEvent(event: MotionEvent?): Boolean {
+        if (event?.action == MotionEvent.ACTION_DOWN) {
+            val v = currentFocus
+            if (v is EditText) {
+                val outRect = Rect()
+                v.getGlobalVisibleRect(outRect)
+                if (!outRect.contains(event.rawX.toInt(), event.rawY.toInt())) {
+                    v.clearFocus()
+                    val imm: InputMethodManager =
+                        getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0)
+                }
+            }
+        }
+        return super.dispatchTouchEvent(event)
+    }
+
     private fun setBackButton() {
         binding.backButton.setOnClickListener {
             val intent = Intent(this@NewFolderActivity, ShareActivity::class.java)
@@ -143,11 +164,15 @@ class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
         binding.folderNameEditText.setOnTouchListener(object : View.OnTouchListener {
             override fun onTouch(v: View?, event: MotionEvent): Boolean {
                 val right = 2
-                if (event.action == MotionEvent.ACTION_UP && binding.folderNameEditText.text.toString() != "") {
-                    if (event.rawX >= binding.folderNameEditText.right - binding.folderNameEditText.compoundDrawables[right].bounds.width()) {
-                        binding.folderNameEditText.setText("")
-                        return true
+                try {
+                    if (event.action == MotionEvent.ACTION_UP && binding.folderNameEditText.text.toString() != "") {
+                        if (event.rawX >= binding.folderNameEditText.right - binding.folderNameEditText.compoundDrawables[right].bounds.width()) {
+                            binding.folderNameEditText.setText("")
+                            return true
+                        }
                     }
+                } catch (e: Exception) {
+                    return true
                 }
                 return false
             }

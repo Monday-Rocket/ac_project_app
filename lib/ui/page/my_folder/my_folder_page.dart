@@ -257,19 +257,10 @@ class MyFolderPage extends StatelessWidget {
                                             width: 63,
                                             height: 63,
                                             fit: BoxFit.contain,
+                                            errorBuilder: (_, __, ___) =>
+                                                emptyFolderView(),
                                           )
-                                        : Container(
-                                            width: 63,
-                                            height: 63,
-                                            color: primary100,
-                                            child: Center(
-                                              child: SvgPicture.asset(
-                                                'assets/images/folder.svg',
-                                                width: 24,
-                                                height: 24,
-                                              ),
-                                            ),
-                                          ),
+                                        : emptyFolderView(),
                                   ),
                                 ),
                                 if (!visible)
@@ -335,6 +326,21 @@ class MyFolderPage extends StatelessWidget {
             final item = folders.removeAt(oldIndex);
             folders.insert(newIndex, item);
           },
+        ),
+      ),
+    );
+  }
+
+  Container emptyFolderView() {
+    return Container(
+      width: 63,
+      height: 63,
+      color: primary100,
+      child: Center(
+        child: SvgPicture.asset(
+          'assets/images/folder.svg',
+          width: 24,
+          height: 24,
         ),
       ),
     );
