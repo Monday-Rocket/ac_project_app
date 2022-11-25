@@ -3,8 +3,12 @@ import 'package:ac_project_app/provider/api/folders/folder_api.dart';
 import 'package:ac_project_app/provider/share_db.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class AddNewFolderCubit extends Cubit<int> {
-  AddNewFolderCubit() : super(0);
+class FolderNameCubit extends Cubit<String> {
+  FolderNameCubit(): super('');
+
+  void update(String name) {
+    emit(name);
+  }
 
   FolderApi folderApi = FolderApi();
 
