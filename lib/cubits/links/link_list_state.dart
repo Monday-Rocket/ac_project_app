@@ -9,8 +9,13 @@ class LinkListInitialState extends LinkListState {
 }
 
 class LinkListLoadingState extends LinkListState {
+
+  LinkListLoadingState(this.links);
+
+  final List<Link> links;
+
   @override
-  List<Object> get props => [];
+  List<Object> get props => [links];
 }
 
 class LinkListLoadedState extends LinkListState {

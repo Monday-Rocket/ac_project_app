@@ -7,7 +7,7 @@ import 'package:ac_project_app/cubits/folders/add_new_folder.dart';
 import 'package:ac_project_app/cubits/folders/folder_view_type_cubit.dart';
 import 'package:ac_project_app/cubits/folders/folders_state.dart';
 import 'package:ac_project_app/cubits/folders/get_folders_cubit.dart';
-import 'package:ac_project_app/cubits/profile/get_profile_info_cubit.dart';
+import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/routes.dart';
@@ -227,7 +227,7 @@ class MyFolderPage extends StatelessWidget {
                       'folders': folders,
                       'tabIndex': index,
                     },
-                  ).then((_) => context.read<GetFoldersCubit>().getFolders());
+                  );
                 },
                 child: Container(
                   margin:

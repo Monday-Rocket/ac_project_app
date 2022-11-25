@@ -1,7 +1,7 @@
 // ignore_for_file: avoid_positional_boolean_parameters, non_constant_identifier_names
 
 import 'package:ac_project_app/const/colors.dart';
-import 'package:ac_project_app/cubits/profile/get_profile_info_cubit.dart';
+import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/resource.dart';
 import 'package:ac_project_app/routes.dart';

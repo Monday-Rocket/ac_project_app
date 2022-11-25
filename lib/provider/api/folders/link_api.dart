@@ -55,11 +55,27 @@ class LinkApi {
     );
   }
 
-  Future<void> getJobGroupLinks(int pageNum) async {
+  Future<Result<SearchedLinks>> getJobGroupLinks(int pageNum) async {
     final result = await client.getUri('/links?pageNo=$pageNum&pageSize=10');
-    result.when(
-      success: (data) {},
-      error: (msg) {},
+    return result.when(
+      success: (data) {
+        return Result.success(
+          SearchedLinks.fromJson(data as Map<String, dynamic>),
+        );
+      },
+      error: Result.error,
+    );
+  }
+
+  Future<Result<SearchedLinks>> getHomeLinks(int pageNum) async {
+    final result = await client.getUri('/links?pageNo=$pageNum&pageSize=10');
+    return result.when(
+      success: (data) {
+        return Result.success(
+          SearchedLinks.fromJson(data as Map<String, dynamic>),
+        );
+      },
+      error: Result.error,
     );
   }
 

@@ -3,6 +3,7 @@ import 'package:ac_project_app/models/profile/profile.dart';
 import 'package:ac_project_app/provider/api/user/profile_api.dart';
 import 'package:ac_project_app/provider/api/user/user_api.dart';
 import 'package:ac_project_app/util/logger.dart';
+import 'package:ac_project_app/util/string_utils.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class GetProfileInfoCubit extends Cubit<ProfileState> {
@@ -41,9 +42,6 @@ class GetProfileInfoCubit extends Cubit<ProfileState> {
     imageNumber = '0${index + 1}';
     emit(ProfileLoadedState(Profile(nickname, makeImagePath(imageNumber!))));
   }
-
-  String makeImagePath(String image) =>
-      'assets/images/profile/img_${image}_on.png';
 
   Future<bool> updateProfileImage() async {
     final result = await profileApi.changeImage(profileImg: imageNumber);

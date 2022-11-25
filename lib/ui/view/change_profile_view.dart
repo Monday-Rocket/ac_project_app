@@ -1,6 +1,6 @@
 import 'package:ac_project_app/const/colors.dart';
-import 'package:ac_project_app/cubits/profile/get_profile_images_cubit.dart';
-import 'package:ac_project_app/cubits/profile/get_profile_info_cubit.dart';
+import 'package:ac_project_app/cubits/profile/profile_images_cubit.dart';
+import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/models/profile/profile_image.dart';
 import 'package:flutter/material.dart';

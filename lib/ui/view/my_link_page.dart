@@ -1,8 +1,8 @@
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/folders/get_selected_folder_cubit.dart';
-import 'package:ac_project_app/cubits/links/link_list_state.dart';
 import 'package:ac_project_app/cubits/links/links_from_selected_folder_cubit.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
+import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/util/get_widget_arguments.dart';
 import 'package:ac_project_app/util/number_commas.dart';
@@ -56,36 +56,24 @@ class MyLinkPage extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(left: 24, right: 12, top: 39),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Row(
-            children: [
-              Text(
-                classified ? folder.name! : '미분류',
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 30,
-                  height: 36 / 30,
-                ),
-              ),
-              if (!(folder.visible ?? false))
-                Container(
-                  margin: const EdgeInsets.only(left: 8),
-                  child: SvgPicture.asset(
-                    'assets/images/ic_lock.svg',
-                  ),
-                )
-              else
-                const SizedBox.shrink(),
-            ],
-          ),
-          InkWell(
-            onTap: () {},
-            child: Padding(
-              padding: const EdgeInsets.all(8),
-              child: SvgPicture.asset('assets/images/more.svg'),
+          Text(
+            classified ? folder.name! : '미분류',
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 30,
+              height: 36 / 30,
             ),
-          )
+          ),
+          if (!(folder.visible ?? false))
+            Container(
+              margin: const EdgeInsets.only(left: 8),
+              child: SvgPicture.asset(
+                'assets/images/ic_lock.svg',
+              ),
+            )
+          else
+            const SizedBox.shrink(),
         ],
       ),
     );
@@ -253,127 +241,123 @@ class MyLinkPage extends StatelessWidget {
     if (folder.links == 0) {
       return buildEmptyList();
     } else {
-      return BlocBuilder<LinksFromSelectedFolderCubit, LinkListState>(
-        builder: (context, state) {
-          if (state is LinkListLoadedState) {
-            final links = state.links;
-            return Expanded(
-              child: ListView.separated(
-                itemCount: links.length,
-                itemBuilder: (_, index) {
-                  final link = links[index];
-                  return InkWell(
-                    onTap: () {
-                      Navigator.pushNamed(
-                        context,
-                        Routes.linkDetail,
-                        arguments: {
-                          'isMyLink': true,
-                          'link': link,
-                        },
-                      ).then((value) {
-                        if (value != null) {
-                          context
-                              .read<LinksFromSelectedFolderCubit>()
-                              .getSelectedLinks(folder, 0);
-                        }
-                      });
-                    },
+      final totalLinks = <Link>[];
+      return BlocBuilder<LinksFromSelectedFolderCubit, List<Link>>(
+        builder: (context, links) {
+          totalLinks.addAll(links);
+          return Expanded(
+            child: ListView.separated(
+              controller: context.read<LinksFromSelectedFolderCubit>().scrollController,
+              itemCount: totalLinks.length,
+              itemBuilder: (_, index) {
+                final link = totalLinks[index];
+                return InkWell(
+                  onTap: () {
+                    Navigator.pushNamed(
+                      context,
+                      Routes.linkDetail,
+                      arguments: {
+                        'isMyLink': true,
+                        'link': link,
+                      },
+                    ).then((value) {
+                      context
+                          .read<LinksFromSelectedFolderCubit>()
+                          .getSelectedLinks(folder, 0);
+                    });
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(
+                      vertical: 18,
+                      horizontal: 24,
+                    ),
                     child: Container(
-                      margin: const EdgeInsets.symmetric(
-                        vertical: 18,
-                        horizontal: 24,
-                      ),
-                      child: Container(
-                        margin: const EdgeInsets.symmetric(vertical: 5),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            SizedBox(
-                              width: (width - 24 * 2) - 159 - 20,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        link.title ?? '',
-                                        maxLines: 1,
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
-                                          color: blackBold,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        height: 7,
-                                      ),
-                                      Text(
-                                        link.describe ?? '\n\n',
-                                        maxLines: 2,
-                                        style: const TextStyle(
-                                          fontSize: 12,
-                                          color: greyText,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Container(
-                                    margin: const EdgeInsets.only(top: 30),
-                                    child: Text(
-                                      link.url ?? '',
+                      margin: const EdgeInsets.symmetric(vertical: 5),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(
+                            width: (width - 24 * 2) - 159 - 20,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Column(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment:
+                                  CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      link.title ?? '',
                                       maxLines: 1,
                                       style: const TextStyle(
-                                        fontSize: 12,
-                                        color: Color(0xFFC0C2C4),
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                        color: blackBold,
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
+                                    const SizedBox(
+                                      height: 7,
+                                    ),
+                                    Text(
+                                      link.describe ?? '\n\n',
+                                      maxLines: 2,
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        color: greyText,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Container(
+                                  margin: const EdgeInsets.only(top: 30),
+                                  child: Text(
+                                    link.url ?? '',
+                                    maxLines: 1,
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: Color(0xFFC0C2C4),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                   ),
-                                ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          ClipRRect(
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(7),
+                            ),
+                            child: ColoredBox(
+                              color: grey100,
+                              child: Image.network(
+                                link.image ?? '',
+                                width: 159,
+                                height: 116,
+                                fit: BoxFit.cover,
+                                errorBuilder: (_, __, ___) {
+                                  return const SizedBox(
+                                    width: 159,
+                                    height: 116,
+                                  );
+                                },
                               ),
                             ),
-                            ClipRRect(
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(7),
-                              ),
-                              child: ColoredBox(
-                                color: grey100,
-                                child: Image.network(
-                                  link.image ?? '',
-                                  width: 159,
-                                  height: 116,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (_, __, ___) {
-                                    return const SizedBox(
-                                      width: 159,
-                                      height: 116,
-                                    );
-                                  },
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
+                          )
+                        ],
                       ),
                     ),
-                  );
-                },
-                separatorBuilder: (BuildContext context, int index) {
-                  return const Divider(height: 1, color: greyTab);
-                },
-              ),
-            );
-          } else {
-            return buildEmptyList();
-          }
+                  ),
+                );
+              },
+              separatorBuilder: (BuildContext context, int index) {
+                return const Divider(height: 1, color: greyTab);
+              },
+            ),
+          );
         },
       );
     }

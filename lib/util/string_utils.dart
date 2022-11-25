@@ -15,3 +15,6 @@ String getSafeTitleText(String? text) {
   }
   return text;
 }
+
+String makeImagePath(String image) =>
+    'assets/images/profile/img_${image}_on.png';

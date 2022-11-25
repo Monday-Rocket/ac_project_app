@@ -267,14 +267,20 @@ class LinkDetailView extends StatelessWidget {
                 if (state == EditState.view) {
                   return Column(
                     mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        '0237198273921739eyJhbGciOiJSUzI1NiIsImtpZCI6ImY4MDljZmYxMTZlNWJhNzQwNzQ1YmZlZGE1OGUxNmU4MmYzZmQ4MDUiLCJ0eXAiOiJKV1QifQ.eyJuYW1lIjoi7KeE6rCV66-8IiwicGljdHVyZSI6Imh0dHBzOi8vbGgzLmdvb2dsZXVzZXJjb250ZW50LmNvbS9hL0FMbTV3dTJFV1BIM0dBUEpkbnJpOHpZMGhPNXlyS21GZ2M1cWhTSFBNcHhMPXM5Ni1jIiwiaXNzIjoiaHR0cHM6Ly9zZWN1cmV0b2tlbi5nb29nbGUuY29tL2FjLXByb2plY3QtZDA0ZWUiLCJhdWQiOiJhYy1wcm9qZWN0LWQwNGVlIiwiYXV0aF90aW1lIjoxNjY5MjYxNjQ2LCJ1c2VyX2lkIjoiREVRSVdoaXZOR1hJZjJFWVRFWVJkRjltcDA3MiIsInN1YiI6IkRFUUlXaGl2TkdYSWYyRVlURVlSZEY5bXAwNzIiLCJpYXQiOjE2NjkyNjUyMTcsImV4cCI6MTY2OTI2ODgxNywiZW1haWwiOiJsaW5rcG9vbHRlc3QyQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJmaXJlYmFzZSI6eyJpZGVudGl0aWVzIjp7Imdvb2dsZS5jb20iOlsiMTA3OTE3MjA3NTg3NTI3MTkzMDI2Il0sImVtYWlsIjpbImxpbmtwb29sdGVzdDJAZ21haWwuY29tIl19LCJzaWduX2luX3Byb3ZpZGVyIjoiZ29vZ2xlLmNvbSJ9fQ.CgvKqC5_zZYjNTa-q0jWm3BzPjLS09zhiSJQ2zEqUl1NK8pcE-ynk9Qucorqvo0uVeXLQPoidMwQ2lNYgNrNffLyXFM9ofhDPn0mXBN3F7P6UlVzBEFY3SPBkQ_wPOvShbw0qFHVGWnPM0kEt_VHq0l55Tmz7qypDRKk06Pflbm2lfPtzm8buhq_Z6435ZRQzffpVKmFMdB5RyYC1K-h2HdCpudTr3AVx9e44RQexVsAsa2qxOJm9OyAoPpTc4sv0CiTaUI_4T_iTytxt6ng4nMtW9E38NDH4VT498y8sKsY35jlmU9IMtq9N_5yTPo9hgA1j6P6WW55u46qi0YQ-w',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: grey700,
-                          letterSpacing: -0.1,
-                          height: 26 / 16,
+                      Container(
+                        constraints: const BoxConstraints(
+                          minHeight: 240,
+                        ),
+                        child: Text(
+                          link.describe ?? '',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: grey700,
+                            letterSpacing: -0.1,
+                            height: 26 / 16,
+                          ),
                         ),
                       ),
                       Container(
