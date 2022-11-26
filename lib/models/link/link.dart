@@ -1,3 +1,4 @@
+import 'package:ac_project_app/models/user/detail_user.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'link.g.dart';
@@ -12,6 +13,7 @@ class Link {
     this.describe,
     this.folderId,
     this.time,
+    this.user,
   });
 
   factory Link.fromJson(Map<String, dynamic> json) => _$LinkFromJson(json);
@@ -27,4 +29,6 @@ class Link {
 
   @JsonKey(name: 'created_date_time')
   String? time;
+
+  final DetailUser? user;
 }

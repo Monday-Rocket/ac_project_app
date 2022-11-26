@@ -15,7 +15,6 @@ class GetFoldersCubit extends Cubit<FoldersState> {
 
   final FolderApi folderApi = FolderApi();
 
-  // 데이터 변경 시 이거 호출해서 갱신하면 될 듯
   Future<void> getFolders() async {
     try {
       emit(LoadingState());

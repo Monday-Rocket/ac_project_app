@@ -1,5 +1,6 @@
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/folders/get_selected_folder_cubit.dart';
+import 'package:ac_project_app/cubits/links/link_list_state.dart';
 import 'package:ac_project_app/cubits/links/links_from_selected_folder_cubit.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/link/link.dart';
@@ -20,6 +21,7 @@ class MyLinkPage extends StatelessWidget {
     final tabIndex = arguments['tabIndex'] as int;
 
     final width = MediaQuery.of(context).size.width;
+    final links = <Link>[];
 
     return MultiBlocProvider(
       providers: [
@@ -34,15 +36,40 @@ class MyLinkPage extends StatelessWidget {
         builder: (context, folder) {
           return Scaffold(
             body: SafeArea(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  buildTitleBar(folder),
-                  buildContentsCountText(folder),
-                  buildSearchBar(),
-                  buildTabBar(folders, tabIndex, folder),
-                  buildListView(folder, width),
-                ],
+              child: BlocBuilder<LinksFromSelectedFolderCubit, LinkListState>(
+                builder: (context, state) {
+                  return Stack(
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          buildTitleBar(folder),
+                          buildContentsCountText(folder),
+                          buildSearchBar(),
+                          buildTabBar(folders, tabIndex, folder),
+                          buildBodyList(
+                            folder: folder,
+                            width: width,
+                            context: context,
+                            totalLinks: links,
+                            state: state,
+                          ),
+                        ],
+                      ),
+                      if (state is LinkListLoadingState ||
+                          state is LinkListInitialState)
+                        Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Container(
+                            margin: const EdgeInsets.only(bottom: 30),
+                            child: const CircularProgressIndicator(color: primary600),
+                          ),
+                        )
+                      else
+                        const SizedBox.shrink(),
+                    ],
+                  );
+                },
               ),
             ),
           );
@@ -237,128 +264,139 @@ class MyLinkPage extends StatelessWidget {
     );
   }
 
-  Widget buildListView(Folder folder, double width) {
+  Widget buildBodyList({
+    required Folder folder,
+    required double width,
+    required BuildContext context,
+    required List<Link> totalLinks,
+    required LinkListState state,
+  }) {
     if (folder.links == 0) {
       return buildEmptyList();
     } else {
-      final totalLinks = <Link>[];
-      return BlocBuilder<LinksFromSelectedFolderCubit, List<Link>>(
-        builder: (context, links) {
-          totalLinks.addAll(links);
-          return Expanded(
-            child: ListView.separated(
-              controller: context.read<LinksFromSelectedFolderCubit>().scrollController,
-              itemCount: totalLinks.length,
-              itemBuilder: (_, index) {
-                final link = totalLinks[index];
-                return InkWell(
-                  onTap: () {
-                    Navigator.pushNamed(
-                      context,
-                      Routes.linkDetail,
-                      arguments: {
-                        'isMyLink': true,
-                        'link': link,
-                      },
-                    ).then((value) {
-                      context
-                          .read<LinksFromSelectedFolderCubit>()
-                          .getSelectedLinks(folder, 0);
-                    });
-                  },
+      if (state is LinkListLoadedState) {
+        final links = state.links;
+        totalLinks.addAll(links);
+      }
+      return Expanded(
+        child: NotificationListener<ScrollEndNotification>(
+          onNotification: (scrollEnd) {
+            final metrics = scrollEnd.metrics;
+            if (metrics.atEdge && metrics.pixels != 0) {
+              context.read<LinksFromSelectedFolderCubit>().loadMore();
+            }
+            return true;
+          },
+          child: ListView.separated(
+            itemCount: totalLinks.length,
+            itemBuilder: (_, index) {
+              final link = totalLinks[index];
+              return InkWell(
+                onTap: () {
+                  Navigator.pushNamed(
+                    context,
+                    Routes.linkDetail,
+                    arguments: {
+                      'isMyLink': true,
+                      'link': link,
+                    },
+                  ).then((value) {
+                    context
+                        .read<LinksFromSelectedFolderCubit>()
+                        .getSelectedLinks(folder, 0);
+                  });
+                },
+                child: Container(
+                  margin: const EdgeInsets.symmetric(
+                    vertical: 18,
+                    horizontal: 24,
+                  ),
                   child: Container(
-                    margin: const EdgeInsets.symmetric(
-                      vertical: 18,
-                      horizontal: 24,
-                    ),
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(vertical: 5),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          SizedBox(
-                            width: (width - 24 * 2) - 159 - 20,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Column(
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment:
-                                  CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      link.title ?? '',
-                                      maxLines: 1,
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
-                                        color: blackBold,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      height: 7,
-                                    ),
-                                    Text(
-                                      link.describe ?? '\n\n',
-                                      maxLines: 2,
-                                      style: const TextStyle(
-                                        fontSize: 12,
-                                        color: greyText,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Container(
-                                  margin: const EdgeInsets.only(top: 30),
-                                  child: Text(
-                                    link.url ?? '',
+                    margin: const EdgeInsets.symmetric(vertical: 5),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SizedBox(
+                          width: (width - 24 * 2) - 159 - 20,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    link.title ?? '',
                                     maxLines: 1,
                                     style: const TextStyle(
-                                      fontSize: 12,
-                                      color: Color(0xFFC0C2C4),
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                      color: blackBold,
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
+                                  const SizedBox(
+                                    height: 7,
+                                  ),
+                                  Text(
+                                    link.describe ?? '\n\n',
+                                    maxLines: 2,
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: greyText,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Container(
+                                margin: const EdgeInsets.only(top: 30),
+                                child: Text(
+                                  link.url ?? '',
+                                  maxLines: 1,
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Color(0xFFC0C2C4),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 ),
-                              ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        ClipRRect(
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(7),
+                          ),
+                          child: ColoredBox(
+                            color: grey100,
+                            child: Image.network(
+                              link.image ?? '',
+                              width: 159,
+                              height: 116,
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, __, ___) {
+                                return const SizedBox(
+                                  width: 159,
+                                  height: 116,
+                                );
+                              },
                             ),
                           ),
-                          ClipRRect(
-                            borderRadius: const BorderRadius.all(
-                              Radius.circular(7),
-                            ),
-                            child: ColoredBox(
-                              color: grey100,
-                              child: Image.network(
-                                link.image ?? '',
-                                width: 159,
-                                height: 116,
-                                fit: BoxFit.cover,
-                                errorBuilder: (_, __, ___) {
-                                  return const SizedBox(
-                                    width: 159,
-                                    height: 116,
-                                  );
-                                },
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
+                        )
+                      ],
                     ),
                   ),
-                );
-              },
-              separatorBuilder: (BuildContext context, int index) {
-                return const Divider(height: 1, color: greyTab);
-              },
-            ),
-          );
-        },
+                ),
+              );
+            },
+            separatorBuilder: (BuildContext context, int index) {
+              return const Divider(height: 1, color: greyTab);
+            },
+          ),
+        ),
       );
     }
   }
