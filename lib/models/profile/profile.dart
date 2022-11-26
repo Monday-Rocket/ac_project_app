@@ -1,6 +1,7 @@
 class Profile {
-  Profile(this.nickname, this.profileImage);
+  Profile({this.id, required this.nickname, required this.profileImage});
 
+  int? id;
   String nickname;
   String profileImage;
 }

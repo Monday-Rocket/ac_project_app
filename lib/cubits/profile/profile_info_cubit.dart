@@ -25,7 +25,11 @@ class GetProfileInfoCubit extends Cubit<ProfileState> {
         imageNumber = user.profileImg;
         emit(
           ProfileLoadedState(
-            Profile(user.nickname, makeImagePath(user.profileImg)),
+            Profile(
+              id: user.id,
+              nickname: user.nickname,
+              profileImage: makeImagePath(user.profileImg),
+            ),
           ),
         );
       },
@@ -40,7 +44,14 @@ class GetProfileInfoCubit extends Cubit<ProfileState> {
     emit(ProfileLoadingState());
 
     imageNumber = '0${index + 1}';
-    emit(ProfileLoadedState(Profile(nickname, makeImagePath(imageNumber!))));
+    emit(
+      ProfileLoadedState(
+        Profile(
+          nickname: nickname,
+          profileImage: makeImagePath(imageNumber!),
+        ),
+      ),
+    );
   }
 
   Future<bool> updateProfileImage() async {

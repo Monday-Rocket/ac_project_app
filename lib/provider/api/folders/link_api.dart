@@ -60,7 +60,7 @@ class LinkApi {
   Future<Result<SearchedLinks>> getJobGroupLinks(
       int jobGroup, int pageNum) async {
     final result = await client
-        .getUri('/job-group/$jobGroup/links?page_no=$pageNum&page_size=10');
+        .getUri('/job-groups/$jobGroup/links?page_no=$pageNum&page_size=10');
     return result.when(
       success: (data) {
         return Result.success(

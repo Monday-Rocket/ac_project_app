@@ -38,9 +38,6 @@ class MyFolderPage extends StatelessWidget {
         BlocProvider<GetFoldersCubit>(
           create: (_) => GetFoldersCubit(),
         ),
-        BlocProvider<GetProfileInfoCubit>(
-          create: (_) => GetProfileInfoCubit(),
-        ),
       ],
       child: BlocBuilder<FolderViewTypeCubit, FolderViewType>(
         builder: (context, folderViewType) {

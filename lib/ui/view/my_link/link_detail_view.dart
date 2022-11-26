@@ -4,6 +4,8 @@ import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/links/delete_link.dart';
 import 'package:ac_project_app/cubits/links/detail_edit_cubit.dart';
 import 'package:ac_project_app/cubits/links/edit_state.dart';
+import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
+import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/util/date_utils.dart';
 import 'package:ac_project_app/util/get_widget_arguments.dart';
@@ -24,6 +26,12 @@ class LinkDetailView extends StatelessWidget {
     final args = getArguments(context);
     final link = args['link'] as Link;
     final scrollController = ScrollController();
+
+    final profileState = context.watch<GetProfileInfoCubit>().state;
+    var isMyLink = false;
+    if (profileState is ProfileLoadedState) {
+      isMyLink = profileState.profile.id == link.user?.id;
+    }
 
     return MultiBlocProvider(
       providers: [
@@ -52,7 +60,9 @@ class LinkDetailView extends StatelessWidget {
                     ),
                     actions: [
                       InkWell(
-                        onTap: () => showLinkOptionsDialog(link, context),
+                        onTap: () => isMyLink
+                            ? showMyLinkOptionsDialog(link, context)
+                            : showLinkOptionsDialog(link, context),
                         child: Container(
                           margin: const EdgeInsets.only(right: 24),
                           child: SvgPicture.asset(
@@ -65,7 +75,13 @@ class LinkDetailView extends StatelessWidget {
                     ],
                     systemOverlayStyle: SystemUiOverlayStyle.dark,
                   ),
-                  body: buildBody(link, cubitContext, state, scrollController),
+                  body: buildBody(
+                    link,
+                    cubitContext,
+                    state,
+                    scrollController,
+                    isMyLink,
+                  ),
                   bottomSheet: Builder(
                     builder: (_) {
                       if (state == EditState.edit) {
@@ -116,7 +132,13 @@ class LinkDetailView extends StatelessWidget {
     );
   }
 
-  Widget buildBody(Link link, BuildContext context, EditState state, ScrollController scrollController) {
+  Widget buildBody(
+    Link link,
+    BuildContext context,
+    EditState state,
+    ScrollController scrollController,
+    bool isMyLink,
+  ) {
     return SingleChildScrollView(
       controller: scrollController,
       reverse: state == EditState.edit,
@@ -223,34 +245,41 @@ class LinkDetailView extends StatelessWidget {
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(
-                  getMonthDayYear(link.time ?? ''),
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: grey400,
-                    fontWeight: FontWeight.w400,
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: Text(
+                    getMonthDayYear(link.time ?? ''),
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: grey400,
+                      fontWeight: FontWeight.w400,
+                    ),
                   ),
                 ),
-                GestureDetector(
-                  onTap: () {
-                    FocusManager.instance.primaryFocus?.unfocus();
-                    Future.delayed(
-                      const Duration(milliseconds: 200),
-                      context.read<DetailEditCubit>().toggle,
-                    );
-                  },
-                  onDoubleTap: () {
-                    FocusManager.instance.primaryFocus?.unfocus();
-                    Future.delayed(
-                      const Duration(milliseconds: 200),
-                      context.read<DetailEditCubit>().toggle,
-                    );
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: SvgPicture.asset(
-                      'assets/images/ic_write_comment.svg',
+                Visibility(
+                  visible: isMyLink,
+                  child: GestureDetector(
+                    onTap: () {
+                      FocusManager.instance.primaryFocus?.unfocus();
+                      Future.delayed(
+                        const Duration(milliseconds: 200),
+                        context.read<DetailEditCubit>().toggle,
+                      );
+                    },
+                    onDoubleTap: () {
+                      FocusManager.instance.primaryFocus?.unfocus();
+                      Future.delayed(
+                        const Duration(milliseconds: 200),
+                        context.read<DetailEditCubit>().toggle,
+                      );
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: SvgPicture.asset(
+                        'assets/images/ic_write_comment.svg',
+                      ),
                     ),
                   ),
                 ),
@@ -334,7 +363,7 @@ class LinkDetailView extends StatelessWidget {
     );
   }
 
-  Future<bool?> showLinkOptionsDialog(Link link, BuildContext parentContext) {
+  Future<bool?> showMyLinkOptionsDialog(Link link, BuildContext parentContext) {
     return showModalBottomSheet<bool?>(
       backgroundColor: Colors.transparent,
       context: parentContext,
@@ -466,4 +495,162 @@ class LinkDetailView extends StatelessWidget {
       },
     );
   }
+}
+
+Future<bool?> showLinkOptionsDialog(Link link, BuildContext parentContext) {
+  return showModalBottomSheet<bool?>(
+    backgroundColor: Colors.transparent,
+    context: parentContext,
+    isScrollControlled: true,
+    builder: (BuildContext context) {
+      return Wrap(
+        children: [
+          StatefulBuilder(
+            builder: (context, setState) {
+              return DecoratedBox(
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    top: 29,
+                  ),
+                  child: Column(
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.only(left: 30, right: 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              '링크 옵션',
+                              style: TextStyle(
+                                color: blackBold,
+                                fontSize: 20,
+                                letterSpacing: -0.3,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () => Navigator.pop(context),
+                              child: const Icon(
+                                Icons.close_rounded,
+                                size: 24,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.only(
+                          top: 17,
+                          left: 6,
+                          right: 6,
+                          bottom: 20,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            InkWell(
+                              onTap: () => Share.share(link.url ?? ''),
+                              highlightColor: grey100,
+                              child: Container(
+                                decoration: const BoxDecoration(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(10),
+                                  ),
+                                ),
+                                padding: const EdgeInsets.only(
+                                  top: 14,
+                                  bottom: 14,
+                                  left: 24,
+                                ),
+                                child: const Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    '공유',
+                                    style: TextStyle(
+                                      color: blackBold,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                /* TODO 내 폴더 담기 API 연동 */
+                              },
+                              child: Container(
+                                decoration: const BoxDecoration(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(10),
+                                  ),
+                                  color: Colors.transparent,
+                                ),
+                                padding: const EdgeInsets.only(
+                                  top: 14,
+                                  bottom: 14,
+                                  left: 24,
+                                ),
+                                child: const Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    '내 폴더 담기',
+                                    style: TextStyle(
+                                      color: blackBold,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                /* TODO 신고하기 API 연동 */
+                              },
+                              child: Container(
+                                decoration: const BoxDecoration(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(10),
+                                  ),
+                                  color: Colors.transparent,
+                                ),
+                                padding: const EdgeInsets.only(
+                                  top: 14,
+                                  bottom: 14,
+                                  left: 24,
+                                ),
+                                child: const Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    '신고하기',
+                                    style: TextStyle(
+                                      color: blackBold,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      );
+    },
+  );
 }

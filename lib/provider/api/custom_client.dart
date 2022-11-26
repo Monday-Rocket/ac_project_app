@@ -31,7 +31,7 @@ class CustomClient extends http.BaseClient {
     Map<String, String>? headers,
   }) async {
     final finalUrl = baseUrl + uri;
-    Log.i(finalUrl);
+    Log.i('GET: $finalUrl');
     return _makeResult(
       await super.get(
         Uri.parse(finalUrl),
@@ -47,7 +47,7 @@ class CustomClient extends http.BaseClient {
     Encoding? encoding,
   }) async {
     final finalUrl = baseUrl + uri;
-    Log.i(finalUrl);
+    Log.i('POST: $finalUrl');
     return _makeResult(
       await super.post(
         Uri.parse(finalUrl),
@@ -65,7 +65,7 @@ class CustomClient extends http.BaseClient {
     Encoding? encoding,
   }) async {
     final finalUrl = baseUrl + uri;
-    Log.i(finalUrl);
+    Log.i('PUT: $finalUrl');
     return _makeResult(
       await super.put(
         Uri.parse(finalUrl),
@@ -83,7 +83,7 @@ class CustomClient extends http.BaseClient {
     Encoding? encoding,
   }) async {
     final finalUrl = baseUrl + uri;
-    Log.i(finalUrl);
+    Log.i('PATCH: $finalUrl');
     return _makeResult(
       await super.patch(
         Uri.parse(finalUrl),

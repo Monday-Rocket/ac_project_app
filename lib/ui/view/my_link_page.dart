@@ -7,6 +7,7 @@ import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/util/get_widget_arguments.dart';
 import 'package:ac_project_app/util/number_commas.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -62,7 +63,9 @@ class MyLinkPage extends StatelessWidget {
                           alignment: Alignment.bottomCenter,
                           child: Container(
                             margin: const EdgeInsets.only(bottom: 30),
-                            child: const CircularProgressIndicator(color: primary600),
+                            child: const CircularProgressIndicator(
+                              color: primary600,
+                            ),
                           ),
                         )
                       else
@@ -297,7 +300,6 @@ class MyLinkPage extends StatelessWidget {
                     context,
                     Routes.linkDetail,
                     arguments: {
-                      'isMyLink': true,
                       'link': link,
                     },
                   ).then((value) {
@@ -372,18 +374,23 @@ class MyLinkPage extends StatelessWidget {
                           ),
                           child: ColoredBox(
                             color: grey100,
-                            child: Image.network(
-                              link.image ?? '',
-                              width: 159,
-                              height: 116,
-                              fit: BoxFit.cover,
-                              errorBuilder: (_, __, ___) {
-                                return const SizedBox(
-                                  width: 159,
-                                  height: 116,
-                                );
-                              },
-                            ),
+                            child: link.image != null && link.image!.isNotEmpty
+                                ? CachedNetworkImage(
+                                    imageUrl: link.image ?? '',
+                                    width: 159,
+                                    height: 116,
+                                    fit: BoxFit.cover,
+                                    errorWidget: (_, __, ___) {
+                                      return const SizedBox(
+                                        width: 159,
+                                        height: 116,
+                                      );
+                                    },
+                                  )
+                                : const SizedBox(
+                                    width: 159,
+                                    height: 116,
+                                  ),
                           ),
                         )
                       ],

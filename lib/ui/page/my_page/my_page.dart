@@ -21,89 +21,82 @@ class MyPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider<GetProfileInfoCubit>(
-          create: (_) => GetProfileInfoCubit(),
+    return Column(
+      children: [
+        BlocBuilder<GetProfileInfoCubit, ProfileState>(
+          builder: (profileContext, state) {
+            if (state is ProfileLoadedState) {
+              final profile = state.profile;
+              return Column(
+                children: [
+                  InkWell(
+                    onTap: () {
+                      Navigator.pushNamed(context, Routes.profile)
+                          .then((result) {
+                        if (result == true) {
+                          Navigator.pushReplacementNamed(
+                            context,
+                            Routes.home,
+                            arguments: {'index': 3},
+                          );
+                        }
+                      });
+                    },
+                    child: Container(
+                      alignment: Alignment.center,
+                      margin: const EdgeInsets.only(top: 90, bottom: 6),
+                      width: 105,
+                      height: 105,
+                      child: Stack(
+                        alignment: Alignment.bottomRight,
+                        children: [
+                          Image.asset(
+                            profile.profileImage,
+                            errorBuilder: (_, __, ___) {
+                              return Image.asset(
+                                'assets/images/profile/img_01_on.png',
+                              );
+                            },
+                          ),
+                          Container(
+                            padding: const EdgeInsets.all(4),
+                            width: 24,
+                            height: 24,
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.white,
+                            ),
+                            child: SvgPicture.asset(
+                              'assets/images/ic_change.svg',
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Text(
+                    profile.nickname,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 28,
+                      color: Color(0xff0e0e0e),
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              );
+            } else {
+              return const SizedBox(
+                height: 144,
+              );
+            }
+          },
         ),
+        const SizedBox(
+          height: 47,
+        ),
+        MenuList(context),
       ],
-      child: Column(
-        children: [
-          BlocBuilder<GetProfileInfoCubit, ProfileState>(
-            builder: (profileContext, state) {
-              if (state is ProfileLoadedState) {
-                final profile = state.profile;
-                return Column(
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        Navigator.pushNamed(context, Routes.profile)
-                            .then((result) {
-                          if (result == true) {
-                            Navigator.pushReplacementNamed(
-                              context,
-                              Routes.home,
-                              arguments: {'index': 3},
-                            );
-                          }
-                        });
-                      },
-                      child: Container(
-                        alignment: Alignment.center,
-                        margin: const EdgeInsets.only(top: 90, bottom: 6),
-                        width: 105,
-                        height: 105,
-                        child: Stack(
-                          alignment: Alignment.bottomRight,
-                          children: [
-                            Image.asset(
-                              profile.profileImage,
-                              errorBuilder: (_, __, ___) {
-                                return Image.asset(
-                                  'assets/images/profile/img_01_on.png',
-                                );
-                              },
-                            ),
-                            Container(
-                              padding: const EdgeInsets.all(4),
-                              width: 24,
-                              height: 24,
-                              decoration: const BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.white,
-                              ),
-                              child: SvgPicture.asset(
-                                'assets/images/ic_change.svg',
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Text(
-                      profile.nickname,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 28,
-                        color: Color(0xff0e0e0e),
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                );
-              } else {
-                return const SizedBox(
-                  height: 144,
-                );
-              }
-            },
-          ),
-          const SizedBox(
-            height: 47,
-          ),
-          MenuList(context),
-        ],
-      ),
     );
   }
 

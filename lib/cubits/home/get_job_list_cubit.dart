@@ -1,6 +1,7 @@
 import 'package:ac_project_app/cubits/home/topic_list_state.dart';
 import 'package:ac_project_app/models/user/detail_user.dart';
 import 'package:ac_project_app/provider/api/user/user_api.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class GetJobListCubit extends Cubit<JobListState> {
@@ -9,6 +10,7 @@ class GetJobListCubit extends Cubit<JobListState> {
   }
 
   final userApi = UserApi();
+  final scrollController = ScrollController();
 
   Future<void> getJobList() async {
     emit(LoadingState());

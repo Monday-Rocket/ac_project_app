@@ -4,7 +4,9 @@ import 'package:ac_project_app/cubits/home/topic_list_state.dart';
 import 'package:ac_project_app/cubits/links/links_from_selected_job_group_cubit.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/models/user/detail_user.dart';
+import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/util/string_utils.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -25,7 +27,7 @@ class HomePage extends StatelessWidget {
         ),
       ],
       child: BlocBuilder<GetJobListCubit, JobListState>(
-        builder: (context, state) {
+        builder: (jobContext, state) {
           if (state is LoadedState) {
             return Scaffold(
               body: SafeArea(
@@ -65,8 +67,8 @@ class HomePage extends StatelessWidget {
                         ),
                       ),
                     ),
-                    buildJobListView(state.jobs),
-                    buildListBody(totalLinks),
+                    buildJobListView(jobContext, state.jobs, totalLinks),
+                    buildListBody(jobContext, totalLinks),
                   ],
                 ),
               ),
@@ -81,158 +83,203 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget buildListBody(List<Link> totalLinks) {
+  Widget buildListBody(BuildContext parentContext, List<Link> totalLinks) {
+    final width = MediaQuery.of(parentContext).size.width;
     return BlocBuilder<LinksFromSelectedJobGroupCubit, List<Link>>(
       builder: (context, links) {
         totalLinks.addAll(links);
         return Expanded(
           child: ListView.separated(
-            shrinkWrap: true,
+            controller: parentContext.read<GetJobListCubit>().scrollController,
             itemCount: totalLinks.length,
+            physics: const AlwaysScrollableScrollPhysics(),
             itemBuilder: (_, i) {
               final link = totalLinks[i];
-              return Container(
-                margin: const EdgeInsets.symmetric(
-                  vertical: 20,
-                  horizontal: 24,
-                ),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Image.asset(
-                          makeImagePath(link.image ?? '01'),
-                          width: 32,
-                          height: 32,
-                        ),
-                        const SizedBox(
-                          width: 8,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Text(
-                                  link.user?.nickname ?? '',
-                                  style: const TextStyle(
-                                    color: grey900,
-                                    fontWeight: FontWeight.w500,
-                                  ),
+              return GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(
+                    context,
+                    Routes.linkDetail,
+                    arguments: {
+                      'link': link,
+                    },
+                  );
+                },
+                child: Container(
+                  margin: const EdgeInsets.symmetric(
+                    vertical: 20,
+                    horizontal: 24,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Image.asset(
+                            makeImagePath(link.user?.profileImg ?? '01'),
+                            width: 32,
+                            height: 32,
+                            errorBuilder: (_, __, ___) {
+                              return Container(
+                                width: 32,
+                                height: 32,
+                                decoration: const BoxDecoration(
+                                  color: grey300,
+                                  shape: BoxShape.circle,
                                 ),
-                                Container(
-                                  margin: const EdgeInsets.only(
-                                    left: 4,
-                                  ),
-                                  decoration: const BoxDecoration(
-                                    color: primary200,
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(4),
+                              );
+                            },
+                          ),
+                          const SizedBox(
+                            width: 8,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    link.user?.nickname ?? '',
+                                    style: const TextStyle(
+                                      color: grey900,
+                                      fontWeight: FontWeight.w500,
                                     ),
                                   ),
-                                  child: Center(
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 3,
-                                        horizontal: 4,
+                                  Container(
+                                    margin: const EdgeInsets.only(
+                                      left: 4,
+                                    ),
+                                    decoration: const BoxDecoration(
+                                      color: primary200,
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(4),
                                       ),
-                                      child: Text(
-                                        link.user?.jobGroup?.name ?? '',
-                                        style: const TextStyle(
-                                          color: primary600,
-                                          fontSize: 10,
-                                          letterSpacing: -0.2,
+                                    ),
+                                    child: Center(
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 3,
+                                          horizontal: 4,
+                                        ),
+                                        child: Text(
+                                          link.user?.jobGroup?.name ?? '',
+                                          style: const TextStyle(
+                                            color: primary600,
+                                            fontSize: 10,
+                                            letterSpacing: -0.2,
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
+                                ],
+                              ),
+                              Container(
+                                margin: const EdgeInsets.only(top: 4),
+                                child: Text(
+                                  link.time ?? '',
+                                  style: const TextStyle(
+                                    color: grey400,
+                                    fontSize: 12,
+                                    letterSpacing: -0.2,
+                                  ),
                                 ),
-                              ],
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                      if (link.describe != null ||
+                          (link.describe?.isNotEmpty ?? false))
+                        Column(
+                          children: [
+                            const SizedBox(
+                              height: 17,
                             ),
                             Text(
-                              link.time ?? '',
+                              link.describe ?? '',
                               style: const TextStyle(
-                                color: grey400,
-                                fontSize: 12,
-                                letterSpacing: -0.2,
+                                fontSize: 16,
+                                color: grey800,
+                                height: 26 / 16,
                               ),
                             ),
                           ],
                         )
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 17,
-                    ),
-                    Text(
-                      link.describe ?? '',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: grey800,
-                        height: 26 / 16,
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(
-                        top: 16,
-                        bottom: 18,
-                      ),
-                      child: ClipRRect(
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(7),
+                      else
+                        const SizedBox.shrink(),
+                      Container(
+                        margin: const EdgeInsets.only(
+                          top: 16,
+                          bottom: 18,
                         ),
-                        child: Container(
-                          constraints: const BoxConstraints(
-                            minWidth: double.infinity,
+                        child: ClipRRect(
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(7),
                           ),
-                          color: grey100,
-                          child: Image.asset(
-                            'assets/images/profile/img_01_on.png',
-                            height: 160,
-                            fit: BoxFit.contain,
-                          ),
+                          child: isLinkVerified(link)
+                              ? Container(
+                                  constraints: const BoxConstraints(
+                                    minWidth: double.infinity,
+                                  ),
+                                  color: grey100,
+                                  child: CachedNetworkImage(
+                                    imageUrl: link.image ?? '',
+                                    height: 160,
+                                    fit: BoxFit.cover,
+                                    errorWidget: (_, __, ___) {
+                                      return const SizedBox();
+                                    },
+                                  ),
+                                )
+                              : const SizedBox(),
                         ),
                       ),
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              link.title ?? '',
-                              style: const TextStyle(
-                                color: blackBold,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              SizedBox(
+                                width: width - (24 * 2 + 25),
+                                child: Text(
+                                  link.title ?? '',
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    color: blackBold,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
                               ),
-                            ),
-                            InkWell(
-                              onTap: () {},
-                              child: SvgPicture.asset(
-                                'assets/images/more_vert.svg',
+                              InkWell(
+                                onTap: () {},
+                                child: SvgPicture.asset(
+                                  'assets/images/more_vert.svg',
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                        Text(
-                          link.url ?? '',
-                          style: const TextStyle(
-                            color: grey500,
-                            fontSize: 12,
+                            ],
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
+                          Text(
+                            link.url ?? '',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              color: grey500,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               );
             },
-            separatorBuilder: (BuildContext context, int index) =>
-                const Divider(
-              height: 1,
-              color: grey200,
+            separatorBuilder: (_, __) => const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24),
+              child: Divider(height: 1, color: grey900),
             ),
           ),
         );
@@ -240,7 +287,16 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget buildJobListView(List<JobGroup> jobs) {
+  bool isLinkVerified(Link link) =>
+      link.image != null &&
+      link.image!.isNotEmpty &&
+      link.image!.contains('http');
+
+  Widget buildJobListView(
+    BuildContext jobContext,
+    List<JobGroup> jobs,
+    List<Link> totalLinks,
+  ) {
     return Container(
       margin: const EdgeInsets.only(top: 30 - 7, left: 12, right: 20),
       child: DefaultTabController(
@@ -288,7 +344,6 @@ class HomePage extends StatelessWidget {
                     }
                     return TabBar(
                       isScrollable: true,
-                      physics: const ClampingScrollPhysics(),
                       unselectedLabelColor: grey700,
                       labelColor: primaryTab,
                       labelStyle: const TextStyle(
@@ -315,7 +370,11 @@ class HomePage extends StatelessWidget {
                       ),
                       tabs: tabs,
                       onTap: (index) {
-                        /* TODO 탭 눌러서 다른 링크 조회 */
+                        final jobGroupId = jobs[index].id!;
+                        jobContext
+                            .read<LinksFromSelectedJobGroupCubit>()
+                            .getSelectedJobLinks(jobGroupId, 0);
+                        totalLinks.clear();
                       },
                     );
                   },

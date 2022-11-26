@@ -1,9 +1,11 @@
 import 'dart:async';
 
+import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/initial_settings.dart';
 import 'package:ac_project_app/provider/share_db.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 Future<void> main() async {
   await initSettings();
@@ -21,15 +23,18 @@ class MyApp extends StatelessWidget {
 }
 
 class MultiPlatformApp {
-  static StatefulWidget create() {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      initialRoute: Routes.splash,
-      onGenerateRoute: Pages.getPages,
-      themeMode: ThemeMode.light,
-      theme: ThemeData(
-        fontFamily: 'Pretendard',
-        brightness: Brightness.light,
+  static Widget create() {
+    return BlocProvider<GetProfileInfoCubit>(
+      create: (_) => GetProfileInfoCubit(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        initialRoute: Routes.splash,
+        onGenerateRoute: Pages.getPages,
+        themeMode: ThemeMode.light,
+        theme: ThemeData(
+          fontFamily: 'Pretendard',
+          brightness: Brightness.light,
+        ),
       ),
     );
   }
