@@ -377,14 +377,19 @@ class MyLinkPage extends StatelessWidget {
                             child: link.image != null && link.image!.isNotEmpty
                                 ? CachedNetworkImage(
                                     imageUrl: link.image ?? '',
-                                    width: 159,
-                                    height: 116,
-                                    fit: BoxFit.cover,
+                                    imageBuilder: (context, imageProvider) =>
+                                        Container(
+                                      width: 159,
+                                      height: 116,
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                          image: imageProvider,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
                                     errorWidget: (_, __, ___) {
-                                      return const SizedBox(
-                                        width: 159,
-                                        height: 116,
-                                      );
+                                      return const SizedBox();
                                     },
                                   )
                                 : const SizedBox(
