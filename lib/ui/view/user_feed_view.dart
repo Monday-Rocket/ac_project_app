@@ -1,5 +1,6 @@
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/feed/feed_view_cubit.dart';
+import 'package:ac_project_app/cubits/folders/get_user_folders_cubit.dart';
 import 'package:ac_project_app/cubits/links/feed_data_state.dart';
 import 'package:ac_project_app/models/feed/feed_data.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
@@ -30,8 +31,12 @@ class UserFeedView extends StatelessWidget {
         BlocProvider<FeedViewCubit>(
           create: (_) => FeedViewCubit(folders),
         ),
+        BlocProvider<GetUserFoldersCubit>(
+          create: (_) => GetUserFoldersCubit(),
+        ),
       ],
       child: Scaffold(
+        backgroundColor: Colors.white,
         body: SafeArea(
           child: Column(
             children: [
@@ -70,6 +75,7 @@ class UserFeedView extends StatelessWidget {
                             context,
                             totalLinks,
                             result,
+                            user,
                           );
                         } else {
                           return const SizedBox.shrink();
@@ -210,6 +216,7 @@ class UserFeedView extends StatelessWidget {
     BuildContext parentContext,
     List<Link> totalLinks,
     FeedData result,
+      DetailUser user,
   ) {
     final width = MediaQuery.of(parentContext).size.width;
     return Builder(
@@ -248,16 +255,19 @@ class UserFeedView extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         GestureDetector(
-                          onTap: () => Navigator.of(context).pushNamed(
+                          onTap: () async => Navigator.of(context).pushNamed(
                             Routes.userFeed,
                             arguments: {
-                              'userId': link.user?.id,
+                              'user': user,
+                              'folders': await context
+                                  .read<GetUserFoldersCubit>()
+                                  .getFolders(user.id!)
                             },
                           ),
                           child: Row(
                             children: [
                               Image.asset(
-                                makeImagePath(link.user?.profileImg ?? '01'),
+                                makeImagePath(user.profileImg),
                                 width: 32,
                                 height: 32,
                                 errorBuilder: (_, __, ___) {
@@ -280,7 +290,7 @@ class UserFeedView extends StatelessWidget {
                                   Row(
                                     children: [
                                       Text(
-                                        link.user?.nickname ?? '',
+                                        user.nickname,
                                         style: const TextStyle(
                                           color: grey900,
                                           fontWeight: FontWeight.w500,
@@ -303,7 +313,7 @@ class UserFeedView extends StatelessWidget {
                                               horizontal: 4,
                                             ),
                                             child: Text(
-                                              link.user?.jobGroup?.name ?? '',
+                                              user.jobGroup?.name ?? '',
                                               style: const TextStyle(
                                                 color: primary600,
                                                 fontSize: 10,
