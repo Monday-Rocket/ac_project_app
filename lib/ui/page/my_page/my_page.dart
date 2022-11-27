@@ -211,7 +211,7 @@ class MyPage extends StatelessWidget {
                 Navigator.pushNamed(
                   context,
                   Routes.termPage,
-                  arguments: LinkArguments(link: 'https://www.naver.com'),
+                  arguments: LinkArguments(link: 'https://spot-harpymimus-46b.notion.site/LINKPOOL-f0c6fd16eecf4c8c96bb317421ecc174'),
                 );
                 break;
               }
@@ -220,7 +220,7 @@ class MyPage extends StatelessWidget {
                 Navigator.pushNamed(
                   context,
                   Routes.termPage,
-                  arguments: LinkArguments(link: 'https://www.daum.net'),
+                  arguments: LinkArguments(link: 'https://spot-harpymimus-46b.notion.site/LINKPOOL-cf1f4d836d764b889a68f79d989cd624'),
                 );
                 break;
               }
