@@ -7,7 +7,7 @@ import 'package:ac_project_app/provider/share_db.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class GetFoldersCubit extends Cubit<FoldersState> {
-  GetFoldersCubit() : super(InitialState()) {
+  GetFoldersCubit() : super(FolderInitialState()) {
     getFolders();
   }
 
@@ -17,18 +17,18 @@ class GetFoldersCubit extends Cubit<FoldersState> {
 
   Future<void> getFolders() async {
     try {
-      emit(LoadingState());
+      emit(FolderLoadingState());
 
       final result = await folderApi.getMyFolders();
       result.when(
         success: (list) {
           folders = list;
-          emit(LoadedState(folders));
+          emit(FolderLoadedState(folders));
         },
-        error: (msg) => emit(ErrorState(msg)),
+        error: (msg) => emit(FolderErrorState(msg)),
       );
     } catch (e) {
-      emit(ErrorState(e.toString()));
+      emit(FolderErrorState(e.toString()));
     }
   }
 
@@ -52,7 +52,7 @@ class GetFoldersCubit extends Cubit<FoldersState> {
 
   void filter(String name) {
     if (name.isEmpty) {
-      emit(LoadedState(folders));
+      emit(FolderLoadedState(folders));
       return;
     } else {
       final filtered = <Folder>[];
@@ -63,7 +63,7 @@ class GetFoldersCubit extends Cubit<FoldersState> {
         }
       }
 
-      emit(LoadedState(filtered));
+      emit(FolderLoadedState(filtered));
     }
   }
 }

@@ -1,101 +1,225 @@
 import 'package:ac_project_app/const/colors.dart';
-import 'package:ac_project_app/cubits/folders/get_user_folders_cubit.dart';
-import 'package:ac_project_app/cubits/home/get_job_list_cubit.dart';
-import 'package:ac_project_app/cubits/home/topic_list_state.dart';
-import 'package:ac_project_app/cubits/links/links_from_selected_job_group_cubit.dart';
+import 'package:ac_project_app/cubits/feed/feed_view_cubit.dart';
+import 'package:ac_project_app/cubits/links/feed_data_state.dart';
+import 'package:ac_project_app/models/feed/feed_data.dart';
+import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/models/user/detail_user.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/bottom_dialog.dart';
+import 'package:ac_project_app/util/get_widget_arguments.dart';
 import 'package:ac_project_app/util/string_utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+class UserFeedView extends StatelessWidget {
+  const UserFeedView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final args = getArguments(context);
+    final user = args['user'] as DetailUser;
+    final folders = args['folders'] as List<Folder>;
     final totalLinks = <Link>[];
+
     return MultiBlocProvider(
       providers: [
-        BlocProvider(
-          create: (_) => GetJobListCubit(),
-        ),
-        BlocProvider(
-          create: (_) => LinksFromSelectedJobGroupCubit(),
-        ),
-        BlocProvider(
-          create: (_) => GetUserFoldersCubit(),
+        BlocProvider<FeedViewCubit>(
+          create: (_) => FeedViewCubit(folders),
         ),
       ],
-      child: BlocBuilder<GetJobListCubit, JobListState>(
-        builder: (jobContext, state) {
-          if (state is LoadedState) {
-            return SafeArea(
-              child: Column(
+      child: Scaffold(
+        body: SafeArea(
+          child: Column(
+            children: [
+              buildTopAppBar(context),
+              Column(
                 children: [
-                  Container(
-                    margin: const EdgeInsets.only(left: 24, right: 24, top: 20),
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        color: grey100,
-                        borderRadius: BorderRadius.all(Radius.circular(7)),
-                      ),
-                      margin: const EdgeInsets.only(right: 6),
-                      child: TextField(
-                        textAlignVertical: TextAlignVertical.center,
-                        cursorColor: grey800,
-                        style: const TextStyle(
-                          color: grey800,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                        ),
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                          isDense: true,
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                          ),
-                          prefixIcon: Image.asset(
-                            'assets/images/folder_search_icon.png',
-                          ),
-                        ),
-                        onChanged: (value) {
-                          // context.read<GetFoldersCubit>().filter(value);
-                        },
-                      ),
-                    ),
+                  Image.asset(
+                    makeImagePath(user.profileImg),
+                    width: 105,
+                    height: 105,
                   ),
-                  buildJobListView(jobContext, state.jobs, totalLinks),
-                  buildListBody(jobContext, totalLinks),
+                  const SizedBox(height: 6),
+                  Text(
+                    user.nickname,
+                    style: const TextStyle(
+                      color: Color(0xff0e0e0e),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 28,
+                      letterSpacing: -0.6,
+                    ),
+                  )
                 ],
               ),
-            );
-          } else {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-        },
+              Expanded(
+                child: Column(
+                  children: [
+                    buildJobListView(context, totalLinks, folders),
+                    BlocBuilder<FeedViewCubit, FeedDataState>(
+                      builder: (feedContext, state) {
+                        if (state is FeedDataLoadedState) {
+                          final result = state.feedData;
+                          if (result.folders.isNotEmpty) {
+                            totalLinks.addAll(result.links);
+                          }
+                          return buildListBody(
+                            context,
+                            totalLinks,
+                            result,
+                          );
+                        } else {
+                          return const SizedBox.shrink();
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
 
-  Widget buildListBody(BuildContext parentContext, List<Link> totalLinks) {
+  Widget buildTopAppBar(BuildContext context) {
+    return AppBar(
+      leading: IconButton(
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        icon: const Icon(Icons.arrow_back_ios_new),
+        color: Colors.black,
+      ),
+      actions: [
+        InkWell(
+          onTap: () => showUserOptionDialog(context),
+          child: Container(
+            margin: const EdgeInsets.only(right: 24),
+            child: SvgPicture.asset(
+              'assets/images/more.svg',
+              width: 25,
+              height: 25,
+            ),
+          ),
+        ),
+      ],
+      backgroundColor: Colors.transparent,
+      systemOverlayStyle: SystemUiOverlayStyle.dark,
+      elevation: 0,
+    );
+  }
+
+  Widget buildJobListView(
+    BuildContext parentContext,
+    List<Link> totalLinks,
+    List<Folder> folders,
+  ) {
+    return Container(
+      margin: const EdgeInsets.only(top: 30 - 7, left: 12, right: 20),
+      child: DefaultTabController(
+        length: folders.length,
+        child: SizedBox(
+          height: 36,
+          child: Stack(
+            children: [
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    left: 15,
+                    right: 11,
+                    bottom: 1,
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          color: greyTab,
+                          height: 1,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.only(right: 7),
+                child: Builder(
+                  builder: (context) {
+                    final tabs = <Widget>[];
+                    for (final folder in folders) {
+                      tabs.add(
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 7,
+                          ),
+                          child: Text(
+                            folder.name ?? '',
+                          ),
+                        ),
+                      );
+                    }
+                    return TabBar(
+                      isScrollable: true,
+                      unselectedLabelColor: grey700,
+                      labelColor: primaryTab,
+                      labelStyle: const TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontSize: 16,
+                        height: 19 / 16,
+                        fontWeight: FontWeight.w800,
+                      ),
+                      unselectedLabelStyle: const TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontSize: 16,
+                        height: 19 / 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      indicator: const UnderlineTabIndicator(
+                        borderSide: BorderSide(
+                          color: primaryTab,
+                          width: 2.5,
+                        ),
+                        insets: EdgeInsets.only(
+                          left: 15,
+                          right: 15,
+                        ),
+                      ),
+                      tabs: tabs,
+                      onTap: (index) {
+                        totalLinks.clear();
+                        context.read<FeedViewCubit>().selectFolder(index);
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildListBody(
+    BuildContext parentContext,
+    List<Link> totalLinks,
+    FeedData result,
+  ) {
     final width = MediaQuery.of(parentContext).size.width;
-    return BlocBuilder<LinksFromSelectedJobGroupCubit, List<Link>>(
-      builder: (context, links) {
-        totalLinks.addAll(links);
+    return Builder(
+      builder: (context) {
         return Expanded(
           child: NotificationListener<ScrollEndNotification>(
             onNotification: (scrollEnd) {
               final metrics = scrollEnd.metrics;
               if (metrics.atEdge && metrics.pixels != 0) {
-                context.read<LinksFromSelectedJobGroupCubit>().loadMore();
+                context.read<FeedViewCubit>().loadMore();
               }
               return true;
             },
@@ -124,13 +248,10 @@ class HomePage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         GestureDetector(
-                          onTap: () async => Navigator.of(context).pushNamed(
+                          onTap: () => Navigator.of(context).pushNamed(
                             Routes.userFeed,
                             arguments: {
-                              'user': link.user,
-                              'folders': await context
-                                  .read<GetUserFoldersCubit>()
-                                  .getFolders(link.user!.id!)
+                              'userId': link.user?.id,
                             },
                           ),
                           child: Row(
@@ -317,101 +438,6 @@ class HomePage extends StatelessWidget {
           ),
         );
       },
-    );
-  }
-
-  Widget buildJobListView(
-    BuildContext jobContext,
-    List<JobGroup> jobs,
-    List<Link> totalLinks,
-  ) {
-    return Container(
-      margin: const EdgeInsets.only(top: 30 - 7, left: 12, right: 20),
-      child: DefaultTabController(
-        length: jobs.length,
-        child: SizedBox(
-          height: 36,
-          child: Stack(
-            children: [
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                    left: 15,
-                    right: 11,
-                    bottom: 1,
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          color: greyTab,
-                          height: 1,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.only(right: 7),
-                child: Builder(
-                  builder: (context) {
-                    final tabs = <Widget>[];
-                    for (final job in jobs) {
-                      tabs.add(
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 7,
-                          ),
-                          child: Text(
-                            job.name ?? '',
-                          ),
-                        ),
-                      );
-                    }
-                    return TabBar(
-                      isScrollable: true,
-                      unselectedLabelColor: grey700,
-                      labelColor: primaryTab,
-                      labelStyle: const TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontSize: 16,
-                        height: 19 / 16,
-                        fontWeight: FontWeight.w800,
-                      ),
-                      unselectedLabelStyle: const TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontSize: 16,
-                        height: 19 / 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      indicator: const UnderlineTabIndicator(
-                        borderSide: BorderSide(
-                          color: primaryTab,
-                          width: 2.5,
-                        ),
-                        insets: EdgeInsets.only(
-                          left: 15,
-                          right: 15,
-                        ),
-                      ),
-                      tabs: tabs,
-                      onTap: (index) {
-                        final jobGroupId = jobs[index].id!;
-                        jobContext
-                            .read<LinksFromSelectedJobGroupCubit>()
-                            .getSelectedJobLinks(jobGroupId, 0);
-                        totalLinks.clear();
-                      },
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }

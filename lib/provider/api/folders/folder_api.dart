@@ -1,7 +1,6 @@
 import 'dart:collection';
 
 import 'package:ac_project_app/models/folder/folder.dart';
-import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/models/result.dart';
 import 'package:ac_project_app/provider/api/custom_client.dart';
 import 'package:ac_project_app/provider/share_data_provider.dart';
@@ -54,11 +53,25 @@ class FolderApi {
     );
   }
 
-  Future<Result<Link>> getOthersFolder(int userId, String folderName) async {
-    final result = await client.getUri('/folders/$userId/$folderName');
+  Future<Result<List<Folder>>> getOthersFolders(int userId) async {
+    final result = await client.getUri('/users/$userId/folders');
     return result.when(
-      success: (data) =>
-          Result.success(Link.fromJson(data as Map<String, dynamic>)),
+      success: (folders) {
+        final list = <Folder>[];
+
+        for (final data in folders as List<dynamic>) {
+          final folder =
+          Folder.fromJson(data as LinkedHashMap<String, dynamic>);
+          if (folder.name == 'unclassified') {
+            folder
+              ..name = '미분류'
+              ..isClassified = false;
+          }
+          list.add(folder);
+        }
+
+        return Result.success(list);
+      },
       error: Result.error,
     );
   }
@@ -129,6 +142,29 @@ class FolderApi {
       error: (msg) {
         return false;
       },
+    );
+  }
+
+  Future<Result<List<Folder>>> getSelectedUserFolders(int userId) async {
+    final result = await client.getUri('/users/$userId/folders');
+    return result.when(
+      success: (folders) {
+        final list = <Folder>[];
+
+        for (final data in folders as List<dynamic>) {
+          final folder =
+          Folder.fromJson(data as LinkedHashMap<String, dynamic>);
+          if (folder.name == 'unclassified') {
+            folder
+              ..name = '미분류'
+              ..isClassified = false;
+          }
+          list.add(folder);
+        }
+
+        return Result.success(list);
+      },
+      error: Result.error,
     );
   }
 }

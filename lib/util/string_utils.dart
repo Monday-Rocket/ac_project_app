@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:ac_project_app/models/link/link.dart';
+
 Object toEncodableFallback(dynamic object) {
   return object.toString();
 }
@@ -18,3 +20,8 @@ String getSafeTitleText(String? text) {
 
 String makeImagePath(String image) =>
     'assets/images/profile/img_${image}_on.png';
+
+bool isLinkVerified(Link link) =>
+    link.image != null &&
+        link.image!.isNotEmpty &&
+        link.image!.contains('http');

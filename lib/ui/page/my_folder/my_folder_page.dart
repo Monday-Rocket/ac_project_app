@@ -7,7 +7,7 @@ import 'package:ac_project_app/cubits/folders/folder_name_cubit.dart';
 import 'package:ac_project_app/cubits/folders/folder_view_type_cubit.dart';
 import 'package:ac_project_app/cubits/folders/folder_visible_cubit.dart';
 import 'package:ac_project_app/cubits/folders/folders_state.dart';
-import 'package:ac_project_app/cubits/folders/get_folders_cubit.dart';
+import 'package:ac_project_app/cubits/folders/get_my_folders_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/cubits/sign_up/button_state_cubit.dart';
@@ -153,16 +153,16 @@ class MyFolderPage extends StatelessWidget {
                         ),
                         Builder(
                           builder: (context) {
-                            if (folderState is LoadingState) {
+                            if (folderState is FolderLoadingState) {
                               return const Center(
                                 child: CircularProgressIndicator(),
                               );
-                            } else if (folderState is ErrorState) {
+                            } else if (folderState is FolderErrorState) {
                               Log.e(folderState.props[0]);
                               return const Center(
                                 child: Icon(Icons.close),
                               );
-                            } else if (folderState is LoadedState) {
+                            } else if (folderState is FolderLoadedState) {
                               if (folderState.folders.isEmpty) {
                                 return const Expanded(
                                   child: Center(

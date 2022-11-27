@@ -12,19 +12,9 @@ class LinksFromSelectedFolderCubit extends Cubit<LinkListState> {
   LinksFromSelectedFolderCubit(Folder folder, int pageNum)
       : super(LinkListInitialState()) {
     getSelectedLinks(folder, pageNum);
-    // scrollController.addListener(() {
-    //   if (scrollController.position.pixels ==
-    //       scrollController.position.maxScrollExtent &&
-    //       hasMore.state == ScrollableType.can) {
-    //     getSelectedLinks(currentFolder!, page + 1);
-    //   } else {
-    //     // Log.i(hasMore.state);
-    //   }
-    // });
   }
 
   final linkApi = LinkApi();
-  // final scrollController = ScrollController();
 
   HasMoreCubit hasMore = HasMoreCubit();
   Folder? currentFolder;

@@ -3,18 +3,18 @@ import 'package:equatable/equatable.dart';
 
 abstract class FoldersState extends Equatable {}
 
-class InitialState extends FoldersState {
+class FolderInitialState extends FoldersState {
   @override
   List<Object> get props => [];
 }
 
-class LoadingState extends FoldersState {
+class FolderLoadingState extends FoldersState {
   @override
   List<Object> get props => [];
 }
 
-class LoadedState extends FoldersState {
-  LoadedState(this.folders);
+class FolderLoadedState extends FoldersState {
+  FolderLoadedState(this.folders);
 
   final List<Folder> folders;
 
@@ -22,8 +22,8 @@ class LoadedState extends FoldersState {
   List<Object> get props => folders;
 }
 
-class ErrorState extends FoldersState {
-  ErrorState(this.message);
+class FolderErrorState extends FoldersState {
+  FolderErrorState(this.message);
 
   final String? message;
 

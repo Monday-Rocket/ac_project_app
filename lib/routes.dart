@@ -3,11 +3,12 @@ import 'package:ac_project_app/ui/page/my_page/term_page.dart';
 import 'package:ac_project_app/ui/view/change_profile_view.dart';
 import 'package:ac_project_app/ui/view/home_view.dart';
 import 'package:ac_project_app/ui/view/login_view.dart';
-import 'package:ac_project_app/ui/view/my_link/link_detail_view.dart';
+import 'package:ac_project_app/ui/view/link_detail_view.dart';
 import 'package:ac_project_app/ui/view/my_link_page.dart';
 import 'package:ac_project_app/ui/view/sign_up_job_view.dart';
 import 'package:ac_project_app/ui/view/sign_up_nickname_view.dart';
 import 'package:ac_project_app/ui/view/splash_view.dart';
+import 'package:ac_project_app/ui/view/user_feed_view.dart';
 import 'package:flutter/material.dart';
 
 class Routes {
@@ -19,10 +20,11 @@ class Routes {
 
   static const home = '/home';
   static const myLinks = '/myLinks';
+  static const linkDetail = '/linkDetail';
+  static const userFeed = '/userFeed';
 
   static const termPage = '/termPage';
 
-  static const linkDetail = '/linkDetail';
   static const myPage = '/myPage';
   static const profile = '/profile';
 }
@@ -40,6 +42,10 @@ class Pages {
         return router.create(child: const HomeView());
       case Routes.myLinks:
         return router.create(child: const MyLinkPage());
+      case Routes.linkDetail:
+        return router.create(child: const LinkDetailView());
+      case Routes.userFeed:
+        return router.create(child: const UserFeedView());
       case Routes.signUpNickname:
         return router.create(child: const SignUpNicknameView());
       case Routes.singUpJob:
@@ -48,8 +54,6 @@ class Pages {
         return router.create(child: const MyPage());
       case Routes.termPage:
         return router.create(child: const TermPage());
-      case Routes.linkDetail:
-        return router.create(child: const LinkDetailView());
       case Routes.profile:
         return router.create(child: const ChangeProfileView());
       default:

@@ -65,6 +65,7 @@ class HomeView extends StatelessWidget {
               ];
 
               return Scaffold(
+                backgroundColor: Colors.white,
                 body: IndexedStack(
                   index: index,
                   children: const <Widget>[
