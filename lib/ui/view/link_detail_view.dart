@@ -24,12 +24,16 @@ class LinkDetailView extends StatelessWidget {
   Widget build(BuildContext context) {
     final args = getArguments(context);
     final link = args['link'] as Link;
+    final isMine = args['isMine'] as bool?;
     final scrollController = ScrollController();
 
     final profileState = context.watch<GetProfileInfoCubit>().state;
     var isMyLink = false;
     if (profileState is ProfileLoadedState) {
       isMyLink = profileState.profile.id == link.user?.id;
+    }
+    if (isMine ?? false) {
+      isMyLink = true;
     }
 
     return MultiBlocProvider(

@@ -301,6 +301,7 @@ class MyLinkPage extends StatelessWidget {
                     Routes.linkDetail,
                     arguments: {
                       'link': link,
+                      'isMine': true,
                     },
                   ).then((value) {
                     context

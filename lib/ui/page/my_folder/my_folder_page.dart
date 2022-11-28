@@ -476,6 +476,9 @@ class MyFolderPage extends StatelessWidget {
                                           context
                                               .read<ButtonStateCubit>()
                                               .enable();
+                                          context
+                                              .read<FolderNameCubit>()
+                                              .update(value!);
                                         }
                                       },
                                       onFieldSubmitted: (value) {
