@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/provider/api/folders/folder_api.dart';
+import 'package:ac_project_app/provider/api/user/user_api.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -24,13 +25,26 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
     Future.delayed(const Duration(milliseconds: 1500), () {
       final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
-        FolderApi().bulkSave().then((_) {
-          Navigator.pushReplacementNamed(
-            context,
-            Routes.home,
-            arguments: {
-              'index': 0,
+        UserApi().postUsers().then((result) {
+          result.when(
+            success: (data) {
+              if (data.is_new ?? false) {
+                FolderApi().bulkSave().then((_) {
+                  Navigator.pushReplacementNamed(
+                    context,
+                    Routes.home,
+                    arguments: {
+                      'index': 0,
+                    },
+                  );
+                });
+              } else {
+                Navigator.pushReplacementNamed(context, Routes.login);
+              }
             },
+            error: (_) => unawaited(
+              Navigator.pushReplacementNamed(context, Routes.login),
+            ),
           );
         });
       } else {
