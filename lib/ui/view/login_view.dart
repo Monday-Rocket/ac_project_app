@@ -17,6 +17,7 @@ import 'package:ac_project_app/util/logger.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -29,8 +30,6 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> with WidgetsBindingObserver {
-  PendingDynamicLinkData? initialLink;
-
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -65,23 +64,9 @@ class _LoginViewState extends State<LoginView> with WidgetsBindingObserver {
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     super.initState();
-    retrieveDynamicLinkAndSignIn(fromColdState: true);
-  }
-
-  Future<void> initDynamicLinks() async {
-    FirebaseDynamicLinks.instance.onLink.listen(
-      (dynamicLink) {
-        final deepLink = dynamicLink.link;
-        _handleLink(deepLink);
-      },
-      onError: (e) async {
-        Log.e('onLinkError');
-      },
-    );
-    final data = await FirebaseDynamicLinks.instance
-        .getDynamicLink(Uri.parse('https://acprojectapp.page.link/jTpt'));
-    final deepLink = data?.link;
-    Log.i('deepLink: $deepLink');
+    Future.delayed(const Duration(milliseconds: 300), () {
+      retrieveDynamicLinkAndSignIn(fromColdState: true);
+    });
   }
 
   @override
@@ -107,53 +92,31 @@ class _LoginViewState extends State<LoginView> with WidgetsBindingObserver {
     required bool fromColdState,
   }) async {
     PendingDynamicLinkData? dynamicLinkData;
+    Uri? deepLink;
 
     if (fromColdState) {
       dynamicLinkData = await FirebaseDynamicLinks.instance.getInitialLink();
+      unawaited(Fluttertoast.showToast(
+          msg: 'init dynamicLinkData is null?: ${dynamicLinkData == null}'));
+      if (dynamicLinkData != null) {
+        deepLink = dynamicLinkData.link;
+      }
     } else {
       dynamicLinkData = await FirebaseDynamicLinks.instance.onLink.first;
+      deepLink = dynamicLinkData.link;
     }
 
-    if (dynamicLinkData == null) {
+    if (deepLink == null) {
       return false;
     }
 
-    final validLink = FirebaseAuth.instance
-        .isSignInWithEmailLink(dynamicLinkData.link.toString());
-    if (validLink) {
-      final continueUrl =
-          dynamicLinkData.link.queryParameters['continueUrl'] ?? '';
-      final email = Uri.parse(continueUrl).queryParameters['email'] ?? '';
-      unawaited(
-        Email.login(email, dynamicLinkData.link.toString())
-            .then((isSuccess) async {
-          if (isSuccess) {
-            final user = await UserApi().postUsers();
-            final folderApi = FolderApi();
+    final validLink =
+        FirebaseAuth.instance.isSignInWithEmailLink(deepLink.toString());
 
-            user.when(
-              success: (data) {
-                folderApi.bulkSave().then(
-                      (_) => unawaited(
-                        Navigator.pushReplacementNamed(
-                          context,
-                          Routes.home,
-                          arguments: {
-                            'index': 0,
-                          },
-                        ),
-                      ),
-                    );
-              },
-              error: (msg) {
-                Log.e('login fail');
-              },
-            );
-          } else {
-            Log.e('login fail');
-          }
-        }),
-      );
+    if (validLink) {
+      final continueUrl = deepLink.queryParameters['continueUrl'] ?? '';
+      final email = Uri.parse(continueUrl).queryParameters['email'] ?? '';
+      _handleLink(email, deepLink.toString());
     }
     return false;
   }
@@ -164,22 +127,32 @@ class _LoginViewState extends State<LoginView> with WidgetsBindingObserver {
     super.dispose();
   }
 
-  Future<void> _handleLink(Uri link) async {
-    final result = await Email.login('ts4840644804@gmail.com', link.toString());
-    if (result) {
-      final user = await UserApi().postUsers();
-      final folderApi = FolderApi();
+  void _handleLink(String email, String link) {
+    Email.login(email, link).then((isSuccess) async {
+      if (isSuccess) {
+        final user = await UserApi().postUsers();
+        final folderApi = FolderApi();
 
-      user.when(
-        success: (data) {
-          folderApi.bulkSave();
-          _moveToSignUpPage(context, data);
-        },
-        error: (msg) {
-          Log.e('로그인 에러');
-        },
-      );
-    }
+        user.when(
+          success: (data) {
+            folderApi.bulkSave().then(
+                  (_) => unawaited(
+                    Navigator.pushReplacementNamed(
+                      context,
+                      Routes.home,
+                      arguments: {'index': 0},
+                    ),
+                  ),
+                );
+          },
+          error: (msg) {
+            Log.e('login fail');
+          },
+        );
+      } else {
+        Log.e('login fail');
+      }
+    });
   }
 
   void showErrorBanner(BuildContext context) {
