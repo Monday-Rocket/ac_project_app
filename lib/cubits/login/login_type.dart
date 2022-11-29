@@ -1,3 +1,3 @@
 enum LoginType {
-  apple, google,
+  email, apple, google,
 }

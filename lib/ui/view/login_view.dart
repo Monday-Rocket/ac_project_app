@@ -8,15 +8,27 @@ import 'package:ac_project_app/cubits/login/login_cubit.dart';
 import 'package:ac_project_app/cubits/login/login_type.dart';
 import 'package:ac_project_app/cubits/login/user_state.dart';
 import 'package:ac_project_app/models/user/user.dart';
+import 'package:ac_project_app/provider/api/folders/folder_api.dart';
+import 'package:ac_project_app/provider/api/user/user_api.dart';
+import 'package:ac_project_app/provider/login/email_login.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/text/custom_font.dart';
+import 'package:ac_project_app/util/logger.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-class LoginView extends StatelessWidget {
+class LoginView extends StatefulWidget {
   const LoginView({super.key});
+
+  @override
+  State<LoginView> createState() => _LoginViewState();
+}
+
+class _LoginViewState extends State<LoginView> with WidgetsBindingObserver {
+  PendingDynamicLinkData? initialLink;
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +58,52 @@ class LoginView extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    initDynamicLinks();
+    super.initState();
+  }
+
+  Future<void> initDynamicLinks() async {
+    FirebaseDynamicLinks.instance.onLink.listen(
+      (dynamicLink) {
+        final deepLink = dynamicLink.link;
+        _handleLink(deepLink);
+      },
+      onError: (e) async {
+        Log.e('onLinkError');
+      },
+    );
+    final data = await FirebaseDynamicLinks.instance.getInitialLink();
+    final deepLink = data?.link;
+    Log.i('deepLink: $deepLink');
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  Future<void> _handleLink(Uri link) async {
+    final result = await Email.login('ts4840644804@gmail.com', link.toString());
+    if (result) {
+      final user = await UserApi().postUsers();
+      final folderApi = FolderApi();
+
+      user.when(
+        success: (data) {
+          folderApi.bulkSave();
+          _moveToSignUpPage(context, data);
+        },
+        error: (msg) {
+          Log.e('로그인 에러');
+        },
+      );
+    }
   }
 
   void showErrorBanner(BuildContext context) {
@@ -486,6 +544,11 @@ class LoginView extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            ElevatedButton(
+              onPressed: () => Email.send('ts4840644804@gmail.com'),
+              child: const Text('테스트'),
+            ),
+            const SizedBox(height: 12),
             buildGoogleLoginButton(context),
             const SizedBox(height: 12),
             buildAppleLoginButton(context),
