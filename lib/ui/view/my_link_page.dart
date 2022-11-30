@@ -36,6 +36,19 @@ class MyLinkPage extends StatelessWidget {
       child: BlocBuilder<GetSelectedFolderCubit, Folder>(
         builder: (context, folder) {
           return Scaffold(
+            appBar: AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              leading: IconButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: const Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  color: grey900,
+                ),
+              ),
+            ),
             body: SafeArea(
               child: BlocBuilder<LinksFromSelectedFolderCubit, LinkListState>(
                 builder: (context, state) {
@@ -47,7 +60,7 @@ class MyLinkPage extends StatelessWidget {
                           buildTitleBar(folder),
                           buildContentsCountText(folder),
                           buildSearchBar(),
-                          buildTabBar(folders, tabIndex, folder),
+                          buildTabBar(folders, tabIndex, folder, links),
                           buildBodyList(
                             folder: folder,
                             width: width,
@@ -84,7 +97,7 @@ class MyLinkPage extends StatelessWidget {
   Container buildTitleBar(Folder folder) {
     final classified = folder.isClassified ?? true;
     return Container(
-      margin: const EdgeInsets.only(left: 24, right: 12, top: 39),
+      margin: const EdgeInsets.only(left: 24, right: 12, top: 10),
       child: Row(
         children: [
           Text(
@@ -173,7 +186,7 @@ class MyLinkPage extends StatelessWidget {
     );
   }
 
-  Widget buildTabBar(List<Folder> folders, int tabIndex, Folder folder) {
+  Widget buildTabBar(List<Folder> folders, int tabIndex, Folder folder, List<Link> totalLinks) {
     return Container(
       margin: const EdgeInsets.only(top: 30, left: 12, right: 20),
       child: DefaultTabController(
@@ -249,6 +262,7 @@ class MyLinkPage extends StatelessWidget {
                       ),
                       tabs: tabs,
                       onTap: (index) {
+                        totalLinks.clear();
                         context
                             .read<GetSelectedFolderCubit>()
                             .update(folders[index]);
@@ -304,6 +318,7 @@ class MyLinkPage extends StatelessWidget {
                       'isMine': true,
                     },
                   ).then((value) {
+                    totalLinks.clear();
                     context
                         .read<LinksFromSelectedFolderCubit>()
                         .getSelectedLinks(folder, 0);

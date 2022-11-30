@@ -3,12 +3,15 @@
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_state.dart';
+import 'package:ac_project_app/provider/api/user/user_api.dart';
 import 'package:ac_project_app/resource.dart';
 import 'package:ac_project_app/routes.dart';
+import 'package:ac_project_app/util/logger.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class LinkArguments {
   LinkArguments({required this.link});
@@ -103,14 +106,16 @@ class MyPage extends StatelessWidget {
   void showPopUp({
     required String title,
     required String content,
-    required BuildContext context,
-    required Future<void> Function() callback,
+    required BuildContext parentContext,
+    required void Function() callback,
     bool icon = false,
     bool isLogout = false,
     bool isLeave = false,
   }) {
+    final width = MediaQuery.of(parentContext).size.width;
+    Log.i(width);
     showDialog<dynamic>(
-      context: context,
+      context: parentContext,
       builder: (BuildContext context) {
         return Dialog(
           shape:
@@ -118,10 +123,10 @@ class MyPage extends StatelessWidget {
           child: Stack(
             children: [
               Container(
-                width: 285,
-                height: icon ? 217 : 183,
+                width: width - (45 * 2),
                 padding: const EdgeInsets.all(16),
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     SizedBox(
                       height: icon ? 14 : 16,
@@ -132,40 +137,34 @@ class MyPage extends StatelessWidget {
                         color: primary800,
                         size: 27,
                       ),
-                    SizedBox(
-                      height: icon ? 7 : 0,
-                    ),
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        fontFamily: R_Font.PRETENDARD,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Text(content, textAlign: TextAlign.center),
-                    const SizedBox(
-                      height: 32,
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        callback.call().then((value) {
-                          Navigator.of(context).pop(true);
-                          Navigator.pushReplacementNamed(context, Routes.login);
-                        });
-                      },
-                      style: ElevatedButton.styleFrom(
-                        fixedSize: const Size(245, 48),
-                        alignment: Alignment.center,
-                        backgroundColor: primary600,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                    Container(
+                      margin: EdgeInsets.only(top: icon ? 7 : 0, bottom: 10),
+                      child: Text(
+                        title,
+                        style: const TextStyle(
+                          fontFamily: R_Font.PRETENDARD,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
-                      child: const Text('확인'),
+                    ),
+                    Text(content, textAlign: TextAlign.center),
+                    Container(
+                      margin: const EdgeInsets.only(left: 4, right: 4, bottom: 4, top: 32),
+                      child: SizedBox(
+                        width: double.infinity,
+                        height: 48,
+                        child: ElevatedButton(
+                          onPressed: callback,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: primary600,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: const Text('확인'),
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -229,13 +228,14 @@ class MyPage extends StatelessWidget {
                 showPopUp(
                   title: '로그아웃 완료',
                   content: '계정이 로그아웃 되었어요',
-                  context: context,
-                  callback: () async {
-                    await FirebaseAuth.instance.signOut();
+                  parentContext: context,
+                  callback: () {
+                    FirebaseAuth.instance.signOut().then((value) {
+                      Navigator.of(context).pop(true);
+                      Navigator.pushReplacementNamed(context, Routes.login);
+                    });
                   },
                 );
-
-                // Navigator.popAndPushNamed(context, Routes.login);
                 break;
               }
             case '회원탈퇴':
@@ -243,8 +243,18 @@ class MyPage extends StatelessWidget {
                 showPopUp(
                   title: '정말 탈퇴하시겠어요?',
                   content: '지금 탈퇴하면 그동안 모은 링크가 사라져요',
-                  context: context,
-                  callback: () async {},
+                  parentContext: context,
+                  callback: () {
+                    UserApi().deleteUser().then((value) {
+                      if (value) {
+                        Navigator.of(context).pop(true);
+                        Navigator.pushReplacementNamed(context, Routes.login);
+                      } else {
+                        Navigator.of(context).pop(true);
+                        Fluttertoast.showToast(msg: '회원탈퇴 실패');
+                      }
+                    });
+                  },
                   icon: true,
                 );
                 break;

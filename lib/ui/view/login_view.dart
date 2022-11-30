@@ -8,7 +8,6 @@ import 'package:ac_project_app/cubits/login/login_cubit.dart';
 import 'package:ac_project_app/cubits/login/login_type.dart';
 import 'package:ac_project_app/cubits/login/user_state.dart';
 import 'package:ac_project_app/models/user/user.dart';
-import 'package:ac_project_app/provider/api/folders/folder_api.dart';
 import 'package:ac_project_app/provider/api/user/user_api.dart';
 import 'package:ac_project_app/provider/login/email_login.dart';
 import 'package:ac_project_app/routes.dart';
@@ -92,11 +91,9 @@ class _LoginViewState extends State<LoginView> with WidgetsBindingObserver {
     final result = await Email.login('ts4840644804@gmail.com', link.toString());
     if (result) {
       final user = await UserApi().postUsers();
-      final folderApi = FolderApi();
 
       user.when(
         success: (data) {
-          folderApi.bulkSave();
           _moveToSignUpPage(context, data);
         },
         error: (msg) {

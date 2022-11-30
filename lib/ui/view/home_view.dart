@@ -1,6 +1,9 @@
 import 'package:ac_project_app/const/colors.dart';
+import 'package:ac_project_app/cubits/folders/folder_view_type_cubit.dart';
+import 'package:ac_project_app/cubits/folders/get_my_folders_cubit.dart';
 import 'package:ac_project_app/cubits/home_second_view_cubit.dart';
 import 'package:ac_project_app/cubits/home_view_cubit.dart';
+import 'package:ac_project_app/provider/api/folders/folder_api.dart';
 import 'package:ac_project_app/ui/page/home/home_page.dart';
 import 'package:ac_project_app/ui/page/my_folder/my_folder_page.dart';
 import 'package:ac_project_app/ui/page/my_page/my_page.dart';
@@ -10,8 +13,37 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class HomeView extends StatelessWidget {
+class HomeView extends StatefulWidget {
   const HomeView({super.key});
+
+  @override
+  State<HomeView> createState() => _HomeViewState();
+}
+
+class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    FolderApi().bulkSave().then((value) {
+      setState(() {});
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      FolderApi().bulkSave().then((value) {
+        setState(() {});
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,11 +100,21 @@ class HomeView extends StatelessWidget {
                 backgroundColor: Colors.white,
                 body: IndexedStack(
                   index: index,
-                  children: const <Widget>[
-                    HomePage(),
-                    UploadPage(),
-                    MyFolderPage(),
-                    MyPage(),
+                  children: <Widget>[
+                    const HomePage(),
+                    const UploadPage(),
+                    MultiBlocProvider(
+                      providers: [
+                        BlocProvider<FolderViewTypeCubit>(
+                          create: (_) => FolderViewTypeCubit(),
+                        ),
+                        BlocProvider<GetFoldersCubit>(
+                          create: (_) => GetFoldersCubit(),
+                        ),
+                      ],
+                      child: const MyFolderPage(),
+                    ),
+                    const MyPage(),
                   ],
                 ),
                 bottomNavigationBar: BottomNavigationBar(

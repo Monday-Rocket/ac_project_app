@@ -1,8 +1,7 @@
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/feed/feed_view_cubit.dart';
 import 'package:ac_project_app/cubits/folders/get_user_folders_cubit.dart';
-import 'package:ac_project_app/cubits/links/feed_data_state.dart';
-import 'package:ac_project_app/models/feed/feed_data.dart';
+import 'package:ac_project_app/cubits/links/link_list_state.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/models/user/detail_user.dart';
@@ -64,17 +63,16 @@ class UserFeedView extends StatelessWidget {
                 child: Column(
                   children: [
                     buildJobListView(context, totalLinks, folders),
-                    BlocBuilder<FeedViewCubit, FeedDataState>(
+                    BlocBuilder<FeedViewCubit, LinkListState>(
                       builder: (feedContext, state) {
-                        if (state is FeedDataLoadedState) {
-                          final result = state.feedData;
-                          if (result.folders.isNotEmpty) {
-                            totalLinks.addAll(result.links);
+                        if (state is LinkListLoadedState) {
+                          final links = state.links;
+                          if (folders.isNotEmpty) {
+                            totalLinks.addAll(links);
                           }
                           return buildListBody(
                             context,
                             totalLinks,
-                            result,
                             user,
                           );
                         } else {
@@ -215,7 +213,6 @@ class UserFeedView extends StatelessWidget {
   Widget buildListBody(
     BuildContext parentContext,
     List<Link> totalLinks,
-    FeedData result,
       DetailUser user,
   ) {
     final width = MediaQuery.of(parentContext).size.width;

@@ -1,6 +1,5 @@
 import 'package:ac_project_app/cubits/login/login_type.dart';
 import 'package:ac_project_app/cubits/login/user_state.dart';
-import 'package:ac_project_app/provider/api/folders/folder_api.dart';
 import 'package:ac_project_app/provider/api/user/user_api.dart';
 import 'package:ac_project_app/provider/login/apple_login.dart';
 import 'package:ac_project_app/provider/login/email_login.dart';
@@ -13,8 +12,6 @@ class LoginCubit extends Cubit<UserState> {
 
   void initialize() {
     emit(InitialState());
-    
-    // FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password)
   }
 
   void login(LoginType loginType, {String? email}) {
@@ -35,11 +32,9 @@ class LoginCubit extends Cubit<UserState> {
   Future<void> sendResult(bool isSuccess) async {
     if (isSuccess) {
       final user = await UserApi().postUsers();
-      final folderApi = FolderApi();
 
       user.when(
         success: (data) {
-          folderApi.bulkSave();
           emit(LoadedState(data));
         },
         error: (msg) {

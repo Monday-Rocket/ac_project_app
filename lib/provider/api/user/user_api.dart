@@ -63,4 +63,9 @@ class UserApi {
       error: Result.error,
     );
   }
+  
+  Future<bool> deleteUser() async {
+    final result = await client.deleteUri('/users');
+    return result.when(success: (_) => true, error: (_) => false);
+  }
 }

@@ -7,7 +7,6 @@ import 'package:ac_project_app/models/result.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:ac_project_app/util/string_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 
 class CustomClient extends http.BaseClient {
@@ -18,8 +17,6 @@ class CustomClient extends http.BaseClient {
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
     final idToken = await FirebaseAuth.instance.currentUser?.getIdToken();
-
-    await Clipboard.setData(ClipboardData(text: idToken));
 
     request.headers['Content-Type'] = 'application/json';
     request.headers['x-auth-token'] = idToken ?? 'test-token';

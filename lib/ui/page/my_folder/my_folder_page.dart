@@ -23,179 +23,199 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-class MyFolderPage extends StatelessWidget {
+class MyFolderPage extends StatefulWidget {
   const MyFolderPage({super.key});
+
+  @override
+  State<MyFolderPage> createState() => _MyFolderPageState();
+}
+
+class _MyFolderPageState extends State<MyFolderPage>
+    with WidgetsBindingObserver {
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      Future.delayed(const Duration(milliseconds: 300), () {
+        context.read<GetFoldersCubit>().getFolders().then((value) {
+          setState(() {});
+        });
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
 
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider<FolderViewTypeCubit>(
-          create: (_) => FolderViewTypeCubit(),
-        ),
-        BlocProvider<GetFoldersCubit>(
-          create: (_) => GetFoldersCubit(),
-        ),
-      ],
-      child: BlocBuilder<FolderViewTypeCubit, FolderViewType>(
-        builder: (context, folderViewType) {
-          return GestureDetector(
-            onTap: () => FocusScope.of(context).unfocus(),
-            child: Stack(
-              children: [
-                Image.asset(
-                  'assets/images/my_folder_back.png',
-                  width: width,
-                  fit: BoxFit.fill,
-                ),
-                BlocBuilder<GetFoldersCubit, FoldersState>(
-                  builder: (getFolderContext, folderState) {
-                    return Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        BlocBuilder<GetProfileInfoCubit, ProfileState>(
-                          builder: (context, state) {
-                            if (state is ProfileLoadedState) {
-                              final profile = state.profile;
-                              return InkWell(
-                                onTap: () {
-                                  // FIXME Reload Image
-                                  context
-                                      .read<GetProfileInfoCubit>()
-                                      .loadProfileData();
-                                },
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Container(
-                                      width: 105,
-                                      height: 105,
-                                      margin: const EdgeInsetsDirectional.only(
-                                        top: 90,
-                                        bottom: 6,
-                                      ),
-                                      child: Image.asset(profile.profileImage),
+    return BlocBuilder<FolderViewTypeCubit, FolderViewType>(
+      builder: (context, folderViewType) {
+        return GestureDetector(
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: Stack(
+            children: [
+              Image.asset(
+                'assets/images/my_folder_back.png',
+                width: width,
+                fit: BoxFit.fill,
+              ),
+              BlocBuilder<GetFoldersCubit, FoldersState>(
+                builder: (getFolderContext, folderState) {
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      BlocBuilder<GetProfileInfoCubit, ProfileState>(
+                        builder: (context, state) {
+                          if (state is ProfileLoadedState) {
+                            final profile = state.profile;
+                            return InkWell(
+                              onTap: () {
+                                // FIXME Reload Image
+                                context
+                                    .read<GetProfileInfoCubit>()
+                                    .loadProfileData();
+                              },
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Container(
+                                    width: 105,
+                                    height: 105,
+                                    margin: const EdgeInsetsDirectional.only(
+                                      top: 90,
+                                      bottom: 6,
                                     ),
-                                    Text(
-                                      profile.nickname,
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 28,
-                                        color: Color(0xff0e0e0e),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            } else {
-                              return const SizedBox.shrink();
-                            }
-                          },
-                        ),
-                        Container(
-                          margin: const EdgeInsetsDirectional.only(
-                            top: 50,
-                            start: 20,
-                            end: 20,
-                            bottom: 6,
-                          ),
-                          child: Row(
-                            children: [
-                              Flexible(
-                                child: Container(
-                                  decoration: const BoxDecoration(
-                                    color: grey100,
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(7)),
+                                    child: Image.asset(profile.profileImage),
                                   ),
-                                  margin: const EdgeInsets.only(right: 6),
-                                  child: TextField(
-                                    textAlignVertical: TextAlignVertical.center,
-                                    cursorColor: grey800,
+                                  Text(
+                                    profile.nickname,
                                     style: const TextStyle(
-                                      color: grey800,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 28,
+                                      color: Color(0xff0e0e0e),
                                     ),
-                                    decoration: InputDecoration(
-                                      border: InputBorder.none,
-                                      focusedBorder: InputBorder.none,
-                                      isDense: true,
-                                      contentPadding:
-                                          const EdgeInsets.symmetric(
-                                        horizontal: 10,
-                                      ),
-                                      prefixIcon: Image.asset(
-                                        'assets/images/folder_search_icon.png',
-                                      ),
-                                    ),
-                                    onChanged: (value) {
-                                      context
-                                          .read<GetFoldersCubit>()
-                                          .filter(value);
-                                    },
                                   ),
-                                ),
+                                ],
                               ),
-                              InkWell(
-                                onTap: () => showAddFolderDialog(context),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(6),
-                                  child: SvgPicture.asset(
-                                    'assets/images/btn_add.svg',
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                            );
+                          } else {
+                            return const SizedBox.shrink();
+                          }
+                        },
+                      ),
+                      Container(
+                        margin: const EdgeInsetsDirectional.only(
+                          top: 50,
+                          start: 20,
+                          end: 20,
+                          bottom: 6,
                         ),
-                        Builder(
-                          builder: (context) {
-                            if (folderState is FolderLoadingState) {
-                              return const Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            } else if (folderState is FolderErrorState) {
-                              Log.e(folderState.props[0]);
-                              return const Center(
-                                child: Icon(Icons.close),
-                              );
-                            } else if (folderState is FolderLoadedState) {
-                              if (folderState.folders.isEmpty) {
-                                return const Expanded(
-                                  child: Center(
-                                    child: Text(
-                                      '등록된 폴더가 없습니다',
-                                      style: TextStyle(
-                                        color: grey300,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500,
-                                      ),
+                        child: Row(
+                          children: [
+                            Flexible(
+                              child: Container(
+                                decoration: const BoxDecoration(
+                                  color: grey100,
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(7)),
+                                ),
+                                margin: const EdgeInsets.only(right: 6),
+                                child: TextField(
+                                  textAlignVertical: TextAlignVertical.center,
+                                  cursorColor: grey800,
+                                  style: const TextStyle(
+                                    color: grey800,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                  decoration: InputDecoration(
+                                    border: InputBorder.none,
+                                    focusedBorder: InputBorder.none,
+                                    isDense: true,
+                                    contentPadding:
+                                        const EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                    ),
+                                    prefixIcon: Image.asset(
+                                      'assets/images/folder_search_icon.png',
                                     ),
                                   ),
-                                );
-                              } else {
-                                return buildListView(
-                                  folderState.folders,
-                                  context,
-                                );
-                              }
+                                  onChanged: (value) {
+                                    context
+                                        .read<GetFoldersCubit>()
+                                        .filter(value);
+                                  },
+                                ),
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () => showAddFolderDialog(context),
+                              child: Padding(
+                                padding: const EdgeInsets.all(6),
+                                child: SvgPicture.asset(
+                                  'assets/images/btn_add.svg',
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Builder(
+                        builder: (context) {
+                          if (folderState is FolderLoadingState) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          } else if (folderState is FolderErrorState) {
+                            Log.e(folderState.props[0]);
+                            return const Center(
+                              child: Icon(Icons.close),
+                            );
+                          } else if (folderState is FolderLoadedState) {
+                            if (folderState.folders.isEmpty) {
+                              return const Expanded(
+                                child: Center(
+                                  child: Text(
+                                    '등록된 폴더가 없습니다',
+                                    style: TextStyle(
+                                      color: grey300,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              );
                             } else {
-                              return const SizedBox.shrink();
+                              return buildListView(
+                                folderState.folders,
+                                context,
+                              );
                             }
-                          },
-                        ),
-                      ],
-                    );
-                  },
-                ),
-              ],
-            ),
-          );
-        },
-      ),
+                          } else {
+                            return const SizedBox.shrink();
+                          }
+                        },
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 

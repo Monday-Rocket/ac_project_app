@@ -1,13 +1,12 @@
-import 'package:ac_project_app/cubits/links/feed_data_state.dart';
 import 'package:ac_project_app/cubits/links/has_more_cubit.dart';
-import 'package:ac_project_app/models/feed/feed_data.dart';
+import 'package:ac_project_app/cubits/links/link_list_state.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/provider/api/folders/link_api.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class FeedViewCubit extends Cubit<FeedDataState> {
-  FeedViewCubit(List<Folder> folders) : super(FeedDataInitialState()) {
-    emit(FeedDataLoadingState());
+class FeedViewCubit extends Cubit<LinkListState> {
+  FeedViewCubit(List<Folder> folders) : super(LinkListInitialState()) {
+    emit(LinkListLoadingState());
     globalFolders.addAll(folders);
     if (folders.isNotEmpty) {
       getLinks(0, page);
@@ -28,27 +27,23 @@ class FeedViewCubit extends Cubit<FeedDataState> {
     final result = await linkApi.getLinksFromSelectedFolder(folder, pageNum);
     result.when(
       success: (data) {
-        emit(
-          FeedDataLoadedState(
-            FeedData(folders: globalFolders, links: data.contents ?? []),
-          ),
-        );
+        emit(LinkListLoadedState(data.contents ?? []));
       },
       error: (msg) {
-        emit(FeedDataErrorState(msg));
+        emit(LinkListErrorState(msg));
       },
     );
   }
 
   void loadMore() {
     if (hasMore.state == ScrollableType.can) {
-      emit(FeedDataLoadingState());
+      emit(LinkListLoadingState());
       getLinks(currentIndex, page + 1);
     }
   }
 
   void selectFolder(int index) {
-    emit(FeedDataLoadingState());
+    emit(LinkListLoadingState());
     getLinks(index, 0);
   }
 }
