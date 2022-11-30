@@ -4,7 +4,6 @@ import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/models/link/searched_links.dart';
 import 'package:ac_project_app/provider/api/folders/link_api.dart';
-import 'package:ac_project_app/util/logger.dart';
 import 'package:ac_project_app/util/page_utils.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -59,7 +58,6 @@ class LinksFromSelectedFolderCubit extends Cubit<LinkListState> {
   List<Link> _setScrollState(SearchedLinks data) {
     page = data.pageNum ?? 0;
     final hasPage = hasMorePage(data);
-    Log.i('hasPage: $hasPage');
     hasMore.emit(hasPage ? ScrollableType.can : ScrollableType.cannot);
 
     return data.contents ?? [];

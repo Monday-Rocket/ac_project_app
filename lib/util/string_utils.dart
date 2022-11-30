@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:ac_project_app/models/link/link.dart';
-import 'package:ac_project_app/util/logger.dart';
 import 'package:intl/intl.dart';
 
 Object toEncodableFallback(dynamic object) {
@@ -38,7 +37,6 @@ String makeLinkTimeString(String timeString) {
   } else {
     final now = DateTime.now().toUtc();
     final duration = now.difference(time);
-    Log.i('duration: $duration, now: $now, time: $time');
 
     if (duration.compareTo(const Duration(hours: 1)) < 0) {
       return '${duration.inMinutes}분 전';
