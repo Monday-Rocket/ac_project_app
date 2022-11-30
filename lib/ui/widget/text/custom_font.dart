@@ -37,18 +37,6 @@ extension Bold on Text {
   }
 }
 
-extension Pretendard on Text {
-  Text pretendard() {
-    final curStyle = style == null ? const TextStyle() : style!;
-    return Text(
-      data ?? '',
-      style: curStyle.copyWith(
-        fontFamily: 'Pretendard',
-      ),
-    );
-  }
-}
-
 extension Roboto on Text {
   Text roboto() {
     final curStyle = style == null ? const TextStyle() : style!;

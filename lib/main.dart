@@ -4,6 +4,7 @@ import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/initial_settings.dart';
 import 'package:ac_project_app/provider/share_db.dart';
+import 'package:ac_project_app/resource.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -33,7 +34,7 @@ class MultiPlatformApp {
         onGenerateRoute: Pages.getPages,
         themeMode: ThemeMode.light,
         theme: ThemeData(
-          fontFamily: 'Pretendard',
+          fontFamily: R_Font.PRETENDARD,
           brightness: Brightness.light,
           progressIndicatorTheme: const ProgressIndicatorThemeData(
             color: primary600,

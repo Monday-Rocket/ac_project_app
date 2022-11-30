@@ -87,7 +87,6 @@ class SignUpNicknameView extends StatelessWidget {
     return const Text(
       '안녕하세요\n프로필을 만들어볼까요?',
       style: TextStyle(
-        fontFamily: 'Pretendard',
         fontSize: 24,
         fontWeight: FontWeight.bold,
       ),

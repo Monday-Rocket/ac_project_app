@@ -7,6 +7,7 @@ import 'package:ac_project_app/cubits/home/topic_list_state.dart';
 import 'package:ac_project_app/cubits/links/links_from_selected_job_group_cubit.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/models/user/detail_user.dart';
+import 'package:ac_project_app/resource.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/bottom_dialog.dart';
 import 'package:ac_project_app/util/string_utils.dart';
@@ -371,13 +372,13 @@ class HomePage extends StatelessWidget {
                       unselectedLabelColor: grey700,
                       labelColor: primaryTab,
                       labelStyle: const TextStyle(
-                        fontFamily: 'Pretendard',
+                        fontFamily: R_Font.PRETENDARD,
                         fontSize: 16,
                         height: 19 / 16,
                         fontWeight: FontWeight.w800,
                       ),
                       unselectedLabelStyle: const TextStyle(
-                        fontFamily: 'Pretendard',
+                        fontFamily: R_Font.PRETENDARD,
                         fontSize: 16,
                         height: 19 / 16,
                         fontWeight: FontWeight.bold,

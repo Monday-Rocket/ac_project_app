@@ -266,9 +266,9 @@ class MyPage extends StatelessWidget {
                 menuName,
                 style: TextStyle(
                   color: color,
-                  fontFamily: R_Font.PRETENDARD,
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
+                  letterSpacing: -0.2,
                 ),
               ),
               if (arrow) const Icon(Icons.arrow_forward_ios_rounded, size: 16),

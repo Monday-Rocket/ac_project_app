@@ -5,6 +5,7 @@ import 'package:ac_project_app/provider/api/user/user_api.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class SplashView extends StatefulWidget {
@@ -84,23 +85,39 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
+    final devicePixelRatio = MediaQuery.of(context).devicePixelRatio;
+    final distance = (height / 3) / devicePixelRatio;
+    print(devicePixelRatio);
+
+    //Setting SysemUIOverlay
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        systemStatusBarContrastEnforced: true,
+        systemNavigationBarColor: Colors.transparent,
+        systemNavigationBarDividerColor: Colors.transparent,
+      ),
+    );
+
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge,
+        overlays: [SystemUiOverlay.top]);
 
     return Scaffold(
       backgroundColor: splashColor,
       body: Stack(
         children: [
-          buildWhiteIcon(),
+          buildWhiteIcon(distance),
           buildBottomWave(width),
-          buildWhiteAppName(),
+          buildWhiteAppName(distance),
         ],
       ),
     );
   }
 
-  Center buildWhiteAppName() {
+  Center buildWhiteAppName(double distance) {
     return Center(
       child: Container(
-        margin: const EdgeInsets.only(top: 80),
+        margin: EdgeInsets.only(top: 80),
         child: SlideTransition(
           position: Tween<Offset>(
             begin: const Offset(0, 0.3),
@@ -126,17 +143,17 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
         opacity: secondAnimationController,
         child: Image.asset(
           'assets/images/wave_back.png',
-          fit: BoxFit.contain,
+          fit: BoxFit.cover,
           width: width,
         ),
       ),
     );
   }
 
-  Center buildWhiteIcon() {
+  Center buildWhiteIcon(double distance) {
     return Center(
       child: Container(
-        margin: const EdgeInsets.only(bottom: 80),
+        margin: EdgeInsets.only(bottom: 80),
         child: SlideTransition(
           position: Tween<Offset>(
             begin: const Offset(0, -0.3),

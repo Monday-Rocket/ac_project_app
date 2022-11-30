@@ -4,6 +4,7 @@ import 'package:ac_project_app/cubits/links/link_list_state.dart';
 import 'package:ac_project_app/cubits/links/links_from_selected_folder_cubit.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/link/link.dart';
+import 'package:ac_project_app/resource.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/util/get_widget_arguments.dart';
 import 'package:ac_project_app/util/number_commas.dart';
@@ -239,13 +240,13 @@ class MyLinkPage extends StatelessWidget {
                       unselectedLabelColor: grey700,
                       labelColor: primaryTab,
                       labelStyle: const TextStyle(
-                        fontFamily: 'Pretendard',
+                        fontFamily: R_Font.PRETENDARD,
                         fontSize: 16,
                         height: 19 / 16,
                         fontWeight: FontWeight.w800,
                       ),
                       unselectedLabelStyle: const TextStyle(
-                        fontFamily: 'Pretendard',
+                        fontFamily: R_Font.PRETENDARD,
                         fontSize: 16,
                         height: 19 / 16,
                         fontWeight: FontWeight.bold,

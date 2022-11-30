@@ -58,7 +58,6 @@ class SignUpJobView extends StatelessWidget {
                         Text(
                           '$nickname님의\n직업을 선택해주세요',
                           style: const TextStyle(
-                            fontFamily: 'Pretendard',
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
                           ),
@@ -82,7 +81,6 @@ class SignUpJobView extends StatelessWidget {
                       child: const Text(
                         '가입완료',
                         style: TextStyle(
-                          fontFamily: 'Pretendard',
                           fontSize: 17,
                           fontWeight: FontWeight.bold,
                         ),
