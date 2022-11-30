@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:ac_project_app/const/colors.dart';
-import 'package:ac_project_app/provider/api/folders/folder_api.dart';
 import 'package:ac_project_app/provider/api/user/user_api.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -29,6 +28,8 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
           result.when(
             success: (data) {
               if (data.is_new ?? false) {
+                Navigator.pushReplacementNamed(context, Routes.login);
+              } else {
                 Navigator.pushReplacementNamed(
                   context,
                   Routes.home,
@@ -36,8 +37,6 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
                     'index': 0,
                   },
                 );
-              } else {
-                Navigator.pushReplacementNamed(context, Routes.login);
               }
             },
             error: (_) => unawaited(

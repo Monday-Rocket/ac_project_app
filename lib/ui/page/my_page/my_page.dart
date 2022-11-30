@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class LinkArguments {
   LinkArguments({required this.link});
@@ -207,20 +208,12 @@ class MyPage extends StatelessWidget {
           switch (menuName) {
             case '이용 약관':
               {
-                Navigator.pushNamed(
-                  context,
-                  Routes.termPage,
-                  arguments: LinkArguments(link: 'https://spot-harpymimus-46b.notion.site/LINKPOOL-f0c6fd16eecf4c8c96bb317421ecc174'),
-                );
+                launchUrl(Uri.parse('https://spot-harpymimus-46b.notion.site/LINKPOOL-f0c6fd16eecf4c8c96bb317421ecc174'), mode: LaunchMode.externalApplication);
                 break;
               }
             case '도움말':
               {
-                Navigator.pushNamed(
-                  context,
-                  Routes.termPage,
-                  arguments: LinkArguments(link: 'https://spot-harpymimus-46b.notion.site/LINKPOOL-cf1f4d836d764b889a68f79d989cd624'),
-                );
+                launchUrl(Uri.parse('https://spot-harpymimus-46b.notion.site/LINKPOOL-cf1f4d836d764b889a68f79d989cd624'), mode: LaunchMode.externalApplication);
                 break;
               }
             case '로그아웃':

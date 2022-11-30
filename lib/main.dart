@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/initial_settings.dart';
 import 'package:ac_project_app/provider/share_db.dart';
@@ -34,6 +35,9 @@ class MultiPlatformApp {
         theme: ThemeData(
           fontFamily: 'Pretendard',
           brightness: Brightness.light,
+          progressIndicatorTheme: const ProgressIndicatorThemeData(
+            color: primary600,
+          ),
         ),
       ),
     );

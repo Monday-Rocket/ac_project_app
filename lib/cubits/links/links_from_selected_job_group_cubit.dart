@@ -29,6 +29,8 @@ class LinksFromSelectedJobGroupCubit extends Cubit<List<Link>> {
     );
   }
 
+  Future<void> refresh() => getSelectedJobLinks(selectedJobId, 0);
+
   void loadMore() {
     if (hasMore.state == ScrollableType.can) {
       getSelectedJobLinks(selectedJobId, page + 1);

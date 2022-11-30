@@ -317,11 +317,16 @@ class MyLinkPage extends StatelessWidget {
                       'link': link,
                       'isMine': true,
                     },
-                  ).then((value) {
-                    totalLinks.clear();
-                    context
-                        .read<LinksFromSelectedFolderCubit>()
-                        .getSelectedLinks(folder, 0);
+                  ).then((result) {
+                    if (result == 'deleted') {
+                      Navigator.pop(context);
+                    } else {
+                      // update
+                      totalLinks.clear();
+                      context
+                          .read<LinksFromSelectedFolderCubit>()
+                          .getSelectedLinks(folder, 0);
+                    }
                   });
                 },
                 child: Container(

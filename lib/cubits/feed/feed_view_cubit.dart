@@ -35,6 +35,20 @@ class FeedViewCubit extends Cubit<LinkListState> {
     );
   }
 
+  Future<void> refresh() async {
+    emit(LinkListLoadingState());
+    final folder = globalFolders[currentIndex];
+    final result = await linkApi.getLinksFromSelectedFolder(folder, 0);
+    result.when(
+      success: (data) {
+        emit(LinkListLoadedState(data.contents ?? []));
+      },
+      error: (msg) {
+        emit(LinkListErrorState(msg));
+      },
+    );
+  }
+
   void loadMore() {
     if (hasMore.state == ScrollableType.can) {
       emit(LinkListLoadingState());

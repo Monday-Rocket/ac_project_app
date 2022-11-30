@@ -1,8 +1,11 @@
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/folders/folder_view_type_cubit.dart';
 import 'package:ac_project_app/cubits/folders/get_my_folders_cubit.dart';
+import 'package:ac_project_app/cubits/folders/get_user_folders_cubit.dart';
+import 'package:ac_project_app/cubits/home/get_job_list_cubit.dart';
 import 'package:ac_project_app/cubits/home_second_view_cubit.dart';
 import 'package:ac_project_app/cubits/home_view_cubit.dart';
+import 'package:ac_project_app/cubits/links/links_from_selected_job_group_cubit.dart';
 import 'package:ac_project_app/provider/api/folders/folder_api.dart';
 import 'package:ac_project_app/ui/page/home/home_page.dart';
 import 'package:ac_project_app/ui/page/my_folder/my_folder_page.dart';
@@ -101,7 +104,20 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
                 body: IndexedStack(
                   index: index,
                   children: <Widget>[
-                    const HomePage(),
+                    MultiBlocProvider(
+                      providers: [
+                        BlocProvider(
+                          create: (_) => GetJobListCubit(),
+                        ),
+                        BlocProvider(
+                          create: (_) => LinksFromSelectedJobGroupCubit(),
+                        ),
+                        BlocProvider(
+                          create: (_) => GetUserFoldersCubit(),
+                        ),
+                      ],
+                      child: const HomePage(),
+                    ),
                     const UploadPage(),
                     MultiBlocProvider(
                       providers: [

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/feed/feed_view_cubit.dart';
 import 'package:ac_project_app/cubits/folders/get_user_folders_cubit.dart';
@@ -213,7 +215,7 @@ class UserFeedView extends StatelessWidget {
   Widget buildListBody(
     BuildContext parentContext,
     List<Link> totalLinks,
-      DetailUser user,
+    DetailUser user,
   ) {
     final width = MediaQuery.of(parentContext).size.width;
     return Builder(
@@ -227,224 +229,236 @@ class UserFeedView extends StatelessWidget {
               }
               return true;
             },
-            child: ListView.separated(
-              itemCount: totalLinks.length,
-              physics: const AlwaysScrollableScrollPhysics(),
-              itemBuilder: (_, i) {
-                final link = totalLinks[i];
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.pushNamed(
-                      context,
-                      Routes.linkDetail,
-                      arguments: {
-                        'link': link,
-                      },
-                    );
-                  },
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(
-                      vertical: 20,
-                      horizontal: 24,
-                    ),
-                    color: Colors.white,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        GestureDetector(
-                          onTap: () async => Navigator.of(context).pushNamed(
-                            Routes.userFeed,
-                            arguments: {
-                              'user': user,
-                              'folders': await context
-                                  .read<GetUserFoldersCubit>()
-                                  .getFolders(user.id!)
-                            },
-                          ),
-                          child: Row(
-                            children: [
-                              Image.asset(
-                                makeImagePath(user.profileImg),
-                                width: 32,
-                                height: 32,
-                                errorBuilder: (_, __, ___) {
-                                  return Container(
-                                    width: 32,
-                                    height: 32,
-                                    decoration: const BoxDecoration(
-                                      color: grey300,
-                                      shape: BoxShape.circle,
-                                    ),
-                                  );
-                                },
-                              ),
-                              const SizedBox(
-                                width: 8,
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Text(
-                                        user.nickname,
-                                        style: const TextStyle(
-                                          color: grey900,
-                                          fontWeight: FontWeight.w500,
-                                        ),
+            child: RefreshIndicator(
+              onRefresh: () => refresh(context, totalLinks),
+              color: primary600,
+              child: ListView.separated(
+                itemCount: totalLinks.length,
+                physics: const AlwaysScrollableScrollPhysics(),
+                itemBuilder: (_, i) {
+                  final link = totalLinks[i];
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        Routes.linkDetail,
+                        arguments: {
+                          'link': link,
+                        },
+                      );
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(
+                        vertical: 20,
+                        horizontal: 24,
+                      ),
+                      color: Colors.white,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          GestureDetector(
+                            onTap: () async => Navigator.of(context).pushNamed(
+                              Routes.userFeed,
+                              arguments: {
+                                'user': user,
+                                'folders': await context
+                                    .read<GetUserFoldersCubit>()
+                                    .getFolders(user.id!)
+                              },
+                            ),
+                            child: Row(
+                              children: [
+                                Image.asset(
+                                  makeImagePath(user.profileImg),
+                                  width: 32,
+                                  height: 32,
+                                  errorBuilder: (_, __, ___) {
+                                    return Container(
+                                      width: 32,
+                                      height: 32,
+                                      decoration: const BoxDecoration(
+                                        color: grey300,
+                                        shape: BoxShape.circle,
                                       ),
-                                      Container(
-                                        margin: const EdgeInsets.only(
-                                          left: 4,
-                                        ),
-                                        decoration: const BoxDecoration(
-                                          color: primary200,
-                                          borderRadius: BorderRadius.all(
-                                            Radius.circular(4),
+                                    );
+                                  },
+                                ),
+                                const SizedBox(
+                                  width: 8,
+                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Text(
+                                          user.nickname,
+                                          style: const TextStyle(
+                                            color: grey900,
+                                            fontWeight: FontWeight.w500,
                                           ),
                                         ),
-                                        child: Center(
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                              vertical: 3,
-                                              horizontal: 4,
+                                        Container(
+                                          margin: const EdgeInsets.only(
+                                            left: 4,
+                                          ),
+                                          decoration: const BoxDecoration(
+                                            color: primary200,
+                                            borderRadius: BorderRadius.all(
+                                              Radius.circular(4),
                                             ),
-                                            child: Text(
-                                              user.jobGroup?.name ?? '',
-                                              style: const TextStyle(
-                                                color: primary600,
-                                                fontSize: 10,
-                                                letterSpacing: -0.2,
+                                          ),
+                                          child: Center(
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                vertical: 3,
+                                                horizontal: 4,
+                                              ),
+                                              child: Text(
+                                                user.jobGroup?.name ?? '',
+                                                style: const TextStyle(
+                                                  color: primary600,
+                                                  fontSize: 10,
+                                                  letterSpacing: -0.2,
+                                                ),
                                               ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  Container(
-                                    margin: const EdgeInsets.only(top: 4),
-                                    child: Text(
-                                      link.time ?? '',
-                                      style: const TextStyle(
-                                        color: grey400,
-                                        fontSize: 12,
-                                        letterSpacing: -0.2,
-                                      ),
+                                      ],
                                     ),
-                                  ),
-                                ],
-                              )
-                            ],
-                          ),
-                        ),
-                        if (link.describe != null ||
-                            (link.describe?.isNotEmpty ?? false))
-                          Column(
-                            children: [
-                              const SizedBox(
-                                height: 17,
-                              ),
-                              Text(
-                                link.describe ?? '',
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  color: grey800,
-                                  height: 26 / 16,
-                                ),
-                              ),
-                            ],
-                          )
-                        else
-                          const SizedBox.shrink(),
-                        Container(
-                          margin: const EdgeInsets.only(
-                            top: 16,
-                            bottom: 18,
-                          ),
-                          child: ClipRRect(
-                            borderRadius: const BorderRadius.all(
-                              Radius.circular(7),
-                            ),
-                            child: isLinkVerified(link)
-                                ? Container(
-                                    constraints: const BoxConstraints(
-                                      minWidth: double.infinity,
-                                    ),
-                                    color: grey100,
-                                    child: CachedNetworkImage(
-                                      imageUrl: link.image ?? '',
-                                      imageBuilder: (context, imageProvider) =>
-                                          Container(
-                                        height: 160,
-                                        decoration: BoxDecoration(
-                                          image: DecorationImage(
-                                            image: imageProvider,
-                                            fit: BoxFit.cover,
-                                          ),
+                                    Container(
+                                      margin: const EdgeInsets.only(top: 4),
+                                      child: Text(
+                                        link.time ?? '',
+                                        style: const TextStyle(
+                                          color: grey400,
+                                          fontSize: 12,
+                                          letterSpacing: -0.2,
                                         ),
                                       ),
-                                      errorWidget: (_, __, ___) {
-                                        return const SizedBox();
-                                      },
                                     ),
-                                  )
-                                : const SizedBox(),
+                                  ],
+                                )
+                              ],
+                            ),
                           ),
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          if (link.describe != null ||
+                              (link.describe?.isNotEmpty ?? false))
+                            Column(
                               children: [
-                                SizedBox(
-                                  width: width - (24 * 2 + 25),
-                                  child: Text(
-                                    link.title ?? '',
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                      color: blackBold,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                    ),
-                                  ),
+                                const SizedBox(
+                                  height: 17,
                                 ),
-                                InkWell(
-                                  onTap: () => showLinkOptionsDialog(
-                                    link,
-                                    parentContext,
-                                  ),
-                                  child: SvgPicture.asset(
-                                    'assets/images/more_vert.svg',
+                                Text(
+                                  link.describe ?? '',
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    color: grey800,
+                                    height: 26 / 16,
                                   ),
                                 ),
                               ],
+                            )
+                          else
+                            const SizedBox.shrink(),
+                          Container(
+                            margin: const EdgeInsets.only(
+                              top: 16,
+                              bottom: 18,
                             ),
-                            Text(
-                              link.url ?? '',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                color: grey500,
-                                fontSize: 12,
+                            child: ClipRRect(
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(7),
                               ),
+                              child: isLinkVerified(link)
+                                  ? Container(
+                                      constraints: const BoxConstraints(
+                                        minWidth: double.infinity,
+                                      ),
+                                      color: grey100,
+                                      child: CachedNetworkImage(
+                                        imageUrl: link.image ?? '',
+                                        imageBuilder:
+                                            (context, imageProvider) =>
+                                                Container(
+                                          height: 160,
+                                          decoration: BoxDecoration(
+                                            image: DecorationImage(
+                                              image: imageProvider,
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        ),
+                                        errorWidget: (_, __, ___) {
+                                          return const SizedBox();
+                                        },
+                                      ),
+                                    )
+                                  : const SizedBox(),
                             ),
-                          ],
-                        ),
-                      ],
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  SizedBox(
+                                    width: width - (24 * 2 + 25),
+                                    child: Text(
+                                      link.title ?? '',
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        color: blackBold,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
+                                  InkWell(
+                                    onTap: () => showLinkOptionsDialog(
+                                      link,
+                                      parentContext,
+                                    ),
+                                    child: SvgPicture.asset(
+                                      'assets/images/more_vert.svg',
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Text(
+                                link.url ?? '',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  color: grey500,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              },
-              separatorBuilder: (_, __) => const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24),
-                child: Divider(height: 1, color: grey900),
+                  );
+                },
+                separatorBuilder: (_, __) => const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24),
+                  child: Divider(height: 1, color: grey900),
+                ),
               ),
             ),
           ),
         );
       },
     );
+  }
+
+  Future<void> refresh(BuildContext context, List<Link> totalLinks) async {
+    totalLinks.clear();
+    unawaited(context.read<FeedViewCubit>().refresh());
   }
 }

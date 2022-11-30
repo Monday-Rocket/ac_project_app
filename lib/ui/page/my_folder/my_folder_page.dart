@@ -47,7 +47,7 @@ class _MyFolderPageState extends State<MyFolderPage>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
+    if (state == AppLifecycleState.resumed || state == AppLifecycleState.detached) {
       Future.delayed(const Duration(milliseconds: 300), () {
         context.read<GetFoldersCubit>().getFolders().then((value) {
           setState(() {});
@@ -219,6 +219,21 @@ class _MyFolderPageState extends State<MyFolderPage>
     );
   }
 
+  void moveToMyLinksView(BuildContext context, List<Folder> folders, int index) {
+    Navigator.pushNamed(
+      context,
+      Routes.myLinks,
+      arguments: {
+        'folders': folders,
+        'tabIndex': index,
+      },
+    ).then((result) {
+      context.read<GetFoldersCubit>().getFolders().then((value) {
+        setState(() {});
+      });
+    });
+  }
+
   Widget buildListView(List<Folder> folders, BuildContext context) {
     return Expanded(
       child: Container(
@@ -239,14 +254,7 @@ class _MyFolderPageState extends State<MyFolderPage>
               key: Key('$index'),
               title: InkWell(
                 onTap: () {
-                  Navigator.pushNamed(
-                    context,
-                    Routes.myLinks,
-                    arguments: {
-                      'folders': folders,
-                      'tabIndex': index,
-                    },
-                  );
+                  moveToMyLinksView(context, folders, index);
                 },
                 child: Container(
                   margin:
@@ -623,14 +631,7 @@ class _MyFolderPageState extends State<MyFolderPage>
 
       parentContext.read<GetFoldersCubit>().getFolders().then((_) {
         final folders = parentContext.read<GetFoldersCubit>().folders;
-        Navigator.pushNamed(
-          parentContext,
-          Routes.myLinks,
-          arguments: {
-            'folders': folders,
-            'tabIndex': folders.length - 1,
-          },
-        );
+        moveToMyLinksView(parentContext, folders, folders.length - 1);
       });
     });
   }
