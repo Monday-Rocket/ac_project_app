@@ -7,14 +7,17 @@ import 'package:ac_project_app/const/strings.dart';
 import 'package:ac_project_app/cubits/login/login_cubit.dart';
 import 'package:ac_project_app/cubits/login/login_type.dart';
 import 'package:ac_project_app/cubits/login/user_state.dart';
-import 'package:ac_project_app/models/user/user.dart';
+import 'package:ac_project_app/models/user/user.dart' as custom;
+import 'package:ac_project_app/provider/api/folders/folder_api.dart';
 import 'package:ac_project_app/provider/api/user/user_api.dart';
 import 'package:ac_project_app/provider/login/email_login.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/text/custom_font.dart';
 import 'package:ac_project_app/util/logger.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -27,8 +30,6 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> with WidgetsBindingObserver {
-  PendingDynamicLinkData? initialLink;
-
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -62,23 +63,62 @@ class _LoginViewState extends State<LoginView> with WidgetsBindingObserver {
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
-    initDynamicLinks();
     super.initState();
+    Future.delayed(const Duration(milliseconds: 300), () {
+      retrieveDynamicLinkAndSignIn(fromColdState: true);
+    });
   }
 
-  Future<void> initDynamicLinks() async {
-    FirebaseDynamicLinks.instance.onLink.listen(
-      (dynamicLink) {
-        final deepLink = dynamicLink.link;
-        _handleLink(deepLink);
-      },
-      onError: (e) async {
-        Log.e('onLinkError');
-      },
-    );
-    final data = await FirebaseDynamicLinks.instance.getInitialLink();
-    final deepLink = data?.link;
-    Log.i('deepLink: $deepLink');
+  @override
+  Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        Log.d('resumed');
+        unawaited(retrieveDynamicLinkAndSignIn(fromColdState: false));
+        break;
+      case AppLifecycleState.paused:
+        Log.d('paused');
+        break;
+      case AppLifecycleState.inactive:
+        Log.d('inactive');
+        break;
+      case AppLifecycleState.detached:
+        Log.d('detached');
+        break;
+    }
+  }
+
+  Future<bool> retrieveDynamicLinkAndSignIn({
+    required bool fromColdState,
+  }) async {
+    PendingDynamicLinkData? dynamicLinkData;
+    Uri? deepLink;
+
+    if (fromColdState) {
+      dynamicLinkData = await FirebaseDynamicLinks.instance.getInitialLink();
+      unawaited(Fluttertoast.showToast(
+          msg: 'init dynamicLinkData is null?: ${dynamicLinkData == null}'));
+      if (dynamicLinkData != null) {
+        deepLink = dynamicLinkData.link;
+      }
+    } else {
+      dynamicLinkData = await FirebaseDynamicLinks.instance.onLink.first;
+      deepLink = dynamicLinkData.link;
+    }
+
+    if (deepLink == null) {
+      return false;
+    }
+
+    final validLink =
+        FirebaseAuth.instance.isSignInWithEmailLink(deepLink.toString());
+
+    if (validLink) {
+      final continueUrl = deepLink.queryParameters['continueUrl'] ?? '';
+      final email = Uri.parse(continueUrl).queryParameters['email'] ?? '';
+      _handleLink(email, deepLink.toString());
+    }
+    return false;
   }
 
   @override
@@ -87,20 +127,32 @@ class _LoginViewState extends State<LoginView> with WidgetsBindingObserver {
     super.dispose();
   }
 
-  Future<void> _handleLink(Uri link) async {
-    final result = await Email.login('ts4840644804@gmail.com', link.toString());
-    if (result) {
-      final user = await UserApi().postUsers();
+  void _handleLink(String email, String link) {
+    Email.login(email, link).then((isSuccess) async {
+      if (isSuccess) {
+        final user = await UserApi().postUsers();
+        final folderApi = FolderApi();
 
-      user.when(
-        success: (data) {
-          _moveToSignUpPage(context, data);
-        },
-        error: (msg) {
-          Log.e('로그인 에러');
-        },
-      );
-    }
+        user.when(
+          success: (data) {
+            folderApi.bulkSave().then(
+                  (_) => unawaited(
+                    Navigator.pushReplacementNamed(
+                      context,
+                      Routes.home,
+                      arguments: {'index': 0},
+                    ),
+                  ),
+                );
+          },
+          error: (msg) {
+            Log.e('login fail');
+          },
+        );
+      } else {
+        Log.e('login fail');
+      }
+    });
   }
 
   void showErrorBanner(BuildContext context) {
@@ -114,7 +166,7 @@ class _LoginViewState extends State<LoginView> with WidgetsBindingObserver {
     );
   }
 
-  Future<void> _moveToSignUpPage(BuildContext context, User user) async {
+  Future<void> _moveToSignUpPage(BuildContext context, custom.User user) async {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (user.is_new ?? false) {
         // 1. 서비스 이용 동의
@@ -144,7 +196,10 @@ class _LoginViewState extends State<LoginView> with WidgetsBindingObserver {
     });
   }
 
-  Future<bool?> getServiceApproval(BuildContext context, User user) async {
+  Future<bool?> getServiceApproval(
+    BuildContext context,
+    custom.User user,
+  ) async {
     return showModalBottomSheet<bool?>(
       backgroundColor: Colors.transparent,
       context: context,

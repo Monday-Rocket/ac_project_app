@@ -25,15 +25,17 @@ dependencies:
   equatable: ^2.0.5
 
   ## login
-  sign_in_with_apple: ^4.1.0
-  google_sign_in: ^5.4.1
+  sign_in_with_apple: ^4.2.0
+  google_sign_in: ^5.4.2
+  firebase_core: ^2.3.0
   firebase_auth: ^4.1.4
   firebase_dynamic_links: ^5.0.6
+  uni_links: ^0.5.1
 
   ## Utils
   very_good_analysis: ^3.0.1
   metadata_fetch: ^0.4.1
-  permission_handler: ^10.0.2
+  permission_handler: ^10.2.0
   flutter_dotenv: ^5.0.2
   logger: ^1.1.0
   path_provider: ^2.0.11
