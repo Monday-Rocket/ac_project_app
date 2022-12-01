@@ -77,4 +77,23 @@ class FolderSaveSuccessViewController: UIViewController {
     })
   }
   
+  @IBAction func goToApp(_ sender: Any) {
+    self.hideExtensionWithCompletionHandler()
+    let urlString = "linkpool://com.mr.acProjectApp"
+    
+    let url = URL(string: urlString)
+    _ = openURL(url!)
+  }
+  
+  @objc func openURL(_ url: URL) -> Bool {
+    var responder: UIResponder? = self
+    
+    while responder != nil {
+      if let application = responder as? UIApplication {
+        return application.perform(#selector(openURL(_:)), with: url) != nil
+      }
+      responder = responder?.next
+    }
+    return false
+  }
 }

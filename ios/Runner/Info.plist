@@ -44,10 +44,20 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string></string>
+			<string>com.mr.acProjectApp</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>com.mr.acProjectApp</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.mr.acProjectApp</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>linkpool</string>
 			</array>
 		</dict>
 	</array>

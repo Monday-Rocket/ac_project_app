@@ -550,6 +550,9 @@
                                                     <fontDescription key="titleFontDescription" name="Pretendard-Bold" family="Pretendard" pointSize="16"/>
                                                     <color key="baseBackgroundColor" red="0.4039215686" green="0.0" blue="0.91764705879999997" alpha="1" colorSpace="calibratedRGB"/>
                                                 </buttonConfiguration>
+                                                <connections>
+                                                    <action selector="goToApp:" destination="X46-ny-z55" eventType="touchDown" id="3FD-U8-Mio"/>
+                                                </connections>
                                             </button>
                                         </subviews>
                                         <constraints>
