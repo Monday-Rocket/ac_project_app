@@ -133,9 +133,7 @@ class _EmailSignUpViewState extends State<EmailSignUpView>
           margin: EdgeInsets.only(
             left: 24,
             right: 24,
-            bottom: MediaQueryData.fromWindow(WidgetsBinding.instance.window)
-                .padding
-                .bottom,
+            bottom: getBottomMargin(),
           ),
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -160,6 +158,14 @@ class _EmailSignUpViewState extends State<EmailSignUpView>
         ),
       ),
     );
+  }
+
+  double getBottomMargin() {
+    final defaultHeight = MediaQueryData.fromWindow(WidgetsBinding.instance.window)
+              .padding
+              .bottom;
+
+    return defaultHeight < 37 ? 37 : defaultHeight;
   }
 
   @override

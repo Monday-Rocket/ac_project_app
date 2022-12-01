@@ -4,9 +4,12 @@ import 'package:ac_project_app/util/logger.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Email {
   static Future<bool> login(String email, String emailLink) async {
+    final prefs = await SharedPreferences.getInstance();
+    unawaited(prefs.setString('loginType', 'email'));
     final userCredential = await FirebaseAuth.instance.signInWithEmailLink(
       email: email,
       emailLink: emailLink,

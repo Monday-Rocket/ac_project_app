@@ -15,38 +15,31 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-class LoginView extends StatefulWidget {
+class LoginView extends StatelessWidget {
   const LoginView({super.key});
 
-  @override
-  State<LoginView> createState() => _LoginViewState();
-}
-
-class _LoginViewState extends State<LoginView> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => LoginCubit(),
       child: Scaffold(
-        body: SafeArea(
-          child: Center(
-            child: BlocBuilder<LoginCubit, UserState>(
-              builder: (loginContext, state) {
-                if (state is LoadingState) {
-                  return const CircularProgressIndicator();
-                } else if (state is ErrorState) {
-                  showErrorBanner(loginContext);
-                } else if (state is LoadedState) {
-                  moveToNext(loginContext, state.user);
-                }
-                return Column(
-                  children: [
-                    buildAppImage(),
-                    buildLoginButtons(loginContext),
-                  ],
-                );
-              },
-            ),
+        body: Center(
+          child: BlocBuilder<LoginCubit, UserState>(
+            builder: (loginContext, state) {
+              if (state is LoadingState) {
+                return const CircularProgressIndicator();
+              } else if (state is ErrorState) {
+                showErrorBanner(loginContext);
+              } else if (state is LoadedState) {
+                moveToNext(context, loginContext, state.user);
+              }
+              return Column(
+                children: [
+                  buildAppImage(),
+                  buildLoginButtons(loginContext),
+                ],
+              );
+            },
           ),
         ),
       ),
@@ -64,26 +57,24 @@ class _LoginViewState extends State<LoginView> with WidgetsBindingObserver {
     );
   }
 
-  Future<void> moveToNext(BuildContext context, custom.User user) async {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
+  Future<void> moveToNext(BuildContext parentContext, BuildContext context, custom.User user) async {
+    Future.delayed(const Duration(milliseconds: 1000), () {
       if (user.is_new ?? false) {
         // 1. 서비스 이용 동의
         // 2. 가입 화면으로 이동
-        unawaited(
-          getServiceApproval(context, user).then((result) {
-            if (result != true) {
-              // 초기화
-              context.read<LoginCubit>().initialize();
-            } else {
-              // 회원가입 이동
-              unawaited(Navigator.pushNamed(context, Routes.signUpNickname));
-            }
-          }),
-        );
+        getServiceApproval(parentContext, user).then((result) {
+          if (result != true) {
+            // 초기화
+            context.read<LoginCubit>().initialize();
+          } else {
+            // 회원가입 이동
+            unawaited(Navigator.pushNamed(parentContext, Routes.signUpNickname));
+          }
+        });
       } else {
         unawaited(
           Navigator.pushReplacementNamed(
-            context,
+            parentContext,
             Routes.home,
             arguments: {
               'index': 0,
@@ -592,6 +583,7 @@ class _LoginViewState extends State<LoginView> with WidgetsBindingObserver {
                       style: TextStyle(
                         fontSize: 15,
                         color: greyLoginText,
+                        letterSpacing: -0.1,
                       ),
                     ).bold().roboto(),
                   ),
@@ -600,6 +592,7 @@ class _LoginViewState extends State<LoginView> with WidgetsBindingObserver {
                     style: TextStyle(
                       fontSize: 15,
                       color: greyLoginText,
+                      letterSpacing: -0.1,
                     ),
                   ).bold(),
                 ],
@@ -637,16 +630,18 @@ class _LoginViewState extends State<LoginView> with WidgetsBindingObserver {
                     child: const Text(
                       'Apple',
                       style: TextStyle(
-                        fontSize: 20,
+                        fontSize: 15,
                         color: Colors.white,
+                        letterSpacing: -0.1,
                       ),
                     ).bold().roboto(),
                   ),
                   const Text(
                     '로 로그인',
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: 15,
                       color: Colors.white,
+                      letterSpacing: -0.1,
                     ),
                   ).bold(),
                 ],

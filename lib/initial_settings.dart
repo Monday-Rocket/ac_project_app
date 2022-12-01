@@ -23,5 +23,4 @@ Future<void> initSettings() async {
   } else {
     Firebase.app();
   }
-  WidgetsFlutterBinding.ensureInitialized();
 }

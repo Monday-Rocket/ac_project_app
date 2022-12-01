@@ -393,9 +393,7 @@ class _TermsViewState extends State<TermsView> {
         margin: EdgeInsets.only(
           left: 24,
           right: 24,
-          bottom: MediaQueryData.fromWindow(WidgetsBinding.instance.window)
-              .padding
-              .bottom,
+          bottom: getBottomMargin(),
         ),
         child: Builder(
           builder: (context) {
@@ -430,5 +428,13 @@ class _TermsViewState extends State<TermsView> {
         ),
       ),
     );
+  }
+
+  double getBottomMargin() {
+    final defaultHeight = MediaQueryData.fromWindow(WidgetsBinding.instance.window)
+        .padding
+        .bottom;
+
+    return defaultHeight < 37 ? 37 : defaultHeight;
   }
 }

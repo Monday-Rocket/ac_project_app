@@ -1,9 +1,16 @@
+import 'dart:async';
+
+import 'package:ac_project_app/cubits/login/login_type.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Google {
   static Future<bool> login() async {
+    final prefs = await SharedPreferences.getInstance();
+    unawaited(prefs.setString('loginType', LoginType.google.name));
+
     final googleSignIn = GoogleSignIn(
       scopes: [
         'email',
