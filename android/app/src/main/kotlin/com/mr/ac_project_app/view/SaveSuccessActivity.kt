@@ -7,6 +7,7 @@ import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.core.content.res.ResourcesCompat
 import com.bumptech.glide.Glide
+import com.mr.ac_project_app.MainActivity
 import com.mr.ac_project_app.R
 import com.mr.ac_project_app.databinding.ActivitySuccessBinding
 import com.mr.ac_project_app.model.FolderModel
@@ -50,6 +51,11 @@ class SaveSuccessActivity: ComponentActivity() {
             startActivity(movingIntent)
             finish()
             overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit)
+        }
+
+        binding.moveToAppButton.setOnClickListener {
+            startActivity(Intent(this@SaveSuccessActivity, MainActivity::class.java))
+            finish()
         }
 
         setFolderView()
