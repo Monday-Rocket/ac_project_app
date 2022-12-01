@@ -10,6 +10,7 @@ import 'package:ac_project_app/util/get_widget_arguments.dart';
 import 'package:ac_project_app/util/number_commas.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -40,6 +41,7 @@ class MyLinkPage extends StatelessWidget {
             appBar: AppBar(
               backgroundColor: Colors.transparent,
               elevation: 0,
+              systemOverlayStyle: SystemUiOverlayStyle.dark,
               leading: IconButton(
                 onPressed: () {
                   Navigator.pop(context);
@@ -48,12 +50,12 @@ class MyLinkPage extends StatelessWidget {
                   Icons.arrow_back_ios_new_rounded,
                   color: grey900,
                 ),
-                padding: const EdgeInsets.only(left: 24, right: 8, top: 16),
+                padding: const EdgeInsets.only(left: 24, right: 8),
               ),
             ),
             body: SafeArea(
               child: BlocBuilder<LinksFromSelectedFolderCubit, LinkListState>(
-                builder: (context, state) {
+                builder: (cubitContext, state) {
                   return Stack(
                     children: [
                       Column(
@@ -61,12 +63,12 @@ class MyLinkPage extends StatelessWidget {
                         children: [
                           buildTitleBar(folder),
                           buildContentsCountText(folder),
-                          buildSearchBar(),
+                          buildSearchBar(context),
                           buildTabBar(folders, tabIndex, folder, links),
                           buildBodyList(
                             folder: folder,
                             width: width,
-                            context: context,
+                            context: cubitContext,
                             totalLinks: links,
                             state: state,
                           ),
@@ -139,40 +141,34 @@ class MyLinkPage extends StatelessWidget {
     );
   }
 
-  Widget buildSearchBar() {
+  Widget buildSearchBar(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(top: 23, left: 23, right: 23),
       child: Row(
         children: [
           Flexible(
-            child: Container(
-              decoration: const BoxDecoration(
-                color: grey100,
-                borderRadius: BorderRadius.all(Radius.circular(7)),
-              ),
-              margin: const EdgeInsets.only(right: 6),
-              child: TextField(
-                textAlignVertical: TextAlignVertical.center,
-                cursorColor: grey800,
-                style: const TextStyle(
-                  color: grey800,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w400,
+            child: GestureDetector(
+              onTap: () => Navigator.pushNamed(context, Routes.search),
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: grey100,
+                  borderRadius: BorderRadius.all(Radius.circular(7)),
                 ),
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  focusedBorder: InputBorder.none,
-                  isDense: true,
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                  ),
-                  prefixIcon: Image.asset(
-                    'assets/images/folder_search_icon.png',
+                margin: const EdgeInsets.only(right: 6),
+                child: TextField(
+                  enabled: false,
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    isDense: true,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                    ),
+                    prefixIcon: Image.asset(
+                      'assets/images/folder_search_icon.png',
+                    ),
                   ),
                 ),
-                onChanged: (value) {
-                  // context.read<GetFoldersCubit>().filter(value);
-                },
               ),
             ),
           ),

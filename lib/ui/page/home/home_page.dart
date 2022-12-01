@@ -30,34 +30,28 @@ class HomePage extends StatelessWidget {
               children: [
                 Container(
                   margin: const EdgeInsets.only(left: 24, right: 24, top: 20),
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      color: grey100,
-                      borderRadius: BorderRadius.all(Radius.circular(7)),
-                    ),
-                    margin: const EdgeInsets.only(right: 6),
-                    child: TextField(
-                      textAlignVertical: TextAlignVertical.center,
-                      cursorColor: grey800,
-                      style: const TextStyle(
-                        color: grey800,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
+                  child: GestureDetector(
+                    onTap: () => Navigator.pushNamed(context, Routes.search),
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        color: grey100,
+                        borderRadius: BorderRadius.all(Radius.circular(7)),
                       ),
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                        isDense: true,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                        ),
-                        prefixIcon: Image.asset(
-                          'assets/images/folder_search_icon.png',
+                      margin: const EdgeInsets.only(right: 6),
+                      child: TextField(
+                        enabled: false,
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          isDense: true,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                          ),
+                          prefixIcon: Image.asset(
+                            'assets/images/folder_search_icon.png',
+                          ),
                         ),
                       ),
-                      onChanged: (value) {
-                        // context.read<GetFoldersCubit>().filter(value);
-                      },
                     ),
                   ),
                 ),

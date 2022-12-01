@@ -40,7 +40,7 @@ class _TermsViewState extends State<TermsView> {
           },
           icon: const Icon(Icons.arrow_back_ios_new),
           color: grey900,
-          padding: const EdgeInsets.only(left: 24, right: 8, top: 16),
+          padding: const EdgeInsets.only(left: 24, right: 8),
         ),
         backgroundColor: Colors.transparent,
         systemOverlayStyle: SystemUiOverlayStyle.dark,

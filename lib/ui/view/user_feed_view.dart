@@ -101,7 +101,7 @@ class UserFeedView extends StatelessWidget {
         },
         icon: const Icon(Icons.arrow_back_ios_new),
         color: grey900,
-        padding: const EdgeInsets.only(left: 24, right: 8, top: 16),
+        padding: const EdgeInsets.only(left: 24, right: 8),
       ),
       actions: [
         InkWell(

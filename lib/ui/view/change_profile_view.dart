@@ -4,6 +4,7 @@ import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/models/profile/profile_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ChangeProfileView extends StatelessWidget {
@@ -28,13 +29,14 @@ class ChangeProfileView extends StatelessWidget {
               backgroundColor: Colors.white,
               elevation: 0.5,
               shadowColor: grey100,
+              systemOverlayStyle: SystemUiOverlayStyle.dark,
               leading: IconButton(
                 icon: const Icon(
                   Icons.arrow_back_ios_new,
                   color: grey900,
                 ),
                 onPressed: () => Navigator.pop(context),
-                padding: const EdgeInsets.only(left: 24, right: 8, top: 16),
+                padding: const EdgeInsets.only(left: 24, right: 8),
               ),
               title: const Text(
                 '프로필 변경',
