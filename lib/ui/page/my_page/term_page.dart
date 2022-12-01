@@ -36,6 +36,7 @@ class _TermPageState extends State<TermPage> {
     final args = ModalRoute.of(context)!.settings.arguments as LinkArguments;
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.transparent,
         leading: IconButton(

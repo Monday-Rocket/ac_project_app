@@ -1,10 +1,12 @@
 import 'package:ac_project_app/ui/page/my_page/my_page.dart';
 import 'package:ac_project_app/ui/page/my_page/term_page.dart';
+import 'package:ac_project_app/ui/page/upload/view/upload_page.dart';
 import 'package:ac_project_app/ui/view/change_profile_view.dart';
 import 'package:ac_project_app/ui/view/home_view.dart';
 import 'package:ac_project_app/ui/view/login_view.dart';
 import 'package:ac_project_app/ui/view/link_detail_view.dart';
 import 'package:ac_project_app/ui/view/my_link_page.dart';
+import 'package:ac_project_app/ui/view/report/report_page.dart';
 import 'package:ac_project_app/ui/view/sign_up_job_view.dart';
 import 'package:ac_project_app/ui/view/sign_up_nickname_view.dart';
 import 'package:ac_project_app/ui/view/splash_view.dart';
@@ -27,6 +29,8 @@ class Routes {
 
   static const myPage = '/myPage';
   static const profile = '/profile';
+  static const report = '/report';
+  static const upload = '/upload';
 }
 
 class Pages {
@@ -56,6 +60,10 @@ class Pages {
         return router.create(child: const TermPage());
       case Routes.profile:
         return router.create(child: const ChangeProfileView());
+      case Routes.report:
+        return router.create(child: const ReportPage());
+      case Routes.upload :
+        return router.create(child: UploadPage());
       default:
         return null;
     }

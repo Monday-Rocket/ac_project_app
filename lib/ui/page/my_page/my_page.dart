@@ -286,6 +286,12 @@ class MyPage extends StatelessWidget {
         DivisionLine(size: 1),
         MenuItem('회원탈퇴', arrow: false, color: redError),
         DivisionLine(size: 1),
+        ElevatedButton(onPressed: (){
+          Navigator.pushNamed(context, Routes.linkDetail);
+        }, child: Text('테스트용 버튼')),
+        ElevatedButton(onPressed: (){
+          Navigator.pushNamed(context, Routes.report);
+        }, child: Text('테스트용 버튼')),
       ],
     );
   }

@@ -4,6 +4,7 @@ import 'package:ac_project_app/cubits/home_view_cubit.dart';
 import 'package:ac_project_app/ui/page/home/home_page.dart';
 import 'package:ac_project_app/ui/page/my_folder/my_folder_page.dart';
 import 'package:ac_project_app/ui/page/my_page/my_page.dart';
+import 'package:ac_project_app/ui/page/upload/view/upload_page.dart';
 import 'package:ac_project_app/util/get_widget_arguments.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -68,7 +69,7 @@ class HomeView extends StatelessWidget {
                 backgroundColor: Colors.white,
                 body: IndexedStack(
                   index: index,
-                  children: const <Widget>[
+                  children: [
                     HomePage(),
                     UploadPage(),
                     MyFolderPage(),
@@ -134,20 +135,6 @@ class UnknownPage extends StatefulWidget {
 }
 
 class _UnknownPageState extends State<UnknownPage> {
-  @override
-  Widget build(BuildContext context) {
-    return Container();
-  }
-}
-
-class UploadPage extends StatefulWidget {
-  const UploadPage({super.key});
-
-  @override
-  State<UploadPage> createState() => _UploadPageState();
-}
-
-class _UploadPageState extends State<UploadPage> {
   @override
   Widget build(BuildContext context) {
     return Container();
