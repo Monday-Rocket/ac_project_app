@@ -8,14 +8,8 @@ import 'package:ac_project_app/cubits/login/login_cubit.dart';
 import 'package:ac_project_app/cubits/login/login_type.dart';
 import 'package:ac_project_app/cubits/login/user_state.dart';
 import 'package:ac_project_app/models/user/user.dart' as custom;
-import 'package:ac_project_app/provider/api/folders/folder_api.dart';
-import 'package:ac_project_app/provider/api/user/user_api.dart';
-import 'package:ac_project_app/provider/login/email_login.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/text/custom_font.dart';
-import 'package:ac_project_app/util/logger.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -43,7 +37,7 @@ class _LoginViewState extends State<LoginView> with WidgetsBindingObserver {
                 } else if (state is ErrorState) {
                   showErrorBanner(loginContext);
                 } else if (state is LoadedState) {
-                  _moveToSignUpPage(loginContext, state.user);
+                  moveToNext(loginContext, state.user);
                 }
                 return Column(
                   children: [
@@ -59,101 +53,6 @@ class _LoginViewState extends State<LoginView> with WidgetsBindingObserver {
     );
   }
 
-  @override
-  void initState() {
-    WidgetsBinding.instance.addObserver(this);
-    super.initState();
-    Future.delayed(const Duration(milliseconds: 300), () {
-      retrieveDynamicLinkAndSignIn(fromColdState: true);
-    });
-  }
-
-  @override
-  Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
-    switch (state) {
-      case AppLifecycleState.resumed:
-        Log.d('resumed');
-        unawaited(retrieveDynamicLinkAndSignIn(fromColdState: false));
-        break;
-      case AppLifecycleState.paused:
-        Log.d('paused');
-        break;
-      case AppLifecycleState.inactive:
-        Log.d('inactive');
-        break;
-      case AppLifecycleState.detached:
-        Log.d('detached');
-        break;
-    }
-  }
-
-  Future<bool> retrieveDynamicLinkAndSignIn({
-    required bool fromColdState,
-  }) async {
-    PendingDynamicLinkData? dynamicLinkData;
-    Uri? deepLink;
-
-    if (fromColdState) {
-      dynamicLinkData = await FirebaseDynamicLinks.instance.getInitialLink();
-      unawaited(Fluttertoast.showToast(
-          msg: 'init dynamicLinkData is null?: ${dynamicLinkData == null}'));
-      if (dynamicLinkData != null) {
-        deepLink = dynamicLinkData.link;
-      }
-    } else {
-      dynamicLinkData = await FirebaseDynamicLinks.instance.onLink.first;
-      deepLink = dynamicLinkData.link;
-    }
-
-    if (deepLink == null) {
-      return false;
-    }
-
-    final validLink =
-        FirebaseAuth.instance.isSignInWithEmailLink(deepLink.toString());
-
-    if (validLink) {
-      final continueUrl = deepLink.queryParameters['continueUrl'] ?? '';
-      final email = Uri.parse(continueUrl).queryParameters['email'] ?? '';
-      _handleLink(email, deepLink.toString());
-    }
-    return false;
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-  }
-
-  void _handleLink(String email, String link) {
-    Email.login(email, link).then((isSuccess) async {
-      if (isSuccess) {
-        final user = await UserApi().postUsers();
-        final folderApi = FolderApi();
-
-        user.when(
-          success: (data) {
-            folderApi.bulkSave().then(
-                  (_) => unawaited(
-                    Navigator.pushReplacementNamed(
-                      context,
-                      Routes.home,
-                      arguments: {'index': 0},
-                    ),
-                  ),
-                );
-          },
-          error: (msg) {
-            Log.e('login fail');
-          },
-        );
-      } else {
-        Log.e('login fail');
-      }
-    });
-  }
-
   void showErrorBanner(BuildContext context) {
     Fluttertoast.showToast(
       msg: '                로그인 실패                ',
@@ -165,7 +64,7 @@ class _LoginViewState extends State<LoginView> with WidgetsBindingObserver {
     );
   }
 
-  Future<void> _moveToSignUpPage(BuildContext context, custom.User user) async {
+  Future<void> moveToNext(BuildContext context, custom.User user) async {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (user.is_new ?? false) {
         // 1. 서비스 이용 동의
@@ -261,6 +160,13 @@ class _LoginViewState extends State<LoginView> with WidgetsBindingObserver {
                                 onTap: () {
                                   setState(() {
                                     firstCheck = !firstCheck;
+                                    if (firstCheck) {
+                                      secondCheck = true;
+                                      thirdCheck = true;
+                                    } else {
+                                      secondCheck = false;
+                                      thirdCheck = false;
+                                    }
                                   });
                                 },
                                 child: AnimatedContainer(
@@ -313,6 +219,7 @@ class _LoginViewState extends State<LoginView> with WidgetsBindingObserver {
                                       onTap: () {
                                         setState(() {
                                           secondCheck = !secondCheck;
+                                          firstCheck = secondCheck && thirdCheck;
                                         });
                                       },
                                       child: AnimatedContainer(
@@ -434,6 +341,7 @@ class _LoginViewState extends State<LoginView> with WidgetsBindingObserver {
                                       onTap: () {
                                         setState(() {
                                           thirdCheck = !thirdCheck;
+                                          firstCheck = secondCheck && thirdCheck;
                                         });
                                       },
                                       child: AnimatedContainer(
@@ -595,14 +503,45 @@ class _LoginViewState extends State<LoginView> with WidgetsBindingObserver {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            ElevatedButton(
-              onPressed: () => Email.send('ts4840644804@gmail.com'),
-              child: const Text('테스트'),
-            ),
-            const SizedBox(height: 12),
             buildGoogleLoginButton(context),
             const SizedBox(height: 12),
             buildAppleLoginButton(context),
+            const SizedBox(height: 12),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size.fromHeight(55),
+                  backgroundColor: primary700,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                onPressed: () =>
+                    Navigator.pushNamed(context, Routes.emailLogin),
+                child: const Text(
+                  '일반 로그인',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 17,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 21),
+            InkWell(
+              onTap: () => Navigator.pushNamed(context, Routes.emailSignUp),
+              child: const Text(
+                '이메일로 회원가입',
+                style: TextStyle(
+                  color: grey400,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 15,
+                  letterSpacing: -0.1,
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -640,7 +579,7 @@ class _LoginViewState extends State<LoginView> with WidgetsBindingObserver {
             border: Border.all(color: const Color(0xffd9dee0)),
           ),
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 22),
+            padding: const EdgeInsets.symmetric(vertical: 21),
             child: Center(
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -651,7 +590,7 @@ class _LoginViewState extends State<LoginView> with WidgetsBindingObserver {
                     child: const Text(
                       'Google',
                       style: TextStyle(
-                        fontSize: 20,
+                        fontSize: 15,
                         color: greyLoginText,
                       ),
                     ).bold().roboto(),
@@ -659,7 +598,7 @@ class _LoginViewState extends State<LoginView> with WidgetsBindingObserver {
                   const Text(
                     '로 로그인',
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: 15,
                       color: greyLoginText,
                     ),
                   ).bold(),
@@ -687,7 +626,7 @@ class _LoginViewState extends State<LoginView> with WidgetsBindingObserver {
             border: Border.all(color: const Color(0xffd9dee0)),
           ),
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 22),
+            padding: const EdgeInsets.only(top: 19, bottom: 23),
             child: Center(
               child: Row(
                 mainAxisSize: MainAxisSize.min,

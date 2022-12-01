@@ -1,13 +1,15 @@
 import 'package:ac_project_app/ui/page/my_page/my_page.dart';
-import 'package:ac_project_app/ui/page/my_page/term_page.dart';
 import 'package:ac_project_app/ui/view/change_profile_view.dart';
+import 'package:ac_project_app/ui/view/email_login_view.dart';
+import 'package:ac_project_app/ui/view/email_sign_up_view.dart';
 import 'package:ac_project_app/ui/view/home_view.dart';
-import 'package:ac_project_app/ui/view/login_view.dart';
 import 'package:ac_project_app/ui/view/link_detail_view.dart';
+import 'package:ac_project_app/ui/view/login_view.dart';
 import 'package:ac_project_app/ui/view/my_link_page.dart';
 import 'package:ac_project_app/ui/view/sign_up_job_view.dart';
 import 'package:ac_project_app/ui/view/sign_up_nickname_view.dart';
 import 'package:ac_project_app/ui/view/splash_view.dart';
+import 'package:ac_project_app/ui/view/terms_view.dart';
 import 'package:ac_project_app/ui/view/user_feed_view.dart';
 import 'package:flutter/material.dart';
 
@@ -15,6 +17,10 @@ class Routes {
   static const splash = '/splash';
 
   static const login = '/login';
+  static const terms = '/terms';
+  static const emailLogin = '/emailLogin';
+  static const emailSignUp = '/emailSignUp';
+
   static const signUpNickname = '/signUpNickname';
   static const singUpJob = '/signUpJob';
 
@@ -22,8 +28,6 @@ class Routes {
   static const myLinks = '/myLinks';
   static const linkDetail = '/linkDetail';
   static const userFeed = '/userFeed';
-
-  static const termPage = '/termPage';
 
   static const myPage = '/myPage';
   static const profile = '/profile';
@@ -38,6 +42,12 @@ class Pages {
         return router.create(child: const SplashView());
       case Routes.login:
         return router.create(child: const LoginView());
+      case Routes.terms:
+        return router.create(child: const TermsView());
+      case Routes.emailLogin:
+        return router.create(child: const EmailLoginView());
+      case Routes.emailSignUp:
+        return router.create(child: const EmailSignUpView());
       case Routes.home:
         return router.create(child: const HomeView());
       case Routes.myLinks:
@@ -52,8 +62,6 @@ class Pages {
         return router.create(child: const SignUpJobView());
       case Routes.myPage:
         return router.create(child: const MyPage());
-      case Routes.termPage:
-        return router.create(child: const TermPage());
       case Routes.profile:
         return router.create(child: const ChangeProfileView());
       default:

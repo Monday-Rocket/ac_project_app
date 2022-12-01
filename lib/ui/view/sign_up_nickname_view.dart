@@ -6,6 +6,7 @@ import 'package:ac_project_app/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 
 class SignUpNicknameView extends StatelessWidget {
   const SignUpNicknameView({super.key});
@@ -27,53 +28,56 @@ class SignUpNicknameView extends StatelessWidget {
         builder: (context, nickname) {
           return BlocBuilder<ButtonStateCubit, ButtonState>(
             builder: (context, state) {
-              return Scaffold(
-                appBar: AppBar(
-                  leading: IconButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    icon: const Icon(Icons.arrow_back_ios_new),
-                    color: Colors.black,
+              return KeyboardDismissOnTap(
+                child: Scaffold(
+                  appBar: AppBar(
+                    leading: IconButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: const Icon(Icons.arrow_back_ios_new),
+                      color: grey900,
+                      padding: const EdgeInsets.only(left: 24, right: 8, top: 16),
+                    ),
+                    backgroundColor: Colors.transparent,
+                    systemOverlayStyle: SystemUiOverlayStyle.dark,
+                    elevation: 0,
                   ),
-                  backgroundColor: Colors.transparent,
-                  systemOverlayStyle: SystemUiOverlayStyle.dark,
-                  elevation: 0,
-                ),
-                body: SafeArea(
-                  child: Container(
-                    margin: const EdgeInsets.fromLTRB(24, 16, 24, 16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            buildTitleText(),
-                            Stack(
-                              alignment: Alignment.centerRight,
-                              children: [
-                                buildNicknameField(context, state),
-                                if (state == ButtonState.enabled)
-                                  const Padding(
-                                    padding: EdgeInsets.only(top: 40, right: 8),
-                                    child: Icon(
-                                      Icons.check_rounded,
-                                      color: primaryTab,
-                                      size: 20,
-                                    ),
-                                  )
-                                else
-                                  const SizedBox.shrink(),
-                              ],
-                            ),
-                          ],
-                        ),
-                        buildNextButton(context, user, nickname, state),
-                      ],
+                  body: SafeArea(
+                    child: Container(
+                      margin: const EdgeInsets.fromLTRB(24, 16, 24, 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              buildTitleText(),
+                              Stack(
+                                alignment: Alignment.centerRight,
+                                children: [
+                                  buildNicknameField(context, state),
+                                  if (state == ButtonState.enabled)
+                                    const Padding(
+                                      padding: EdgeInsets.only(top: 40, right: 8),
+                                      child: Icon(
+                                        Icons.check_rounded,
+                                        color: primaryTab,
+                                        size: 20,
+                                      ),
+                                    )
+                                  else
+                                    const SizedBox.shrink(),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
+                  bottomSheet: buildNextButton(context, user, nickname, state),
                 ),
               );
             },
@@ -99,35 +103,44 @@ class SignUpNicknameView extends StatelessWidget {
     String? nickname,
     ButtonState state,
   ) {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        minimumSize: const Size.fromHeight(55),
-        backgroundColor: state == ButtonState.enabled ? primary800 : secondary,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        disabledBackgroundColor: secondary,
-        disabledForegroundColor: Colors.white,
+    return Container(
+      margin: EdgeInsets.only(
+        left: 24,
+        right: 24,
+        bottom: MediaQueryData.fromWindow(WidgetsBinding.instance.window)
+            .padding
+            .bottom,
       ),
-      onPressed: state == ButtonState.enabled
-          ? () {
-              Navigator.pushNamed(
-                context,
-                Routes.singUpJob,
-                arguments: {
-                  'nickname': nickname,
-                  'user': user,
-                },
-              );
-            }
-          : null,
-      child: const Text(
-        '확인',
-        style: TextStyle(
-          fontSize: 17,
-          fontWeight: FontWeight.bold,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          minimumSize: const Size.fromHeight(55),
+          backgroundColor: state == ButtonState.enabled ? primary800 : secondary,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          disabledBackgroundColor: secondary,
+          disabledForegroundColor: Colors.white,
         ),
-        textWidthBasis: TextWidthBasis.parent,
+        onPressed: state == ButtonState.enabled
+            ? () {
+                Navigator.pushNamed(
+                  context,
+                  Routes.singUpJob,
+                  arguments: {
+                    'nickname': nickname,
+                    'user': user,
+                  },
+                );
+              }
+            : null,
+        child: const Text(
+          '확인',
+          style: TextStyle(
+            fontSize: 17,
+            fontWeight: FontWeight.bold,
+          ),
+          textWidthBasis: TextWidthBasis.parent,
+        ),
       ),
     );
   }

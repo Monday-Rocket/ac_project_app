@@ -2,7 +2,6 @@ import 'package:ac_project_app/cubits/login/login_type.dart';
 import 'package:ac_project_app/cubits/login/user_state.dart';
 import 'package:ac_project_app/provider/api/user/user_api.dart';
 import 'package:ac_project_app/provider/login/apple_login.dart';
-import 'package:ac_project_app/provider/login/email_login.dart';
 import 'package:ac_project_app/provider/login/google_login.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,8 +22,6 @@ class LoginCubit extends Cubit<UserState> {
       case LoginType.apple:
         Apple.login().then(sendResult);
         break;
-      case LoginType.email:
-        Email.send(email!);
     }
   }
 

@@ -30,7 +30,7 @@ class MultiPlatformApp {
       create: (_) => GetProfileInfoCubit(),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        initialRoute: Routes.splash,
+        initialRoute: Routes.terms,
         onGenerateRoute: Pages.getPages,
         themeMode: ThemeMode.light,
         theme: ThemeData(

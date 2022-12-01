@@ -34,6 +34,7 @@ class ChangeProfileView extends StatelessWidget {
                   color: grey900,
                 ),
                 onPressed: () => Navigator.pop(context),
+                padding: const EdgeInsets.only(left: 24, right: 8, top: 16),
               ),
               title: const Text(
                 '프로필 변경',
