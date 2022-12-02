@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -11,10 +10,10 @@
         android:id="@+id/background"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/body_layout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/body_layout"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/body_layout"
@@ -22,10 +21,10 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_margin="0dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@drawable/share_white_round_back"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:background="@drawable/share_white_round_back">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
         <ImageView
             android:id="@+id/imageView"
@@ -33,10 +32,10 @@
             android:layout_height="28dp"
             android:layout_marginStart="24dp"
             android:layout_marginTop="30dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            android:contentDescription="@string/save_success"
             android:src="@drawable/save_success"
-            android:contentDescription="@string/save_success" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/title_success_text_view"
@@ -61,9 +60,9 @@
             android:paddingStart="28dp"
             android:paddingTop="24dp"
             android:paddingEnd="20dp"
+            android:src="@drawable/btn_x_primary"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:src="@drawable/btn_x_primary" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <View
             android:id="@+id/divider"
@@ -76,48 +75,63 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/title_success_text_view" />
+
         <TextView
             android:id="@+id/select_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="22dp"
+            android:fontFamily="@font/pretendard_medium"
             android:text="@string/select_folder"
             android:textColor="@color/grey800"
             android:textSize="16sp"
-            android:fontFamily="@font/pretendard_medium"
-            app:layout_constraintTop_toBottomOf="@id/divider"
             app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginTop="22dp"
-            android:layout_marginStart="24dp" />
+            app:layout_constraintTop_toBottomOf="@id/divider" />
+
         <ImageButton
             android:id="@+id/folder_plus_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
-            app:layout_constraintTop_toBottomOf="@id/divider"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:paddingTop="20dp"
+            android:contentDescription="@string/add_folder"
             android:paddingStart="24dp"
+            android:paddingTop="20dp"
             android:paddingEnd="24dp"
             android:paddingBottom="4dp"
             android:src="@drawable/btn_add"
-            android:contentDescription="@string/add_folder"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/divider" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/folder_list"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintTop_toBottomOf="@id/select_text"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginTop="14dp"
             android:layout_marginStart="24dp"
+            android:layout_marginTop="14dp"
             android:layout_marginBottom="30dp"
             android:clipToPadding="false"
+            android:orientation="horizontal"
             android:paddingStart="0dp"
             android:paddingEnd="36dp"
-            tools:listitem="@layout/triple_folder"/>
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/select_text"
+            tools:listitem="@layout/one_folder" />
+
+        <include
+            android:id="@+id/empty_folder_image"
+            layout="@layout/empty_folder_layout"
+            android:layout_width="95dp"
+            android:layout_height="95dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="14dp"
+            android:layout_marginBottom="60dp"
+            android:visibility="visible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/select_text"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

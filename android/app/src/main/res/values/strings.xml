@@ -17,4 +17,5 @@
     <string name="comment_subtitle">링크 코멘트</string>
     <string name="preference_new_links">new_links</string>
     <string name="preference_new_folders">new_folders</string>
+    <string name="empty_folder_text">폴더추가</string>
 </resources>

@@ -56,7 +56,9 @@ class ShareActivity : ComponentActivity() {
             )
         )
         binding.folderList.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
-        modelList.addAll(viewModel.getFoldersFromDB())
+        val folders = viewModel.getFoldersFromDB()
+        modelList.addAll(folders)
+
         binding.folderList.adapter = RecyclerViewAdapter(
             modelList
         ) { position ->
@@ -71,6 +73,13 @@ class ShareActivity : ComponentActivity() {
             startActivity(intent)
             overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit)
             finish()
+        }
+
+        if (folders.isEmpty()) {
+            binding.emptyFolderImage.root.visibility = View.VISIBLE
+            binding.emptyFolderImage.root.setOnClickListener {
+                binding.folderPlusButton.callOnClick()
+            }
         }
     }
 
