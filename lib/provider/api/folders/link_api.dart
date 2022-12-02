@@ -113,4 +113,22 @@ class LinkApi {
       error: Result.error,
     );
   }
+
+  Future<Result<SearchedLinks>> searchMyLinks(String text, int pageNum) async {
+    final result = await client.getUri(
+      '/links/search?'
+          'my_links_only=true&'
+          'keyword=$text&'
+          'page_no=$pageNum&'
+          'page_size=10',
+    );
+    return result.when(
+      success: (data) {
+        return Result.success(
+          SearchedLinks.fromJson(data as Map<String, dynamic>),
+        );
+      },
+      error: Result.error,
+    );
+  }
 }

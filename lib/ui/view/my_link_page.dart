@@ -148,7 +148,13 @@ class MyLinkPage extends StatelessWidget {
         children: [
           Flexible(
             child: GestureDetector(
-              onTap: () => Navigator.pushNamed(context, Routes.search),
+              onTap: () => Navigator.pushNamed(
+                context,
+                Routes.search,
+                arguments: {
+                  'isMine': true,
+                },
+              ),
               child: Container(
                 decoration: const BoxDecoration(
                   color: grey100,
@@ -184,7 +190,8 @@ class MyLinkPage extends StatelessWidget {
     );
   }
 
-  Widget buildTabBar(List<Folder> folders, int tabIndex, Folder folder, List<Link> totalLinks) {
+  Widget buildTabBar(List<Folder> folders, int tabIndex, Folder folder,
+      List<Link> totalLinks) {
     return Container(
       margin: const EdgeInsets.only(top: 30, left: 12, right: 20),
       child: DefaultTabController(

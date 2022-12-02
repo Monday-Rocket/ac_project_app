@@ -31,7 +31,13 @@ class HomePage extends StatelessWidget {
                 Container(
                   margin: const EdgeInsets.only(left: 24, right: 24, top: 20),
                   child: GestureDetector(
-                    onTap: () => Navigator.pushNamed(context, Routes.search),
+                    onTap: () => Navigator.pushNamed(
+                      context,
+                      Routes.search,
+                      arguments: {
+                        'isMine': false,
+                      },
+                    ),
                     child: Container(
                       decoration: const BoxDecoration(
                         color: grey100,

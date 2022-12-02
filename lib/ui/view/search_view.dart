@@ -7,6 +7,7 @@ import 'package:ac_project_app/cubits/home/search_links_cubit.dart';
 import 'package:ac_project_app/cubits/links/link_list_state.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/routes.dart';
+import 'package:ac_project_app/util/get_widget_arguments.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +29,8 @@ class _SearchViewState extends State<SearchView> {
 
   @override
   Widget build(BuildContext context) {
+    final args = getArguments(context);
+    final isMine = args['isMine'] as bool;
     final totalLinks = <Link>[];
     final width = MediaQuery.of(context).size.width;
 
@@ -68,9 +71,16 @@ class _SearchViewState extends State<SearchView> {
                       onTap: buttonState
                           ? () {
                               totalLinks.clear();
-                              context
-                                  .read<SearchLinksCubit>()
-                                  .searchLinks(textController.text, 0);
+                              final text = textController.text;
+                              if (isMine) {
+                                context
+                                    .read<SearchLinksCubit>()
+                                    .searchMyLinks(text, 0);
+                              } else {
+                                context
+                                    .read<SearchLinksCubit>()
+                                    .searchLinks(text, 0);
+                              }
                             }
                           : null,
                       child: Padding(
@@ -121,6 +131,7 @@ class _SearchViewState extends State<SearchView> {
                                 Routes.linkDetail,
                                 arguments: {
                                   'link': link,
+                                  'isMine': isMine,
                                 },
                               );
                             },
@@ -155,7 +166,8 @@ class _SearchViewState extends State<SearchView> {
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 16,
                                                   color: blackBold,
-                                                  overflow: TextOverflow.ellipsis,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
                                                 ),
                                               ),
                                               const SizedBox(
@@ -167,7 +179,8 @@ class _SearchViewState extends State<SearchView> {
                                                 style: const TextStyle(
                                                   fontSize: 12,
                                                   color: greyText,
-                                                  overflow: TextOverflow.ellipsis,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
                                                 ),
                                               ),
                                             ],

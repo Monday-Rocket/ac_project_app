@@ -30,6 +30,22 @@ class SearchLinksCubit extends Cubit<LinkListState> {
     );
   }
 
+  Future<void> searchMyLinks(String text, int pageNum) async {
+
+    emit(LinkListLoadingState());
+
+    final result = await linkApi.searchMyLinks(text, pageNum);
+    result.when(
+      success: (data) {
+        final links = _setScrollState(data);
+        emit(LinkListLoadedState(links));
+      },
+      error: (msg) {
+        emit(LinkListErrorState(msg));
+      },
+    );
+  }
+
   Future<void> refresh() => searchLinks(currentText, 0);
 
   void loadMore() {
