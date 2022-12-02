@@ -14,14 +14,16 @@ import OpenGraph
 class ShareViewController: UIViewController {
   
   
-  @IBOutlet weak var layoutView: UIView?
+  @IBOutlet weak var layoutView: UIView!
   @IBOutlet weak var checkImageView: UIImageView!
   @IBOutlet weak var closeButton: UIButton!
   
   @IBOutlet weak var backgroundView: UIView!
   
   @IBOutlet weak var folderListView: UICollectionView!
+  @IBOutlet weak var emptyFolderView: UIView!
   
+  @IBOutlet weak var emptyFolderViewConstraints: NSLayoutConstraint!
   var dataArray : [Folder] = []
   
   let dbHelper = DBHelper.shared
@@ -29,7 +31,6 @@ class ShareViewController: UIViewController {
   var linkImageUrl: String?
   var selectedFolder: Folder?
   var titleText: String?
-  
   
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -56,6 +57,16 @@ class ShareViewController: UIViewController {
   
   private func loadFolders() {
     dataArray = dbHelper.readData()
+    NSLog("dataArray count: \(dataArray.count)")
+    if (dataArray.isEmpty) {
+//      self.emptyFolderViewConstraints.constant = 100
+      self.emptyFolderView.isHidden = false
+    } else {
+//      self.emptyFolderViewConstraints.constant = 0
+      self.emptyFolderView.isHidden = true
+    }
+    
+    self.layoutView.layoutIfNeeded()
   }
   
   private func getLink() {

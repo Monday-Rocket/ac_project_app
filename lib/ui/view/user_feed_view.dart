@@ -39,55 +39,64 @@ class UserFeedView extends StatelessWidget {
       ],
       child: Scaffold(
         backgroundColor: Colors.white,
-        body: SafeArea(
-          child: Column(
-            children: [
-              buildTopAppBar(context),
-              Column(
+        body: Stack(
+          children: [
+            Image.asset(
+              'assets/images/my_folder_back.png',
+              width: MediaQuery.of(context).size.width,
+              fit: BoxFit.fill,
+            ),
+            SafeArea(
+              child: Column(
                 children: [
-                  Image.asset(
-                    makeImagePath(user.profileImg),
-                    width: 105,
-                    height: 105,
+                  buildTopAppBar(context),
+                  Column(
+                    children: [
+                      Image.asset(
+                        makeImagePath(user.profileImg),
+                        width: 105,
+                        height: 105,
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        user.nickname,
+                        style: const TextStyle(
+                          color: Color(0xff0e0e0e),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 28,
+                          letterSpacing: -0.6,
+                        ),
+                      )
+                    ],
                   ),
-                  const SizedBox(height: 6),
-                  Text(
-                    user.nickname,
-                    style: const TextStyle(
-                      color: Color(0xff0e0e0e),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 28,
-                      letterSpacing: -0.6,
+                  Expanded(
+                    child: Column(
+                      children: [
+                        buildJobListView(context, totalLinks, folders),
+                        BlocBuilder<FeedViewCubit, LinkListState>(
+                          builder: (feedContext, state) {
+                            if (state is LinkListLoadedState) {
+                              final links = state.links;
+                              if (folders.isNotEmpty) {
+                                totalLinks.addAll(links);
+                              }
+                              return buildListBody(
+                                context,
+                                totalLinks,
+                                user,
+                              );
+                            } else {
+                              return const SizedBox.shrink();
+                            }
+                          },
+                        ),
+                      ],
                     ),
-                  )
+                  ),
                 ],
               ),
-              Expanded(
-                child: Column(
-                  children: [
-                    buildJobListView(context, totalLinks, folders),
-                    BlocBuilder<FeedViewCubit, LinkListState>(
-                      builder: (feedContext, state) {
-                        if (state is LinkListLoadedState) {
-                          final links = state.links;
-                          if (folders.isNotEmpty) {
-                            totalLinks.addAll(links);
-                          }
-                          return buildListBody(
-                            context,
-                            totalLinks,
-                            user,
-                          );
-                        } else {
-                          return const SizedBox.shrink();
-                        }
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

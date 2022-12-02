@@ -187,16 +187,39 @@
                                             <outlet property="delegate" destination="j1y-V4-xli" id="xS7-Ac-S46"/>
                                         </connections>
                                     </collectionView>
+                                    <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ts2-e3-q7a">
+                                        <rect key="frame" x="24" y="121" width="95" height="95"/>
+                                        <color key="backgroundColor" name="grey300"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="95" id="XWB-MY-36y"/>
+                                            <constraint firstAttribute="width" constant="95" id="iFW-E8-uqk"/>
+                                        </constraints>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                <integer key="value" value="32"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounce" value="YES"/>
+                                        </userDefinedRuntimeAttributes>
+                                    </containerView>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="폴더추가" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HlL-Qj-C8X">
+                                        <rect key="frame" x="47.333333333333343" y="160" width="48.666666666666657" height="17"/>
+                                        <fontDescription key="fontDescription" name="Pretendard-Medium" family="Pretendard" pointSize="14"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="trailing" secondItem="26V-wP-wEK" secondAttribute="trailing" id="3bd-QO-Ex2"/>
                                     <constraint firstItem="BzQ-i1-hFr" firstAttribute="leading" secondItem="HJZ-Dr-si8" secondAttribute="trailing" constant="13" id="44b-vY-IVL"/>
+                                    <constraint firstItem="ts2-e3-q7a" firstAttribute="top" secondItem="hid-p6-z53" secondAttribute="bottom" constant="14" id="A9Q-Y8-Xqm"/>
                                     <constraint firstAttribute="height" constant="308" id="CA0-8Y-kjk"/>
                                     <constraint firstItem="p7f-yK-ZWm" firstAttribute="top" secondItem="ual-lW-pEE" secondAttribute="top" constant="32" id="Cgr-1g-XUc"/>
                                     <constraint firstItem="HJZ-Dr-si8" firstAttribute="leading" secondItem="ual-lW-pEE" secondAttribute="leading" constant="18" id="EAp-hL-j3I"/>
+                                    <constraint firstItem="HlL-Qj-C8X" firstAttribute="centerY" secondItem="ts2-e3-q7a" secondAttribute="centerY" id="HgQ-Z4-xsq"/>
                                     <constraint firstItem="HJZ-Dr-si8" firstAttribute="top" secondItem="ual-lW-pEE" secondAttribute="top" constant="30" id="QGC-2C-NQ9"/>
                                     <constraint firstItem="hid-p6-z53" firstAttribute="top" secondItem="7Fr-Ql-ywt" secondAttribute="bottom" constant="20" id="Qhv-4f-c5A"/>
+                                    <constraint firstItem="ts2-e3-q7a" firstAttribute="leading" secondItem="ual-lW-pEE" secondAttribute="leading" constant="24" id="RgH-Am-zVG"/>
                                     <constraint firstAttribute="trailing" secondItem="7Fr-Ql-ywt" secondAttribute="trailing" constant="24" id="S3j-Pu-AZN"/>
                                     <constraint firstItem="BzQ-i1-hFr" firstAttribute="top" secondItem="ual-lW-pEE" secondAttribute="top" constant="32" id="T4V-HX-Ejo"/>
                                     <constraint firstItem="hid-p6-z53" firstAttribute="leading" secondItem="ual-lW-pEE" secondAttribute="leading" constant="24" id="eZD-LL-TpN"/>
@@ -208,6 +231,7 @@
                                     <constraint firstItem="26V-wP-wEK" firstAttribute="top" secondItem="QtK-qM-Rgq" secondAttribute="bottom" constant="11" id="ma4-R0-6Sb"/>
                                     <constraint firstAttribute="bottom" secondItem="26V-wP-wEK" secondAttribute="bottom" constant="37" id="sWU-60-xhH"/>
                                     <constraint firstAttribute="trailing" secondItem="QtK-qM-Rgq" secondAttribute="trailing" constant="24" id="voz-BA-fmc"/>
+                                    <constraint firstItem="HlL-Qj-C8X" firstAttribute="centerX" secondItem="ts2-e3-q7a" secondAttribute="centerX" id="xNS-06-GyL"/>
                                 </constraints>
                             </view>
                         </subviews>
@@ -232,6 +256,8 @@
                         <outlet property="backgroundView" destination="gz1-WP-NYa" id="SuH-k5-2Z9"/>
                         <outlet property="checkImageView" destination="HJZ-Dr-si8" id="SoA-lF-EtK"/>
                         <outlet property="closeButton" destination="p7f-yK-ZWm" id="cvu-sn-BtC"/>
+                        <outlet property="emptyFolderView" destination="ts2-e3-q7a" id="b0R-2R-OoX"/>
+                        <outlet property="emptyFolderViewConstraints" destination="ts2-e3-q7a" id="qo6-zF-Ykn"/>
                         <outlet property="folderListView" destination="26V-wP-wEK" id="eAb-rg-20K"/>
                         <outlet property="layoutView" destination="ual-lW-pEE" id="Ft6-B8-s4H"/>
                         <segue destination="X46-ny-z55" kind="show" identifier="folderSaveSuccess" id="KSu-dh-boo"/>
