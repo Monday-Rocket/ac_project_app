@@ -88,7 +88,6 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
     final height = MediaQuery.of(context).size.height;
     final devicePixelRatio = MediaQuery.of(context).devicePixelRatio;
     final distance = (height / 3) / devicePixelRatio;
-    print(devicePixelRatio);
 
     //Setting SysemUIOverlay
     SystemChrome.setSystemUIOverlayStyle(
@@ -99,8 +98,10 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
       ),
     );
 
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge,
-        overlays: [SystemUiOverlay.top]);
+    SystemChrome.setEnabledSystemUIMode(
+      SystemUiMode.edgeToEdge,
+      overlays: [SystemUiOverlay.top],
+    );
 
     return Scaffold(
       backgroundColor: splashColor,
@@ -117,7 +118,7 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
   Center buildWhiteAppName(double distance) {
     return Center(
       child: Container(
-        margin: EdgeInsets.only(top: 80),
+        margin: const EdgeInsets.only(top: 80),
         child: SlideTransition(
           position: Tween<Offset>(
             begin: const Offset(0, 0.3),
@@ -153,7 +154,7 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
   Center buildWhiteIcon(double distance) {
     return Center(
       child: Container(
-        margin: EdgeInsets.only(bottom: 80),
+        margin: const EdgeInsets.only(bottom: 80),
         child: SlideTransition(
           position: Tween<Offset>(
             begin: const Offset(0, -0.3),
