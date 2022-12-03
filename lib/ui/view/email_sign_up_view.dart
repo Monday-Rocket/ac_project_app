@@ -4,6 +4,7 @@ import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/provider/api/user/user_api.dart';
 import 'package:ac_project_app/provider/login/email_login.dart';
 import 'package:ac_project_app/routes.dart';
+import 'package:ac_project_app/ui/widget/only_back_app_bar.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
@@ -30,19 +31,7 @@ class _EmailSignUpViewState extends State<EmailSignUpView>
   Widget build(BuildContext context) {
     return KeyboardDismissOnTap(
       child: Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: const Icon(Icons.arrow_back_ios_new),
-            color: grey900,
-            padding: const EdgeInsets.only(left: 24, right: 8),
-          ),
-          backgroundColor: Colors.transparent,
-          systemOverlayStyle: SystemUiOverlayStyle.dark,
-          elevation: 0,
-        ),
+        appBar: buildBackAppBar(context),
         body: SafeArea(
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 24),

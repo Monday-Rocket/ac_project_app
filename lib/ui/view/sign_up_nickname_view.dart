@@ -3,6 +3,7 @@ import 'package:ac_project_app/cubits/sign_up/button_state_cubit.dart';
 import 'package:ac_project_app/cubits/sign_up/nickname_cubit.dart';
 import 'package:ac_project_app/models/user/user.dart';
 import 'package:ac_project_app/routes.dart';
+import 'package:ac_project_app/ui/widget/only_back_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -30,19 +31,7 @@ class SignUpNicknameView extends StatelessWidget {
             builder: (context, state) {
               return KeyboardDismissOnTap(
                 child: Scaffold(
-                  appBar: AppBar(
-                    leading: IconButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      icon: const Icon(Icons.arrow_back_ios_new),
-                      color: grey900,
-                      padding: const EdgeInsets.only(left: 24, right: 8),
-                    ),
-                    backgroundColor: Colors.transparent,
-                    systemOverlayStyle: SystemUiOverlayStyle.dark,
-                    elevation: 0,
-                  ),
+                  appBar: buildBackAppBar(context),
                   body: SafeArea(
                     child: Container(
                       margin: const EdgeInsets.fromLTRB(24, 16, 24, 16),

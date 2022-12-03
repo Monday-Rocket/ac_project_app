@@ -6,6 +6,7 @@ import 'package:ac_project_app/cubits/sign_up/job_list_cubit.dart';
 import 'package:ac_project_app/cubits/sign_up/sign_up_cubit.dart';
 import 'package:ac_project_app/models/user/detail_user.dart';
 import 'package:ac_project_app/models/user/user.dart';
+import 'package:ac_project_app/ui/widget/only_back_app_bar.dart';
 import 'package:ac_project_app/util/get_json_argument.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:flutter/material.dart';
@@ -31,19 +32,7 @@ class SignUpJobView extends StatelessWidget {
         ),
       ],
       child: Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: const Icon(Icons.arrow_back_ios_new),
-            color: grey900,
-            padding: const EdgeInsets.only(left: 24, right: 8),
-          ),
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          systemOverlayStyle: SystemUiOverlayStyle.dark,
-        ),
+        appBar: buildBackAppBar(context),
         body: SafeArea(
           child: Container(
             margin: const EdgeInsets.fromLTRB(24, 16, 24, 16),

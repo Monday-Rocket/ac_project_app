@@ -6,6 +6,7 @@ import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/resource.dart';
 import 'package:ac_project_app/routes.dart';
+import 'package:ac_project_app/ui/widget/only_back_app_bar.dart';
 import 'package:ac_project_app/util/get_widget_arguments.dart';
 import 'package:ac_project_app/util/number_commas.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -38,21 +39,7 @@ class MyLinkPage extends StatelessWidget {
       child: BlocBuilder<GetSelectedFolderCubit, Folder>(
         builder: (context, folder) {
           return Scaffold(
-            appBar: AppBar(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              systemOverlayStyle: SystemUiOverlayStyle.dark,
-              leading: IconButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: const Icon(
-                  Icons.arrow_back_ios_new_rounded,
-                  color: grey900,
-                ),
-                padding: const EdgeInsets.only(left: 24, right: 8),
-              ),
-            ),
+            appBar: buildBackAppBar(context),
             body: SafeArea(
               child: BlocBuilder<LinksFromSelectedFolderCubit, LinkListState>(
                 builder: (cubitContext, state) {
