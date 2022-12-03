@@ -21,7 +21,7 @@ class ShareViewController: UIViewController {
   @IBOutlet weak var backgroundView: UIView!
   
   @IBOutlet weak var folderListView: UICollectionView!
-  @IBOutlet weak var emptyFolderView: UIView!
+  @IBOutlet weak var emptyFolderButton: UIButton!
   
   @IBOutlet weak var emptyFolderViewConstraints: NSLayoutConstraint!
   var dataArray : [Folder] = []
@@ -39,12 +39,12 @@ class ShareViewController: UIViewController {
     self.folderListView.dataSource = self
     self.folderListView.backgroundColor = UIColor.white
     self.layoutView?.layer.cornerRadius = 30
+//    self.emptyFolderButton.layer.cornerRadius = 64
     
     self.backgroundView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.hideExtensionWithCompletionHandler(_:))))
     
     self.loadFolders()
     self.getLink()
-    
     
     NSLog(UserDefaultsHelper.getNewLinks().description)
     NSLog(UserDefaultsHelper.getNewFolders().description)
@@ -54,16 +54,17 @@ class ShareViewController: UIViewController {
     self.hideExtensionWithCompletionHandler()
   }
   
+  @IBAction func addNewFolder(_ sender: Any) {
+    performSegue(withIdentifier: "addNewFolderSegue", sender: self)
+  }
   
   private func loadFolders() {
     dataArray = dbHelper.readData()
     NSLog("dataArray count: \(dataArray.count)")
     if (dataArray.isEmpty) {
-//      self.emptyFolderViewConstraints.constant = 100
-      self.emptyFolderView.isHidden = false
+      self.emptyFolderButton.isHidden = false
     } else {
-//      self.emptyFolderViewConstraints.constant = 0
-      self.emptyFolderView.isHidden = true
+      self.emptyFolderButton.isHidden = true
     }
     
     self.layoutView.layoutIfNeeded()
