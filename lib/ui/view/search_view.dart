@@ -286,7 +286,7 @@ class _SearchViewState extends State<SearchView> {
                   fontSize: 14,
                   letterSpacing: -0.1,
                   height: 18 / 14,
-                  color: grey700,
+                  color: lightGrey700,
                 ),
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 10,
@@ -348,7 +348,7 @@ class _SearchViewState extends State<SearchView> {
                       fontSize: 14,
                       letterSpacing: -0.1,
                       height: 18 / 14,
-                      color: grey700,
+                      color: lightGrey700,
                     ),
                   )
                 ],

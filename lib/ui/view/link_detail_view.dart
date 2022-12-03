@@ -309,7 +309,7 @@ class LinkDetailView extends StatelessWidget {
                           link.describe ?? '',
                           style: const TextStyle(
                             fontSize: 16,
-                            color: grey700,
+                            color: lightGrey700,
                             letterSpacing: -0.1,
                             height: 26 / 16,
                           ),
@@ -342,6 +342,8 @@ class LinkDetailView extends StatelessWidget {
                           style: const TextStyle(
                             fontSize: 14,
                             color: grey700,
+                            height: 19.6/14,
+                            letterSpacing: -0.1,
                           ),
                           cursorColor: primary600,
                           keyboardType: TextInputType.multiline,

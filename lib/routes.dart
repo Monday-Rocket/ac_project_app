@@ -6,6 +6,7 @@ import 'package:ac_project_app/ui/view/home_view.dart';
 import 'package:ac_project_app/ui/view/link_detail_view.dart';
 import 'package:ac_project_app/ui/view/login_view.dart';
 import 'package:ac_project_app/ui/view/my_link_page.dart';
+import 'package:ac_project_app/ui/view/report_view.dart';
 import 'package:ac_project_app/ui/view/search_view.dart';
 import 'package:ac_project_app/ui/view/sign_up_job_view.dart';
 import 'package:ac_project_app/ui/view/sign_up_nickname_view.dart';
@@ -34,6 +35,8 @@ class Routes {
   static const profile = '/profile';
 
   static const search = '/search';
+
+  static const report = '/report';
 }
 
 class Pages {
@@ -69,6 +72,8 @@ class Pages {
         return router.create(child: const ChangeProfileView());
       case Routes.search:
         return router.create(child: const SearchView());
+      case Routes.report:
+        return router.create(child: const ReportView());
       default:
         return null;
     }

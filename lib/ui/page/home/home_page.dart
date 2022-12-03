@@ -369,7 +369,7 @@ class HomePage extends StatelessWidget {
                     }
                     return TabBar(
                       isScrollable: true,
-                      unselectedLabelColor: grey700,
+                      unselectedLabelColor: lightGrey700,
                       labelColor: primaryTab,
                       labelStyle: const TextStyle(
                         fontFamily: R_Font.PRETENDARD,

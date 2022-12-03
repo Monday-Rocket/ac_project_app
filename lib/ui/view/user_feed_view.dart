@@ -49,7 +49,7 @@ class UserFeedView extends StatelessWidget {
             SafeArea(
               child: Column(
                 children: [
-                  buildTopAppBar(context),
+                  buildTopAppBar(context, user),
                   Column(
                     children: [
                       Image.asset(
@@ -102,7 +102,7 @@ class UserFeedView extends StatelessWidget {
     );
   }
 
-  Widget buildTopAppBar(BuildContext context) {
+  Widget buildTopAppBar(BuildContext context, DetailUser user) {
     return AppBar(
       leading: IconButton(
         onPressed: () {
@@ -114,7 +114,7 @@ class UserFeedView extends StatelessWidget {
       ),
       actions: [
         InkWell(
-          onTap: () => showUserOptionDialog(context),
+          onTap: () => showUserOptionDialog(context, user),
           child: Container(
             margin: const EdgeInsets.only(right: 24),
             child: SvgPicture.asset(
@@ -183,7 +183,7 @@ class UserFeedView extends StatelessWidget {
                     }
                     return TabBar(
                       isScrollable: true,
-                      unselectedLabelColor: grey700,
+                      unselectedLabelColor: lightGrey700,
                       labelColor: primaryTab,
                       labelStyle: const TextStyle(
                         fontFamily: R_Font.PRETENDARD,

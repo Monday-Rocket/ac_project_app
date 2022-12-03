@@ -171,7 +171,7 @@ class SignUpJobView extends StatelessWidget {
               child: Icon(
                 Icons.close_rounded,
                 size: 20,
-                color: grey700,
+                color: lightGrey700,
               ),
             ),
           ),

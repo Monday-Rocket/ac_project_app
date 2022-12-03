@@ -2,6 +2,7 @@ import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/links/delete_link.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/models/report/report_type.dart';
+import 'package:ac_project_app/models/user/detail_user.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
@@ -105,13 +106,18 @@ Future<bool?> showLinkOptionsDialog(Link link, BuildContext parentContext) {
                               child: buildItem('공유'),
                             ),
                             InkWell(
-                              onTap: () => Navigator.pushNamed(
-                                context,
-                                Routes.report,
-                                arguments: {
-                                  'type': ReportType.post,
-                                },
-                              ),
+                              onTap: () {
+                                Navigator.pop(context);
+                                Navigator.pushNamed(
+                                  context,
+                                  Routes.report,
+                                  arguments: {
+                                    'type': ReportType.post,
+                                    'id': link.id,
+                                    'name': link.title,
+                                  },
+                                );
+                              },
                               child: buildItem('신고하기'),
                             ),
                           ],
@@ -129,7 +135,7 @@ Future<bool?> showLinkOptionsDialog(Link link, BuildContext parentContext) {
   );
 }
 
-Future<bool?> showUserOptionDialog(BuildContext parentContext) {
+Future<bool?> showUserOptionDialog(BuildContext parentContext, DetailUser user) {
   return showModalBottomSheet<bool?>(
     backgroundColor: Colors.transparent,
     context: parentContext,
@@ -159,11 +165,18 @@ Future<bool?> showUserOptionDialog(BuildContext parentContext) {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             InkWell(
-                              onTap: () => Navigator.pushNamed(
-                                context,
-                                Routes.report,
-                                arguments: {'type': ReportType.user},
-                              ),
+                              onTap: () {
+                                Navigator.pop(context);
+                                Navigator.pushNamed(
+                                  parentContext,
+                                  Routes.report,
+                                  arguments: {
+                                    'type': ReportType.user,
+                                    'id': user.id,
+                                    'name': user.nickname,
+                                  },
+                                );
+                              },
                               child: buildItem('신고하기'),
                             ),
                           ],
