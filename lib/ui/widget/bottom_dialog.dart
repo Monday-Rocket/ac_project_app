@@ -68,7 +68,7 @@ Future<bool?> showMyLinkOptionsDialog(Link link, BuildContext parentContext) {
   );
 }
 
-Future<bool?> showLinkOptionsDialog(Link link, BuildContext parentContext) {
+Future<bool?> showLinkOptionsDialog(Link link, BuildContext parentContext, {void Function()? callback}) {
   return showModalBottomSheet<bool?>(
     backgroundColor: Colors.transparent,
     context: parentContext,
@@ -107,7 +107,6 @@ Future<bool?> showLinkOptionsDialog(Link link, BuildContext parentContext) {
                             ),
                             InkWell(
                               onTap: () {
-                                Navigator.pop(context);
                                 Navigator.pushNamed(
                                   context,
                                   Routes.report,
@@ -116,7 +115,10 @@ Future<bool?> showLinkOptionsDialog(Link link, BuildContext parentContext) {
                                     'id': link.id,
                                     'name': link.title,
                                   },
-                                );
+                                ).then((value) {
+                                  Navigator.pop(context);
+                                  callback?.call();
+                                });
                               },
                               child: buildItem('신고하기'),
                             ),
@@ -135,7 +137,7 @@ Future<bool?> showLinkOptionsDialog(Link link, BuildContext parentContext) {
   );
 }
 
-Future<bool?> showUserOptionDialog(BuildContext parentContext, DetailUser user) {
+Future<bool?> showUserOptionDialog(BuildContext parentContext, DetailUser user, {void Function()? callback}) {
   return showModalBottomSheet<bool?>(
     backgroundColor: Colors.transparent,
     context: parentContext,
@@ -166,7 +168,6 @@ Future<bool?> showUserOptionDialog(BuildContext parentContext, DetailUser user) 
                           children: [
                             InkWell(
                               onTap: () {
-                                Navigator.pop(context);
                                 Navigator.pushNamed(
                                   parentContext,
                                   Routes.report,
@@ -175,7 +176,10 @@ Future<bool?> showUserOptionDialog(BuildContext parentContext, DetailUser user) 
                                     'id': user.id,
                                     'name': user.nickname,
                                   },
-                                );
+                                ).then((_) {
+                                  Navigator.pop(context);
+                                  callback?.call();
+                                });
                               },
                               child: buildItem('신고하기'),
                             ),

@@ -14,8 +14,7 @@ void showPopUp({
     context: parentContext,
     builder: (BuildContext context) {
       return Dialog(
-        shape:
-        RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: Stack(
           children: [
             Container(
@@ -46,7 +45,8 @@ void showPopUp({
                   ),
                   Text(content, textAlign: TextAlign.center),
                   Container(
-                    margin: const EdgeInsets.only(left: 4, right: 4, bottom: 4, top: 32),
+                    margin: const EdgeInsets.only(
+                        left: 4, right: 4, bottom: 4, top: 32),
                     child: SizedBox(
                       width: double.infinity,
                       height: 48,
@@ -58,7 +58,14 @@ void showPopUp({
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        child: const Text('확인'),
+                        child: const Text(
+                          '확인',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                     ),
                   ),

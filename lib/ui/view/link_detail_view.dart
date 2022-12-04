@@ -55,17 +55,18 @@ class LinkDetailView extends StatelessWidget {
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      icon: const Icon(
-                        Icons.arrow_back_ios_new_rounded,
-                        color: grey900,
-                      ),
+                      icon: SvgPicture.asset('assets/images/ic_back.svg'),
                       padding: const EdgeInsets.only(left: 24, right: 8),
                     ),
                     actions: [
                       InkWell(
                         onTap: () => isMyLink
                             ? showMyLinkOptionsDialog(link, context)
-                            : showLinkOptionsDialog(link, context),
+                            : showLinkOptionsDialog(
+                                link,
+                                context,
+                                callback: () => Navigator.pop(context),
+                              ),
                         child: Container(
                           margin: const EdgeInsets.only(right: 24),
                           child: SvgPicture.asset(
@@ -342,7 +343,7 @@ class LinkDetailView extends StatelessWidget {
                           style: const TextStyle(
                             fontSize: 14,
                             color: grey700,
-                            height: 19.6/14,
+                            height: 19.6 / 14,
                             letterSpacing: -0.1,
                           ),
                           cursorColor: primary600,

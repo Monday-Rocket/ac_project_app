@@ -6,6 +6,7 @@ import 'package:ac_project_app/models/profile/profile_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class ChangeProfileView extends StatelessWidget {
   const ChangeProfileView({super.key});
@@ -31,10 +32,7 @@ class ChangeProfileView extends StatelessWidget {
               shadowColor: grey100,
               systemOverlayStyle: SystemUiOverlayStyle.dark,
               leading: IconButton(
-                icon: const Icon(
-                  Icons.arrow_back_ios_new,
-                  color: grey900,
-                ),
+                icon: SvgPicture.asset('assets/images/ic_back.svg'),
                 onPressed: () => Navigator.pop(context),
                 padding: const EdgeInsets.only(left: 24, right: 8),
               ),

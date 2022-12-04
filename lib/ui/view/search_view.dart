@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class SearchView extends StatefulWidget {
   const SearchView({super.key});
@@ -59,7 +60,7 @@ class _SearchViewState extends State<SearchView> {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  icon: const Icon(Icons.arrow_back_ios_new),
+                  icon: SvgPicture.asset('assets/images/ic_back.svg'),
                   color: grey900,
                   padding: const EdgeInsets.only(left: 24, right: 8),
                 ),

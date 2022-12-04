@@ -108,13 +108,19 @@ class UserFeedView extends StatelessWidget {
         onPressed: () {
           Navigator.pop(context);
         },
-        icon: const Icon(Icons.arrow_back_ios_new),
+        icon: SvgPicture.asset('assets/images/ic_back.svg'),
         color: grey900,
         padding: const EdgeInsets.only(left: 24, right: 8),
       ),
       actions: [
         InkWell(
-          onTap: () => showUserOptionDialog(context, user),
+          onTap: () => showUserOptionDialog(
+            context,
+            user,
+            callback: () {
+              Navigator.pop(context);
+            },
+          ),
           child: Container(
             margin: const EdgeInsets.only(right: 24),
             child: SvgPicture.asset(
@@ -433,6 +439,7 @@ class UserFeedView extends StatelessWidget {
                                     onTap: () => showLinkOptionsDialog(
                                       link,
                                       parentContext,
+                                      callback: () => Navigator.pop(context),
                                     ),
                                     child: SvgPicture.asset(
                                       'assets/images/more_vert.svg',

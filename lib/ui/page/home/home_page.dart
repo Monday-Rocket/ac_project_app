@@ -282,6 +282,7 @@ class HomePage extends StatelessWidget {
                                     onTap: () => showLinkOptionsDialog(
                                       link,
                                       parentContext,
+                                      callback: () => refresh(context, totalLinks),
                                     ),
                                     child: SvgPicture.asset(
                                       'assets/images/more_vert.svg',

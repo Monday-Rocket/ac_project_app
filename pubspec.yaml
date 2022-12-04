@@ -46,6 +46,7 @@ dependencies:
   share_plus: ^6.3.0
   flutter_keyboard_visibility: ^5.4.0
   shared_preferences: ^2.0.15
+  extended_text: ^9.1.2
 
   ## SVG
   flutter_svg: ^1.1.6

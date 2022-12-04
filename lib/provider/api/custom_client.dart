@@ -8,6 +8,7 @@ import 'package:ac_project_app/util/logger.dart';
 import 'package:ac_project_app/util/string_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
 
 class CustomClient extends http.BaseClient {
   static const baseUrl =
@@ -30,7 +31,7 @@ class CustomClient extends http.BaseClient {
     final finalUrl = baseUrl + uri;
     Log.i('GET: $finalUrl');
     return _makeResult(
-      await super.get(
+      () async => super.get(
         Uri.parse(finalUrl),
         headers: headers,
       ),
@@ -46,7 +47,7 @@ class CustomClient extends http.BaseClient {
     final finalUrl = baseUrl + uri;
     Log.i('POST: $finalUrl');
     return _makeResult(
-      await super.post(
+      () async => super.post(
         Uri.parse(finalUrl),
         headers: headers,
         body: makeBody(body),
@@ -64,7 +65,7 @@ class CustomClient extends http.BaseClient {
     final finalUrl = baseUrl + uri;
     Log.i('PUT: $finalUrl');
     return _makeResult(
-      await super.put(
+      () async => super.put(
         Uri.parse(finalUrl),
         headers: headers,
         body: makeBody(body),
@@ -82,7 +83,7 @@ class CustomClient extends http.BaseClient {
     final finalUrl = baseUrl + uri;
     Log.i('PATCH: $finalUrl');
     return _makeResult(
-      await super.patch(
+      () async => super.patch(
         Uri.parse(finalUrl),
         headers: headers,
         body: makeBody(body),
@@ -100,7 +101,7 @@ class CustomClient extends http.BaseClient {
     final finalUrl = baseUrl + uri;
     Log.i(finalUrl);
     return _makeResult(
-      await super.delete(
+      () async => super.delete(
         Uri.parse(finalUrl),
         headers: headers,
         body: makeBody(body),
@@ -109,23 +110,29 @@ class CustomClient extends http.BaseClient {
     );
   }
 
-  Result<dynamic> _makeResult(http.Response response) {
-    if (response.statusCode == 200) {
-      final apiResult = ApiResult.fromJson(
-        jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>,
-      );
-      // 결과 출력
-      Log.i(apiResult.toJson());
-      if (apiResult.error == null && apiResult.status == 0) {
-        return Result.success(apiResult.data);
-      } else {
-        Log.e(apiResult.error!.message);
-        return Result.error(apiResult.error!.message);
+  Future<Result> _makeResult(Future<Response> Function() callback) async {
+    try {
+      final response = await callback.call();
+
+      if (response.statusCode == 200) {
+        final apiResult = ApiResult.fromJson(
+          jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>,
+        );
+        // 결과 출력
+        Log.i(apiResult.toJson());
+        if (apiResult.error == null && apiResult.status == 0) {
+          return Result.success(apiResult.data);
+        } else {
+          Log.e(apiResult.error!.message);
+          return Result.error('${apiResult.status}');
+        }
       }
+      final errorMessage = 'Network Error: ${response.statusCode}';
+      Log.e(errorMessage);
+      return Result.error(errorMessage);
+    } catch (e) {
+      return const Result.error('통신 에러');
     }
-    final errorMessage = 'Network Error: ${response.statusCode}';
-    Log.e(errorMessage);
-    return Result.error(errorMessage);
   }
 
   String? makeBody(dynamic body) {
