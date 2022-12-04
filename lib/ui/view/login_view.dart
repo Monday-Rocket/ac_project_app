@@ -57,7 +57,8 @@ class LoginView extends StatelessWidget {
     );
   }
 
-  Future<void> moveToNext(BuildContext parentContext, BuildContext context, custom.User user) async {
+  Future<void> moveToNext(BuildContext parentContext, BuildContext context,
+      custom.User user) async {
     Future.delayed(const Duration(milliseconds: 1000), () {
       if (user.is_new ?? false) {
         // 1. 서비스 이용 동의
@@ -68,7 +69,8 @@ class LoginView extends StatelessWidget {
             context.read<LoginCubit>().initialize();
           } else {
             // 회원가입 이동
-            unawaited(Navigator.pushNamed(parentContext, Routes.signUpNickname));
+            unawaited(
+                Navigator.pushNamed(parentContext, Routes.signUpNickname));
           }
         });
       } else {
@@ -210,7 +212,8 @@ class LoginView extends StatelessWidget {
                                       onTap: () {
                                         setState(() {
                                           secondCheck = !secondCheck;
-                                          firstCheck = secondCheck && thirdCheck;
+                                          firstCheck =
+                                              secondCheck && thirdCheck;
                                         });
                                       },
                                       child: AnimatedContainer(
@@ -332,7 +335,8 @@ class LoginView extends StatelessWidget {
                                       onTap: () {
                                         setState(() {
                                           thirdCheck = !thirdCheck;
-                                          firstCheck = secondCheck && thirdCheck;
+                                          firstCheck =
+                                              secondCheck && thirdCheck;
                                         });
                                       },
                                       child: AnimatedContainer(

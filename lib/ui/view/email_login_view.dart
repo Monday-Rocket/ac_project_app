@@ -1,12 +1,18 @@
+// ignore_for_file: avoid_positional_boolean_parameters
+
 import 'dart:async';
 
+import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/provider/api/user/user_api.dart';
 import 'package:ac_project_app/provider/login/email_login.dart';
 import 'package:ac_project_app/routes.dart';
+import 'package:ac_project_app/ui/widget/dialog.dart';
+import 'package:ac_project_app/ui/widget/only_back_app_bar.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 
 class EmailLoginView extends StatefulWidget {
   const EmailLoginView({super.key});
@@ -17,26 +23,140 @@ class EmailLoginView extends StatefulWidget {
 
 class _EmailLoginViewState extends State<EmailLoginView>
     with WidgetsBindingObserver {
-  @override
-  void initState() {
-    WidgetsBinding.instance.addObserver(this);
-    super.initState();
-    Future.delayed(const Duration(milliseconds: 300), () {
-      retrieveDynamicLinkAndSignIn(fromColdState: true);
-    });
-  }
+  final formKey = GlobalKey<FormState>();
+  bool buttonState = false;
+  bool hasError = false;
+  String emailString = '';
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            Text('이메일 로그인')
-          ],
-        ),
+    return KeyboardDismissOnTap(
+      child: KeyboardVisibilityBuilder(
+        builder: (context, visible) {
+          return Scaffold(
+            appBar: buildBackAppBar(context),
+            body: SafeArea(
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 16),
+                    const Text(
+                      '로그인',
+                      style: TextStyle(
+                        fontSize: 24,
+                        color: grey900,
+                        fontWeight: FontWeight.bold,
+                        height: 34 / 24,
+                        letterSpacing: -0.3,
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(top: 30, bottom: 23),
+                      child: Form(
+                        key: formKey,
+                        child: TextFormField(
+                          autofocus: true,
+                          style: const TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w500,
+                            color: blackBold,
+                          ),
+                          decoration: InputDecoration(
+                            labelText: '이메일',
+                            labelStyle: const TextStyle(
+                              color: Color(0xFF9097A3),
+                              fontWeight: FontWeight.w500,
+                            ),
+                            focusedBorder: const UnderlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: primary800, width: 2),
+                            ),
+                            errorStyle: const TextStyle(
+                              color: redError,
+                            ),
+                            focusedErrorBorder: const UnderlineInputBorder(
+                              borderSide: BorderSide(color: redError, width: 2),
+                            ),
+                            enabledBorder: const UnderlineInputBorder(
+                              borderSide: BorderSide(color: greyTab, width: 2),
+                            ),
+                            contentPadding: EdgeInsets.zero,
+                            suffix: buttonState
+                                ? const Icon(
+                                    Icons.check,
+                                    color: primary700,
+                                    size: 16,
+                                  )
+                                : null,
+                          ),
+                          validator: validateEmail,
+                          onSaved: (String? value) {
+                            emailString = value ?? '';
+                          },
+                          onChanged: (String? value) {
+                            if (value?.isEmpty ?? true) {
+                              setState(() {
+                                buttonState = false;
+                              });
+                            }
+                            if (formKey.currentState != null) {
+                              if (!formKey.currentState!.validate()) {
+                                setState(() {
+                                  buttonState = false;
+                                });
+                                return;
+                              } else {
+                                formKey.currentState!.save();
+                                setState(() {
+                                  buttonState = true;
+                                });
+                              }
+                            }
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            bottomSheet: Container(
+              margin: EdgeInsets.only(
+                left: 24,
+                right: 24,
+                bottom: getBottomMargin(visible),
+              ),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size.fromHeight(55),
+                  backgroundColor: primary800,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  disabledBackgroundColor: secondary,
+                  disabledForegroundColor: Colors.white,
+                ),
+                onPressed: buttonState ? () => Email.send(emailString) : null,
+                child: const Text(
+                  '로그인',
+                  style: TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textWidthBasis: TextWidthBasis.parent,
+                ),
+              ),
+            ),
+          );
+        },
       ),
     );
+  }
+
+  double getBottomMargin(bool visible) {
+    return visible ? 16 : 37;
   }
 
   @override
@@ -96,6 +216,7 @@ class _EmailLoginViewState extends State<EmailLoginView>
   }
 
   void _handleLink(String email, String link) {
+    hasError = true;
     Email.login(email, link).then((isSuccess) async {
       if (isSuccess) {
         final user = await UserApi().postUsers();
@@ -109,12 +230,31 @@ class _EmailLoginViewState extends State<EmailLoginView>
             );
           },
           error: (msg) {
+            setState(() {
+              hasError = true;
+            });
             Log.e('login fail');
           },
         );
       } else {
+        showError(context);
         Log.e('login fail');
       }
     });
+  }
+
+  String? validateEmail(String? value) {
+    const pattern =
+        r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]"
+        r'{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]'
+        r'{0,253}[a-zA-Z0-9])?)*$';
+    final regex = RegExp(pattern);
+    if (value == null || value.isEmpty || !regex.hasMatch(value)) {
+      return '메일 형식으로 입력해주세요.';
+    } else if (hasError) {
+      return '입력한 정보와 일치하는 계정이 없습니다.';
+    } else {
+      return null;
+    }
   }
 }

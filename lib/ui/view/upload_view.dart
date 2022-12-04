@@ -261,7 +261,11 @@ class _UploadViewState extends State<UploadView> {
             parentContext: context,
             callback: () {
               Navigator.pop(context);
-              Navigator.pushNamed(context, Routes.home);
+              Navigator.popAndPushNamed(
+                context,
+                Routes.home,
+                arguments: {'index': 0},
+              );
             },
           );
         } else {

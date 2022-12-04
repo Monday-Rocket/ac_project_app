@@ -223,7 +223,6 @@ class _EmailSignUpViewState extends State<EmailSignUpView>
             Navigator.pushReplacementNamed(
               context,
               Routes.terms,
-              arguments: {'index': 0},
             );
           },
           error: (msg) {

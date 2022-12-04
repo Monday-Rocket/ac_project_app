@@ -5,7 +5,7 @@ import 'package:ac_project_app/ui/view/email_sign_up_view.dart';
 import 'package:ac_project_app/ui/view/home_view.dart';
 import 'package:ac_project_app/ui/view/link_detail_view.dart';
 import 'package:ac_project_app/ui/view/login_view.dart';
-import 'package:ac_project_app/ui/view/my_link_page.dart';
+import 'package:ac_project_app/ui/view/my_link_view.dart';
 import 'package:ac_project_app/ui/view/report_view.dart';
 import 'package:ac_project_app/ui/view/search_view.dart';
 import 'package:ac_project_app/ui/view/sign_up_job_view.dart';
@@ -60,7 +60,7 @@ class Pages {
       case Routes.home:
         return router.create(child: const HomeView());
       case Routes.myLinks:
-        return router.create(child: const MyLinkPage());
+        return router.create(child: const MyLinkView());
       case Routes.linkDetail:
         return router.create(child: const LinkDetailView());
       case Routes.userFeed:
