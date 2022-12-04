@@ -50,3 +50,11 @@ String makeLinkTimeString(String timeString) {
     return DateFormat('yyyy/MM/dd').format(time);
   }
 }
+
+String getCurrentTime() {
+  final dateFormatter = DateFormat('yyyy-MM-dd');
+  final timeFormatter = DateFormat('hh:mm:ss');
+
+  final now = DateTime.now();
+  return '${dateFormatter.format(now)}T${timeFormatter.format(now)}Z';
+}

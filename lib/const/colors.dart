@@ -28,7 +28,7 @@ const primary1000 = Color(0xFF6200EA);
 const primaryTab = Color(0xFF741FFF);
 
 const secondary200 = Color(0xFFC0CAFF);
-const secondary400 = Color(0xFF8C9EFF);
+const secondary400 = Color(0x558C9EFF);
 const secondary700 = Color(0xFF536DFE);
 const secondary1000 = Color(0xFF304FFE);
 

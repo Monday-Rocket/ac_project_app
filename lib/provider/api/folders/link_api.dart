@@ -24,7 +24,7 @@ class LinkApi {
     );
   }
 
-  Future<void> postLink(Link link) async {
+  Future<bool> postLink(Link link) async {
     final result = await client.postUri(
       '/links',
       body: {
@@ -36,9 +36,13 @@ class LinkApi {
         'folder': link.folderId,
       },
     );
-    result.when(
-      success: (data) {},
-      error: (msg) {},
+    return result.when(
+      success: (data) {
+        return true;
+      },
+      error: (msg) {
+        return false;
+      },
     );
   }
 

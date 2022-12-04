@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_positional_boolean_parameters
+
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/sign_up/button_state_cubit.dart';
 import 'package:ac_project_app/cubits/sign_up/nickname_cubit.dart';
@@ -5,7 +7,6 @@ import 'package:ac_project_app/models/user/user.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/only_back_app_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 
@@ -30,43 +31,56 @@ class SignUpNicknameView extends StatelessWidget {
           return BlocBuilder<ButtonStateCubit, ButtonState>(
             builder: (context, state) {
               return KeyboardDismissOnTap(
-                child: Scaffold(
-                  appBar: buildBackAppBar(context),
-                  body: SafeArea(
-                    child: Container(
-                      margin: const EdgeInsets.fromLTRB(24, 16, 24, 16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
+                child: KeyboardVisibilityBuilder(
+                  builder: (context, visible) {
+                    return Scaffold(
+                      appBar: buildBackAppBar(context),
+                      body: SafeArea(
+                        child: Container(
+                          margin: const EdgeInsets.fromLTRB(24, 16, 24, 16),
+                          child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              buildTitleText(),
-                              Stack(
-                                alignment: Alignment.centerRight,
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  buildNicknameField(context, state),
-                                  if (state == ButtonState.enabled)
-                                    const Padding(
-                                      padding: EdgeInsets.only(top: 40, right: 8),
-                                      child: Icon(
-                                        Icons.check_rounded,
-                                        color: primaryTab,
-                                        size: 20,
-                                      ),
-                                    )
-                                  else
-                                    const SizedBox.shrink(),
+                                  buildTitleText(),
+                                  Stack(
+                                    alignment: Alignment.centerRight,
+                                    children: [
+                                      buildNicknameField(context, state),
+                                      if (state == ButtonState.enabled)
+                                        const Padding(
+                                          padding: EdgeInsets.only(
+                                            top: 40,
+                                            right: 8,
+                                          ),
+                                          child: Icon(
+                                            Icons.check_rounded,
+                                            color: primaryTab,
+                                            size: 20,
+                                          ),
+                                        )
+                                      else
+                                        const SizedBox.shrink(),
+                                    ],
+                                  ),
                                 ],
                               ),
                             ],
                           ),
-                        ],
+                        ),
                       ),
-                    ),
-                  ),
-                  bottomSheet: buildNextButton(context, user, nickname, state),
+                      bottomSheet: buildNextButton(
+                        context,
+                        user,
+                        nickname,
+                        state,
+                        visible,
+                      ),
+                    );
+                  },
                 ),
               );
             },
@@ -91,19 +105,19 @@ class SignUpNicknameView extends StatelessWidget {
     User? user,
     String? nickname,
     ButtonState state,
+    bool visible,
   ) {
     return Container(
       margin: EdgeInsets.only(
         left: 24,
         right: 24,
-        bottom: MediaQueryData.fromWindow(WidgetsBinding.instance.window)
-            .padding
-            .bottom,
+        bottom: getBottomMargin(visible),
       ),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           minimumSize: const Size.fromHeight(55),
-          backgroundColor: state == ButtonState.enabled ? primary800 : secondary,
+          backgroundColor:
+              state == ButtonState.enabled ? primary800 : secondary,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
@@ -202,5 +216,9 @@ class SignUpNicknameView extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  double getBottomMargin(bool visible) {
+    return visible ? 16 : 37;
   }
 }

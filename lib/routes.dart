@@ -12,6 +12,7 @@ import 'package:ac_project_app/ui/view/sign_up_job_view.dart';
 import 'package:ac_project_app/ui/view/sign_up_nickname_view.dart';
 import 'package:ac_project_app/ui/view/splash_view.dart';
 import 'package:ac_project_app/ui/view/terms_view.dart';
+import 'package:ac_project_app/ui/view/upload_view.dart';
 import 'package:ac_project_app/ui/view/user_feed_view.dart';
 import 'package:flutter/material.dart';
 
@@ -37,6 +38,8 @@ class Routes {
   static const search = '/search';
 
   static const report = '/report';
+
+  static const upload = '/upload';
 }
 
 class Pages {
@@ -74,6 +77,8 @@ class Pages {
         return router.create(child: const SearchView());
       case Routes.report:
         return router.create(child: const ReportView());
+      case Routes.upload:
+        return router.create(child: const UploadView());
       default:
         return null;
     }

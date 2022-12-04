@@ -7,6 +7,7 @@ import 'package:ac_project_app/cubits/home_second_view_cubit.dart';
 import 'package:ac_project_app/cubits/home_view_cubit.dart';
 import 'package:ac_project_app/cubits/links/links_from_selected_job_group_cubit.dart';
 import 'package:ac_project_app/provider/api/folders/folder_api.dart';
+import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/page/home/home_page.dart';
 import 'package:ac_project_app/ui/page/my_folder/my_folder_page.dart';
 import 'package:ac_project_app/ui/page/my_page/my_page.dart';
@@ -118,7 +119,6 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
                       ],
                       child: const HomePage(),
                     ),
-                    const UploadPage(),
                     MultiBlocProvider(
                       providers: [
                         BlocProvider<FolderViewTypeCubit>(
@@ -146,7 +146,13 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
                   showUnselectedLabels: true,
                   items: bottomItems,
                   currentIndex: index,
-                  onTap: context.read<HomeViewCubit>().moveTo,
+                  onTap: (index) {
+                    if (index == 1) {
+                      Navigator.pushNamed(context, Routes.upload);
+                    } else {
+                      context.read<HomeViewCubit>().moveTo(index);
+                    }
+                  },
                 ),
               );
             },
@@ -181,33 +187,5 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
       }
     }
     return icons;
-  }
-}
-
-class UnknownPage extends StatefulWidget {
-  const UnknownPage({super.key});
-
-  @override
-  State<UnknownPage> createState() => _UnknownPageState();
-}
-
-class _UnknownPageState extends State<UnknownPage> {
-  @override
-  Widget build(BuildContext context) {
-    return Container();
-  }
-}
-
-class UploadPage extends StatefulWidget {
-  const UploadPage({super.key});
-
-  @override
-  State<UploadPage> createState() => _UploadPageState();
-}
-
-class _UploadPageState extends State<UploadPage> {
-  @override
-  Widget build(BuildContext context) {
-    return Container();
   }
 }

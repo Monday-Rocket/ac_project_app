@@ -6,7 +6,6 @@ import 'package:ac_project_app/ui/widget/only_back_app_bar.dart';
 import 'package:ac_project_app/ui/widget/text/custom_font.dart';
 import 'package:ac_project_app/util/get_widget_arguments.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 class TermsView extends StatefulWidget {
   const TermsView({super.key});
@@ -18,13 +17,12 @@ class TermsView extends StatefulWidget {
 class _TermsViewState extends State<TermsView> {
   bool buttonState = false;
 
-  var firstCheck = false;
-  var secondCheck = false;
-  var thirdCheck = false;
+  bool firstCheck = false;
+  bool secondCheck = false;
+  bool thirdCheck = false;
 
-  var secondOpened = false;
-  var thirdOpened = false;
-
+  bool secondOpened = false;
+  bool thirdOpened = false;
 
   final secondController = ScrollController();
   final thirdController = ScrollController();
@@ -72,14 +70,10 @@ class _TermsViewState extends State<TermsView> {
                           });
                         },
                         child: AnimatedContainer(
-                          duration:
-                          const Duration(milliseconds: 200),
+                          duration: const Duration(milliseconds: 200),
                           decoration: BoxDecoration(
-                            color: firstCheck
-                                ? primary800
-                                : grey100,
-                            borderRadius:
-                            const BorderRadius.all(
+                            color: firstCheck ? primary800 : grey100,
+                            borderRadius: const BorderRadius.all(
                               Radius.circular(8),
                             ),
                             border: Border.all(
@@ -91,29 +85,27 @@ class _TermsViewState extends State<TermsView> {
                             padding: const EdgeInsets.all(2),
                             child: firstCheck
                                 ? const Icon(
-                              Icons.check,
-                              size: 18,
-                              color: Colors.white,
-                            )
+                                    Icons.check,
+                                    size: 18,
+                                    color: Colors.white,
+                                  )
                                 : const Icon(
-                              Icons.check,
-                              size: 18,
-                              color: grey300,
-                            ),
+                                    Icons.check,
+                                    size: 18,
+                                    color: grey300,
+                                  ),
                           ),
                         ),
                       ),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(left: 11),
-                      child: const Text('전체 동의')
-                          .bold()
-                          .fontSize(17),
+                      child: const Text('전체 동의').bold().fontSize(17),
                     ),
                   ],
                 ),
                 Container(
-                  margin: EdgeInsets.only(top: 21, bottom: 19),
+                  margin: const EdgeInsets.only(top: 21, bottom: 19),
                   child: const Divider(
                     height: 1,
                     color: greyTab,
@@ -122,8 +114,7 @@ class _TermsViewState extends State<TermsView> {
                 Column(
                   children: [
                     Row(
-                      mainAxisAlignment:
-                      MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Row(
                           mainAxisSize: MainAxisSize.min,
@@ -132,27 +123,26 @@ class _TermsViewState extends State<TermsView> {
                               onTap: () {
                                 setState(() {
                                   secondCheck = !secondCheck;
-                                  firstCheck =
-                                      secondCheck && thirdCheck;
+                                  firstCheck = secondCheck && thirdCheck;
                                 });
                               },
                               child: AnimatedContainer(
                                 duration: const Duration(
-                                    milliseconds: 200),
+                                  milliseconds: 200,
+                                ),
                                 child: Padding(
-                                  padding:
-                                  const EdgeInsets.all(2),
+                                  padding: const EdgeInsets.all(2),
                                   child: secondCheck
                                       ? const Icon(
-                                    Icons.check,
-                                    size: 18,
-                                    color: primary800,
-                                  )
+                                          Icons.check,
+                                          size: 18,
+                                          color: primary800,
+                                        )
                                       : const Icon(
-                                    Icons.check,
-                                    size: 18,
-                                    color: grey300,
-                                  ),
+                                          Icons.check,
+                                          size: 18,
+                                          color: grey300,
+                                        ),
                                 ),
                               ),
                             ),
@@ -164,7 +154,8 @@ class _TermsViewState extends State<TermsView> {
                               },
                               child: Padding(
                                 padding: const EdgeInsets.only(
-                                    left: 11),
+                                  left: 11,
+                                ),
                                 child: const Text('개인정보 처리방침')
                                     .weight(FontWeight.w500)
                                     .fontSize(15),
@@ -181,23 +172,21 @@ class _TermsViewState extends State<TermsView> {
                             },
                             child: AnimatedContainer(
                               duration: const Duration(
-                                  milliseconds: 200),
+                                milliseconds: 200,
+                              ),
                               child: Padding(
-                                padding:
-                                const EdgeInsets.all(2),
+                                padding: const EdgeInsets.all(2),
                                 child: secondOpened
                                     ? const Icon(
-                                  Icons
-                                      .keyboard_arrow_down_sharp,
-                                  size: 20,
-                                  color: grey500,
-                                )
+                                        Icons.keyboard_arrow_down_sharp,
+                                        size: 20,
+                                        color: grey500,
+                                      )
                                     : const Icon(
-                                  Icons
-                                      .keyboard_arrow_right_sharp,
-                                  size: 20,
-                                  color: grey500,
-                                ),
+                                        Icons.keyboard_arrow_right_sharp,
+                                        size: 20,
+                                        color: grey500,
+                                      ),
                               ),
                             ),
                           ),
@@ -209,51 +198,48 @@ class _TermsViewState extends State<TermsView> {
                     ),
                     AnimatedContainer(
                       height: secondOpened ? 140 : 0,
-                      duration:
-                      const Duration(milliseconds: 150),
+                      duration: const Duration(milliseconds: 150),
                       decoration: const BoxDecoration(
                         borderRadius: BorderRadius.all(
-                            Radius.circular(5)),
+                          Radius.circular(5),
+                        ),
                         color: grey100,
                       ),
                       child: secondOpened
                           ? Scrollbar(
-                        controller: secondController,
-                        child: SingleChildScrollView(
-                          controller: secondController,
-                          padding: EdgeInsets.zero,
-                          child: const Padding(
-                            padding: EdgeInsets.only(
-                              left: 24,
-                              top: 14,
-                              right: 24,
-                            ),
-                            child: Text(
-                              firstCheckText,
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight:
-                                FontWeight.w400,
-                                color: grey600,
+                              controller: secondController,
+                              child: SingleChildScrollView(
+                                controller: secondController,
+                                padding: EdgeInsets.zero,
+                                child: const Padding(
+                                  padding: EdgeInsets.only(
+                                    left: 24,
+                                    top: 14,
+                                    right: 24,
+                                  ),
+                                  child: Text(
+                                    firstCheckText,
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w400,
+                                      color: grey600,
+                                    ),
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                        ),
-                      )
+                            )
                           : const SizedBox.shrink(),
                     ),
                     AnimatedContainer(
                       height: secondOpened ? 15 : 0,
-                      duration:
-                      const Duration(milliseconds: 150),
+                      duration: const Duration(milliseconds: 150),
                     ),
                   ],
                 ),
                 Column(
                   children: [
                     Row(
-                      mainAxisAlignment:
-                      MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Row(
                           mainAxisSize: MainAxisSize.min,
@@ -262,27 +248,26 @@ class _TermsViewState extends State<TermsView> {
                               onTap: () {
                                 setState(() {
                                   thirdCheck = !thirdCheck;
-                                  firstCheck =
-                                      secondCheck && thirdCheck;
+                                  firstCheck = secondCheck && thirdCheck;
                                 });
                               },
                               child: AnimatedContainer(
                                 duration: const Duration(
-                                    milliseconds: 200),
+                                  milliseconds: 200,
+                                ),
                                 child: Padding(
-                                  padding:
-                                  const EdgeInsets.all(2),
+                                  padding: const EdgeInsets.all(2),
                                   child: thirdCheck
                                       ? const Icon(
-                                    Icons.check,
-                                    size: 18,
-                                    color: primary800,
-                                  )
+                                          Icons.check,
+                                          size: 18,
+                                          color: primary800,
+                                        )
                                       : const Icon(
-                                    Icons.check,
-                                    size: 18,
-                                    color: grey300,
-                                  ),
+                                          Icons.check,
+                                          size: 18,
+                                          color: grey300,
+                                        ),
                                 ),
                               ),
                             ),
@@ -294,7 +279,8 @@ class _TermsViewState extends State<TermsView> {
                               },
                               child: Padding(
                                 padding: const EdgeInsets.only(
-                                    left: 11),
+                                  left: 11,
+                                ),
                                 child: const Text('서비스 이용방침')
                                     .weight(FontWeight.w500)
                                     .fontSize(15),
@@ -310,22 +296,21 @@ class _TermsViewState extends State<TermsView> {
                           },
                           child: AnimatedContainer(
                             duration: const Duration(
-                                milliseconds: 200),
+                              milliseconds: 200,
+                            ),
                             child: Padding(
                               padding: const EdgeInsets.all(2),
                               child: thirdOpened
                                   ? const Icon(
-                                Icons
-                                    .keyboard_arrow_down_sharp,
-                                size: 20,
-                                color: grey500,
-                              )
+                                      Icons.keyboard_arrow_down_sharp,
+                                      size: 20,
+                                      color: grey500,
+                                    )
                                   : const Icon(
-                                Icons
-                                    .keyboard_arrow_right_sharp,
-                                size: 20,
-                                color: grey500,
-                              ),
+                                      Icons.keyboard_arrow_right_sharp,
+                                      size: 20,
+                                      color: grey500,
+                                    ),
                             ),
                           ),
                         ),
@@ -333,42 +318,40 @@ class _TermsViewState extends State<TermsView> {
                     ),
                     AnimatedContainer(
                       height: thirdOpened ? 15 : 0,
-                      duration:
-                      const Duration(milliseconds: 150),
+                      duration: const Duration(milliseconds: 150),
                     ),
                     AnimatedContainer(
                       height: thirdOpened ? 140 : 0,
-                      duration:
-                      const Duration(milliseconds: 150),
+                      duration: const Duration(milliseconds: 150),
                       decoration: const BoxDecoration(
                         borderRadius: BorderRadius.all(
-                            Radius.circular(5)),
+                          Radius.circular(5),
+                        ),
                         color: grey100,
                       ),
                       child: thirdOpened
                           ? Scrollbar(
-                        controller: thirdController,
-                        child: SingleChildScrollView(
-                          controller: thirdController,
-                          padding: EdgeInsets.zero,
-                          child: const Padding(
-                            padding: EdgeInsets.only(
-                              left: 24,
-                              top: 14,
-                              right: 24,
-                            ),
-                            child: Text(
-                              secondCheckText,
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight:
-                                FontWeight.w400,
-                                color: grey600,
+                              controller: thirdController,
+                              child: SingleChildScrollView(
+                                controller: thirdController,
+                                padding: EdgeInsets.zero,
+                                child: const Padding(
+                                  padding: EdgeInsets.only(
+                                    left: 24,
+                                    top: 14,
+                                    right: 24,
+                                  ),
+                                  child: Text(
+                                    secondCheckText,
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w400,
+                                      color: grey600,
+                                    ),
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                        ),
-                      )
+                            )
                           : const SizedBox.shrink(),
                     ),
                   ],
@@ -379,16 +362,14 @@ class _TermsViewState extends State<TermsView> {
         ),
       ),
       bottomSheet: Container(
-        margin: EdgeInsets.only(
+        margin: const EdgeInsets.only(
           left: 24,
           right: 24,
-          bottom: getBottomMargin(),
+          bottom: 37,
         ),
         child: Builder(
           builder: (context) {
-            final allChecked = firstCheck &&
-                secondCheck &&
-                thirdCheck;
+            final allChecked = firstCheck && secondCheck && thirdCheck;
             return ElevatedButton(
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size.fromHeight(55),
@@ -399,11 +380,13 @@ class _TermsViewState extends State<TermsView> {
                 disabledBackgroundColor: secondary,
                 disabledForegroundColor: Colors.white,
               ),
-              onPressed: allChecked ? () => Navigator.pushNamed(
-                context,
-                Routes.signUpNickname,
-                arguments: user,
-              ) : null,
+              onPressed: allChecked
+                  ? () => Navigator.pushNamed(
+                        context,
+                        Routes.signUpNickname,
+                        arguments: user,
+                      )
+                  : null,
               child: const Text(
                 '약관동의',
                 style: TextStyle(
@@ -413,17 +396,9 @@ class _TermsViewState extends State<TermsView> {
                 textWidthBasis: TextWidthBasis.parent,
               ),
             );
-          }
+          },
         ),
       ),
     );
-  }
-
-  double getBottomMargin() {
-    final defaultHeight = MediaQueryData.fromWindow(WidgetsBinding.instance.window)
-        .padding
-        .bottom;
-
-    return defaultHeight < 37 ? 37 : defaultHeight;
   }
 }

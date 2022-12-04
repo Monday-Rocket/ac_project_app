@@ -262,13 +262,7 @@ class _ReportViewState extends State<ReportView> {
             icon: true,
           );
         } else {
-          showPopUp(
-            title: '서버 에러',
-            content: '서버 통신 오류',
-            parentContext: context,
-            callback: () => Navigator.pop(context),
-            icon: true,
-          );
+          showError(context);
         }
       });
 

@@ -46,7 +46,11 @@ void showPopUp({
                   Text(content, textAlign: TextAlign.center),
                   Container(
                     margin: const EdgeInsets.only(
-                        left: 4, right: 4, bottom: 4, top: 32),
+                      left: 4,
+                      right: 4,
+                      bottom: 4,
+                      top: 32,
+                    ),
                     child: SizedBox(
                       width: double.infinity,
                       height: 48,
@@ -88,5 +92,15 @@ void showPopUp({
         ),
       );
     },
+  );
+}
+
+void showError(BuildContext context) {
+  showPopUp(
+    title: '서버 에러',
+    content: '서버 통신 오류',
+    parentContext: context,
+    callback: () => Navigator.pop(context),
+    icon: true,
   );
 }

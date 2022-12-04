@@ -30,7 +30,7 @@ class MultiPlatformApp {
       create: (_) => GetProfileInfoCubit(),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        initialRoute: Routes.report,
+        initialRoute: Routes.emailSignUp,
         onGenerateRoute: Pages.getPages,
         themeMode: ThemeMode.light,
         theme: ThemeData(
@@ -38,6 +38,9 @@ class MultiPlatformApp {
           brightness: Brightness.light,
           progressIndicatorTheme: const ProgressIndicatorThemeData(
             color: primary600,
+          ),
+          bottomSheetTheme: const BottomSheetThemeData(
+            backgroundColor: Colors.white,
           ),
         ),
       ),
