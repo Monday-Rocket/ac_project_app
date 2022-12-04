@@ -11,6 +11,7 @@ import 'package:ac_project_app/provider/api/folders/link_api.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/bottom_dialog.dart';
 import 'package:ac_project_app/ui/widget/dialog.dart';
+import 'package:ac_project_app/util/get_widget_arguments.dart';
 import 'package:ac_project_app/util/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -37,7 +38,18 @@ class _UploadViewState extends State<UploadView> {
   int? selectedFolderId;
 
   @override
+  void initState() {
+    Future.microtask(() {
+      final args = getArguments(context);
+      final url = args['url'] as String? ?? '';
+      linkTextController.text = url;
+    });
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
+
     return MultiBlocProvider(
       providers: [
         BlocProvider<GetFoldersCubit>(

@@ -123,6 +123,21 @@ Future<bool?> showLinkOptionsDialog(
                               onTap: () {
                                 Navigator.pushNamed(
                                   context,
+                                  Routes.upload,
+                                  arguments: {
+                                    'url': link.url,
+                                  },
+                                ).then((value) {
+                                  Navigator.pop(context);
+                                  callback?.call();
+                                });
+                              },
+                              child: buildItem('내 폴더 담기'),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                Navigator.pushNamed(
+                                  context,
                                   Routes.report,
                                   arguments: {
                                     'type': ReportType.post,
