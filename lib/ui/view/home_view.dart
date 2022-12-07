@@ -119,6 +119,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
                       ],
                       child: const HomePage(),
                     ),
+                    const Scaffold(),
                     MultiBlocProvider(
                       providers: [
                         BlocProvider<FolderViewTypeCubit>(

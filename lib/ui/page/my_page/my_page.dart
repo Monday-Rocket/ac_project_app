@@ -13,12 +13,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class LinkArguments {
-  LinkArguments({required this.link});
-
-  final String link;
-}
-
 class MyPage extends StatelessWidget {
   const MyPage({super.key});
 

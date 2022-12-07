@@ -427,88 +427,94 @@ class _UploadViewState extends State<UploadView> {
       builder: (folderContext, state) {
         if (state is FolderLoadedState) {
           final folders = state.folders;
-          return ListView.builder(
-            itemCount: folders.length,
-            shrinkWrap: true,
-            scrollDirection: Axis.horizontal,
-            itemBuilder: (_, index) {
-              final folder = folders[index];
-              final rightPadding = index != folders.length - 1 ? 12 : 24;
-              return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    selectedIndex = index;
-                  });
-                },
-                child: Container(
-                  margin: EdgeInsets.only(
-                    right: rightPadding.toDouble(),
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Stack(
-                        children: [
-                          Container(
-                            width: 95,
-                            height: 95,
-                            decoration: const BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(32)),
-                              color: grey100,
-                            ),
-                            child: ClipRRect(
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(32),
-                              ),
-                              child: Image.network(
-                                folder.thumbnail ?? '',
-                                fit: BoxFit.cover,
-                                errorBuilder: (_, __, ___) {
-                                  return Container(
-                                    width: 95,
-                                    height: 95,
-                                    decoration: const BoxDecoration(
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(32),
-                                      ),
-                                      color: grey100,
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-                          Visibility(
-                            visible: selectedIndex == index,
-                            child: Container(
+          return Container(
+            constraints: const BoxConstraints(
+              minHeight: 115,
+              maxHeight: 130,
+            ),
+            child: ListView.builder(
+              itemCount: folders.length,
+              shrinkWrap: true,
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (_, index) {
+                final folder = folders[index];
+                final rightPadding = index != folders.length - 1 ? 12 : 24;
+                return GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      selectedIndex = index;
+                    });
+                  },
+                  child: Container(
+                    margin: EdgeInsets.only(
+                      right: rightPadding.toDouble(),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Stack(
+                          children: [
+                            Container(
                               width: 95,
                               height: 95,
                               decoration: const BoxDecoration(
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(32)),
-                                color: secondary400,
+                                color: grey100,
+                              ),
+                              child: ClipRRect(
+                                borderRadius: const BorderRadius.all(
+                                  Radius.circular(32),
+                                ),
+                                child: Image.network(
+                                  folder.thumbnail ?? '',
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (_, __, ___) {
+                                    return Container(
+                                      width: 95,
+                                      height: 95,
+                                      decoration: const BoxDecoration(
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(32),
+                                        ),
+                                        color: grey100,
+                                      ),
+                                    );
+                                  },
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        folder.name ?? '',
-                        style: const TextStyle(
-                          color: grey700,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 12,
-                          letterSpacing: -0.3,
-                          height: 14.3 / 12,
+                            Visibility(
+                              visible: selectedIndex == index,
+                              child: Container(
+                                width: 95,
+                                height: 95,
+                                decoration: const BoxDecoration(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(32)),
+                                  color: secondary400,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      )
-                    ],
+                        const SizedBox(height: 6),
+                        Text(
+                          folder.name ?? '',
+                          style: const TextStyle(
+                            color: grey700,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 12,
+                            letterSpacing: -0.3,
+                            height: 14.3 / 12,
+                          ),
+                        )
+                      ],
+                    ),
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           );
         } else {
           return const SizedBox(height: 115);
