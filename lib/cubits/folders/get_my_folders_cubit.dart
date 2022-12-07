@@ -7,8 +7,12 @@ import 'package:ac_project_app/provider/share_db.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class GetFoldersCubit extends Cubit<FoldersState> {
-  GetFoldersCubit() : super(FolderInitialState()) {
-    getFolders();
+  GetFoldersCubit({bool? excludeUnclassified}) : super(FolderInitialState()) {
+    if (excludeUnclassified ?? false) {
+      getFoldersWithoutUnclassified();
+    } else {
+      getFolders();
+    }
   }
 
   List<Folder> folders = [];
@@ -20,6 +24,23 @@ class GetFoldersCubit extends Cubit<FoldersState> {
       emit(FolderLoadingState());
 
       final result = await folderApi.getMyFolders();
+      result.when(
+        success: (list) {
+          folders = list;
+          emit(FolderLoadedState(folders));
+        },
+        error: (msg) => emit(FolderErrorState(msg)),
+      );
+    } catch (e) {
+      emit(FolderErrorState(e.toString()));
+    }
+  }
+
+  Future<void> getFoldersWithoutUnclassified() async {
+    try {
+      emit(FolderLoadingState());
+
+      final result = await folderApi.getMyFoldersWithoutUnclassified();
       result.when(
         success: (list) {
           folders = list;

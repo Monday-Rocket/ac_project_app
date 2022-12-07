@@ -14,7 +14,7 @@ String stringifyMessage(List<dynamic> listData) {
 
 String getSafeTitleText(String? text) {
   if (text == null || text.isEmpty) {
-    return '제목 없음';
+    return '';
   }
   return text;
 }

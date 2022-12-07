@@ -33,7 +33,7 @@ class LinkApi {
         'image': link.image,
         'describe': link.describe,
         'created_at': link.time,
-        'folder': link.folderId,
+        'folder_id': link.folderId,
       },
     );
     return result.when(

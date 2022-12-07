@@ -33,6 +33,7 @@ const secondary700 = Color(0xFF536DFE);
 const secondary1000 = Color(0xFF304FFE);
 
 const redError = Color(0xFFF4406B);
+const redError2 = Color(0xFFF81D51);
 const black1000 = Color(0xFF010101);
 
 const grey600_10 = Color(0x1A606873);

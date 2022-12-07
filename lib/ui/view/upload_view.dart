@@ -3,16 +3,11 @@
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/folders/folders_state.dart';
 import 'package:ac_project_app/cubits/folders/get_my_folders_cubit.dart';
+import 'package:ac_project_app/cubits/links/upload_link_cubit.dart';
 import 'package:ac_project_app/cubits/sign_up/button_state_cubit.dart';
-import 'package:ac_project_app/cubits/url_data_cubit.dart';
-import 'package:ac_project_app/models/folder/folder.dart';
-import 'package:ac_project_app/models/link/link.dart';
-import 'package:ac_project_app/provider/api/folders/link_api.dart';
-import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/bottom_dialog.dart';
 import 'package:ac_project_app/ui/widget/dialog.dart';
 import 'package:ac_project_app/util/get_widget_arguments.dart';
-import 'package:ac_project_app/util/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -49,11 +44,13 @@ class _UploadViewState extends State<UploadView> {
 
   @override
   Widget build(BuildContext context) {
-
     return MultiBlocProvider(
       providers: [
         BlocProvider<GetFoldersCubit>(
-          create: (_) => GetFoldersCubit(),
+          create: (_) => GetFoldersCubit(excludeUnclassified: true),
+        ),
+        BlocProvider<UploadLinkCubit>(
+          create: (_) => UploadLinkCubit(),
         ),
       ],
       child: KeyboardDismissOnTap(
@@ -63,9 +60,7 @@ class _UploadViewState extends State<UploadView> {
               backgroundColor: Colors.white,
               appBar: AppBar(
                 leading: IconButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
+                  onPressed: () => Navigator.pop(context),
                   icon: SvgPicture.asset('assets/images/ic_back.svg'),
                   color: grey900,
                   padding: const EdgeInsets.only(left: 24, right: 8),
@@ -94,52 +89,10 @@ class _UploadViewState extends State<UploadView> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         buildSubTitle('링크'),
-                        Container(
-                          margin: const EdgeInsets.only(top: 14, right: 24),
-                          decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(12)),
-                            color: grey100,
-                          ),
-                          child: SingleChildScrollView(
-                            padding: EdgeInsets.zero,
-                            controller: firstScrollController,
-                            child: SizedBox(
-                              height: 80,
-                              child: TextField(
-                                controller: linkTextController,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  height: 16.7 / 14,
-                                  color: grey600,
-                                  letterSpacing: -0.3,
-                                ),
-                                cursorColor: primary600,
-                                keyboardType: TextInputType.multiline,
-                                maxLines: null,
-                                decoration: const InputDecoration(
-                                  border: InputBorder.none,
-                                  focusedBorder: InputBorder.none,
-                                  isDense: true,
-                                  contentPadding: EdgeInsets.symmetric(
-                                    vertical: 15,
-                                    horizontal: 16,
-                                  ),
-                                  hintText: '링크를 여기에 불러주세요',
-                                  hintStyle: TextStyle(
-                                    color: grey400,
-                                    fontSize: 14,
-                                    letterSpacing: -0.3,
-                                  ),
-                                ),
-                                onChanged: (value) => setState(() {}),
-                              ),
-                            ),
-                          ),
-                        ),
+                        buildLinkTextField(),
                         Container(
                           margin: const EdgeInsets.only(
                             right: 16,
-                            top: 29,
                             bottom: 3,
                           ),
                           child: Row(
@@ -158,7 +111,6 @@ class _UploadViewState extends State<UploadView> {
                             ],
                           ),
                         ),
-                        // buildTestFolderList(),
                         buildFolderList(),
                         const SizedBox(height: 35),
                         buildSubTitle('링크 코멘트'),
@@ -251,175 +203,113 @@ class _UploadViewState extends State<UploadView> {
     );
   }
 
-  void completeRegister(BuildContext context) {
-    final url = linkTextController.text;
-    UrlLoader.loadData(url).then((metadata) {
-      LinkApi()
-          .postLink(
-        Link(
-          url: url,
-          image: metadata.image,
-          title: metadata.title,
-          describe: commentTextController.text,
-          folderId: selectedFolderId,
-          time: getCurrentTime(),
-        ),
-      )
-          .then((result) {
-        if (result) {
-          showPopUp(
-            title: '저장완료!',
-            content: '링크와 코멘트가 담겼어요',
-            parentContext: context,
-            callback: () {
-              Navigator.pop(context);
-              Navigator.popAndPushNamed(
-                context,
-                Routes.home,
-                arguments: {'index': 0},
-              );
-            },
-          );
-        } else {
-          showError(context);
-        }
-      });
-    });
-  }
-
-  Builder buildTestFolderList() {
-    return Builder(
-      builder: (context) {
-        final folders = [
-          Folder(
-            thumbnail:
-                'https://miro.medium.com/max/1400/1*SSRjtoQ0H2X3SBPOiJ5rZw.jpeg',
-            visible: true,
-            name: '앱 디자인',
-          ),
-          Folder(
-            thumbnail:
-                'https://miro.medium.com/max/1400/1*SSRjtoQ0H2X3SBPOiJ5rZw.jpeg',
-            visible: true,
-            name: '앱 디자인',
-          ),
-          Folder(
-            thumbnail:
-                'https://miro.medium.com/max/1400/1*SSRjtoQ0H2X3SBPOiJ5rZw.jpeg',
-            visible: true,
-            name: '앱 디자인',
-          ),
-          Folder(
-            thumbnail:
-                'https://miro.medium.com/max/1400/1*SSRjtoQ0H2X3SBPOiJ5rZw.jpeg',
-            visible: true,
-            name: '앱 디자인',
-          ),
-          Folder(
-            thumbnail:
-                'https://miro.medium.com/max/1400/1*SSRjtoQ0H2X3SBPOiJ5rZw.jpeg',
-            visible: true,
-            name: '앱 디자인',
-          ),
-          Folder(
-            thumbnail:
-                'https://miro.medium.com/max/1400/1*SSRjtoQ0H2X3SBPOiJ5rZw.jpeg',
-            visible: true,
-            name: '앱 디자인',
-          ),
-        ];
+  Widget buildLinkTextField() {
+    return BlocBuilder<UploadLinkCubit, bool?>(
+      builder: (context, state) {
+        final linkError = state == false;
         return Container(
-          constraints: const BoxConstraints(
-            minHeight: 115,
-            maxHeight: 130,
+          margin: const EdgeInsets.only(
+            top: 14,
+            right: 24,
+            bottom: 15,
           ),
-          child: ListView.builder(
-            shrinkWrap: true,
-            scrollDirection: Axis.horizontal,
-            itemCount: folders.length,
-            itemBuilder: (_, index) {
-              final folder = folders[index];
-              final rightPadding = index != folders.length - 1 ? 12 : 24;
-              return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    selectedIndex = index;
-                    selectedFolderId = folder.id;
-                  });
-                },
-                child: Container(
-                  margin: EdgeInsets.only(
-                    right: rightPadding.toDouble(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(1),
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(12),
                   ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Stack(
-                        children: [
-                          Container(
-                            width: 95,
-                            height: 95,
-                            decoration: const BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(32)),
-                              color: grey100,
-                            ),
-                            child: ClipRRect(
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(32),
-                              ),
-                              child: Image.network(
-                                folder.thumbnail ?? '',
-                                fit: BoxFit.cover,
-                                errorBuilder: (_, __, ___) {
-                                  return Container(
-                                    width: 95,
-                                    height: 95,
-                                    decoration: const BoxDecoration(
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(32),
-                                      ),
-                                      color: grey100,
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-                          Visibility(
-                            visible: selectedIndex == index,
-                            child: Container(
-                              width: 95,
-                              height: 95,
-                              decoration: const BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(32)),
-                                color: secondary400,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        folder.name ?? '',
+                  color: linkError ? redError2 : grey100,
+                ),
+                child: DecoratedBox(
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(12)),
+                    color: grey100,
+                  ),
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.zero,
+                    controller: firstScrollController,
+                    child: SizedBox(
+                      height: 80,
+                      child: TextField(
+                        controller: linkTextController,
                         style: const TextStyle(
-                          color: grey700,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 12,
+                          fontSize: 14,
+                          height: 16.7 / 14,
+                          color: grey600,
                           letterSpacing: -0.3,
-                          height: 14.3 / 12,
                         ),
-                      )
-                    ],
+                        cursorColor: primary600,
+                        keyboardType: TextInputType.multiline,
+                        maxLines: null,
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          isDense: true,
+                          contentPadding: EdgeInsets.symmetric(
+                            vertical: 15,
+                            horizontal: 16,
+                          ),
+                          hintText: '링크를 여기에 불러주세요',
+                          hintStyle: TextStyle(
+                            color: grey400,
+                            fontSize: 14,
+                            letterSpacing: -0.3,
+                          ),
+                        ),
+                        onChanged: (value) => setState(() {
+                          if (value.isNotEmpty) {
+                            buttonState = ButtonState.enabled;
+                          }
+                        }),
+                      ),
+                    ),
                   ),
                 ),
-              );
-            },
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 6),
+                child: Text(
+                  '링크 형식으로 입력해 주세요',
+                  style: TextStyle(
+                    color: linkError ? redError2 : Colors.white,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 12,
+                    height: 14.3 / 12,
+                  ),
+                ),
+              ),
+            ],
           ),
         );
       },
     );
+  }
+
+  void completeRegister(BuildContext context) {
+    context
+        .read<UploadLinkCubit>()
+        .completeRegister(
+          linkTextController.text,
+          commentTextController.text,
+          selectedFolderId,
+        )
+        .then((result) {
+      if (result) {
+        showPopUp(
+          title: '저장완료!',
+          content: '링크와 코멘트가 담겼어요',
+          parentContext: context,
+          callback: () {
+            Navigator.pop(context);
+            Navigator.pop(context);
+          },
+        );
+      }
+    });
   }
 
   BlocBuilder<GetFoldersCubit, FoldersState> buildFolderList() {
@@ -439,10 +329,12 @@ class _UploadViewState extends State<UploadView> {
               itemBuilder: (_, index) {
                 final folder = folders[index];
                 final rightPadding = index != folders.length - 1 ? 12 : 24;
+                final visible = folder.visible ?? false;
                 return GestureDetector(
                   onTap: () {
                     setState(() {
                       selectedIndex = index;
+                      selectedFolderId = folder.id;
                     });
                   },
                   child: Container(
@@ -462,26 +354,43 @@ class _UploadViewState extends State<UploadView> {
                                     BorderRadius.all(Radius.circular(32)),
                                 color: grey100,
                               ),
-                              child: ClipRRect(
-                                borderRadius: const BorderRadius.all(
-                                  Radius.circular(32),
-                                ),
-                                child: Image.network(
-                                  folder.thumbnail ?? '',
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (_, __, ___) {
-                                    return Container(
-                                      width: 95,
-                                      height: 95,
-                                      decoration: const BoxDecoration(
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(32),
+                              child: Stack(
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: const BorderRadius.all(
+                                      Radius.circular(32),
+                                    ),
+                                    child: Image.network(
+                                      folder.thumbnail ?? '',
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (_, __, ___) {
+                                        return Container(
+                                          width: 95,
+                                          height: 95,
+                                          decoration: const BoxDecoration(
+                                            borderRadius: BorderRadius.all(
+                                              Radius.circular(32),
+                                            ),
+                                            color: grey100,
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                  if (!visible)
+                                    Align(
+                                      alignment: Alignment.bottomRight,
+                                      child: Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 3),
+                                        child: SvgPicture.asset(
+                                          'assets/images/ic_lock.svg',
                                         ),
-                                        color: grey100,
                                       ),
-                                    );
-                                  },
-                                ),
+                                    )
+                                  else
+                                    const SizedBox.shrink(),
+                                ],
                               ),
                             ),
                             Visibility(
@@ -508,7 +417,7 @@ class _UploadViewState extends State<UploadView> {
                             letterSpacing: -0.3,
                             height: 14.3 / 12,
                           ),
-                        )
+                        ),
                       ],
                     ),
                   ),
