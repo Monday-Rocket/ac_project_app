@@ -33,7 +33,6 @@ dependencies:
   uni_links: ^0.5.1
 
   ## Utils
-  very_good_analysis: ^3.0.1
   metadata_fetch: ^0.4.1
   permission_handler: ^10.2.0
   flutter_dotenv: ^5.0.2
@@ -45,21 +44,23 @@ dependencies:
   shimmer: ^2.0.0
   share_plus: ^6.3.0
   flutter_keyboard_visibility: ^5.4.0
-  shared_preferences: ^2.0.15
   extended_text: ^9.1.2
+
+  ## lint
+  very_good_analysis: ^3.0.1
 
   ## SVG
   flutter_svg: ^1.1.6
 
-  ## for Database
+  ## for Storage
   sqflite: ^2.1.0+1
+  shared_preferences: ^2.0.15
 
   ## for Test Functions
-  geolocator: ^9.0.1
   flutter_signin_button: ^2.0.0
   freezed_annotation: ^2.1.0
 
-  webview_flutter: ^3.0.4
+  ## Web
   url_launcher: ^6.1.6
 
 dev_dependencies:
