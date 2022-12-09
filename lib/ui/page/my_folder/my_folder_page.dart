@@ -241,121 +241,125 @@ class _MyFolderPageState extends State<MyFolderPage>
     return Expanded(
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 24),
-        child: CustomReorderableListView.separated(
-          shrinkWrap: true,
-          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-          itemCount: folders.length,
-          separatorBuilder: (ctx, index) =>
-              const Divider(thickness: 1, height: 1),
-          itemBuilder: (ctx, index) {
-            final folder = folders[index];
-            final visible = folder.visible ?? true;
-            final isNotClassified = folder.name == '미분류';
+        child: RefreshIndicator(
+          onRefresh: () async => context.read<GetFoldersCubit>().getFolders(),
+          color: primary600,
+          child: CustomReorderableListView.separated(
+            shrinkWrap: true,
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            itemCount: folders.length,
+            separatorBuilder: (ctx, index) =>
+                const Divider(thickness: 1, height: 1),
+            itemBuilder: (ctx, index) {
+              final folder = folders[index];
+              final visible = folder.visible ?? true;
+              final isNotClassified = folder.name == '미분류';
 
-            return ListTile(
-              contentPadding: EdgeInsets.zero,
-              key: Key('$index'),
-              title: InkWell(
-                onTap: () {
-                  moveToMyLinksView(context, folders, index);
-                },
-                child: Container(
-                  margin:
-                      const EdgeInsets.symmetric(vertical: 20, horizontal: 4),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                            width: 63 + 6,
-                            height: 63,
-                            margin: const EdgeInsets.only(right: 30),
-                            child: Stack(
-                              children: [
-                                ClipRRect(
-                                  borderRadius: const BorderRadius.all(
-                                    Radius.circular(20),
+              return ListTile(
+                contentPadding: EdgeInsets.zero,
+                key: Key('$index'),
+                title: InkWell(
+                  onTap: () {
+                    moveToMyLinksView(context, folders, index);
+                  },
+                  child: Container(
+                    margin:
+                        const EdgeInsets.symmetric(vertical: 20, horizontal: 4),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              width: 63 + 6,
+                              height: 63,
+                              margin: const EdgeInsets.only(right: 30),
+                              child: Stack(
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: const BorderRadius.all(
+                                      Radius.circular(20),
+                                    ),
+                                    child: ColoredBox(
+                                      color: grey100,
+                                      child: folder.thumbnail != null &&
+                                              (folder.thumbnail?.isNotEmpty ??
+                                                  false)
+                                          ? Image.network(
+                                              folder.thumbnail!,
+                                              width: 63,
+                                              height: 63,
+                                              fit: BoxFit.contain,
+                                              errorBuilder: (_, __, ___) =>
+                                                  emptyFolderView(),
+                                            )
+                                          : emptyFolderView(),
+                                    ),
                                   ),
-                                  child: ColoredBox(
-                                    color: grey100,
-                                    child: folder.thumbnail != null &&
-                                            (folder.thumbnail?.isNotEmpty ??
-                                                false)
-                                        ? Image.network(
-                                            folder.thumbnail!,
-                                            width: 63,
-                                            height: 63,
-                                            fit: BoxFit.contain,
-                                            errorBuilder: (_, __, ___) =>
-                                                emptyFolderView(),
-                                          )
-                                        : emptyFolderView(),
+                                  if (!visible)
+                                    Align(
+                                      alignment: Alignment.bottomRight,
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(bottom: 3),
+                                        child: SvgPicture.asset(
+                                          'assets/images/ic_lock.svg',
+                                        ),
+                                      ),
+                                    )
+                                  else
+                                    const SizedBox.shrink(),
+                                ],
+                              ),
+                            ),
+                            Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  folder.name!,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                    color: blackBold,
                                   ),
                                 ),
-                                if (!visible)
-                                  Align(
-                                    alignment: Alignment.bottomRight,
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(bottom: 3),
-                                      child: SvgPicture.asset(
-                                        'assets/images/ic_lock.svg',
-                                      ),
-                                    ),
-                                  )
-                                else
-                                  const SizedBox.shrink(),
+                                const SizedBox(
+                                  height: 6,
+                                ),
+                                Text(
+                                  '링크 ${addCommasFrom(folder.links)}개',
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    color: greyText,
+                                  ),
+                                )
                               ],
+                            )
+                          ],
+                        ),
+                        if (isNotClassified)
+                          const SizedBox.shrink()
+                        else
+                          InkWell(
+                            onTap: () => showFolderOptionsDialog(folder, context),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8),
+                              child: SvgPicture.asset('assets/images/more.svg'),
                             ),
                           ),
-                          Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                folder.name!,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                  color: blackBold,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 6,
-                              ),
-                              Text(
-                                '링크 ${addCommasFrom(folder.links)}개',
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                  color: greyText,
-                                ),
-                              )
-                            ],
-                          )
-                        ],
-                      ),
-                      if (isNotClassified)
-                        const SizedBox.shrink()
-                      else
-                        InkWell(
-                          onTap: () => showFolderOptionsDialog(folder, context),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8),
-                            child: SvgPicture.asset('assets/images/more.svg'),
-                          ),
-                        ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            );
-          },
-          onReorder: (int oldIndex, int newIndex) {
-            Log.i('old: $oldIndex, new: $newIndex');
-            final item = folders.removeAt(oldIndex);
-            folders.insert(newIndex, item);
-          },
+              );
+            },
+            onReorder: (int oldIndex, int newIndex) {
+              Log.i('old: $oldIndex, new: $newIndex');
+              final item = folders.removeAt(oldIndex);
+              folders.insert(newIndex, item);
+            },
+          ),
         ),
       ),
     );

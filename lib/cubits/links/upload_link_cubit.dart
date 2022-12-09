@@ -1,17 +1,17 @@
+import 'package:ac_project_app/cubits/links/upload_result_state.dart';
 import 'package:ac_project_app/cubits/url_data_cubit.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/provider/api/folders/link_api.dart';
 import 'package:ac_project_app/util/string_utils.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class UploadLinkCubit extends Cubit<bool?> {
-  UploadLinkCubit(): super(null);
+class UploadLinkCubit extends Cubit<UploadResultState> {
+  UploadLinkCubit(): super(UploadResultState.success);
 
-  Future<bool> completeRegister(String url, String describe, int? folderId) async {
+  Future<UploadResultState> completeRegister(String url, String describe, int? folderId) async {
     try {
       final metadata = await UrlLoader.loadData(url);
-      final result = await LinkApi()
-          .postLink(
+      final result = await LinkApi().postLink(
         Link(
           url: url,
           image: metadata.image,
@@ -21,11 +21,12 @@ class UploadLinkCubit extends Cubit<bool?> {
           time: getCurrentTime(),
         ),
       );
+
       emit(result);
       return result;
     } catch (e) {
-      emit(false);
-      return false;
+      emit(UploadResultState.error);
+      return UploadResultState.error;
     }
   }
 }

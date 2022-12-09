@@ -1,3 +1,4 @@
+import 'package:ac_project_app/cubits/links/upload_result_state.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/models/link/searched_links.dart';
@@ -24,7 +25,7 @@ class LinkApi {
     );
   }
 
-  Future<bool> postLink(Link link) async {
+  Future<UploadResultState> postLink(Link link) async {
     final result = await client.postUri(
       '/links',
       body: {
@@ -38,10 +39,13 @@ class LinkApi {
     );
     return result.when(
       success: (data) {
-        return true;
+        return UploadResultState.success;
       },
       error: (msg) {
-        return false;
+        if (msg == '2001') {
+          return UploadResultState.duplicated;
+        }
+        return UploadResultState.apiError;
       },
     );
   }

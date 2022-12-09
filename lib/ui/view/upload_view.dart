@@ -4,6 +4,7 @@ import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/folders/folders_state.dart';
 import 'package:ac_project_app/cubits/folders/get_my_folders_cubit.dart';
 import 'package:ac_project_app/cubits/links/upload_link_cubit.dart';
+import 'package:ac_project_app/cubits/links/upload_result_state.dart';
 import 'package:ac_project_app/cubits/sign_up/button_state_cubit.dart';
 import 'package:ac_project_app/ui/widget/bottom_dialog.dart';
 import 'package:ac_project_app/ui/widget/dialog.dart';
@@ -63,7 +64,7 @@ class _UploadViewState extends State<UploadView> {
                   onPressed: () => Navigator.pop(context),
                   icon: SvgPicture.asset('assets/images/ic_back.svg'),
                   color: grey900,
-                  padding: const EdgeInsets.only(left: 24, right: 8),
+                  padding: const EdgeInsets.only(left: 20, right: 8),
                 ),
                 backgroundColor: Colors.transparent,
                 elevation: 0,
@@ -100,7 +101,7 @@ class _UploadViewState extends State<UploadView> {
                             children: [
                               buildSubTitle('폴더 선택'),
                               InkWell(
-                                onTap: () => showAddFolderDialog(context),
+                                onTap: () => showAddFolderDialog(context, isFromUpload: true),
                                 child: Padding(
                                   padding: const EdgeInsets.all(8),
                                   child: SvgPicture.asset(
@@ -204,9 +205,9 @@ class _UploadViewState extends State<UploadView> {
   }
 
   Widget buildLinkTextField() {
-    return BlocBuilder<UploadLinkCubit, bool?>(
+    return BlocBuilder<UploadLinkCubit, UploadResultState>(
       builder: (context, state) {
-        final linkError = state == false;
+        final linkError = state == UploadResultState.error;
         return Container(
           margin: const EdgeInsets.only(
             top: 14,
@@ -298,7 +299,7 @@ class _UploadViewState extends State<UploadView> {
           selectedFolderId,
         )
         .then((result) {
-      if (result) {
+      if (result == UploadResultState.success) {
         showPopUp(
           title: '저장완료!',
           content: '링크와 코멘트가 담겼어요',
@@ -308,6 +309,17 @@ class _UploadViewState extends State<UploadView> {
             Navigator.pop(context);
           },
         );
+      } else if (result == UploadResultState.duplicated) {
+        showPopUp(
+          title: '업로드 실패',
+          content: '입력하신 링크는 이미 업로드한 링크에요\n링크를 다시 한번 확인해 주세요',
+          parentContext: context,
+          callback: () {
+            Navigator.pop(context);
+          },
+        );
+      } else if (result == UploadResultState.apiError) {
+        showError(context);
       }
     });
   }

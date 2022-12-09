@@ -56,7 +56,7 @@ class LinkDetailView extends StatelessWidget {
                         Navigator.pop(context);
                       },
                       icon: SvgPicture.asset('assets/images/ic_back.svg'),
-                      padding: const EdgeInsets.only(left: 24, right: 8),
+                      padding: const EdgeInsets.only(left: 20, right: 8),
                     ),
                     actions: [
                       InkWell(

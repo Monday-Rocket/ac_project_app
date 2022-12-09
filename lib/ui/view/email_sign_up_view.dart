@@ -159,6 +159,7 @@ class _EmailSignUpViewState extends State<EmailSignUpView>
 
   @override
   Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
+    Log.i('didChangeAppLifecycleState');
     switch (state) {
       case AppLifecycleState.resumed:
         Log.d('resumed');
@@ -181,14 +182,16 @@ class _EmailSignUpViewState extends State<EmailSignUpView>
   }) async {
     PendingDynamicLinkData? dynamicLinkData;
     Uri? deepLink;
-
+    Log.i('check');
     if (fromColdState) {
       dynamicLinkData = await FirebaseDynamicLinks.instance.getInitialLink();
       if (dynamicLinkData != null) {
         deepLink = dynamicLinkData.link;
       }
     } else {
+      Log.d('listen check start');
       dynamicLinkData = await FirebaseDynamicLinks.instance.onLink.first;
+      Log.d('listen check end');
       deepLink = dynamicLinkData.link;
     }
 
@@ -208,6 +211,12 @@ class _EmailSignUpViewState extends State<EmailSignUpView>
   }
 
   @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    super.initState();
+  }
+
+  @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
@@ -223,6 +232,9 @@ class _EmailSignUpViewState extends State<EmailSignUpView>
             Navigator.pushReplacementNamed(
               context,
               Routes.terms,
+              arguments: {
+                'user': data,
+              },
             );
           },
           error: (msg) {

@@ -300,6 +300,7 @@ Future<bool?> showAddFolderDialog(
   void Function(BuildContext context, List<Folder> folders, int index)?
       moveToMyLinksView,
   void Function()? callback,
+  bool? isFromUpload,
 }) async {
   final formKey = GlobalKey<FormState>();
 
@@ -359,6 +360,7 @@ Future<bool?> showAddFolderDialog(
                                         visibleState,
                                         moveToMyLinksView: moveToMyLinksView,
                                         callback: callback,
+                                        isFromUpload: isFromUpload,
                                       ),
                                       child: Text(
                                         '완료',
@@ -444,6 +446,7 @@ Future<bool?> showAddFolderDialog(
                                         visibleState,
                                         moveToMyLinksView: moveToMyLinksView,
                                         callback: callback,
+                                        isFromUpload: isFromUpload,
                                       );
                                     },
                                   ),
@@ -506,6 +509,7 @@ Future<bool?> showAddFolderDialog(
                                     visibleState,
                                     moveToMyLinksView: moveToMyLinksView,
                                     callback: callback,
+                                    isFromUpload: isFromUpload,
                                   ),
                                   child: const Text(
                                     '폴더에 저장하기',
@@ -541,6 +545,7 @@ void saveEmptyFolder(
   void Function(BuildContext context, List<Folder> folders, int index)?
       moveToMyLinksView,
   void Function()? callback,
+  bool? isFromUpload,
 }) {
   if (folderName.isEmpty) {
     return;
@@ -562,10 +567,36 @@ void saveEmptyFolder(
       fontSize: 13,
     );
 
-    parentContext.read<GetFoldersCubit>().getFolders().then((_) {
-      final folders = parentContext.read<GetFoldersCubit>().folders;
-      moveToMyLinksView?.call(parentContext, folders, folders.length - 1);
-      callback?.call();
-    });
+    if (isFromUpload ?? false) {
+      parentContext
+          .read<GetFoldersCubit>()
+          .getFoldersWithoutUnclassified()
+          .then((_) {
+        runCallback(
+          parentContext,
+          moveToMyLinksView: moveToMyLinksView,
+          callback: callback,
+        );
+      });
+    } else {
+      parentContext.read<GetFoldersCubit>().getFolders().then((_) {
+        runCallback(
+          parentContext,
+          moveToMyLinksView: moveToMyLinksView,
+          callback: callback,
+        );
+      });
+    }
   });
+}
+
+void runCallback(
+  BuildContext parentContext, {
+  void Function(BuildContext context, List<Folder> folders, int index)?
+      moveToMyLinksView,
+  void Function()? callback,
+}) {
+  final folders = parentContext.read<GetFoldersCubit>().folders;
+  moveToMyLinksView?.call(parentContext, folders, folders.length - 1);
+  callback?.call();
 }

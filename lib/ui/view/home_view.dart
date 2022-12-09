@@ -149,7 +149,9 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
                   currentIndex: index,
                   onTap: (index) {
                     if (index == 1) {
-                      Navigator.pushNamed(context, Routes.upload);
+                      Navigator.pushNamed(context, Routes.upload).then(
+                        (value) => setState(() {}),
+                      );
                     } else {
                       context.read<HomeViewCubit>().moveTo(index);
                     }

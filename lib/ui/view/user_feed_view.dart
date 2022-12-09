@@ -110,7 +110,7 @@ class UserFeedView extends StatelessWidget {
         },
         icon: SvgPicture.asset('assets/images/ic_back.svg'),
         color: grey900,
-        padding: const EdgeInsets.only(left: 24, right: 8),
+        padding: const EdgeInsets.only(left: 20, right: 8),
       ),
       actions: [
         InkWell(

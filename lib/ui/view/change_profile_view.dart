@@ -34,7 +34,7 @@ class ChangeProfileView extends StatelessWidget {
               leading: IconButton(
                 icon: SvgPicture.asset('assets/images/ic_back.svg'),
                 onPressed: () => Navigator.pop(context),
-                padding: const EdgeInsets.only(left: 24, right: 8),
+                padding: const EdgeInsets.only(left: 20, right: 8),
               ),
               title: const Text(
                 '프로필 변경',

@@ -13,6 +13,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class EmailLoginView extends StatefulWidget {
   const EmailLoginView({super.key});
@@ -210,6 +211,12 @@ class _EmailLoginViewState extends State<EmailLoginView>
   }
 
   @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    super.initState();
+  }
+
+  @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
@@ -223,11 +230,22 @@ class _EmailLoginViewState extends State<EmailLoginView>
 
         user.when(
           success: (data) {
-            Navigator.pushReplacementNamed(
-              context,
-              Routes.home,
-              arguments: {'index': 0},
-            );
+            if (data.is_new ?? false) {
+              Fluttertoast.showToast(msg: '가입된 계정이 없어 회원 가입 화면으로 이동합니다.');
+              Navigator.pushReplacementNamed(
+                context,
+                Routes.terms,
+                arguments: {
+                  'user': data,
+                },
+              );
+            } else {
+              Navigator.pushReplacementNamed(
+                context,
+                Routes.home,
+                arguments: {'index': 0},
+              );
+            }
           },
           error: (msg) {
             setState(() {
@@ -252,6 +270,9 @@ class _EmailLoginViewState extends State<EmailLoginView>
     if (value == null || value.isEmpty || !regex.hasMatch(value)) {
       return '메일 형식으로 입력해주세요.';
     } else if (hasError) {
+      setState(() {
+        buttonState = true;
+      });
       return '입력한 정보와 일치하는 계정이 없습니다.';
     } else {
       return null;

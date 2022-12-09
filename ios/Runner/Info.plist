@@ -47,7 +47,7 @@
 			<string>com.mr.acProjectApp</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.mr.acProjectApp</string>
+				<string>acprojectapp.page.link</string>
 			</array>
 		</dict>
 		<dict>

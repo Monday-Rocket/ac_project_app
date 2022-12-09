@@ -24,6 +24,7 @@ class SignUpCubit extends Cubit<String?> {
         if (data.id == user?.id) {
           return const Result.success(Routes.home);
         }
+        Log.e('${data.id} != ${user?.id}');
         return const Result.error('id 다름');
       },
       error: Result.error,
