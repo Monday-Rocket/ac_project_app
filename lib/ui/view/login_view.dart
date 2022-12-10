@@ -31,7 +31,7 @@ class LoginView extends StatelessWidget {
                 if (state is LoadingState) {
                   return const CircularProgressIndicator();
                 } else if (state is ErrorState) {
-                  showErrorBanner(loginContext);
+                  showErrorBanner(loginContext, state.message);
                 } else if (state is LoadedState) {
                   moveToNext(context, loginContext, state.user);
                 }
@@ -49,9 +49,9 @@ class LoginView extends StatelessWidget {
     );
   }
 
-  void showErrorBanner(BuildContext context) {
+  void showErrorBanner(BuildContext context, String message) {
     Fluttertoast.showToast(
-      msg: '                로그인 실패                ',
+      msg: '로그인 실패: $message',
       gravity: ToastGravity.TOP,
       toastLength: Toast.LENGTH_LONG,
       backgroundColor: grey900,
@@ -60,8 +60,11 @@ class LoginView extends StatelessWidget {
     );
   }
 
-  Future<void> moveToNext(BuildContext parentContext, BuildContext context,
-      custom.User user) async {
+  Future<void> moveToNext(
+    BuildContext parentContext,
+    BuildContext context,
+    custom.User user,
+  ) async {
     Future.delayed(const Duration(milliseconds: 1000), () {
       if (user.is_new ?? false) {
         // 1. 서비스 이용 동의
@@ -73,7 +76,8 @@ class LoginView extends StatelessWidget {
           } else {
             // 회원가입 이동
             unawaited(
-                Navigator.pushNamed(parentContext, Routes.signUpNickname));
+              Navigator.pushNamed(parentContext, Routes.signUpNickname),
+            );
           }
         });
       } else {
