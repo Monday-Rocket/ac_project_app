@@ -5,12 +5,12 @@ import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/provider/api/user/user_api.dart';
 import 'package:ac_project_app/routes.dart';
+import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MyPage extends StatelessWidget {
@@ -37,6 +37,7 @@ class MyPage extends StatelessWidget {
                             Routes.home,
                             arguments: {'index': 3},
                           );
+                          showBottomToast('프로필 이미지를 변경했어요!');
                         }
                       });
                     },
@@ -153,7 +154,7 @@ class MyPage extends StatelessWidget {
                         Navigator.pushReplacementNamed(context, Routes.login);
                       } else {
                         Navigator.of(context).pop(true);
-                        Fluttertoast.showToast(msg: '회원탈퇴 실패');
+                        showBottomToast('회원탈퇴 실패');
                       }
                     });
                   },

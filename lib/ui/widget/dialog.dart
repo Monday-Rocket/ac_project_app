@@ -6,7 +6,7 @@ void showPopUp({
   required String title,
   required String content,
   required BuildContext parentContext,
-  required void Function() callback,
+  required void Function()? callback,
   bool icon = false,
 }) {
   final width = MediaQuery.of(parentContext).size.width;

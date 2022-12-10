@@ -6,6 +6,7 @@ import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/provider/api/user/user_api.dart';
 import 'package:ac_project_app/provider/login/email_login.dart';
 import 'package:ac_project_app/routes.dart';
+import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/buttons/bottom_sheet_button.dart';
 import 'package:ac_project_app/ui/widget/dialog.dart';
 import 'package:ac_project_app/ui/widget/only_back_app_bar.dart';
@@ -14,7 +15,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 class EmailLoginView extends StatefulWidget {
   const EmailLoginView({super.key});
@@ -141,7 +141,7 @@ class _EmailLoginViewState extends State<EmailLoginView>
                 context: context,
                 text: '로그인',
                 keyboardVisible: visible,
-                onPressed: buttonState ? () => Email.send(emailString) : null,
+                onPressed: buttonState ? () => Email.send(context, emailString) : null,
               ),
             );
           },
@@ -225,14 +225,7 @@ class _EmailLoginViewState extends State<EmailLoginView>
         user.when(
           success: (data) {
             if (data.is_new ?? false) {
-              Fluttertoast.showToast(msg: '가입된 계정이 없어 회원 가입 화면으로 이동합니다.');
-              Navigator.pushReplacementNamed(
-                context,
-                Routes.terms,
-                arguments: {
-                  'user': data,
-                },
-              );
+              showBottomToast('가입된 계정이 없어 회원 가입 화면으로 이동합니다.');
             } else {
               Navigator.pushReplacementNamed(
                 context,

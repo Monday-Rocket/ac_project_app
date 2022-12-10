@@ -10,11 +10,12 @@ import 'package:ac_project_app/models/report/report_type.dart';
 import 'package:ac_project_app/models/user/detail_user.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/page/my_folder/folder_visible_state.dart';
+import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/text/custom_font.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:share_plus/share_plus.dart';
 
 Future<bool?> showMyLinkOptionsDialog(Link link, BuildContext parentContext) {
@@ -47,10 +48,17 @@ Future<bool?> showMyLinkOptionsDialog(Link link, BuildContext parentContext) {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             InkWell(
-                              onTap: () => Share.share(
-                                link.url ?? '',
-                                subject: link.title,
-                              ),
+                              onTap: () {
+                                Share.share(
+                                  link.url ?? '',
+                                  subject: link.title,
+                                );
+                                Clipboard.setData(
+                                  ClipboardData(text: link.url ?? ''),
+                                ).then(
+                                  (value) => showBottomToast('링크 주소가 복사 되었어요!'),
+                                );
+                              },
                               highlightColor: grey100,
                               child: buildItem('공유'),
                             ),
@@ -59,6 +67,9 @@ Future<bool?> showMyLinkOptionsDialog(Link link, BuildContext parentContext) {
                                 DeleteLink.delete(link).then((result) {
                                   Navigator.pop(context);
                                   Navigator.pop(parentContext, 'deleted');
+                                  if (result) {
+                                    showBottomToast('링크가 삭제되었어요!');
+                                  }
                                 });
                               },
                               child: buildItem('링크 삭제'),
@@ -558,14 +569,7 @@ void saveEmptyFolder(
 
   context.read<FolderNameCubit>().add(folder).then((result) {
     Navigator.pop(context);
-    Fluttertoast.showToast(
-      msg: '                새로운 폴더가 생성되었어요!                ',
-      gravity: ToastGravity.BOTTOM,
-      toastLength: Toast.LENGTH_LONG,
-      backgroundColor: grey900,
-      textColor: Colors.white,
-      fontSize: 13,
-    );
+    showBottomToast('새로운 폴더가 생성되었어요!');
 
     if (isFromUpload ?? false) {
       parentContext

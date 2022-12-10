@@ -138,7 +138,7 @@ class _EmailSignUpViewState extends State<EmailSignUpView>
                 context: context,
                 text: '확인',
                 keyboardVisible: visible,
-                onPressed: buttonState ? () => Email.send(emailString) : null,
+                onPressed: buttonState ? () => Email.send(context, emailString) : null,
               ),
             );
           },

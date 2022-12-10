@@ -9,11 +9,11 @@ import 'package:ac_project_app/cubits/login/login_type.dart';
 import 'package:ac_project_app/cubits/login/user_state.dart';
 import 'package:ac_project_app/models/user/user.dart' as custom;
 import 'package:ac_project_app/routes.dart';
+import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/text/custom_font.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 class LoginView extends StatelessWidget {
   const LoginView({super.key});
@@ -50,14 +50,7 @@ class LoginView extends StatelessWidget {
   }
 
   void showErrorBanner(BuildContext context, String message) {
-    Fluttertoast.showToast(
-      msg: '로그인 실패: $message',
-      gravity: ToastGravity.TOP,
-      toastLength: Toast.LENGTH_LONG,
-      backgroundColor: grey900,
-      textColor: Colors.white,
-      fontSize: 13,
-    );
+    showBottomToast('로그인 실패: $message');
   }
 
   Future<void> moveToNext(

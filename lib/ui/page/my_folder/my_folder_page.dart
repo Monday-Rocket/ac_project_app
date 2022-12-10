@@ -11,6 +11,7 @@ import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/bottom_dialog.dart';
+import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/custom_reorderable_list_view.dart';
 import 'package:ac_project_app/ui/widget/text/custom_font.dart';
 import 'package:ac_project_app/util/logger.dart';
@@ -18,7 +19,6 @@ import 'package:ac_project_app/util/number_commas.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 class MyFolderPage extends StatefulWidget {
   const MyFolderPage({super.key});
@@ -583,9 +583,12 @@ class _MyFolderPageState extends State<MyFolderPage>
                       ),
                       onPressed: () {
                         final cubit = context.read<GetFoldersCubit>();
-                        cubit.delete(folder).then((value) {
+                        cubit.delete(folder).then((result) {
                           Navigator.pop(context, true);
                           cubit.getFolders();
+                          if (result) {
+                            showBottomToast('폴더가 삭제되었어요!');
+                          }
                         });
                       },
                       child: const Text(
@@ -603,14 +606,7 @@ class _MyFolderPageState extends State<MyFolderPage>
     ).then((bool? value) {
       Navigator.pop(context);
       if (value ?? false) {
-        Fluttertoast.showToast(
-          msg: '                  폴더가 삭제되었어요!                  ',
-          gravity: ToastGravity.BOTTOM,
-          toastLength: Toast.LENGTH_LONG,
-          backgroundColor: grey900,
-          textColor: Colors.white,
-          fontSize: 13,
-        );
+        showBottomToast('폴더가 삭제되었어요!');
       }
     });
   }
