@@ -83,6 +83,10 @@ android {
             shrinkResources true
             minifyEnabled true
             signingConfig signingConfigs.release
+
+            ndk {
+                debugSymbolLevel 'FULL'
+            }
         }
     }
     namespace 'com.mr.ac_project_app'
