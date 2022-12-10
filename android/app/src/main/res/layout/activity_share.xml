@@ -128,7 +128,7 @@
             android:layout_marginStart="24dp"
             android:layout_marginTop="14dp"
             android:layout_marginBottom="60dp"
-            android:visibility="visible"
+            android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/select_text"
             app:layout_constraintBottom_toBottomOf="parent"/>

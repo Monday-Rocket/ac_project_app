@@ -80,6 +80,8 @@ class ShareActivity : ComponentActivity() {
             binding.emptyFolderImage.root.setOnClickListener {
                 binding.folderPlusButton.callOnClick()
             }
+        } else {
+            binding.emptyFolderImage.root.visibility = View.GONE
         }
     }
 
