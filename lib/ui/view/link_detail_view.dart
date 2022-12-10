@@ -7,6 +7,7 @@ import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/ui/widget/bottom_dialog.dart';
+import 'package:ac_project_app/ui/widget/buttons/bottom_sheet_button.dart';
 import 'package:ac_project_app/util/date_utils.dart';
 import 'package:ac_project_app/util/get_widget_arguments.dart';
 import 'package:ac_project_app/util/string_utils.dart';
@@ -48,6 +49,7 @@ class LinkDetailView extends StatelessWidget {
             return BlocBuilder<DetailEditCubit, EditState>(
               builder: (cubitContext, state) {
                 return Scaffold(
+                  resizeToAvoidBottomInset: false,
                   appBar: AppBar(
                     backgroundColor: Colors.transparent,
                     elevation: 0,
@@ -89,38 +91,17 @@ class LinkDetailView extends StatelessWidget {
                   bottomSheet: Builder(
                     builder: (_) {
                       if (state == EditState.edit) {
-                        return Container(
-                          margin: const EdgeInsets.only(
-                            bottom: 16,
-                            left: 24,
-                            right: 24,
-                          ),
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              minimumSize: const Size.fromHeight(55),
-                              backgroundColor: primary700,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
+                        return buildBottomSheetButton(
+                          context: context,
+                          text: '확인',
+                          keyboardVisible: visible,
+                          onPressed: () => cubitContext
+                              .read<DetailEditCubit>()
+                              .saveComment(link)
+                              .then(
+                                (value) =>
+                                    value ? Navigator.pop(context) : null,
                               ),
-                            ),
-                            onPressed: () {
-                              cubitContext
-                                  .read<DetailEditCubit>()
-                                  .saveComment(link)
-                                  .then(
-                                    (value) =>
-                                        value ? Navigator.pop(context) : null,
-                                  );
-                            },
-                            child: const Text(
-                              '확인',
-                              style: TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              textWidthBasis: TextWidthBasis.parent,
-                            ),
-                          ),
                         );
                       } else {
                         return const SizedBox.shrink();

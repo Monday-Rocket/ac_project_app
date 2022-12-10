@@ -2,6 +2,7 @@ import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/const/strings.dart';
 import 'package:ac_project_app/models/user/user.dart';
 import 'package:ac_project_app/routes.dart';
+import 'package:ac_project_app/ui/widget/buttons/bottom_sheet_button.dart';
 import 'package:ac_project_app/ui/widget/only_back_app_bar.dart';
 import 'package:ac_project_app/ui/widget/text/custom_font.dart';
 import 'package:ac_project_app/util/get_widget_arguments.dart';
@@ -361,43 +362,16 @@ class _TermsViewState extends State<TermsView> {
           ),
         ),
       ),
-      bottomSheet: Container(
-        margin: const EdgeInsets.only(
-          left: 24,
-          right: 24,
-          bottom: 37,
-        ),
-        child: Builder(
-          builder: (context) {
-            final allChecked = firstCheck && secondCheck && thirdCheck;
-            return ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size.fromHeight(55),
-                backgroundColor: primary800,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                disabledBackgroundColor: secondary,
-                disabledForegroundColor: Colors.white,
-              ),
-              onPressed: allChecked
-                  ? () => Navigator.pushNamed(
-                        context,
-                        Routes.signUpNickname,
-                        arguments: user,
-                      )
-                  : null,
-              child: const Text(
-                '약관동의',
-                style: TextStyle(
-                  fontSize: 17,
-                  fontWeight: FontWeight.bold,
-                ),
-                textWidthBasis: TextWidthBasis.parent,
-              ),
-            );
-          },
-        ),
+      bottomSheet: buildBottomSheetButton(
+        context: context,
+        text: '약관동의',
+        onPressed: firstCheck && secondCheck && thirdCheck
+            ? () => Navigator.pushNamed(
+                  context,
+                  Routes.signUpNickname,
+                  arguments: user,
+                )
+            : null,
       ),
     );
   }

@@ -6,6 +6,7 @@ import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/provider/api/user/user_api.dart';
 import 'package:ac_project_app/provider/login/email_login.dart';
 import 'package:ac_project_app/routes.dart';
+import 'package:ac_project_app/ui/widget/buttons/bottom_sheet_button.dart';
 import 'package:ac_project_app/ui/widget/only_back_app_bar.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -29,132 +30,125 @@ class _EmailSignUpViewState extends State<EmailSignUpView>
 
   @override
   Widget build(BuildContext context) {
-    return KeyboardDismissOnTap(
-      child: KeyboardVisibilityBuilder(
-        builder: (context, visible) {
-          return Scaffold(
-            appBar: buildBackAppBar(context),
-            body: SafeArea(
-              child: Container(
-                margin: const EdgeInsets.symmetric(horizontal: 24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 16),
-                    const Text(
-                      '가입에 필요한\n정보를 입력해주세요.',
-                      style: TextStyle(
-                        fontSize: 24,
-                        color: grey900,
-                        fontWeight: FontWeight.bold,
-                        height: 34 / 24,
-                        letterSpacing: -0.3,
+    return WillPopScope(
+      onWillPop: () async {
+        unawaited(Navigator.pushNamed(context, Routes.login));
+        return true;
+      },
+      child: KeyboardDismissOnTap(
+        child: KeyboardVisibilityBuilder(
+          builder: (context, visible) {
+            return Scaffold(
+              resizeToAvoidBottomInset: false,
+              appBar: buildBackAppBar(
+                context,
+                callback: () =>
+                    Navigator.popAndPushNamed(context, Routes.login),
+              ),
+              body: SafeArea(
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 16),
+                      const Text(
+                        '가입에 필요한\n정보를 입력해주세요.',
+                        style: TextStyle(
+                          fontSize: 24,
+                          color: grey900,
+                          fontWeight: FontWeight.bold,
+                          height: 34 / 24,
+                          letterSpacing: -0.3,
+                        ),
                       ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(top: 30, bottom: 23),
-                      child: Form(
-                        key: formKey,
-                        child: TextFormField(
-                          autofocus: true,
-                          style: const TextStyle(
-                            fontSize: 17,
-                            fontWeight: FontWeight.w500,
-                            color: blackBold,
-                          ),
-                          decoration: InputDecoration(
-                            labelText: '이메일',
-                            labelStyle: const TextStyle(
-                              color: Color(0xFF9097A3),
+                      Container(
+                        margin: const EdgeInsets.only(top: 30, bottom: 23),
+                        child: Form(
+                          key: formKey,
+                          child: TextFormField(
+                            autofocus: true,
+                            style: const TextStyle(
+                              fontSize: 17,
                               fontWeight: FontWeight.w500,
+                              color: blackBold,
                             ),
-                            focusedBorder: const UnderlineInputBorder(
-                              borderSide: BorderSide(color: primary800, width: 2),
+                            decoration: InputDecoration(
+                              labelText: '이메일',
+                              labelStyle: const TextStyle(
+                                color: Color(0xFF9097A3),
+                                fontWeight: FontWeight.w500,
+                              ),
+                              focusedBorder: const UnderlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: primary800, width: 2),
+                              ),
+                              errorStyle: const TextStyle(
+                                color: redError,
+                              ),
+                              focusedErrorBorder: const UnderlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: redError, width: 2),
+                              ),
+                              enabledBorder: const UnderlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: greyTab, width: 2),
+                              ),
+                              contentPadding: EdgeInsets.zero,
+                              suffix: buttonState
+                                  ? const Icon(
+                                      Icons.check,
+                                      color: primary700,
+                                      size: 16,
+                                    )
+                                  : null,
                             ),
-                            errorStyle: const TextStyle(
-                              color: redError,
-                            ),
-                            focusedErrorBorder: const UnderlineInputBorder(
-                              borderSide: BorderSide(color: redError, width: 2),
-                            ),
-                            enabledBorder: const UnderlineInputBorder(
-                              borderSide: BorderSide(color: greyTab, width: 2),
-                            ),
-                            contentPadding: EdgeInsets.zero,
-                            suffix: buttonState
-                                ? const Icon(
-                                    Icons.check,
-                                    color: primary700,
-                                    size: 16,
-                                  )
-                                : null,
-                          ),
-                          validator: validateEmail,
-                          onSaved: (String? value) {
-                            emailString = value ?? '';
-                          },
-                          onChanged: (String? value) {
-                            if (value?.isEmpty ?? true) {
-                              setState(() {
-                                buttonState = false;
-                              });
-                            }
-                            if (formKey.currentState != null) {
-                              if (!formKey.currentState!.validate()) {
+                            validator: validateEmail,
+                            onSaved: (String? value) {
+                              emailString = value ?? '';
+                            },
+                            onChanged: (String? value) {
+                              if (value?.isEmpty ?? true) {
                                 setState(() {
                                   buttonState = false;
                                 });
-                                return;
-                              } else {
-                                formKey.currentState!.save();
-                                setState(() {
-                                  buttonState = true;
-                                });
                               }
-                            }
-                          },
+                              if (formKey.currentState != null) {
+                                if (!formKey.currentState!.validate()) {
+                                  setState(() {
+                                    buttonState = false;
+                                  });
+                                  return;
+                                } else {
+                                  formKey.currentState!.save();
+                                  setState(() {
+                                    buttonState = true;
+                                  });
+                                }
+                              }
+                            },
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            bottomSheet: Container(
-              margin: EdgeInsets.only(
-                left: 24,
-                right: 24,
-                bottom: getBottomMargin(visible),
-              ),
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size.fromHeight(55),
-                  backgroundColor: primary800,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    ],
                   ),
-                  disabledBackgroundColor: secondary,
-                  disabledForegroundColor: Colors.white,
                 ),
+              ),
+              bottomSheet: buildBottomSheetButton(
+                context: context,
+                text: '확인',
+                keyboardVisible: visible,
                 onPressed: buttonState ? () => Email.send(emailString) : null,
-                child: const Text(
-                  '확인',
-                  style: TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  textWidthBasis: TextWidthBasis.parent,
-                ),
               ),
-            ),
-          );
-        }
+            );
+          },
+        ),
       ),
     );
   }
 
-  double getBottomMargin(bool visible) {
-    return visible ? 16 : 37;
+  void backToLogin(BuildContext context) {
+    unawaited(Navigator.pushNamed(context, Routes.login));
   }
 
   @override

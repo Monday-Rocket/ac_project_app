@@ -7,6 +7,7 @@ import 'package:ac_project_app/cubits/links/upload_link_cubit.dart';
 import 'package:ac_project_app/cubits/links/upload_result_state.dart';
 import 'package:ac_project_app/cubits/sign_up/button_state_cubit.dart';
 import 'package:ac_project_app/ui/widget/bottom_dialog.dart';
+import 'package:ac_project_app/ui/widget/buttons/bottom_sheet_button.dart';
 import 'package:ac_project_app/ui/widget/dialog.dart';
 import 'package:ac_project_app/util/get_widget_arguments.dart';
 import 'package:flutter/material.dart';
@@ -101,7 +102,8 @@ class _UploadViewState extends State<UploadView> {
                             children: [
                               buildSubTitle('폴더 선택'),
                               InkWell(
-                                onTap: () => showAddFolderDialog(context, isFromUpload: true),
+                                onTap: () => showAddFolderDialog(context,
+                                    isFromUpload: true),
                                 child: Padding(
                                   padding: const EdgeInsets.all(8),
                                   child: SvgPicture.asset(
@@ -166,36 +168,13 @@ class _UploadViewState extends State<UploadView> {
                   ),
                 ),
               ),
-              bottomSheet: Container(
-                margin: EdgeInsets.only(
-                  left: 24,
-                  right: 24,
-                  bottom: getBottomMargin(visible),
-                ),
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size.fromHeight(55),
-                    backgroundColor: buttonState == ButtonState.enabled
-                        ? primary800
-                        : secondary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    disabledBackgroundColor: secondary,
-                    disabledForegroundColor: Colors.white,
-                  ),
-                  onPressed: buttonState == ButtonState.enabled
-                      ? () => completeRegister(context)
-                      : null,
-                  child: const Text(
-                    '등록완료',
-                    style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    textWidthBasis: TextWidthBasis.parent,
-                  ),
-                ),
+              bottomSheet: buildBottomSheetButton(
+                context: context,
+                text: '등록완료',
+                keyboardVisible: visible,
+                onPressed: buttonState == ButtonState.enabled
+                    ? () => completeRegister(context)
+                    : null,
               ),
             );
           },

@@ -23,23 +23,26 @@ class LoginView extends StatelessWidget {
     return BlocProvider(
       create: (_) => LoginCubit(),
       child: Scaffold(
-        body: Center(
-          child: BlocBuilder<LoginCubit, UserState>(
-            builder: (loginContext, state) {
-              if (state is LoadingState) {
-                return const CircularProgressIndicator();
-              } else if (state is ErrorState) {
-                showErrorBanner(loginContext);
-              } else if (state is LoadedState) {
-                moveToNext(context, loginContext, state.user);
-              }
-              return Column(
-                children: [
-                  buildAppImage(),
-                  buildLoginButtons(loginContext),
-                ],
-              );
-            },
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: Center(
+            child: BlocBuilder<LoginCubit, UserState>(
+              builder: (loginContext, state) {
+                if (state is LoadingState) {
+                  return const CircularProgressIndicator();
+                } else if (state is ErrorState) {
+                  showErrorBanner(loginContext);
+                } else if (state is LoadedState) {
+                  moveToNext(context, loginContext, state.user);
+                }
+                return Column(
+                  children: [
+                    buildAppImage(),
+                    buildLoginButtons(loginContext),
+                  ],
+                );
+              },
+            ),
           ),
         ),
       ),
@@ -493,52 +496,48 @@ class LoginView extends StatelessWidget {
   Align buildLoginButtons(BuildContext context) {
     return Align(
       alignment: Alignment.bottomCenter,
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 37),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            buildGoogleLoginButton(context),
-            const SizedBox(height: 12),
-            buildAppleLoginButton(context),
-            const SizedBox(height: 12),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size.fromHeight(55),
-                  backgroundColor: primary700,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                onPressed: () =>
-                    Navigator.pushNamed(context, Routes.emailLogin),
-                child: const Text(
-                  '일반 로그인',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 17,
-                  ),
+      child: Column(
+        children: [
+          buildGoogleLoginButton(context),
+          const SizedBox(height: 12),
+          buildAppleLoginButton(context),
+          const SizedBox(height: 12),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size.fromHeight(55),
+                backgroundColor: primary700,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
                 ),
               ),
-            ),
-            const SizedBox(height: 21),
-            InkWell(
-              onTap: () => Navigator.pushNamed(context, Routes.emailSignUp),
+              onPressed: () =>
+                  Navigator.popAndPushNamed(context, Routes.emailLogin),
               child: const Text(
-                '이메일로 회원가입',
+                '일반 로그인',
                 style: TextStyle(
-                  color: grey400,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 15,
-                  letterSpacing: -0.1,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 17,
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 21),
+          InkWell(
+            onTap: () => Navigator.popAndPushNamed(context, Routes.emailSignUp),
+            child: const Text(
+              '이메일로 회원가입',
+              style: TextStyle(
+                color: grey400,
+                fontWeight: FontWeight.w500,
+                fontSize: 15,
+                letterSpacing: -0.1,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

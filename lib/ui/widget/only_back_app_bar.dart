@@ -3,11 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-AppBar buildBackAppBar(BuildContext context) {
+AppBar buildBackAppBar(BuildContext context, {void Function()? callback}) {
   return AppBar(
     leading: IconButton(
       onPressed: () {
-        Navigator.pop(context);
+        if (callback != null) {
+          callback.call();
+        } else {
+          Navigator.pop(context);
+        }
       },
       icon: SvgPicture.asset('assets/images/ic_back.svg'),
       color: grey900,

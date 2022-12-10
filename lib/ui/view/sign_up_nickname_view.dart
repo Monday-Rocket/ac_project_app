@@ -5,6 +5,7 @@ import 'package:ac_project_app/cubits/sign_up/button_state_cubit.dart';
 import 'package:ac_project_app/cubits/sign_up/nickname_cubit.dart';
 import 'package:ac_project_app/models/user/user.dart';
 import 'package:ac_project_app/routes.dart';
+import 'package:ac_project_app/ui/widget/buttons/bottom_sheet_button.dart';
 import 'package:ac_project_app/ui/widget/only_back_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -34,50 +35,23 @@ class SignUpNicknameView extends StatelessWidget {
                 child: KeyboardVisibilityBuilder(
                   builder: (context, visible) {
                     return Scaffold(
+                      resizeToAvoidBottomInset: false,
                       appBar: buildBackAppBar(context),
-                      body: SafeArea(
-                        child: Container(
-                          margin: const EdgeInsets.fromLTRB(24, 16, 24, 16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  buildTitleText(),
-                                  Stack(
-                                    alignment: Alignment.centerRight,
-                                    children: [
-                                      buildNicknameField(context, state),
-                                      if (state == ButtonState.enabled)
-                                        const Padding(
-                                          padding: EdgeInsets.only(
-                                            top: 40,
-                                            right: 8,
-                                          ),
-                                          child: Icon(
-                                            Icons.check_rounded,
-                                            color: primaryTab,
-                                            size: 20,
-                                          ),
-                                        )
-                                      else
-                                        const SizedBox.shrink(),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      bottomSheet: buildNextButton(
-                        context,
-                        user,
-                        nickname,
-                        state,
-                        visible,
+                      body: buildBody(context, state),
+                      bottomSheet: buildBottomSheetButton(
+                        context: context,
+                        text: '확인',
+                        keyboardVisible: visible,
+                        onPressed: state == ButtonState.enabled
+                            ? () => Navigator.pushNamed(
+                                  context,
+                                  Routes.singUpJob,
+                                  arguments: {
+                                    'nickname': nickname,
+                                    'user': user,
+                                  },
+                                )
+                            : null,
                       ),
                     );
                   },
@@ -90,60 +64,52 @@ class SignUpNicknameView extends StatelessWidget {
     );
   }
 
+  Widget buildBody(BuildContext context, ButtonState state) {
+    return SafeArea(
+      child: Container(
+        margin: const EdgeInsets.fromLTRB(24, 16, 24, 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                buildTitleText(),
+                Stack(
+                  alignment: Alignment.centerRight,
+                  children: [
+                    buildNicknameField(context, state),
+                    if (state == ButtonState.enabled)
+                      const Padding(
+                        padding: EdgeInsets.only(
+                          top: 40,
+                          right: 8,
+                        ),
+                        child: Icon(
+                          Icons.check_rounded,
+                          color: primaryTab,
+                          size: 20,
+                        ),
+                      )
+                    else
+                      const SizedBox.shrink(),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget buildTitleText() {
     return const Text(
       '안녕하세요\n프로필을 만들어볼까요?',
       style: TextStyle(
         fontSize: 24,
         fontWeight: FontWeight.bold,
-      ),
-    );
-  }
-
-  Widget buildNextButton(
-    BuildContext context,
-    User? user,
-    String? nickname,
-    ButtonState state,
-    bool visible,
-  ) {
-    return Container(
-      margin: EdgeInsets.only(
-        left: 24,
-        right: 24,
-        bottom: getBottomMargin(visible),
-      ),
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          minimumSize: const Size.fromHeight(55),
-          backgroundColor:
-              state == ButtonState.enabled ? primary800 : secondary,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          disabledBackgroundColor: secondary,
-          disabledForegroundColor: Colors.white,
-        ),
-        onPressed: state == ButtonState.enabled
-            ? () {
-                Navigator.pushNamed(
-                  context,
-                  Routes.singUpJob,
-                  arguments: {
-                    'nickname': nickname,
-                    'user': user,
-                  },
-                );
-              }
-            : null,
-        child: const Text(
-          '확인',
-          style: TextStyle(
-            fontSize: 17,
-            fontWeight: FontWeight.bold,
-          ),
-          textWidthBasis: TextWidthBasis.parent,
-        ),
       ),
     );
   }
