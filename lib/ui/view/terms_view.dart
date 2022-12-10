@@ -33,6 +33,7 @@ class _TermsViewState extends State<TermsView> {
     final user = getArguments(context)['user'] as User?;
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: buildBackAppBar(context),
       backgroundColor: Colors.white,
       body: SafeArea(

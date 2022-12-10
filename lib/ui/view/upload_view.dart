@@ -59,6 +59,7 @@ class _UploadViewState extends State<UploadView> {
         child: KeyboardVisibilityBuilder(
           builder: (context, visible) {
             return Scaffold(
+              resizeToAvoidBottomInset: false,
               backgroundColor: Colors.white,
               appBar: AppBar(
                 leading: IconButton(
