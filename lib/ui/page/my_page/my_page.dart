@@ -129,7 +129,7 @@ class MyPage extends StatelessWidget {
               {
                 showPopUp(
                   title: '로그아웃 완료',
-                  content: '계정이 로그아웃 되었어요',
+                  content: '계정을 로그아웃 하시겠어요?',
                   parentContext: context,
                   callback: () {
                     FirebaseAuth.instance.signOut().then((value) {
