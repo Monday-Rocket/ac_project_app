@@ -8,21 +8,26 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class Google {
   static Future<bool> login() async {
-    final prefs = await SharedPreferences.getInstance();
-    unawaited(prefs.setString('loginType', LoginType.google.name));
-
-    final googleSignIn = GoogleSignIn(
-      scopes: [
-        'email',
-      ],
-    );
     try {
+      final prefs = await SharedPreferences.getInstance();
+      unawaited(prefs.setString('loginType', LoginType.google.name));
+
+      final googleSignIn = GoogleSignIn(
+        scopes: [
+          'email',
+        ],
+      );
       final account = await googleSignIn.signIn();
-      final authentication = await account?.authentication;
+
+      if (account == null) {
+        throw Exception('not logged in');
+      }
+
+      final authentication = await account.authentication;
 
       final credential = GoogleAuthProvider.credential(
-        accessToken: authentication?.accessToken,
-        idToken: authentication?.idToken,
+        accessToken: authentication.accessToken,
+        idToken: authentication.idToken,
       );
 
       // Firebase Sign in
