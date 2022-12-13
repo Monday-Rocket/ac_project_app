@@ -68,6 +68,9 @@ class NewFolderViewController : UIViewController {
     }
   }
   
+  @IBAction func didEndOnExit(_ sender: Any) {
+  }
+  
   @objc func onTogglePressed(_ sender: UILongPressGestureRecognizer) {
     if newFolderVisible {
       newFolderVisible = false
