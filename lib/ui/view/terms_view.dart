@@ -55,22 +55,22 @@ class _TermsViewState extends State<TermsView> {
                   ),
                 ),
                 const SizedBox(height: 40),
-                Row(
-                  children: [
-                    Center(
-                      child: InkWell(
-                        onTap: () {
-                          setState(() {
-                            firstCheck = !firstCheck;
-                            if (firstCheck) {
-                              secondCheck = true;
-                              thirdCheck = true;
-                            } else {
-                              secondCheck = false;
-                              thirdCheck = false;
-                            }
-                          });
-                        },
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      firstCheck = !firstCheck;
+                      if (firstCheck) {
+                        secondCheck = true;
+                        thirdCheck = true;
+                      } else {
+                        secondCheck = false;
+                        thirdCheck = false;
+                      }
+                    });
+                  },
+                  child: Row(
+                    children: [
+                      Center(
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 200),
                           decoration: BoxDecoration(
@@ -99,12 +99,12 @@ class _TermsViewState extends State<TermsView> {
                           ),
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 11),
-                      child: const Text('전체 동의').bold().fontSize(17),
-                    ),
-                  ],
+                      Padding(
+                        padding: const EdgeInsets.only(left: 11),
+                        child: const Text('전체 동의').bold().fontSize(17),
+                      ),
+                    ],
+                  ),
                 ),
                 Container(
                   margin: const EdgeInsets.only(top: 21, bottom: 19),
@@ -115,88 +115,81 @@ class _TermsViewState extends State<TermsView> {
                 ),
                 Column(
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          secondCheck = !secondCheck;
+                          firstCheck = secondCheck && thirdCheck;
+                        });
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 15),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            InkWell(
-                              onTap: () {
-                                setState(() {
-                                  secondCheck = !secondCheck;
-                                  firstCheck = secondCheck && thirdCheck;
-                                });
-                              },
-                              child: AnimatedContainer(
-                                duration: const Duration(
-                                  milliseconds: 200,
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                AnimatedContainer(
+                                  duration: const Duration(
+                                    milliseconds: 200,
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(2),
+                                    child: secondCheck
+                                        ? const Icon(
+                                            Icons.check,
+                                            size: 18,
+                                            color: primary800,
+                                          )
+                                        : const Icon(
+                                            Icons.check,
+                                            size: 18,
+                                            color: grey300,
+                                          ),
+                                  ),
                                 ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(2),
-                                  child: secondCheck
-                                      ? const Icon(
-                                          Icons.check,
-                                          size: 18,
-                                          color: primary800,
-                                        )
-                                      : const Icon(
-                                          Icons.check,
-                                          size: 18,
-                                          color: grey300,
-                                        ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 11,
+                                  ),
+                                  child: const Text('개인정보 처리방침')
+                                      .weight(FontWeight.w500)
+                                      .fontSize(15),
                                 ),
-                              ),
+                              ],
                             ),
-                            InkWell(
-                              onTap: () {
-                                setState(() {
-                                  secondOpened = !secondOpened;
-                                });
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 11,
+                            Center(
+                              child: InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    secondOpened = !secondOpened;
+                                  });
+                                },
+                                child: AnimatedContainer(
+                                  duration: const Duration(
+                                    milliseconds: 200,
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(2),
+                                    child: secondOpened
+                                        ? const Icon(
+                                            Icons.keyboard_arrow_down_sharp,
+                                            size: 20,
+                                            color: grey500,
+                                          )
+                                        : const Icon(
+                                            Icons.keyboard_arrow_right_sharp,
+                                            size: 20,
+                                            color: grey500,
+                                          ),
+                                  ),
                                 ),
-                                child: const Text('개인정보 처리방침')
-                                    .weight(FontWeight.w500)
-                                    .fontSize(15),
                               ),
                             ),
                           ],
                         ),
-                        Center(
-                          child: InkWell(
-                            onTap: () {
-                              setState(() {
-                                secondOpened = !secondOpened;
-                              });
-                            },
-                            child: AnimatedContainer(
-                              duration: const Duration(
-                                milliseconds: 200,
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(2),
-                                child: secondOpened
-                                    ? const Icon(
-                                        Icons.keyboard_arrow_down_sharp,
-                                        size: 20,
-                                        color: grey500,
-                                      )
-                                    : const Icon(
-                                        Icons.keyboard_arrow_right_sharp,
-                                        size: 20,
-                                        color: grey500,
-                                      ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 15,
+                      ),
                     ),
                     AnimatedContainer(
                       height: secondOpened ? 140 : 0,
@@ -240,20 +233,20 @@ class _TermsViewState extends State<TermsView> {
                 ),
                 Column(
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            InkWell(
-                              onTap: () {
-                                setState(() {
-                                  thirdCheck = !thirdCheck;
-                                  firstCheck = secondCheck && thirdCheck;
-                                });
-                              },
-                              child: AnimatedContainer(
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          thirdCheck = !thirdCheck;
+                          firstCheck = secondCheck && thirdCheck;
+                        });
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              AnimatedContainer(
                                 duration: const Duration(
                                   milliseconds: 200,
                                 ),
@@ -272,14 +265,7 @@ class _TermsViewState extends State<TermsView> {
                                         ),
                                 ),
                               ),
-                            ),
-                            InkWell(
-                              onTap: () {
-                                setState(() {
-                                  thirdOpened = !thirdOpened;
-                                });
-                              },
-                              child: Padding(
+                              Padding(
                                 padding: const EdgeInsets.only(
                                   left: 11,
                                 ),
@@ -287,36 +273,36 @@ class _TermsViewState extends State<TermsView> {
                                     .weight(FontWeight.w500)
                                     .fontSize(15),
                               ),
-                            ),
-                          ],
-                        ),
-                        InkWell(
-                          onTap: () {
-                            setState(() {
-                              thirdOpened = !thirdOpened;
-                            });
-                          },
-                          child: AnimatedContainer(
-                            duration: const Duration(
-                              milliseconds: 200,
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(2),
-                              child: thirdOpened
-                                  ? const Icon(
-                                      Icons.keyboard_arrow_down_sharp,
-                                      size: 20,
-                                      color: grey500,
-                                    )
-                                  : const Icon(
-                                      Icons.keyboard_arrow_right_sharp,
-                                      size: 20,
-                                      color: grey500,
-                                    ),
+                            ],
+                          ),
+                          InkWell(
+                            onTap: () {
+                              setState(() {
+                                thirdOpened = !thirdOpened;
+                              });
+                            },
+                            child: AnimatedContainer(
+                              duration: const Duration(
+                                milliseconds: 200,
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(2),
+                                child: thirdOpened
+                                    ? const Icon(
+                                        Icons.keyboard_arrow_down_sharp,
+                                        size: 20,
+                                        color: grey500,
+                                      )
+                                    : const Icon(
+                                        Icons.keyboard_arrow_right_sharp,
+                                        size: 20,
+                                        color: grey500,
+                                      ),
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                     AnimatedContainer(
                       height: thirdOpened ? 15 : 0,

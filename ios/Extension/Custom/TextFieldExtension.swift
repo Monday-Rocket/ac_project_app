@@ -22,7 +22,7 @@ extension UIViewController: UITextFieldDelegate {
     NSLog("❇️ key board show!")
     if self.view.window?.frame.origin.y == 0 {
       UIView.animate(withDuration: 0.1) {
-        self.view.window?.frame.origin.y -= 150
+        self.view.window?.frame.origin.y -= 200
       }
     }
   }
@@ -31,7 +31,7 @@ extension UIViewController: UITextFieldDelegate {
     NSLog("❇️ key board hide!")
     if self.view.window?.frame.origin.y != 0 {
       UIView.animate(withDuration: 0.1) {
-        self.view.window?.frame.origin.y += 150
+        self.view.window?.frame.origin.y += 200
       }
     }
   }
@@ -39,7 +39,7 @@ extension UIViewController: UITextFieldDelegate {
   @objc func hideKeyboard(_ sender: Any) {
     if self.view.window?.frame.origin.y != 0 {
       UIView.animate(withDuration: 0.1) {
-        self.view.window?.frame.origin.y += 150
+        self.view.window?.frame.origin.y += 200
       }
     }
     view.endEditing(true)

@@ -197,7 +197,7 @@ void showMyPageDialog({
                           child: SizedBox(
                             height: 48,
                             child: ElevatedButton(
-                              onPressed: leftCallback,
+                              onPressed: rightCallback,
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: grey800,
                                 shape: RoundedRectangleBorder(
