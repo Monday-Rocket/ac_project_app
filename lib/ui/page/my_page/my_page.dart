@@ -128,11 +128,14 @@ class MyPage extends StatelessWidget {
               }
             case '로그아웃':
               {
-                showPopUp(
-                  title: '로그아웃 완료',
+                showMyPageDialog(
+                  title: '로그아웃',
                   content: '계정을 로그아웃 하시겠어요?',
                   parentContext: context,
-                  callback: () {
+                  leftText: '취소',
+                  rightText: '로그아웃',
+                  leftCallback: () => Navigator.pop(context),
+                  rightCallback: () {
                     FirebaseAuth.instance.signOut().then((value) {
                       Navigator.of(context).pop(true);
                       Navigator.pushReplacementNamed(context, Routes.login);
@@ -143,11 +146,13 @@ class MyPage extends StatelessWidget {
               }
             case '회원탈퇴':
               {
-                showPopUp(
+                showMyPageDialog(
                   title: '정말 탈퇴하시겠어요?',
                   content: '지금 탈퇴하면 그동안 모은 링크가 사라져요',
                   parentContext: context,
-                  callback: () {
+                  leftText: '회원 탈퇴',
+                  rightText: '탈퇴 취소',
+                  leftCallback: () {
                     UserApi().deleteUser().then((value) {
                       if (value) {
                         Navigator.of(context).pop(true);
@@ -158,6 +163,7 @@ class MyPage extends StatelessWidget {
                       }
                     });
                   },
+                  rightCallback: () => Navigator.pop(context),
                   icon: true,
                 );
                 break;

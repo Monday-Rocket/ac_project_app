@@ -16,6 +16,7 @@ import com.mr.ac_project_app.model.FolderModel
 import com.mr.ac_project_app.model.SaveType
 import com.mr.ac_project_app.ui.RecyclerViewAdapter
 import com.mr.ac_project_app.utils.toDp
+import com.mr.ac_project_app.view.LinkErrorActivity
 import com.mr.ac_project_app.view.SaveSuccessActivity
 
 
@@ -92,7 +93,12 @@ class ShareActivity : ComponentActivity() {
             savedLink = intent.getStringExtra("android.intent.extra.PROCESS_TEXT") ?: ""
         }
 
-        viewModel.saveLink(savedLink)
+        val hasError = viewModel.saveLink(savedLink)
+        if (hasError) {
+            val intent = Intent(this@ShareActivity, LinkErrorActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
     }
 
     inner class HorizontalSpaceItemDecoration(private val space: Int) :

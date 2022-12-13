@@ -5,6 +5,7 @@ import android.content.ContentValues
 import android.database.Cursor
 import android.text.TextUtils
 import android.util.Log
+import android.webkit.URLUtil
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.mr.ac_project_app.LinkPoolApp
@@ -33,9 +34,12 @@ class ShareViewModel(application: Application) : AndroidViewModel(application) {
         dbHelper = ShareDbHelper(context = getApplication<Application>().applicationContext)
     }
 
-    fun saveLink(link: String) {
-        if (isLinkSaved.value!! || TextUtils.isEmpty(link)) {
-            return
+    fun saveLink(link: String): Boolean {
+        if (isLinkSaved.value!!) {
+            return false
+        }
+        if (TextUtils.isEmpty(link) || !URLUtil.isValidUrl(link)) {
+            return true
         }
         savedLink.postValue(link)
         CoroutineScope(Dispatchers.IO).launch {
@@ -86,6 +90,7 @@ class ShareViewModel(application: Application) : AndroidViewModel(application) {
             saveLinkWithoutFolder(link, tempTitle, tempImage)
             isLinkSaved.postValue(true)
         }
+        return false
     }
 
     private fun saveLinkWithoutFolder(savedLink: String, title: String, imageLink: String) {

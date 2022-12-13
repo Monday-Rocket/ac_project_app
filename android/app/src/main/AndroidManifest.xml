@@ -5,13 +5,13 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 
     <application
         android:name=".LinkPoolApp"
         android:icon="@mipmap/ic_launcher"
-        android:usesCleartextTraffic="true"
-        android:label="LINKPOOL">
+        android:label="LINKPOOL"
+        android:usesCleartextTraffic="true">
 
         <activity
             android:name="com.mr.ac_project_app.MainActivity"
@@ -19,25 +19,28 @@
             android:exported="true"
             android:hardwareAccelerated="true"
             android:launchMode="singleTop"
+            android:screenOrientation="portrait"
             android:theme="@style/LaunchTheme"
             android:windowSoftInputMode="adjustResize"
-            android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity">
 
             <meta-data
                 android:name="io.flutter.embedding.android.NormalTheme"
                 android:resource="@style/LaunchTheme" />
-                        <intent-filter>
-                            <action android:name="android.intent.action.MAIN"/>
-                            <category android:name="android.intent.category.LAUNCHER"/>
-                        </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE"/>
+                <category android:name="android.intent.category.BROWSABLE" />
+
                 <data
-                        android:host="acprojectapp.page.link"
-                        android:scheme="https"/>
+                    android:host="acprojectapp.page.link"
+                    android:scheme="https" />
             </intent-filter>
         </activity>
         <activity
@@ -57,31 +60,35 @@
             android:name="com.mr.ac_project_app.view.share.ShareActivity"
             android:exported="true"
             android:theme="@style/TransparentCompat">
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
-                       <intent-filter>
-                           <action android:name="android.intent.action.SEND" />
-                           <action android:name="android.intent.action.PROCESS_TEXT"/>
-                           <category android:name="android.intent.category.DEFAULT" />
-                           <data android:mimeType="text/plain" />
-                       </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <action android:name="android.intent.action.PROCESS_TEXT" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
 
         </activity>
 
         <activity
             android:name=".view.SaveSuccessActivity"
             android:exported="false"
-            android:theme="@style/TransparentCompat"/>
+            android:theme="@style/TransparentCompat" />
 
-        <activity android:name=".view.folder.NewFolderActivity"
+        <activity
+            android:name=".view.folder.NewFolderActivity"
             android:exported="false"
-            android:theme="@style/TransparentCompat"/>
+            android:theme="@style/TransparentCompat" />
 
-        <activity android:name=".view.comment.CommentActivity"
+        <activity
+            android:name=".view.comment.CommentActivity"
             android:exported="false"
-            android:theme="@style/TransparentCompat"/>
+            android:theme="@style/TransparentCompat" />
+
+        <activity
+            android:name=".view.LinkErrorActivity"
+            android:exported="false"
+            android:theme="@style/TransparentCompat" />
 
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
