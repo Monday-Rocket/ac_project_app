@@ -58,6 +58,8 @@ class _UploadViewState extends State<UploadView> {
       child: KeyboardDismissOnTap(
         child: KeyboardVisibilityBuilder(
           builder: (context, visible) {
+            final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+
             return Scaffold(
               resizeToAvoidBottomInset: false,
               backgroundColor: Colors.white,
@@ -164,6 +166,7 @@ class _UploadViewState extends State<UploadView> {
                             ),
                           ),
                         ),
+                        SizedBox(height: keyboardHeight,)
                       ],
                     ),
                   ),

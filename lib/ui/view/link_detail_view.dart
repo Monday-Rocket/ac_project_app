@@ -48,6 +48,7 @@ class LinkDetailView extends StatelessWidget {
           builder: (context, visible) {
             return BlocBuilder<DetailEditCubit, EditState>(
               builder: (cubitContext, state) {
+                final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
                 return Scaffold(
                   resizeToAvoidBottomInset: false,
                   appBar: AppBar(
@@ -82,11 +83,12 @@ class LinkDetailView extends StatelessWidget {
                     systemOverlayStyle: SystemUiOverlayStyle.dark,
                   ),
                   body: buildBody(
+                    scrollController,
+                    state,
                     link,
                     cubitContext,
-                    state,
-                    scrollController,
                     isMyLink,
+                    keyboardHeight,
                   ),
                   bottomSheet: Builder(
                     builder: (_) {
@@ -118,11 +120,12 @@ class LinkDetailView extends StatelessWidget {
   }
 
   Widget buildBody(
-    Link link,
-    BuildContext context,
-    EditState state,
     ScrollController scrollController,
+    EditState state,
+    Link link,
+    BuildContext cubitContext,
     bool isMyLink,
+    double keyboardHeight,
   ) {
     return SingleChildScrollView(
       controller: scrollController,
@@ -162,7 +165,7 @@ class LinkDetailView extends StatelessWidget {
                       child: Image.network(
                         link.image ?? '',
                         fit: BoxFit.cover,
-                        width: MediaQuery.of(context).size.width - 48,
+                        width: MediaQuery.of(cubitContext).size.width - 48,
                         height: 193,
                         errorBuilder: (_, __, ___) {
                           return Container(
@@ -173,7 +176,7 @@ class LinkDetailView extends StatelessWidget {
                                 topRight: Radius.circular(10),
                               ),
                             ),
-                            width: MediaQuery.of(context).size.width - 48,
+                            width: MediaQuery.of(cubitContext).size.width - 48,
                             height: 10,
                           );
                         },
@@ -250,14 +253,14 @@ class LinkDetailView extends StatelessWidget {
                       FocusManager.instance.primaryFocus?.unfocus();
                       Future.delayed(
                         const Duration(milliseconds: 200),
-                        context.read<DetailEditCubit>().toggle,
+                        cubitContext.read<DetailEditCubit>().toggle,
                       );
                     },
                     onDoubleTap: () {
                       FocusManager.instance.primaryFocus?.unfocus();
                       Future.delayed(
                         const Duration(milliseconds: 200),
-                        context.read<DetailEditCubit>().toggle,
+                        cubitContext.read<DetailEditCubit>().toggle,
                       );
                     },
                     child: Padding(
@@ -319,8 +322,9 @@ class LinkDetailView extends StatelessWidget {
                           minHeight: 120,
                         ),
                         child: TextField(
-                          controller:
-                              context.read<DetailEditCubit>().textController,
+                          controller: cubitContext
+                              .read<DetailEditCubit>()
+                              .textController,
                           style: const TextStyle(
                             fontSize: 14,
                             color: grey700,
@@ -344,6 +348,7 @@ class LinkDetailView extends StatelessWidget {
                 }
               },
             ),
+            SizedBox(height: keyboardHeight),
           ],
         ),
       ),

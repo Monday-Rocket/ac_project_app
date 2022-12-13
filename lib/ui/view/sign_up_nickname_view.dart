@@ -34,10 +34,11 @@ class SignUpNicknameView extends StatelessWidget {
               return KeyboardDismissOnTap(
                 child: KeyboardVisibilityBuilder(
                   builder: (context, visible) {
+                    final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
                     return Scaffold(
                       resizeToAvoidBottomInset: false,
                       appBar: buildBackAppBar(context),
-                      body: buildBody(context, state),
+                      body: buildBody(context, state, keyboardHeight),
                       bottomSheet: buildBottomSheetButton(
                         context: context,
                         text: '확인',
@@ -64,40 +65,35 @@ class SignUpNicknameView extends StatelessWidget {
     );
   }
 
-  Widget buildBody(BuildContext context, ButtonState state) {
+  Widget buildBody(BuildContext context, ButtonState state, double keyboardHeight) {
     return SafeArea(
       child: Container(
         margin: const EdgeInsets.fromLTRB(24, 16, 24, 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            buildTitleText(),
+            Stack(
+              alignment: Alignment.centerRight,
               children: [
-                buildTitleText(),
-                Stack(
-                  alignment: Alignment.centerRight,
-                  children: [
-                    buildNicknameField(context, state),
-                    if (state == ButtonState.enabled)
-                      const Padding(
-                        padding: EdgeInsets.only(
-                          top: 40,
-                          right: 8,
-                        ),
-                        child: Icon(
-                          Icons.check_rounded,
-                          color: primaryTab,
-                          size: 20,
-                        ),
-                      )
-                    else
-                      const SizedBox.shrink(),
-                  ],
-                ),
+                buildNicknameField(context, state),
+                if (state == ButtonState.enabled)
+                  const Padding(
+                    padding: EdgeInsets.only(
+                      top: 40,
+                      right: 8,
+                    ),
+                    child: Icon(
+                      Icons.check_rounded,
+                      color: primaryTab,
+                      size: 20,
+                    ),
+                  )
+                else
+                  const SizedBox.shrink(),
               ],
             ),
+            SizedBox(height: keyboardHeight),
           ],
         ),
       ),
@@ -182,9 +178,5 @@ class SignUpNicknameView extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  double getBottomMargin(bool visible) {
-    return visible ? 16 : 37;
   }
 }
