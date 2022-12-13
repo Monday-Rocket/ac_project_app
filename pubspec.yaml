@@ -3,7 +3,7 @@ description: 비사이드 12기 먼데이 로켓팀 프로젝트
 
 publish_to: 'none'
 
-version: 1.0.0+1
+version: 1.0.14+14
 
 environment:
   sdk: ">=2.17.6 <3.0.0"
@@ -12,10 +12,56 @@ dependencies:
   flutter:
     sdk: flutter
 
+  cupertino_icons:
 
-  cupertino_icons: ^1.0.2
-  get: ^4.6.5
+  ## Network
+  dio: ^4.0.6
+  json_annotation: ^4.6.0
+  http: ^0.13.5
+  cached_network_image: ^3.2.3
+
+  ## Architecture
+  flutter_bloc: ^8.1.1
+  equatable: ^2.0.5
+
+  ## login
+  sign_in_with_apple: ^4.2.0
+  google_sign_in: ^5.4.2
+  firebase_core: ^2.4.0
+  firebase_auth: ^4.2.0
+  firebase_dynamic_links: ^5.0.8
+  uni_links: ^0.5.1
+
+  ## Utils
+  metadata_fetch: ^0.4.1
+  permission_handler: ^10.2.0
+  flutter_dotenv: ^5.0.2
+  logger: ^1.1.0
+  path_provider: ^2.0.11
+  intl: ^0.17.0
+  path: ^1.8.2
+  oktoast:
+  shimmer: ^2.0.0
+  share_plus: ^6.3.0
+  flutter_keyboard_visibility: ^5.4.0
+  extended_text: ^9.1.2
+
+  ## lint
   very_good_analysis: ^3.0.1
+
+  ## SVG
+  flutter_svg: ^1.1.6
+
+  ## for Storage
+  sqflite: ^2.1.0+1
+  shared_preferences: ^2.0.15
+
+  ## for Test Functions
+  flutter_signin_button: ^2.0.0
+  freezed_annotation: ^2.1.0
+
+  ## Web
+  url_launcher: ^6.1.6
 
 dev_dependencies:
   flutter_test:
@@ -23,6 +69,34 @@ dev_dependencies:
 
   flutter_lints: ^2.0.0
 
+  # for model class
+  build_runner: ^2.2.0
+  json_serializable: ^6.3.1
+  analyzer: ^5.1.0
+  freezed: ^2.1.1
+
 flutter:
 
   uses-material-design: true
+
+  assets:
+    - .env
+    - assets/images/profile/
+    - assets/images/login/
+    - assets/images/
+
+  fonts:
+    - family: Pretendard
+      fonts:
+        - asset: assets/fonts/Pretendard/Pretendard-Thin.otf
+          weight: 200
+        - asset: assets/fonts/Pretendard/Pretendard-Regular.otf
+          weight: 400
+        - asset: assets/fonts/Pretendard/Pretendard-Bold.otf
+          weight: 700
+    - family: Roboto
+      fonts:
+        - asset: assets/fonts/Roboto/Roboto-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Roboto/Roboto-Bold.ttf
+          weight: 700

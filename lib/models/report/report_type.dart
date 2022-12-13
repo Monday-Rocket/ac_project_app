@@ -1,0 +1,3 @@
+enum ReportType {
+  post, user
+}

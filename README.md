@@ -1,16 +1,24 @@
 # ac_project_app
 
-비사이드 12기 먼데이 로켓팀 프로젝트
+- 비사이드 12기 먼데이 로켓팀 프로젝트
 
-## Getting Started
+## 사용 기술
 
-This project is a starting point for a Flutter application.
+- Flutter 3.3.2
 
-A few resources to get you started if this is your first Flutter project:
+![bloc.png](docs/bloc_white.png)
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- DI Architecture: [bloc](https://pub.dev/packages/flutter_bloc)
+- main plugins: flutter_bloc, retrofit, very_good_analysis, firebase_auth
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Platform Specification
+
+### Android OS
+- sdk: 24 ~ 33
+- gradle: 7.4
+
+### iOS
+- Minimum Deployments: iOS 15.0
+
+### Source Directory Structure
+![project_directory.png](docs/project_directory.png)

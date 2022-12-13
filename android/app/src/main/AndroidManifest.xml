@@ -1,30 +1,95 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="project.mr.ac_project_app">
-   <application
-        android:label="ac_project_app"
-        android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.mr.ac_project_app">
+
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+
+    <application
+        android:name=".LinkPoolApp"
+        android:icon="@mipmap/ic_launcher"
+        android:label="LINKPOOL"
+        android:usesCleartextTraffic="true">
+
         <activity
-            android:name=".MainActivity"
-            android:exported="true"
-            android:launchMode="singleTop"
-            android:theme="@style/LaunchTheme"
+            android:name="com.mr.ac_project_app.MainActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+            android:exported="true"
             android:hardwareAccelerated="true"
-            android:windowSoftInputMode="adjustResize">
-            <!-- Specifies an Android theme to apply to this Activity as soon as
-                 the Android process has started. This theme is visible to the user
-                 while the Flutter UI initializes. After that, this theme continues
-                 to determine the Window background behind the Flutter UI. -->
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/LaunchTheme"
+            android:windowSoftInputMode="adjustResize"
+            tools:ignore="LockedOrientationActivity">
+
             <meta-data
-              android:name="io.flutter.embedding.android.NormalTheme"
-              android:resource="@style/NormalTheme"
-              />
+                android:name="io.flutter.embedding.android.NormalTheme"
+                android:resource="@style/LaunchTheme" />
+
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="acprojectapp.page.link"
+                    android:scheme="https" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.aboutyou.dart_packages.sign_in_with_apple.SignInWithAppleCallback"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="signinwithapple" />
+                <data android:path="/callback" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.mr.ac_project_app.view.share.ShareActivity"
+            android:exported="true"
+            android:theme="@style/TransparentCompat">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <action android:name="android.intent.action.PROCESS_TEXT" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+
+        </activity>
+
+        <activity
+            android:name=".view.SaveSuccessActivity"
+            android:exported="false"
+            android:theme="@style/TransparentCompat" />
+
+        <activity
+            android:name=".view.folder.NewFolderActivity"
+            android:exported="false"
+            android:theme="@style/TransparentCompat" />
+
+        <activity
+            android:name=".view.comment.CommentActivity"
+            android:exported="false"
+            android:theme="@style/TransparentCompat" />
+
+        <activity
+            android:name=".view.LinkErrorActivity"
+            android:exported="false"
+            android:theme="@style/TransparentCompat" />
+
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data

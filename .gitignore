@@ -49,3 +49,5 @@ app.*.map.json
 pubspec.lock
 android/private_key.pepk
 android/monday-key.jks
+.env
+lib/firebase_options.dart

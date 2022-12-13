@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+
+    <ImageView
+        android:id="@+id/leftImage"
+        android:layout_width="47dp"
+        android:layout_height="95dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@drawable/folder_left" />
+    <ImageView
+        android:id="@+id/rightTopImage"
+        android:layout_width="47dp"
+        android:layout_height="47dp"
+        android:layout_marginStart="1dp"
+        app:layout_constraintStart_toEndOf="@id/leftImage"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@drawable/folder_right_top" />
+    <ImageView
+        android:id="@+id/rightBottomImage"
+        android:layout_width="47dp"
+        android:layout_height="47dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="1dp"
+        app:layout_constraintStart_toEndOf="@id/leftImage"
+        app:layout_constraintTop_toBottomOf="@id/rightTopImage"
+        android:background="@drawable/folder_right_bottom" />
+    <ImageView
+        android:id="@+id/lockImage"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@drawable/ic_lock"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/rightBottomImage" />
+    <TextView
+        android:id="@+id/folder_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/pretendard_medium"
+        android:textColor="@color/grey700"
+        android:textSize="12sp"
+        android:layout_marginTop="6dp"
+        tools:text="앱 디자인"
+        tools:background="@drawable/folder_text_back"
+        android:paddingVertical="5dp"
+        android:paddingHorizontal="12dp"
+        app:layout_constraintTop_toBottomOf="@id/rightBottomImage"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
