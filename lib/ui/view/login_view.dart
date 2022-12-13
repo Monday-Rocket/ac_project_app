@@ -6,11 +6,16 @@ import 'package:ac_project_app/const/resource.dart';
 import 'package:ac_project_app/const/strings.dart';
 import 'package:ac_project_app/cubits/login/login_cubit.dart';
 import 'package:ac_project_app/cubits/login/login_type.dart';
-import 'package:ac_project_app/cubits/login/user_state.dart';
+import 'package:ac_project_app/cubits/login/login_user_state.dart';
 import 'package:ac_project_app/models/user/user.dart' as custom;
+import 'package:ac_project_app/provider/api/user/user_api.dart';
+import 'package:ac_project_app/provider/login/email_login.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/text/custom_font.dart';
+import 'package:ac_project_app/util/logger.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -26,14 +31,16 @@ class LoginView extends StatelessWidget {
         backgroundColor: Colors.white,
         body: SafeArea(
           child: Center(
-            child: BlocBuilder<LoginCubit, UserState>(
+            child: BlocBuilder<LoginCubit, LoginUserState>(
               builder: (loginContext, state) {
-                if (state is LoadingState) {
+                if (state is LoginLoadingState) {
                   return const CircularProgressIndicator();
-                } else if (state is ErrorState) {
+                } else if (state is LoginErrorState) {
                   showErrorBanner(loginContext, state.message);
-                } else if (state is LoadedState) {
+                } else if (state is LoginLoadedState) {
                   moveToNext(context, loginContext, state.user);
+                } else if (state is LoginInitialState) {
+                  retrieveDynamicLinkAndSignIn(loginContext);
                 }
                 return Column(
                   children: [
@@ -47,6 +54,64 @@ class LoginView extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void retrieveDynamicLinkAndSignIn(BuildContext context) {
+    FirebaseDynamicLinks.instance.onLink.listen((dynamicLinkData) {
+      context.read<LoginCubit>().loading();
+
+      final deepLink = dynamicLinkData.link;
+      final validLink =
+          FirebaseAuth.instance.isSignInWithEmailLink(deepLink.toString());
+
+      if (validLink) {
+        final continueUrl = deepLink.queryParameters['continueUrl'] ?? '';
+        final email = Uri.parse(continueUrl).queryParameters['email'] ?? '';
+        _handleLink(email, deepLink.toString(), context);
+      } else {
+        context.read<LoginCubit>().showError('이메일 로그인/회원가입 실패');
+      }
+    });
+  }
+
+  void _handleLink(String email, String link, BuildContext context) {
+    Email.login(email, link).then((isSuccess) async {
+      if (isSuccess) {
+        final user = await UserApi().postUsers();
+
+        user.when(
+          success: (data) {
+            if (data.is_new ?? false) {
+              Navigator.pushNamed(
+                context,
+                Routes.terms,
+                arguments: {
+                  'user': data,
+                },
+              ).then((_) => context.read<LoginCubit>().showNothing());
+              Future.delayed(
+                const Duration(milliseconds: 500),
+                () => showBottomToast('가입된 계정이 없어 회원 가입 화면으로 이동합니다.'),
+              );
+            } else {
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                Routes.home,
+                (_) => false,
+                arguments: {'index': 0},
+              );
+            }
+          },
+          error: (msg) {
+            context.read<LoginCubit>().showError('이메일 로그인/회원가입 실패');
+            Log.e('login fail');
+          },
+        );
+      } else {
+        context.read<LoginCubit>().showError('이메일 로그인/회원가입 실패');
+        Log.e('login fail');
+      }
+    });
   }
 
   void showErrorBanner(BuildContext context, String message) {
@@ -194,7 +259,8 @@ class LoginView extends StatelessWidget {
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.only(left: 11),
-                                  child: const Text('전체 동의').bold().fontSize(17),
+                                  child:
+                                      const Text('전체 동의').bold().fontSize(17),
                                 ),
                               ],
                             ),
@@ -375,7 +441,8 @@ class LoginView extends StatelessWidget {
                                           padding: const EdgeInsets.all(2),
                                           child: thirdOpened
                                               ? const Icon(
-                                                  Icons.keyboard_arrow_down_sharp,
+                                                  Icons
+                                                      .keyboard_arrow_down_sharp,
                                                   size: 20,
                                                   color: grey500,
                                                 )

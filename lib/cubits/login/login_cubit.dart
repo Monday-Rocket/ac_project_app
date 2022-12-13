@@ -1,20 +1,32 @@
 import 'package:ac_project_app/cubits/login/login_type.dart';
-import 'package:ac_project_app/cubits/login/user_state.dart';
+import 'package:ac_project_app/cubits/login/login_user_state.dart';
 import 'package:ac_project_app/provider/api/user/user_api.dart';
 import 'package:ac_project_app/provider/login/apple_login.dart';
 import 'package:ac_project_app/provider/login/google_login.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class LoginCubit extends Cubit<UserState> {
-  LoginCubit() : super(InitialState());
+class LoginCubit extends Cubit<LoginUserState> {
+  LoginCubit() : super(LoginInitialState());
 
   void initialize() {
-    emit(InitialState());
+    emit(LoginInitialState());
+  }
+
+  void loading() {
+    emit(LoginLoadingState());
+  }
+
+  void showError(String message) {
+    emit(LoginErrorState(message));
+  }
+
+  void showNothing() {
+    emit(LoginEmptyState());
   }
 
   void login(LoginType loginType, {String? email}) {
-    emit(LoadingState());
+    emit(LoginLoadingState());
     switch (loginType) {
       case LoginType.google:
         Google.login().then(sendResult);
@@ -32,15 +44,15 @@ class LoginCubit extends Cubit<UserState> {
 
       user.when(
         success: (data) {
-          emit(LoadedState(data));
+          emit(LoginLoadedState(data));
         },
         error: (msg) {
-          emit(ErrorState(msg));
+          emit(LoginErrorState(msg));
         },
       );
     } else {
       Log.e('login fail');
-      emit(ErrorState('login fail'));
+      emit(LoginErrorState('login fail'));
     }
   }
 }
