@@ -166,7 +166,9 @@ class _UploadViewState extends State<UploadView> {
                             ),
                           ),
                         ),
-                        SizedBox(height: keyboardHeight,)
+                        SizedBox(
+                          height: keyboardHeight,
+                        )
                       ],
                     ),
                   ),
@@ -200,56 +202,48 @@ class _UploadViewState extends State<UploadView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                padding: const EdgeInsets.all(1),
+              DecoratedBox(
                 decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(12),
-                  ),
-                  color: linkError ? redError2 : grey100,
+                  border: Border.all(color: linkError ? redError2 : grey100),
+                  borderRadius: const BorderRadius.all(Radius.circular(12)),
+                  color: grey100,
                 ),
-                child: DecoratedBox(
-                  decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(12)),
-                    color: grey100,
-                  ),
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.zero,
-                    controller: firstScrollController,
-                    child: SizedBox(
-                      height: 80,
-                      child: TextField(
-                        controller: linkTextController,
-                        style: const TextStyle(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.zero,
+                  controller: firstScrollController,
+                  child: SizedBox(
+                    height: 80,
+                    child: TextField(
+                      controller: linkTextController,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        height: 16.7 / 14,
+                        color: grey600,
+                        letterSpacing: -0.3,
+                      ),
+                      cursorColor: primary600,
+                      keyboardType: TextInputType.multiline,
+                      maxLines: null,
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        isDense: true,
+                        contentPadding: EdgeInsets.symmetric(
+                          vertical: 15,
+                          horizontal: 16,
+                        ),
+                        hintText: '링크를 여기에 불러주세요',
+                        hintStyle: TextStyle(
+                          color: grey400,
                           fontSize: 14,
-                          height: 16.7 / 14,
-                          color: grey600,
                           letterSpacing: -0.3,
                         ),
-                        cursorColor: primary600,
-                        keyboardType: TextInputType.multiline,
-                        maxLines: null,
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                          isDense: true,
-                          contentPadding: EdgeInsets.symmetric(
-                            vertical: 15,
-                            horizontal: 16,
-                          ),
-                          hintText: '링크를 여기에 불러주세요',
-                          hintStyle: TextStyle(
-                            color: grey400,
-                            fontSize: 14,
-                            letterSpacing: -0.3,
-                          ),
-                        ),
-                        onChanged: (value) => setState(() {
-                          if (value.isNotEmpty) {
-                            buttonState = ButtonState.enabled;
-                          }
-                        }),
                       ),
+                      onChanged: (value) => setState(() {
+                        if (value.isNotEmpty) {
+                          buttonState = ButtonState.enabled;
+                        }
+                      }),
                     ),
                   ),
                 ),
