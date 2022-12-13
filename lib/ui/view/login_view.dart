@@ -510,7 +510,7 @@ class LoginView extends StatelessWidget {
                 ),
               ),
               onPressed: () =>
-                  Navigator.popAndPushNamed(context, Routes.emailLogin),
+                  Navigator.pushNamed(context, Routes.emailLogin),
               child: const Text(
                 '일반 로그인',
                 style: TextStyle(
@@ -523,7 +523,7 @@ class LoginView extends StatelessWidget {
           ),
           const SizedBox(height: 21),
           InkWell(
-            onTap: () => Navigator.popAndPushNamed(context, Routes.emailSignUp),
+            onTap: () => Navigator.pushNamed(context, Routes.emailSignUp),
             child: const Text(
               '이메일로 회원가입',
               style: TextStyle(

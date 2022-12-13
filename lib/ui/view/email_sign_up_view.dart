@@ -6,6 +6,7 @@ import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/provider/api/user/user_api.dart';
 import 'package:ac_project_app/provider/login/email_login.dart';
 import 'package:ac_project_app/routes.dart';
+import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/buttons/bottom_sheet_button.dart';
 import 'package:ac_project_app/ui/widget/only_back_app_bar.dart';
 import 'package:ac_project_app/util/logger.dart';
@@ -28,121 +29,122 @@ class _EmailSignUpViewState extends State<EmailSignUpView>
 
   String emailString = '';
 
+  bool isEmailSent = false;
+
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        unawaited(Navigator.pushNamed(context, Routes.login));
-        return true;
-      },
-      child: KeyboardDismissOnTap(
-        child: KeyboardVisibilityBuilder(
-          builder: (context, visible) {
-            return Scaffold(
-              resizeToAvoidBottomInset: false,
-              appBar: buildBackAppBar(
-                context,
-                callback: () =>
-                    Navigator.popAndPushNamed(context, Routes.login),
-              ),
-              body: SafeArea(
-                child: Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 16),
-                      const Text(
-                        '가입에 필요한\n정보를 입력해주세요.',
-                        style: TextStyle(
-                          fontSize: 24,
-                          color: grey900,
-                          fontWeight: FontWeight.bold,
-                          height: 34 / 24,
-                          letterSpacing: -0.3,
-                        ),
+    return KeyboardDismissOnTap(
+      child: KeyboardVisibilityBuilder(
+        builder: (context, visible) {
+          return Scaffold(
+            resizeToAvoidBottomInset: false,
+            appBar: buildBackAppBar(context),
+            body: SafeArea(
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 16),
+                    const Text(
+                      '가입에 필요한\n정보를 입력해주세요.',
+                      style: TextStyle(
+                        fontSize: 24,
+                        color: grey900,
+                        fontWeight: FontWeight.bold,
+                        height: 34 / 24,
+                        letterSpacing: -0.3,
                       ),
-                      Container(
-                        margin: const EdgeInsets.only(top: 30, bottom: 23),
-                        child: Form(
-                          key: formKey,
-                          child: TextFormField(
-                            autofocus: true,
-                            style: const TextStyle(
-                              fontSize: 17,
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(top: 30, bottom: 23),
+                      child: Form(
+                        key: formKey,
+                        child: TextFormField(
+                          autofocus: true,
+                          style: const TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w500,
+                            color: blackBold,
+                          ),
+                          decoration: InputDecoration(
+                            labelText: '이메일',
+                            labelStyle: const TextStyle(
+                              color: Color(0xFF9097A3),
                               fontWeight: FontWeight.w500,
-                              color: blackBold,
                             ),
-                            decoration: InputDecoration(
-                              labelText: '이메일',
-                              labelStyle: const TextStyle(
-                                color: Color(0xFF9097A3),
-                                fontWeight: FontWeight.w500,
-                              ),
-                              focusedBorder: const UnderlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: primary800, width: 2),
-                              ),
-                              errorStyle: const TextStyle(
-                                color: redError,
-                              ),
-                              focusedErrorBorder: const UnderlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: redError, width: 2),
-                              ),
-                              enabledBorder: const UnderlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: greyTab, width: 2),
-                              ),
-                              contentPadding: EdgeInsets.zero,
-                              suffix: buttonState
-                                  ? const Icon(
-                                      Icons.check,
-                                      color: primary700,
-                                      size: 16,
-                                    )
-                                  : null,
+                            focusedBorder: const UnderlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: primary800, width: 2),
                             ),
-                            validator: validateEmail,
-                            onSaved: (String? value) {
-                              emailString = value ?? '';
-                            },
-                            onChanged: (String? value) {
-                              if (value?.isEmpty ?? true) {
+                            errorStyle: const TextStyle(
+                              color: redError,
+                            ),
+                            focusedErrorBorder: const UnderlineInputBorder(
+                              borderSide: BorderSide(color: redError, width: 2),
+                            ),
+                            enabledBorder: const UnderlineInputBorder(
+                              borderSide: BorderSide(color: greyTab, width: 2),
+                            ),
+                            contentPadding: EdgeInsets.zero,
+                            suffix: buttonState
+                                ? const Icon(
+                                    Icons.check,
+                                    color: primary700,
+                                    size: 16,
+                                  )
+                                : null,
+                          ),
+                          validator: validateEmail,
+                          onSaved: (String? value) {
+                            emailString = value ?? '';
+                          },
+                          onChanged: (String? value) {
+                            if (value?.isEmpty ?? true) {
+                              setState(() {
+                                buttonState = false;
+                              });
+                            }
+                            if (formKey.currentState != null) {
+                              if (!formKey.currentState!.validate()) {
                                 setState(() {
                                   buttonState = false;
                                 });
+                                return;
+                              } else {
+                                formKey.currentState!.save();
+                                setState(() {
+                                  buttonState = true;
+                                });
                               }
-                              if (formKey.currentState != null) {
-                                if (!formKey.currentState!.validate()) {
-                                  setState(() {
-                                    buttonState = false;
-                                  });
-                                  return;
-                                } else {
-                                  formKey.currentState!.save();
-                                  setState(() {
-                                    buttonState = true;
-                                  });
-                                }
-                              }
-                            },
-                          ),
+                            }
+                          },
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
-              bottomSheet: buildBottomSheetButton(
-                context: context,
-                text: '확인',
-                keyboardVisible: visible,
-                onPressed: buttonState ? () => Email.send(context, emailString) : null,
-              ),
-            );
-          },
-        ),
+            ),
+            bottomSheet: buildBottomSheetButton(
+              context: context,
+              text: '확인',
+              keyboardVisible: visible,
+              onPressed: buttonState
+                  ? () {
+                      if (isEmailSent) {
+                        showBottomToast('이미 이메일이 발송 되었습니다.');
+                      } else {
+                        Email.send(context, emailString);
+                        setState(() {
+                          isEmailSent = true;
+                        });
+                      }
+                    }
+                  : null,
+            ),
+          );
+        },
       ),
     );
   }
@@ -157,7 +159,7 @@ class _EmailSignUpViewState extends State<EmailSignUpView>
     switch (state) {
       case AppLifecycleState.resumed:
         Log.d('resumed');
-        unawaited(retrieveDynamicLinkAndSignIn(fromColdState: false));
+        retrieveDynamicLinkAndSignIn();
         break;
       case AppLifecycleState.paused:
         Log.d('paused');
@@ -171,37 +173,19 @@ class _EmailSignUpViewState extends State<EmailSignUpView>
     }
   }
 
-  Future<bool> retrieveDynamicLinkAndSignIn({
-    required bool fromColdState,
-  }) async {
-    PendingDynamicLinkData? dynamicLinkData;
-    Uri? deepLink;
-    Log.i('check');
-    if (fromColdState) {
-      dynamicLinkData = await FirebaseDynamicLinks.instance.getInitialLink();
-      if (dynamicLinkData != null) {
-        deepLink = dynamicLinkData.link;
+  void retrieveDynamicLinkAndSignIn() {
+    FirebaseDynamicLinks.instance.onLink.listen((dynamicLinkData) {
+      final deepLink = dynamicLinkData.link;
+
+      final validLink =
+          FirebaseAuth.instance.isSignInWithEmailLink(deepLink.toString());
+
+      if (validLink) {
+        final continueUrl = deepLink.queryParameters['continueUrl'] ?? '';
+        final email = Uri.parse(continueUrl).queryParameters['email'] ?? '';
+        _handleLink(email, deepLink.toString());
       }
-    } else {
-      Log.d('listen check start');
-      dynamicLinkData = await FirebaseDynamicLinks.instance.onLink.first;
-      Log.d('listen check end');
-      deepLink = dynamicLinkData.link;
-    }
-
-    if (deepLink == null) {
-      return false;
-    }
-
-    final validLink =
-        FirebaseAuth.instance.isSignInWithEmailLink(deepLink.toString());
-
-    if (validLink) {
-      final continueUrl = deepLink.queryParameters['continueUrl'] ?? '';
-      final email = Uri.parse(continueUrl).queryParameters['email'] ?? '';
-      _handleLink(email, deepLink.toString());
-    }
-    return false;
+    });
   }
 
   @override
@@ -223,13 +207,20 @@ class _EmailSignUpViewState extends State<EmailSignUpView>
 
         user.when(
           success: (data) {
-            Navigator.pushReplacementNamed(
-              context,
-              Routes.terms,
-              arguments: {
-                'user': data,
-              },
-            );
+            if (!mounted) {
+              return;
+            }
+            if (data.is_new ?? false) {
+              Navigator.pushReplacementNamed(
+                context,
+                Routes.terms,
+                arguments: {
+                  'user': data,
+                },
+              );
+            } else {
+              showBottomToast('가입된 계정이 이미 있습니다!');
+            }
           },
           error: (msg) {
             Log.e('login fail');
