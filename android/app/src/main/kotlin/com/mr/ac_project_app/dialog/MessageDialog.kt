@@ -16,6 +16,7 @@ class MessageDialog(
     private val title: String,
     private val buttonText: String,
     private val content: String,
+    private val mustFinished: Boolean? = false,
 ): DialogFragment() {
 
     private var _binding: ShareDialogBinding? = null
@@ -54,6 +55,13 @@ class MessageDialog(
 
 
         return binding.root
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (mustFinished == true) {
+            this.confirmDialogInterface.onButtonClick()
+        }
     }
 }
 
