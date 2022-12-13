@@ -36,6 +36,7 @@ class _EmailSignUpViewState extends State<EmailSignUpView>
     return KeyboardDismissOnTap(
       child: KeyboardVisibilityBuilder(
         builder: (context, visible) {
+          final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
           return Scaffold(
             resizeToAvoidBottomInset: false,
             appBar: buildBackAppBar(context),
@@ -122,6 +123,7 @@ class _EmailSignUpViewState extends State<EmailSignUpView>
                         ),
                       ),
                     ),
+                    SizedBox(height: keyboardHeight),
                   ],
                 ),
               ),
