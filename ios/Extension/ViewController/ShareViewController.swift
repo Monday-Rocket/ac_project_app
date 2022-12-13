@@ -34,17 +34,16 @@ class ShareViewController: UIViewController {
   
   override func viewDidLoad() {
     super.viewDidLoad()
+    self.getLink()  // link 아니면 에러 팝업으로 이동
     
     self.folderListView.delegate = self
     self.folderListView.dataSource = self
     self.folderListView.backgroundColor = UIColor.white
     self.layoutView?.layer.cornerRadius = 30
-//    self.emptyFolderButton.layer.cornerRadius = 64
     
     self.backgroundView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.hideExtensionWithCompletionHandler(_:))))
     
     self.loadFolders()
-    self.getLink()
     
     NSLog(UserDefaultsHelper.getNewLinks().description)
     NSLog(UserDefaultsHelper.getNewFolders().description)
@@ -68,6 +67,21 @@ class ShareViewController: UIViewController {
     }
     
     self.layoutView.layoutIfNeeded()
+  }
+  
+  
+  override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+    
+    if let viewController = segue.destination as? NewFolderViewController {
+      viewController.link = self.link
+      viewController.imageLink = self.linkImageUrl
+    }
+    
+    if let viewController = segue.destination as? FolderSaveSuccessViewController {
+      viewController.link = self.link
+      viewController.folder = self.selectedFolder
+      viewController.saveType = SaveType.Selected
+    }
   }
   
   private func getLink() {
@@ -94,24 +108,12 @@ class ShareViewController: UIViewController {
     }
   }
   
-  override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-    
-    if let viewController = segue.destination as? NewFolderViewController {
-      viewController.link = self.link
-      viewController.imageLink = self.linkImageUrl
-    }
-    
-    if let viewController = segue.destination as? FolderSaveSuccessViewController {
-      viewController.link = self.link
-      viewController.folder = self.selectedFolder
-      viewController.saveType = SaveType.Selected
-    }
-  }
   
   private func saveLink(_ link: String) {
     
     // 링크가 아니면 저장 안함
     guard (link.starts(with: "http://") || link.starts(with: "https://")) && !link.isEmpty else {
+      self.showLinkErrorDialog()
       return
     }
     
@@ -127,8 +129,15 @@ class ShareViewController: UIViewController {
           break
         case .failure(let error):
           NSLog("🚨 open graph error: \(error.localizedDescription)")
+          self.showLinkErrorDialog()
       }
     })
+  }
+  
+  func showLinkErrorDialog() {
+    DispatchQueue.main.async {
+      self.performSegue(withIdentifier: "linkErrorSegue", sender: self)
+    }
   }
   
   @objc func hideExtensionWithCompletionHandler(_ sender: UITapGestureRecognizer? = nil) {

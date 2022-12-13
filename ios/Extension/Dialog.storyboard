@@ -161,7 +161,7 @@
                                             <fontDescription key="titleFontDescription" name="Pretendard-Bold" family="Pretendard" pointSize="16"/>
                                         </buttonConfiguration>
                                         <connections>
-                                            <action selector="onButtonPressed:" destination="ha9-U2-s0H" eventType="touchUpInside" id="CTq-BV-ppf"/>
+                                            <action selector="onButtonPressed:" destination="ha9-U2-s0H" eventType="touchUpInside" id="EiQ-b9-yyv"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wIA-ZA-nOp">
@@ -212,7 +212,7 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="button" destination="1aw-2C-2PE" id="8zG-Fu-t7C"/>
+                        <outlet property="button" destination="1aw-2C-2PE" id="Q8T-0f-F67"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Bjz-09-43t" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
