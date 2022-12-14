@@ -153,7 +153,7 @@ class _TermsViewState extends State<TermsView> {
                                   padding: const EdgeInsets.only(
                                     left: 11,
                                   ),
-                                  child: const Text('개인정보 처리방침')
+                                  child: const Text('개인정보 수집 및 이용 동의')
                                       .weight(FontWeight.w500)
                                       .fontSize(15),
                                 ),
@@ -269,7 +269,7 @@ class _TermsViewState extends State<TermsView> {
                                 padding: const EdgeInsets.only(
                                   left: 11,
                                 ),
-                                child: const Text('서비스 이용방침')
+                                child: const Text('서비스 이용약관')
                                     .weight(FontWeight.w500)
                                     .fontSize(15),
                               ),
