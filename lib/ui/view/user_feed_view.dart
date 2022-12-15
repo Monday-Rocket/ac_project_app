@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_positional_boolean_parameters
+
 import 'dart:async';
 
 import 'package:ac_project_app/const/colors.dart';
@@ -26,6 +28,7 @@ class UserFeedView extends StatelessWidget {
     final args = getArguments(context);
     final user = args['user'] as DetailUser;
     final folders = args['folders'] as List<Folder>;
+    final isMine = args['isMine'] as bool;
     final totalLinks = <Link>[];
 
     return MultiBlocProvider(
@@ -49,7 +52,7 @@ class UserFeedView extends StatelessWidget {
             SafeArea(
               child: Column(
                 children: [
-                  buildTopAppBar(context, user),
+                  buildTopAppBar(context, user, isMine),
                   Column(
                     children: [
                       Image.asset(
@@ -84,6 +87,7 @@ class UserFeedView extends StatelessWidget {
                                 context,
                                 totalLinks,
                                 user,
+                                isMine,
                               );
                             } else {
                               return const SizedBox.shrink();
@@ -102,7 +106,7 @@ class UserFeedView extends StatelessWidget {
     );
   }
 
-  Widget buildTopAppBar(BuildContext context, DetailUser user) {
+  Widget buildTopAppBar(BuildContext context, DetailUser user, bool isMine) {
     return AppBar(
       leading: IconButton(
         onPressed: () {
@@ -113,7 +117,7 @@ class UserFeedView extends StatelessWidget {
         padding: const EdgeInsets.only(left: 20, right: 8),
       ),
       actions: [
-        InkWell(
+        if (!isMine) InkWell(
           onTap: () => showUserOptionDialog(
             context,
             user,
@@ -129,7 +133,7 @@ class UserFeedView extends StatelessWidget {
               height: 25,
             ),
           ),
-        ),
+        ) else const SizedBox.shrink(),
       ],
       backgroundColor: Colors.transparent,
       systemOverlayStyle: SystemUiOverlayStyle.dark,
@@ -233,6 +237,7 @@ class UserFeedView extends StatelessWidget {
     BuildContext parentContext,
     List<Link> totalLinks,
     DetailUser user,
+    bool isMine,
   ) {
     final width = MediaQuery.of(parentContext).size.width;
     return Builder(
@@ -280,7 +285,8 @@ class UserFeedView extends StatelessWidget {
                                 'user': user,
                                 'folders': await context
                                     .read<GetUserFoldersCubit>()
-                                    .getFolders(user.id!)
+                                    .getFolders(user.id!),
+                                'isMine': isMine,
                               },
                             ),
                             child: Row(
@@ -348,7 +354,7 @@ class UserFeedView extends StatelessWidget {
                                     Container(
                                       margin: const EdgeInsets.only(top: 4),
                                       child: Text(
-                                        link.time ?? '',
+                                        makeLinkTimeString(link.time ?? ''),
                                         style: const TextStyle(
                                           color: grey400,
                                           fontSize: 12,
@@ -436,11 +442,14 @@ class UserFeedView extends StatelessWidget {
                                     ),
                                   ),
                                   InkWell(
-                                    onTap: () => showLinkOptionsDialog(
-                                      link,
-                                      parentContext,
-                                      callback: () => Navigator.pop(context),
-                                    ),
+                                    onTap: () => isMine
+                                        ? showMyLinkOptionsDialog(link, context)
+                                        : showLinkOptionsDialog(
+                                            link,
+                                            parentContext,
+                                            callback: () =>
+                                                Navigator.pop(context),
+                                          ),
                                     child: SvgPicture.asset(
                                       'assets/images/more_vert.svg',
                                     ),

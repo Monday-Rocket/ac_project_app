@@ -62,8 +62,7 @@ class MyLinkView extends StatelessWidget {
                       ),
                       if (state is LinkListLoadingState ||
                           state is LinkListInitialState)
-                        Align(
-                          alignment: Alignment.bottomCenter,
+                        Center(
                           child: Container(
                             margin: const EdgeInsets.only(bottom: 30),
                             child: const CircularProgressIndicator(

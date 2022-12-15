@@ -5,6 +5,8 @@ import 'package:ac_project_app/cubits/folders/get_user_folders_cubit.dart';
 import 'package:ac_project_app/cubits/home/get_job_list_cubit.dart';
 import 'package:ac_project_app/cubits/home/topic_list_state.dart';
 import 'package:ac_project_app/cubits/links/links_from_selected_job_group_cubit.dart';
+import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
+import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/models/user/detail_user.dart';
 import 'package:ac_project_app/resource.dart';
@@ -31,13 +33,14 @@ class HomePage extends StatelessWidget {
                 Container(
                   margin: const EdgeInsets.only(left: 24, right: 24, top: 20),
                   child: GestureDetector(
-                    onTap: () => Navigator.pushNamed(
-                      context,
-                      Routes.search,
-                      arguments: {
-                        'isMine': false,
-                      },
-                    ),
+                    onTap: () =>
+                        Navigator.pushNamed(
+                          context,
+                          Routes.search,
+                          arguments: {
+                            'isMine': false,
+                          },
+                        ),
                     child: Container(
                       decoration: const BoxDecoration(
                         color: grey100,
@@ -76,7 +79,10 @@ class HomePage extends StatelessWidget {
   }
 
   Widget buildListBody(BuildContext parentContext, List<Link> totalLinks) {
-    final width = MediaQuery.of(parentContext).size.width;
+    final width = MediaQuery
+        .of(parentContext)
+        .size
+        .width;
     return BlocBuilder<LinksFromSelectedJobGroupCubit, List<Link>>(
       builder: (context, links) {
         addLinks(context, totalLinks, links);
@@ -117,15 +123,21 @@ class HomePage extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           GestureDetector(
-                            onTap: () async => Navigator.of(context).pushNamed(
-                              Routes.userFeed,
-                              arguments: {
-                                'user': link.user,
-                                'folders': await context
-                                    .read<GetUserFoldersCubit>()
-                                    .getFolders(link.user!.id!)
-                              },
-                            ),
+                            onTap: () async {
+                              final profileState = context
+                                  .read<GetProfileInfoCubit>()
+                                  .state as ProfileLoadedState;
+                              await Navigator.of(context).pushNamed(
+                                Routes.userFeed,
+                                arguments: {
+                                  'user': link.user,
+                                  'folders': await context
+                                      .read<GetUserFoldersCubit>()
+                                      .getFolders(link.user!.id!),
+                                  'isMine': profileState.profile.id == link.user!.id,
+                                },
+                              );
+                            },
                             child: Row(
                               children: [
                                 Image.asset(
@@ -171,7 +183,7 @@ class HomePage extends StatelessWidget {
                                           child: Center(
                                             child: Padding(
                                               padding:
-                                                  const EdgeInsets.symmetric(
+                                              const EdgeInsets.symmetric(
                                                 vertical: 3,
                                                 horizontal: 4,
                                               ),
@@ -234,28 +246,28 @@ class HomePage extends StatelessWidget {
                               ),
                               child: isLinkVerified(link)
                                   ? Container(
-                                      constraints: const BoxConstraints(
-                                        minWidth: double.infinity,
-                                      ),
-                                      color: grey100,
-                                      child: CachedNetworkImage(
-                                        imageUrl: link.image ?? '',
-                                        imageBuilder:
-                                            (context, imageProvider) =>
-                                                Container(
-                                          height: 160,
-                                          decoration: BoxDecoration(
-                                            image: DecorationImage(
-                                              image: imageProvider,
-                                              fit: BoxFit.cover,
-                                            ),
+                                constraints: const BoxConstraints(
+                                  minWidth: double.infinity,
+                                ),
+                                color: grey100,
+                                child: CachedNetworkImage(
+                                  imageUrl: link.image ?? '',
+                                  imageBuilder:
+                                      (context, imageProvider) =>
+                                      Container(
+                                        height: 160,
+                                        decoration: BoxDecoration(
+                                          image: DecorationImage(
+                                            image: imageProvider,
+                                            fit: BoxFit.cover,
                                           ),
                                         ),
-                                        errorWidget: (_, __, ___) {
-                                          return const SizedBox();
-                                        },
                                       ),
-                                    )
+                                  errorWidget: (_, __, ___) {
+                                    return const SizedBox();
+                                  },
+                                ),
+                              )
                                   : const SizedBox(),
                             ),
                           ),
@@ -264,7 +276,7 @@ class HomePage extends StatelessWidget {
                             children: [
                               Row(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                MainAxisAlignment.spaceBetween,
                                 children: [
                                   SizedBox(
                                     width: width - (24 * 2 + 25),
@@ -279,12 +291,22 @@ class HomePage extends StatelessWidget {
                                     ),
                                   ),
                                   InkWell(
-                                    onTap: () => showLinkOptionsDialog(
-                                      link,
-                                      context,
-                                      callback: () =>
-                                          refresh(context, totalLinks),
-                                    ),
+                                    onTap: () {
+                                      final profileState = context
+                                          .read<GetProfileInfoCubit>()
+                                          .state as ProfileLoadedState;
+                                      if (profileState.profile.id ==
+                                          link.user!.id) {
+                                        showMyLinkOptionsDialog(link, context);
+                                      } else {
+                                        showLinkOptionsDialog(
+                                          link,
+                                          context,
+                                          callback: () =>
+                                              refresh(context, totalLinks),
+                                        );
+                                      }
+                                    },
                                     child: SvgPicture.asset(
                                       'assets/images/more_vert.svg',
                                     ),
@@ -307,7 +329,8 @@ class HomePage extends StatelessWidget {
                     ),
                   );
                 },
-                separatorBuilder: (_, __) => const Padding(
+                separatorBuilder: (_, __) =>
+                const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24),
                   child: Divider(height: 1, color: grey900),
                 ),
@@ -320,18 +343,20 @@ class HomePage extends StatelessWidget {
   }
 
   void addLinks(BuildContext context, List<Link> totalLinks, List<Link> links) {
-    if (context.read<LinksFromSelectedJobGroupCubit>().hasRefresh) {
+    if (context
+        .read<LinksFromSelectedJobGroupCubit>()
+        .hasRefresh) {
       totalLinks.clear();
-      context.read<LinksFromSelectedJobGroupCubit>().hasRefresh = false;
+      context
+          .read<LinksFromSelectedJobGroupCubit>()
+          .hasRefresh = false;
     }
     totalLinks.addAll(links);
   }
 
-  Widget buildJobListView(
-    BuildContext jobContext,
-    List<JobGroup> jobs,
-    List<Link> totalLinks,
-  ) {
+  Widget buildJobListView(BuildContext jobContext,
+      List<JobGroup> jobs,
+      List<Link> totalLinks,) {
     return Container(
       margin: const EdgeInsets.only(top: 30 - 7, left: 12, right: 20),
       child: DefaultTabController(
