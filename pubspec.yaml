@@ -92,6 +92,8 @@ flutter:
           weight: 200
         - asset: assets/fonts/Pretendard/Pretendard-Regular.otf
           weight: 400
+        - asset: assets/fonts/Pretendard/Pretendard-Medium.otf
+          weight: 500
         - asset: assets/fonts/Pretendard/Pretendard-Bold.otf
           weight: 700
     - family: Roboto
