@@ -6,3 +6,9 @@ const approveSecondLink = 'https://spot-harpymimus-46b.notion.site/LINKPOOL-f0c6
 
 // 개인정보 처리방침
 const personalInfoLink = 'https://spot-harpymimus-46b.notion.site/LINKPOOL-652aff7a651549e9bfd67cb16f8478de';
+
+// 도움말
+const helpLink = 'https://spot-harpymimus-46b.notion.site/5940b1c7e51f4a95996c4cb6f7356b50';
+
+// API LINK
+const baseUrl = 'http://ac-project-api.ap-northeast-2.elasticbeanstalk.com';
