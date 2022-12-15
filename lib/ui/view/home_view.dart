@@ -65,6 +65,9 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
         BlocProvider(
           create: (_) => LinksFromSelectedJobGroupCubit(),
         ),
+        BlocProvider<GetFoldersCubit>(
+          create: (_) => GetFoldersCubit(),
+        ),
       ],
       child: BlocBuilder<HomeSecondViewCubit, int>(
         builder: (context, second) {
@@ -125,9 +128,6 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
                         BlocProvider<FolderViewTypeCubit>(
                           create: (_) => FolderViewTypeCubit(),
                         ),
-                        BlocProvider<GetFoldersCubit>(
-                          create: (_) => GetFoldersCubit(),
-                        ),
                       ],
                       child: const MyFolderPage(),
                     ),
@@ -155,6 +155,9 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
                       Navigator.pushNamed(context, Routes.upload).then(
                         (value) => setState(() {}),
                       );
+                    } else if (index == 2) {
+                      context.read<GetFoldersCubit>().getFolders();
+                      context.read<HomeViewCubit>().moveTo(index);
                     } else {
                       context.read<HomeViewCubit>().moveTo(index);
                     }
