@@ -38,10 +38,14 @@ class _UploadViewState extends State<UploadView> {
   Widget build(BuildContext context) {
     final args = getArguments(context);
     final url = args['url'] as String? ?? '';
+    if (url.isNotEmpty) {
+      linkTextController.text = url;
+    }
     final isCopied = args['isCopied'] as bool? ?? false;
+    if (isCopied) {
+      buttonState = isCopied ? ButtonState.enabled : ButtonState.disabled;
+    }
     final height = MediaQuery.of(context).size.height;
-    linkTextController.text = url;
-    buttonState = isCopied ? ButtonState.enabled : ButtonState.disabled;
 
     return MultiBlocProvider(
       providers: [
