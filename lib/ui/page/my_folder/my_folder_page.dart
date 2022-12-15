@@ -289,7 +289,7 @@ class _MyFolderPageState extends State<MyFolderPage>
                                               folder.thumbnail!,
                                               width: 63,
                                               height: 63,
-                                              fit: BoxFit.contain,
+                                              fit: BoxFit.cover,
                                               errorBuilder: (_, __, ___) =>
                                                   emptyFolderView(),
                                             )

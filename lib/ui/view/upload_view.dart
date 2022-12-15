@@ -105,8 +105,10 @@ class _UploadViewState extends State<UploadView> {
                             children: [
                               buildSubTitle('폴더 선택'),
                               InkWell(
-                                onTap: () => showAddFolderDialog(context,
-                                    isFromUpload: true),
+                                onTap: () => showAddFolderDialog(
+                                  context,
+                                  isFromUpload: true,
+                                ),
                                 child: Padding(
                                   padding: const EdgeInsets.all(8),
                                   child: SvgPicture.asset(
@@ -349,21 +351,20 @@ class _UploadViewState extends State<UploadView> {
                                     borderRadius: const BorderRadius.all(
                                       Radius.circular(32),
                                     ),
-                                    child: Image.network(
-                                      folder.thumbnail ?? '',
-                                      fit: BoxFit.cover,
-                                      errorBuilder: (_, __, ___) {
-                                        return Container(
-                                          width: 95,
-                                          height: 95,
-                                          decoration: const BoxDecoration(
-                                            borderRadius: BorderRadius.all(
-                                              Radius.circular(32),
-                                            ),
-                                            color: grey100,
-                                          ),
-                                        );
-                                      },
+                                    child: ColoredBox(
+                                      color: grey100,
+                                      child: folder.thumbnail != null &&
+                                          (folder.thumbnail?.isNotEmpty ??
+                                              false)
+                                          ? Image.network(
+                                        folder.thumbnail!,
+                                        width: 95,
+                                        height: 95,
+                                        fit: BoxFit.cover,
+                                        errorBuilder: (_, __, ___) =>
+                                            emptyFolderView(),
+                                      )
+                                          : emptyFolderView(),
                                     ),
                                   ),
                                   if (!visible)
@@ -434,6 +435,21 @@ class _UploadViewState extends State<UploadView> {
         height: 19 / 16,
         letterSpacing: -0.3,
         color: grey800,
+      ),
+    );
+  }
+
+  Container emptyFolderView() {
+    return Container(
+      width: 95,
+      height: 95,
+      color: primary100,
+      child: Center(
+        child: SvgPicture.asset(
+          'assets/images/folder.svg',
+          width: 24,
+          height: 24,
+        ),
       ),
     );
   }
