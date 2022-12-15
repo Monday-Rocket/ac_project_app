@@ -5,6 +5,7 @@ import 'package:ac_project_app/models/result.dart';
 import 'package:ac_project_app/models/user/detail_user.dart';
 import 'package:ac_project_app/models/user/user.dart';
 import 'package:ac_project_app/provider/api/custom_client.dart';
+import 'package:ac_project_app/provider/logout.dart';
 
 class UserApi {
   final client = CustomClient();
@@ -65,7 +66,12 @@ class UserApi {
   }
   
   Future<bool> deleteUser() async {
-    final result = await client.deleteUri('/users');
-    return result.when(success: (_) => true, error: (_) => false);
+    final logoutResult = await logoutWithoutPush();
+    if (logoutResult) {
+      final result = await client.deleteUri('/users');
+      return result.when(success: (_) => true, error: (_) => false);
+    } else {
+      return false;
+    }
   }
 }

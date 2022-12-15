@@ -4,10 +4,10 @@ import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/provider/api/user/user_api.dart';
+import 'package:ac_project_app/provider/logout.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/dialog.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -135,12 +135,7 @@ class MyPage extends StatelessWidget {
                   leftText: '취소',
                   rightText: '로그아웃',
                   leftCallback: () => Navigator.pop(context),
-                  rightCallback: () {
-                    FirebaseAuth.instance.signOut().then((value) {
-                      Navigator.of(context).pop(true);
-                      Navigator.pushReplacementNamed(context, Routes.login);
-                    });
-                  },
+                  rightCallback: () => logout(context),
                 );
                 break;
               }
