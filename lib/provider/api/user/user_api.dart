@@ -64,14 +64,12 @@ class UserApi {
       error: Result.error,
     );
   }
-  
+
   Future<bool> deleteUser() async {
-    final logoutResult = await logoutWithoutPush();
-    if (logoutResult) {
-      final result = await client.deleteUri('/users');
-      return result.when(success: (_) => true, error: (_) => false);
-    } else {
-      return false;
-    }
+    final result = await client.deleteUri('/users');
+    return result.when(
+      success: (_) async => logoutWithoutPush(),
+      error: (_) => false,
+    );
   }
 }
