@@ -7,7 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LinksFromSelectedJobGroupCubit extends Cubit<List<Link>> {
   LinksFromSelectedJobGroupCubit(): super([]) {
-    getSelectedJobLinks(1, 0);
+    initialize();
   }
 
   final linkApi = LinkApi();
@@ -15,8 +15,15 @@ class LinksFromSelectedJobGroupCubit extends Cubit<List<Link>> {
   HasMoreCubit hasMore = HasMoreCubit();
   int selectedJobId = 1;
   int page = 0;
+  bool hasRefresh = false;
+
+  void initialize() {
+    emit([]);
+    getSelectedJobLinks(1, 0);
+  }
 
   Future<void> getSelectedJobLinks(int jobGroupId, int pageNum) async {
+    hasRefresh = true;
     selectedJobId = jobGroupId;
     final result = await linkApi.getJobGroupLinks(jobGroupId, pageNum);
     result.when(
@@ -28,7 +35,10 @@ class LinksFromSelectedJobGroupCubit extends Cubit<List<Link>> {
     );
   }
 
-  Future<void> refresh() => getSelectedJobLinks(selectedJobId, 0);
+  void refresh() {
+    hasRefresh = true;
+    getSelectedJobLinks(selectedJobId, 0);
+  }
 
   void loadMore() {
     if (hasMore.state == ScrollableType.can) {

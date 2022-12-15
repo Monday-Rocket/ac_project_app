@@ -62,6 +62,9 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
         BlocProvider(
           create: (_) => HomeSecondViewCubit(),
         ),
+        BlocProvider(
+          create: (_) => LinksFromSelectedJobGroupCubit(),
+        ),
       ],
       child: BlocBuilder<HomeSecondViewCubit, int>(
         builder: (context, second) {
@@ -111,9 +114,6 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
                           create: (_) => GetJobListCubit(),
                         ),
                         BlocProvider(
-                          create: (_) => LinksFromSelectedJobGroupCubit(),
-                        ),
-                        BlocProvider(
                           create: (_) => GetUserFoldersCubit(),
                         ),
                       ],
@@ -148,7 +148,10 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
                   items: bottomItems,
                   currentIndex: index,
                   onTap: (index) {
-                    if (index == 1) {
+                    if (index == 0) {
+                      context.read<LinksFromSelectedJobGroupCubit>().refresh();
+                      context.read<HomeViewCubit>().moveTo(index);
+                    } else if (index == 1) {
                       Navigator.pushNamed(context, Routes.upload).then(
                         (value) => setState(() {}),
                       );

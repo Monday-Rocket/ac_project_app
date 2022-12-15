@@ -79,7 +79,7 @@ class HomePage extends StatelessWidget {
     final width = MediaQuery.of(parentContext).size.width;
     return BlocBuilder<LinksFromSelectedJobGroupCubit, List<Link>>(
       builder: (context, links) {
-        totalLinks.addAll(links);
+        addLinks(context, totalLinks, links);
         return Expanded(
           child: NotificationListener<ScrollEndNotification>(
             onNotification: (scrollEnd) {
@@ -281,8 +281,9 @@ class HomePage extends StatelessWidget {
                                   InkWell(
                                     onTap: () => showLinkOptionsDialog(
                                       link,
-                                      parentContext,
-                                      callback: () => refresh(context, totalLinks),
+                                      context,
+                                      callback: () =>
+                                          refresh(context, totalLinks),
                                     ),
                                     child: SvgPicture.asset(
                                       'assets/images/more_vert.svg',
@@ -316,6 +317,14 @@ class HomePage extends StatelessWidget {
         );
       },
     );
+  }
+
+  void addLinks(BuildContext context, List<Link> totalLinks, List<Link> links) {
+    if (context.read<LinksFromSelectedJobGroupCubit>().hasRefresh) {
+      totalLinks.clear();
+      context.read<LinksFromSelectedJobGroupCubit>().hasRefresh = false;
+    }
+    totalLinks.addAll(links);
   }
 
   Widget buildJobListView(
@@ -414,7 +423,6 @@ class HomePage extends StatelessWidget {
   }
 
   Future<void> refresh(BuildContext context, List<Link> totalLinks) async {
-    totalLinks.clear();
-    unawaited(context.read<LinksFromSelectedJobGroupCubit>().refresh());
+    context.read<LinksFromSelectedJobGroupCubit>().refresh();
   }
 }
