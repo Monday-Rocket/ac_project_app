@@ -193,6 +193,7 @@ class _ReportViewState extends State<ReportView> {
                               cursorColor: primary600,
                               keyboardType: TextInputType.multiline,
                               maxLines: null,
+                              maxLength: 500,
                               decoration: const InputDecoration(
                                 border: InputBorder.none,
                                 focusedBorder: InputBorder.none,
@@ -208,6 +209,7 @@ class _ReportViewState extends State<ReportView> {
                                   color: grey400,
                                   fontSize: 14,
                                 ),
+                                counterText: '',
                               ),
                               onChanged: (value) => setState(() {}),
                             ),

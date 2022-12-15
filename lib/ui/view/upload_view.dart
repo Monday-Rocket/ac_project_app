@@ -128,53 +128,75 @@ class _UploadViewState extends State<UploadView> {
         right: 24,
         bottom: 90,
       ),
+      height: 110,
       decoration: const BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(12)),
         color: grey100,
       ),
-      child: SingleChildScrollView(
-        controller: secondScrollController,
-        padding: EdgeInsets.zero,
-        child: SizedBox(
-          height: 80,
-          child: TextField(
-            controller: commentTextController,
-            style: const TextStyle(
-              fontSize: 14,
-              height: 16.7 / 14,
-              color: grey600,
-              letterSpacing: -0.3,
-            ),
-            cursorColor: primary600,
-            keyboardType: TextInputType.multiline,
-            maxLines: null,
-            decoration: const InputDecoration(
-              border: InputBorder.none,
-              focusedBorder: InputBorder.none,
-              isDense: true,
-              contentPadding: EdgeInsets.symmetric(
-                vertical: 15,
-                horizontal: 16,
+      child: Column(
+        children: [
+          SingleChildScrollView(
+            controller: secondScrollController,
+            padding: EdgeInsets.zero,
+            child: SizedBox(
+              height: 80,
+              child: TextField(
+                controller: commentTextController,
+                style: const TextStyle(
+                  fontSize: 14,
+                  height: 16.7 / 14,
+                  color: grey600,
+                  letterSpacing: -0.3,
+                ),
+                cursorColor: primary600,
+                keyboardType: TextInputType.multiline,
+                maxLines: null,
+                maxLength: 500,
+                decoration: const InputDecoration(
+                  border: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  isDense: true,
+                  contentPadding: EdgeInsets.symmetric(
+                    vertical: 15,
+                    horizontal: 16,
+                  ),
+                  hintText: '저장한 링크에 대해 간단하게 메모해보세요',
+                  hintStyle: TextStyle(
+                    color: grey400,
+                    fontSize: 14,
+                    letterSpacing: -0.3,
+                  ),
+                  counterText: '',
+                ),
+                onTap: () {
+                  if (visible) {
+                    parentScrollController.animateTo(
+                      0,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.ease,
+                    );
+                  }
+                },
+                onChanged: (value) => setState(() {}),
               ),
-              hintText: '저장한 링크에 대해 간단하게 메모해보세요',
-              hintStyle: TextStyle(
-                color: grey400,
-                fontSize: 14,
-                letterSpacing: -0.3,
-              ),
             ),
-            onTap: () {
-              if (visible) {
-                parentScrollController.animateTo(
-                  0,
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.ease,
-                );
-              }
-            },
-            onChanged: (value) => setState(() {}),
           ),
-        ),
+          Align(
+            alignment: Alignment.bottomRight,
+            child: Padding(
+              padding: const EdgeInsets.only(right: 14),
+              child: Text(
+                '${commentTextController.text.length}/500',
+                style: const TextStyle(
+                  color: grey400,
+                  fontSize: 14,
+                  letterSpacing: -0.3,
+                  height: 16.7 / 14,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
