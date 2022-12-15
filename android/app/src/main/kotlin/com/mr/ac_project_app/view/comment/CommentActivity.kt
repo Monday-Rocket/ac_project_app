@@ -2,6 +2,7 @@ package com.mr.ac_project_app.view.comment
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
@@ -17,6 +18,7 @@ import androidx.activity.viewModels
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.FragmentActivity
+import com.mr.ac_project_app.MainActivity
 import com.mr.ac_project_app.R
 import com.mr.ac_project_app.databinding.ActivityCommentBinding
 import com.mr.ac_project_app.dialog.ConfirmDialogInterface
@@ -149,6 +151,8 @@ class CommentActivity : FragmentActivity(), ConfirmDialogInterface {
     }
 
     override fun onButtonClick() {
-        finishAffinity()
+        val intent = Intent(this@CommentActivity, MainActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 }

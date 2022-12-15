@@ -43,6 +43,7 @@ class ShareActivity : ComponentActivity() {
             val intent = Intent(this@ShareActivity, NewFolderActivity::class.java)
             intent.putExtra("link", viewModel.savedLink.value)
             intent.putExtra("imageLink", viewModel.imageLink.value)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
             finish()
             overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit)
@@ -71,6 +72,7 @@ class ShareActivity : ComponentActivity() {
             intent.putExtra("folder", folder)
             intent.putExtra("link", viewModel.savedLink.value)
             intent.putExtra("saveType", SaveType.Selected)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
             overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit)
             finish()
@@ -96,6 +98,7 @@ class ShareActivity : ComponentActivity() {
         val hasError = viewModel.saveLink(savedLink)
         if (hasError) {
             val intent = Intent(this@ShareActivity, LinkErrorActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
             finish()
         }
