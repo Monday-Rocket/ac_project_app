@@ -137,6 +137,7 @@ Future<bool?> showLinkOptionsDialog(
                                   Routes.upload,
                                   arguments: {
                                     'url': link.url,
+                                    'isCopied': true,
                                   },
                                 ).then((value) {
                                   Navigator.pop(context);

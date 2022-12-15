@@ -29,23 +29,17 @@ class _UploadViewState extends State<UploadView> {
   final firstScrollController = ScrollController();
   final secondScrollController = ScrollController();
   ButtonState buttonState = ButtonState.disabled;
-
   int selectedIndex = -1;
-
   int? selectedFolderId;
 
   @override
-  void initState() {
-    Future.microtask(() {
-      final args = getArguments(context);
-      final url = args['url'] as String? ?? '';
-      linkTextController.text = url;
-    });
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final args = getArguments(context);
+    final url = args['url'] as String? ?? '';
+    final isCopied = args['isCopied'] as bool? ?? false;
+    linkTextController.text = url;
+    buttonState = isCopied ? ButtonState.enabled : ButtonState.disabled;
+
     return MultiBlocProvider(
       providers: [
         BlocProvider<GetFoldersCubit>(
@@ -447,8 +441,8 @@ class _UploadViewState extends State<UploadView> {
       child: Center(
         child: SvgPicture.asset(
           'assets/images/folder.svg',
-          width: 24,
-          height: 24,
+          width: 36,
+          height: 36,
         ),
       ),
     );
