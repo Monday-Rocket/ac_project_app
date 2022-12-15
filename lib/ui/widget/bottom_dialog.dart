@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/folders/folder_name_cubit.dart';
 import 'package:ac_project_app/cubits/folders/folder_visible_cubit.dart';
@@ -31,8 +33,9 @@ Future<bool?> showMyLinkOptionsDialog(Link link, BuildContext parentContext) {
               return DecoratedBox(
                 decoration: _dialogDecoration(),
                 child: Padding(
-                  padding: const EdgeInsets.only(
+                  padding: EdgeInsets.only(
                     top: 29,
+                    bottom: Platform.isAndroid ? MediaQuery.of(context).padding.bottom : 0,
                   ),
                   child: Column(
                     children: [
@@ -106,8 +109,9 @@ Future<bool?> showLinkOptionsDialog(
               return DecoratedBox(
                 decoration: _dialogDecoration(),
                 child: Padding(
-                  padding: const EdgeInsets.only(
+                  padding: EdgeInsets.only(
                     top: 29,
+                    bottom: Platform.isAndroid ? MediaQuery.of(context).padding.bottom : 0,
                   ),
                   child: Column(
                     children: [
@@ -195,8 +199,9 @@ Future<bool?> showUserOptionDialog(
               return DecoratedBox(
                 decoration: _dialogDecoration(),
                 child: Padding(
-                  padding: const EdgeInsets.only(
+                  padding: EdgeInsets.only(
                     top: 29,
+                    bottom: Platform.isAndroid ? MediaQuery.of(context).padding.bottom : 0,
                   ),
                   child: Column(
                     children: [

@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_positional_boolean_parameters
 
 import 'dart:async';
+import 'dart:io';
 
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/folders/folder_view_type_cubit.dart';
@@ -401,8 +402,9 @@ class _MyFolderPageState extends State<MyFolderPage>
                 ),
               ),
               child: Padding(
-                padding: const EdgeInsets.only(
+                padding: EdgeInsets.only(
                   top: 29,
+                  bottom: Platform.isAndroid ? MediaQuery.of(context).padding.bottom : 0,
                 ),
                 child: Column(
                   children: [
