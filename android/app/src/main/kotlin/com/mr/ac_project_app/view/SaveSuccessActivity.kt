@@ -48,13 +48,16 @@ class SaveSuccessActivity: ComponentActivity() {
             val movingIntent = Intent(this@SaveSuccessActivity, CommentActivity::class.java)
             movingIntent.putExtra("saveType", saveType)
             movingIntent.putExtra("link", link)
+            movingIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(movingIntent)
             finish()
             overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit)
         }
 
         binding.moveToAppButton.setOnClickListener {
-            startActivity(Intent(this@SaveSuccessActivity, MainActivity::class.java))
+            val intent = Intent(this@SaveSuccessActivity, MainActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
             finish()
         }
 

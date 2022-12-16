@@ -25,6 +25,29 @@ void logout(BuildContext context) {
   });
 }
 
+Future<bool> logoutWithoutPush() async {
+  try {
+    final prefs = await SharedPreferences.getInstance();
+    final loginType = prefs.getString('loginType') ?? '';
+    switch (loginType) {
+      case 'google':
+        await GoogleSignIn(
+          scopes: [
+            'email',
+          ],
+        ).signOut();
+        await FirebaseAuth.instance.signOut();
+        break;
+      default:
+        await FirebaseAuth.instance.signOut();
+        break;
+    }
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
 void firebaseLogout(BuildContext context) {
   FirebaseAuth.instance.signOut().then((value) {
     Navigator.of(context).pop(true);

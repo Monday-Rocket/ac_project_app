@@ -1,13 +1,14 @@
 // ignore_for_file: avoid_positional_boolean_parameters, non_constant_identifier_names
 
 import 'package:ac_project_app/const/colors.dart';
+import 'package:ac_project_app/const/strings.dart';
 import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/provider/api/user/user_api.dart';
+import 'package:ac_project_app/provider/logout.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/dialog.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -118,12 +119,26 @@ class MyPage extends StatelessWidget {
           switch (menuName) {
             case '이용 약관':
               {
-                launchUrl(Uri.parse('https://spot-harpymimus-46b.notion.site/LINKPOOL-f0c6fd16eecf4c8c96bb317421ecc174'), mode: LaunchMode.externalApplication);
+                launchUrl(
+                  Uri.parse(approveSecondLink),
+                  mode: LaunchMode.externalApplication,
+                );
+                break;
+              }
+            case '개인정보 처리방침':
+              {
+                launchUrl(
+                  Uri.parse(personalInfoLink),
+                  mode: LaunchMode.externalApplication,
+                );
                 break;
               }
             case '도움말':
               {
-                launchUrl(Uri.parse('https://spot-harpymimus-46b.notion.site/LINKPOOL-cf1f4d836d764b889a68f79d989cd624'), mode: LaunchMode.externalApplication);
+                launchUrl(
+                  Uri.parse(helpLink),
+                  mode: LaunchMode.externalApplication,
+                );
                 break;
               }
             case '로그아웃':
@@ -135,12 +150,7 @@ class MyPage extends StatelessWidget {
                   leftText: '취소',
                   rightText: '로그아웃',
                   leftCallback: () => Navigator.pop(context),
-                  rightCallback: () {
-                    FirebaseAuth.instance.signOut().then((value) {
-                      Navigator.of(context).pop(true);
-                      Navigator.pushReplacementNamed(context, Routes.login);
-                    });
-                  },
+                  rightCallback: () => logout(context),
                 );
                 break;
               }
@@ -198,6 +208,8 @@ class MyPage extends StatelessWidget {
       children: [
         DivisionLine(),
         MenuItem('이용 약관'),
+        DivisionLine(size: 1),
+        MenuItem('개인정보 처리방침'),
         DivisionLine(size: 1),
         MenuItem('도움말'),
         DivisionLine(),

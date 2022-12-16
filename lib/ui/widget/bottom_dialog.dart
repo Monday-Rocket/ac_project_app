@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/folders/folder_name_cubit.dart';
 import 'package:ac_project_app/cubits/folders/folder_visible_cubit.dart';
@@ -15,6 +17,7 @@ import 'package:ac_project_app/ui/widget/text/custom_font.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -31,8 +34,11 @@ Future<bool?> showMyLinkOptionsDialog(Link link, BuildContext parentContext) {
               return DecoratedBox(
                 decoration: _dialogDecoration(),
                 child: Padding(
-                  padding: const EdgeInsets.only(
+                  padding: EdgeInsets.only(
                     top: 29,
+                    bottom: Platform.isAndroid
+                        ? MediaQuery.of(context).padding.bottom
+                        : 0,
                   ),
                   child: Column(
                     children: [
@@ -106,8 +112,11 @@ Future<bool?> showLinkOptionsDialog(
               return DecoratedBox(
                 decoration: _dialogDecoration(),
                 child: Padding(
-                  padding: const EdgeInsets.only(
+                  padding: EdgeInsets.only(
                     top: 29,
+                    bottom: Platform.isAndroid
+                        ? MediaQuery.of(context).padding.bottom
+                        : 0,
                   ),
                   child: Column(
                     children: [
@@ -137,10 +146,18 @@ Future<bool?> showLinkOptionsDialog(
                                   Routes.upload,
                                   arguments: {
                                     'url': link.url,
+                                    'isCopied': true,
                                   },
                                 ).then((value) {
                                   Navigator.pop(context);
                                   callback?.call();
+                                  Navigator.pushReplacementNamed(
+                                    context,
+                                    Routes.home,
+                                    arguments: {
+                                      'index': 2,
+                                    },
+                                  );
                                 });
                               },
                               child: buildItem('내 폴더 담기'),
@@ -194,8 +211,11 @@ Future<bool?> showUserOptionDialog(
               return DecoratedBox(
                 decoration: _dialogDecoration(),
                 child: Padding(
-                  padding: const EdgeInsets.only(
+                  padding: EdgeInsets.only(
                     top: 29,
+                    bottom: Platform.isAndroid
+                        ? MediaQuery.of(context).padding.bottom
+                        : 0,
                   ),
                   child: Column(
                     children: [
@@ -334,7 +354,7 @@ Future<bool?> showAddFolderDialog(
         ],
         child: Wrap(
           children: [
-            GestureDetector(
+            KeyboardDismissOnTap(
               child: DecoratedBox(
                 decoration: const BoxDecoration(
                   color: Colors.white,
@@ -498,9 +518,9 @@ Future<bool?> showAddFolderDialog(
                           BlocBuilder<ButtonStateCubit, ButtonState>(
                             builder: (context, state) {
                               return Container(
-                                margin: const EdgeInsets.only(
+                                margin: EdgeInsets.only(
                                   top: 50,
-                                  bottom: 20,
+                                  bottom: Platform.isAndroid ? MediaQuery.of(context).padding.bottom : 0,
                                 ),
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(

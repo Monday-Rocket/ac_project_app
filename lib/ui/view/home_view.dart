@@ -62,6 +62,12 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
         BlocProvider(
           create: (_) => HomeSecondViewCubit(),
         ),
+        BlocProvider(
+          create: (_) => LinksFromSelectedJobGroupCubit(),
+        ),
+        BlocProvider<GetFoldersCubit>(
+          create: (_) => GetFoldersCubit(),
+        ),
       ],
       child: BlocBuilder<HomeSecondViewCubit, int>(
         builder: (context, second) {
@@ -111,9 +117,6 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
                           create: (_) => GetJobListCubit(),
                         ),
                         BlocProvider(
-                          create: (_) => LinksFromSelectedJobGroupCubit(),
-                        ),
-                        BlocProvider(
                           create: (_) => GetUserFoldersCubit(),
                         ),
                       ],
@@ -124,9 +127,6 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
                       providers: [
                         BlocProvider<FolderViewTypeCubit>(
                           create: (_) => FolderViewTypeCubit(),
-                        ),
-                        BlocProvider<GetFoldersCubit>(
-                          create: (_) => GetFoldersCubit(),
                         ),
                       ],
                       child: const MyFolderPage(),
@@ -148,10 +148,16 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
                   items: bottomItems,
                   currentIndex: index,
                   onTap: (index) {
-                    if (index == 1) {
+                    if (index == 0) {
+                      context.read<LinksFromSelectedJobGroupCubit>().refresh();
+                      context.read<HomeViewCubit>().moveTo(index);
+                    } else if (index == 1) {
                       Navigator.pushNamed(context, Routes.upload).then(
                         (value) => setState(() {}),
                       );
+                    } else if (index == 2) {
+                      context.read<GetFoldersCubit>().getFolders();
+                      context.read<HomeViewCubit>().moveTo(index);
                     } else {
                       context.read<HomeViewCubit>().moveTo(index);
                     }

@@ -68,7 +68,7 @@ class _SearchViewState extends State<SearchView> {
                 titleSpacing: 0,
                 actions: [
                   Center(
-                    child: GestureDetector(
+                    child: InkWell(
                       onTap: buttonState
                           ? () {
                               totalLinks.clear();
@@ -86,7 +86,7 @@ class _SearchViewState extends State<SearchView> {
                           : null,
                       child: Padding(
                         padding: const EdgeInsets.only(
-                          left: 10,
+                          left: 16,
                           right: 22,
                           top: 8,
                           bottom: 8,
@@ -266,7 +266,6 @@ class _SearchViewState extends State<SearchView> {
             borderRadius: BorderRadius.all(Radius.circular(7)),
           ),
           height: 36,
-          margin: const EdgeInsets.only(right: 6),
           child: Center(
             child: TextField(
               textAlignVertical: TextAlignVertical.center,

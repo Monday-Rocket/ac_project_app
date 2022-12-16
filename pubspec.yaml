@@ -3,7 +3,7 @@ description: 비사이드 12기 먼데이 로켓팀 프로젝트
 
 publish_to: 'none'
 
-version: 1.0.14+14
+version: 1.0.15+15
 
 environment:
   sdk: ">=2.17.6 <3.0.0"
@@ -92,6 +92,8 @@ flutter:
           weight: 200
         - asset: assets/fonts/Pretendard/Pretendard-Regular.otf
           weight: 400
+        - asset: assets/fonts/Pretendard/Pretendard-Medium.otf
+          weight: 500
         - asset: assets/fonts/Pretendard/Pretendard-Bold.otf
           weight: 700
     - family: Roboto

@@ -62,8 +62,7 @@ class MyLinkView extends StatelessWidget {
                       ),
                       if (state is LinkListLoadingState ||
                           state is LinkListInitialState)
-                        Align(
-                          alignment: Alignment.bottomCenter,
+                        Center(
                           child: Container(
                             margin: const EdgeInsets.only(bottom: 30),
                             child: const CircularProgressIndicator(
@@ -301,6 +300,7 @@ class MyLinkView extends StatelessWidget {
               final link = totalLinks[index];
               return InkWell(
                 onTap: () {
+                  context.read<LinksFromSelectedFolderCubit>().emit(LinkListLoadingState());
                   Navigator.pushNamed(
                     context,
                     Routes.linkDetail,
