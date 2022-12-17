@@ -9,6 +9,8 @@ const grey500 = Color(0xFF7A828B);
 const grey600 = Color(0xFF606873);
 const grey700 = Color(0xFF424852);
 const lightGrey700 = Color(0x80424852);
+const e6Grey700 = Color(0xE7424852);
+
 const grey800 = Color(0xFF30343E);
 const grey900 = Color(0xFF191F28);
 
