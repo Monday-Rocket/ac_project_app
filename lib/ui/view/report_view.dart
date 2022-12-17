@@ -221,6 +221,7 @@ class _ReportViewState extends State<ReportView> {
                                   '${textController.text.length}/500',
                                   style: const TextStyle(
                                     color: grey400,
+                                    fontWeight: FontWeight.w400,
                                     fontSize: 14,
                                     letterSpacing: -0.3,
                                     height: 16.7 / 14,

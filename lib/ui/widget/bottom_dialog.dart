@@ -38,7 +38,7 @@ Future<bool?> showMyLinkOptionsDialog(Link link, BuildContext parentContext) {
                     top: 29,
                     bottom: Platform.isAndroid
                         ? MediaQuery.of(context).padding.bottom
-                        : 0,
+                        : 16,
                   ),
                   child: Column(
                     children: [
@@ -116,7 +116,7 @@ Future<bool?> showLinkOptionsDialog(
                     top: 29,
                     bottom: Platform.isAndroid
                         ? MediaQuery.of(context).padding.bottom
-                        : 0,
+                        : 16,
                   ),
                   child: Column(
                     children: [
@@ -215,7 +215,7 @@ Future<bool?> showUserOptionDialog(
                     top: 29,
                     bottom: Platform.isAndroid
                         ? MediaQuery.of(context).padding.bottom
-                        : 0,
+                        : 16,
                   ),
                   child: Column(
                     children: [
@@ -520,7 +520,9 @@ Future<bool?> showAddFolderDialog(
                               return Container(
                                 margin: EdgeInsets.only(
                                   top: 50,
-                                  bottom: Platform.isAndroid ? MediaQuery.of(context).padding.bottom : 0,
+                                  bottom: Platform.isAndroid
+                                      ? MediaQuery.of(context).padding.bottom
+                                      : 16,
                                 ),
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(

@@ -196,6 +196,7 @@ class _UploadViewState extends State<UploadView> {
                   fontSize: 14,
                   letterSpacing: -0.3,
                   height: 16.7 / 14,
+                  fontWeight: FontWeight.w400,
                 ),
               ),
             ),
