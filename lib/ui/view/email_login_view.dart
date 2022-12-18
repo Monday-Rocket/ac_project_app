@@ -138,7 +138,7 @@ class _EmailLoginViewState extends State<EmailLoginView>
                       if (isEmailSent) {
                         showBottomToast('이미 이메일이 발송 되었습니다.');
                       } else {
-                        Email.send(context, emailString);
+                        Email.send(context, emailString, '로그인');
                         setState(() {
                           isEmailSent = true;
                         });
