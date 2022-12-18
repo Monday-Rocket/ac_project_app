@@ -11,13 +11,15 @@ import androidx.fragment.app.DialogFragment
 import com.mr.ac_project_app.databinding.ShareDialogBinding
 
 class MessageDialog(
-    private val confirmDialogInterface: ConfirmDialogInterface,
+    private val confirmDialogInterface: ConfirmDialogInterface? = null,
     private val imageId: Int?,
     private val title: String,
     private val buttonText: String,
     private val content: String,
     private val mustFinished: Boolean? = false,
-): DialogFragment() {
+    private val errorDialogInterface: ErrorDialogInterface? = null,
+    private val closeDialogInterface: CloseDialogInterface? = null,
+) : DialogFragment() {
 
     private var _binding: ShareDialogBinding? = null
     private val binding get() = _binding!!
@@ -41,7 +43,7 @@ class MessageDialog(
             }
         } else {
             binding.dialogCloseButton.setOnClickListener {
-                this.confirmDialogInterface.onButtonClick()
+                this.confirmDialogInterface?.onButtonClick()
                 dismiss()
             }
         }
@@ -49,7 +51,14 @@ class MessageDialog(
         binding.dialogOneButton.text = buttonText
 
         binding.dialogOneButton.setOnClickListener {
-            this.confirmDialogInterface.onButtonClick()
+            if (errorDialogInterface != null) {
+                dismiss()
+                errorDialogInterface.onErrorConfirmedClick()
+            } else if (closeDialogInterface != null) {
+                closeDialogInterface.onCloseClick()
+            } else {
+                this.confirmDialogInterface?.onButtonClick()
+            }
             dismiss()
         }
 
@@ -60,11 +69,19 @@ class MessageDialog(
     override fun onDestroy() {
         super.onDestroy()
         if (mustFinished == true) {
-            this.confirmDialogInterface.onButtonClick()
+            this.confirmDialogInterface?.onButtonClick()
         }
     }
 }
 
 interface ConfirmDialogInterface {
     fun onButtonClick()
+}
+
+interface ErrorDialogInterface {
+    fun onErrorConfirmedClick()
+}
+
+interface CloseDialogInterface {
+    fun onCloseClick()
 }
