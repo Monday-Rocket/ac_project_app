@@ -125,6 +125,14 @@ class CustomClient extends http.BaseClient {
           Log.e(apiResult.error!.message);
           return Result.error('${apiResult.status}');
         }
+      } else if (response.statusCode == 400) {
+        // 중복 에러
+        final apiResult = ApiResult.fromJson(
+          jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>,
+        );
+        // 결과 출력
+        Log.e(apiResult);
+        return Result.error('${apiResult.status}');
       }
       final errorMessage = 'Network Error: ${response.statusCode}';
       Log.e(errorMessage);
