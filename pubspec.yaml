@@ -35,7 +35,6 @@ dependencies:
   ## Utils
   metadata_fetch: ^0.4.1
   permission_handler: ^10.2.0
-  flutter_dotenv: ^5.0.2
   logger: ^1.1.0
   path_provider: ^2.0.11
   intl: ^0.17.0
@@ -80,7 +79,6 @@ flutter:
   uses-material-design: true
 
   assets:
-    - .env
     - assets/images/profile/
     - assets/images/login/
     - assets/images/
