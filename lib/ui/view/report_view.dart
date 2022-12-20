@@ -187,6 +187,7 @@ class _ReportViewState extends State<ReportView> {
                           children: [
                             TextField(
                               controller: textController,
+                              enabled: radioValue == 6,
                               style: const TextStyle(
                                 fontSize: 14,
                                 height: 16.7 / 14,
