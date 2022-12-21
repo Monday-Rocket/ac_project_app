@@ -182,7 +182,7 @@ class _ReportViewState extends State<ReportView> {
                       padding: EdgeInsets.zero,
                       child: Container(
                         height: 98,
-                        margin: const EdgeInsets.only(bottom: 8),
+                        margin: const EdgeInsets.only(bottom: 14),
                         child: Stack(
                           children: [
                             TextField(
