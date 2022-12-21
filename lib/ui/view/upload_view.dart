@@ -415,8 +415,8 @@ class _UploadViewState extends State<UploadView> {
                                       child: Padding(
                                         padding:
                                             const EdgeInsets.only(bottom: 3),
-                                        child: SvgPicture.asset(
-                                          'assets/images/ic_lock.svg',
+                                        child: Image.asset(
+                                          'assets/images/ic_lock.png',
                                         ),
                                       ),
                                     )
