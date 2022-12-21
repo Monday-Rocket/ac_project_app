@@ -141,21 +141,21 @@ class MyLinkView extends StatelessWidget {
                 },
               ),
               child: Container(
-                  decoration: const BoxDecoration(
-                    color: ccGrey100,
-                    borderRadius: BorderRadius.all(Radius.circular(7)),
+                decoration: const BoxDecoration(
+                  color: ccGrey100,
+                  borderRadius: BorderRadius.all(Radius.circular(7)),
+                ),
+                width: double.infinity,
+                height: 36,
+                margin: const EdgeInsets.only(right: 6),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: Image.asset('assets/images/folder_search_icon.png'),
                   ),
-                  width: double.infinity,
-                  height: 36,
-                  margin: const EdgeInsets.only(right: 6),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 10),
-                      child:
-                          Image.asset('assets/images/folder_search_icon.png'),
-                    ),
-                  )),
+                ),
+              ),
             ),
           ),
           InkWell(
@@ -170,8 +170,12 @@ class MyLinkView extends StatelessWidget {
     );
   }
 
-  Widget buildTabBar(List<Folder> folders, int tabIndex, Folder folder,
-      List<Link> totalLinks) {
+  Widget buildTabBar(
+    List<Folder> folders,
+    int tabIndex,
+    Folder folder,
+    List<Link> totalLinks,
+  ) {
     return Container(
       margin: const EdgeInsets.only(top: 30, left: 12, right: 20),
       padding: const EdgeInsets.only(bottom: 18),

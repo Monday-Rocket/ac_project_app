@@ -33,31 +33,29 @@ class HomePage extends StatelessWidget {
                 Container(
                   margin: const EdgeInsets.only(left: 24, right: 24, top: 20),
                   child: GestureDetector(
-                    onTap: () =>
-                        Navigator.pushNamed(
-                          context,
-                          Routes.search,
-                          arguments: {
-                            'isMine': false,
-                          },
-                        ),
+                    onTap: () => Navigator.pushNamed(
+                      context,
+                      Routes.search,
+                      arguments: {
+                        'isMine': false,
+                      },
+                    ),
                     child: Container(
                       decoration: const BoxDecoration(
-                        color: grey100,
+                        color: ccGrey100,
                         borderRadius: BorderRadius.all(Radius.circular(7)),
                       ),
+                      width: double.infinity,
+                      height: 36,
                       margin: const EdgeInsets.only(right: 6),
-                      child: TextField(
-                        enabled: false,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                          isDense: true,
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                          ),
-                          prefixIcon: Image.asset(
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 10),
+                          child: Image.asset(
                             'assets/images/folder_search_icon.png',
+                            width: 24,
+                            height: 24,
                           ),
                         ),
                       ),
@@ -79,10 +77,7 @@ class HomePage extends StatelessWidget {
   }
 
   Widget buildListBody(BuildContext parentContext, List<Link> totalLinks) {
-    final width = MediaQuery
-        .of(parentContext)
-        .size
-        .width;
+    final width = MediaQuery.of(parentContext).size.width;
     return BlocBuilder<LinksFromSelectedJobGroupCubit, List<Link>>(
       builder: (context, links) {
         addLinks(context, totalLinks, links);
@@ -134,7 +129,8 @@ class HomePage extends StatelessWidget {
                                   'folders': await context
                                       .read<GetUserFoldersCubit>()
                                       .getFolders(link.user!.id!),
-                                  'isMine': profileState.profile.id == link.user!.id,
+                                  'isMine':
+                                      profileState.profile.id == link.user!.id,
                                 },
                               );
                             },
@@ -175,7 +171,7 @@ class HomePage extends StatelessWidget {
                                             left: 4,
                                           ),
                                           decoration: const BoxDecoration(
-                                            color: primary200,
+                                            color: primary66_200,
                                             borderRadius: BorderRadius.all(
                                               Radius.circular(4),
                                             ),
@@ -183,7 +179,7 @@ class HomePage extends StatelessWidget {
                                           child: Center(
                                             child: Padding(
                                               padding:
-                                              const EdgeInsets.symmetric(
+                                                  const EdgeInsets.symmetric(
                                                 vertical: 3,
                                                 horizontal: 4,
                                               ),
@@ -246,28 +242,28 @@ class HomePage extends StatelessWidget {
                               ),
                               child: isLinkVerified(link)
                                   ? Container(
-                                constraints: const BoxConstraints(
-                                  minWidth: double.infinity,
-                                ),
-                                color: grey100,
-                                child: CachedNetworkImage(
-                                  imageUrl: link.image ?? '',
-                                  imageBuilder:
-                                      (context, imageProvider) =>
-                                      Container(
-                                        height: 160,
-                                        decoration: BoxDecoration(
-                                          image: DecorationImage(
-                                            image: imageProvider,
-                                            fit: BoxFit.cover,
+                                      constraints: const BoxConstraints(
+                                        minWidth: double.infinity,
+                                      ),
+                                      color: grey100,
+                                      child: CachedNetworkImage(
+                                        imageUrl: link.image ?? '',
+                                        imageBuilder:
+                                            (context, imageProvider) =>
+                                                Container(
+                                          height: 160,
+                                          decoration: BoxDecoration(
+                                            image: DecorationImage(
+                                              image: imageProvider,
+                                              fit: BoxFit.cover,
+                                            ),
                                           ),
                                         ),
+                                        errorWidget: (_, __, ___) {
+                                          return const SizedBox();
+                                        },
                                       ),
-                                  errorWidget: (_, __, ___) {
-                                    return const SizedBox();
-                                  },
-                                ),
-                              )
+                                    )
                                   : const SizedBox(),
                             ),
                           ),
@@ -276,7 +272,8 @@ class HomePage extends StatelessWidget {
                             children: [
                               Row(
                                 mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
                                   SizedBox(
                                     width: width - (24 * 2 + 25),
@@ -313,6 +310,7 @@ class HomePage extends StatelessWidget {
                                   ),
                                 ],
                               ),
+                              const SizedBox(height: 6),
                               Text(
                                 link.url ?? '',
                                 maxLines: 1,
@@ -329,10 +327,9 @@ class HomePage extends StatelessWidget {
                     ),
                   );
                 },
-                separatorBuilder: (_, __) =>
-                const Padding(
+                separatorBuilder: (_, __) => const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24),
-                  child: Divider(height: 1, color: grey900),
+                  child: Divider(height: 1, thickness: 1, color: ccGrey200),
                 ),
               ),
             ),
@@ -343,20 +340,18 @@ class HomePage extends StatelessWidget {
   }
 
   void addLinks(BuildContext context, List<Link> totalLinks, List<Link> links) {
-    if (context
-        .read<LinksFromSelectedJobGroupCubit>()
-        .hasRefresh) {
+    if (context.read<LinksFromSelectedJobGroupCubit>().hasRefresh) {
       totalLinks.clear();
-      context
-          .read<LinksFromSelectedJobGroupCubit>()
-          .hasRefresh = false;
+      context.read<LinksFromSelectedJobGroupCubit>().hasRefresh = false;
     }
     totalLinks.addAll(links);
   }
 
-  Widget buildJobListView(BuildContext jobContext,
-      List<JobGroup> jobs,
-      List<Link> totalLinks,) {
+  Widget buildJobListView(
+    BuildContext jobContext,
+    List<JobGroup> jobs,
+    List<Link> totalLinks,
+  ) {
     return Container(
       margin: const EdgeInsets.only(top: 30 - 7, left: 12, right: 20),
       child: DefaultTabController(
@@ -404,8 +399,9 @@ class HomePage extends StatelessWidget {
                     }
                     return TabBar(
                       isScrollable: true,
-                      unselectedLabelColor: lightGrey700,
+                      unselectedLabelColor: grey700,
                       labelColor: primaryTab,
+                      labelPadding: const EdgeInsets.symmetric(horizontal: 13),
                       labelStyle: const TextStyle(
                         fontFamily: R_Font.PRETENDARD,
                         fontSize: 16,
