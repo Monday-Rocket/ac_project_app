@@ -37,16 +37,6 @@ class MainActivity : FlutterActivity() {
                         result.success(false)
                     }
                 }
-                "loadData" -> {
-                    try {
-                        val arguments = call.arguments as HashMap<*, *>
-                        val folders = arguments["folders"] as List<HashMap<String, Any>>
-                        ShareDBFunctions.loadData(applicationContext, folders)
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                        result.success(false)
-                    }
-                }
                 else -> {
                     result.notImplemented()
                 }

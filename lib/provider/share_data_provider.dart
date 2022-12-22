@@ -102,13 +102,10 @@ class ShareDataProvider {
 
   static void loadServerData() {
     try {
-      FolderApi().getFoldersForSharePanel().then(
+      FolderApi().getMyFoldersWithoutUnclassified().then(
             (result) => result.when(
               success: (folders) {
-                Log.i('call loadData');
-                _platform.invokeMethod('loadData', {
-                  'folders': folders,
-                }).then((result) => Log.i('load all data: $result'));
+                ShareDB.loadData(folders).then((result) => Log.i('load all data: $result'));
               },
               error: Log.e,
             ),

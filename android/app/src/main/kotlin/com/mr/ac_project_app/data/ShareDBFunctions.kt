@@ -99,23 +99,4 @@ object ShareDBFunctions {
         )
         db.close()
     }
-
-    fun loadData(context: Context, folders: List<HashMap<String, Any>>) {
-        val dbHelper = ShareDbHelper(context)
-        val db = dbHelper.writableDatabase
-        try {
-            for (folder in folders) {
-                val cv = ContentValues().apply {
-                    put(ShareContract.Folder.imageLink, folder["thumbnail"] as String? ?: "")
-                    put(ShareContract.Folder.visible, folder["visible"] as Boolean? ?: false)
-                    put(ShareContract.Folder.folderName, folder["name"] as String? ?: "")
-                    put(ShareContract.Folder.time, folder["created_date_time"] as String?)
-                }
-                db.insert(ShareContract.Folder.table, null, cv)
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        db.close()
-    }
 }

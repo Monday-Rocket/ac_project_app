@@ -71,4 +71,22 @@ class ShareDB {
     await db.execute('delete from folder');
     await db.close();
   }
+
+  static Future<bool> loadData(List<Folder> folders) async {
+    try {
+      final db = await _getDB();
+      for (final folder in folders) {
+        await db.insert('folder', {
+          'name': folder.name ?? '',
+          'visible': folder.visible! ? 1 : 0,
+          'imageLink': folder.thumbnail ?? '',
+          'time': folder.time,
+        });
+      }
+      return true;
+    } catch (e) {
+      Log.e(e.toString());
+      return false;
+    }
+  }
 }
