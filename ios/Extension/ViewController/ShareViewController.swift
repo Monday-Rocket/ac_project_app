@@ -40,6 +40,7 @@ class ShareViewController: UIViewController {
     self.folderListView.dataSource = self
     self.folderListView.backgroundColor = UIColor.white
     self.layoutView?.layer.cornerRadius = 30
+    self.layoutView?.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
     
     self.backgroundView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.hideExtensionWithCompletionHandler(_:))))
     

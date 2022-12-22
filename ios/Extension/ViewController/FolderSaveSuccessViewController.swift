@@ -31,6 +31,7 @@ class FolderSaveSuccessViewController: UIViewController {
     
     // MARK: - 상단 Round
     layoutView?.layer.cornerRadius = 30
+    layoutView?.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
     
     self.backgroundView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.hideExtensionWithCompletionHandler(_:))))
     

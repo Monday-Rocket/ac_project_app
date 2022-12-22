@@ -23,6 +23,7 @@ class CommentViewController: UIViewController {
     
       // MARK: - 상단 Round
     self.layoutView?.layer.cornerRadius = 30
+    self.layoutView?.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
     
     self.saveCommentButton?.tintColor = .secondary
     
