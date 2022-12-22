@@ -1,10 +1,13 @@
 package com.mr.ac_project_app
 
+import android.util.Log
+import com.mr.ac_project_app.data.ShareDBFunctions
 import com.mr.ac_project_app.data.SharedPrefHelper
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 
+@Suppress("UNCHECKED_CAST")
 class MainActivity : FlutterActivity() {
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -27,19 +30,29 @@ class MainActivity : FlutterActivity() {
                 }
                 "clearData" -> {
                     try {
-                        val linkSharedPref = SharedPrefHelper.getNewLinks(context)
-                        val folderSharedPref = SharedPrefHelper.getNewFolders(context)
-
-                        with(linkSharedPref.edit()) {
-                            clear()
-                            apply()
-                        }
-
-                        with(folderSharedPref.edit()) {
-                            clear()
-                            apply()
-                        }
+                        SharedPrefHelper.clear(context)
                         result.success(true)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        result.success(false)
+                    }
+                }
+                "clearAllData" -> {
+                    try {
+                        SharedPrefHelper.clear(context)
+                        ShareDBFunctions.clear(applicationContext)
+                        result.success(true)
+
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        result.success(false)
+                    }
+                }
+                "loadData" -> {
+                    try {
+                        val arguments = call.arguments as HashMap<*, *>
+                        val folders = arguments["folders"] as List<HashMap<String, Any>>
+                        ShareDBFunctions.loadData(applicationContext, folders)
                     } catch (e: Exception) {
                         e.printStackTrace()
                         result.success(false)

@@ -3,6 +3,7 @@ import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:ac_project_app/provider/api/folders/folder_api.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart' as path;
@@ -85,6 +86,33 @@ class ShareDataProvider {
     } on PlatformException catch (e) {
       Log.e(e.message);
       rethrow;
+    }
+  }
+
+  static Future<void> clearAllData() async {
+    try {
+      final result = await _platform.invokeMethod('clearAllData');
+      Log.i('clear all data: $result');
+    } on PlatformException catch (e) {
+      Log.e(e.message);
+    }
+  }
+
+  static void loadServerData() {
+    try {
+      FolderApi().getFoldersForSharePanel().then(
+            (result) => result.when(
+              success: (folders) {
+                Log.i('call loadData');
+                _platform.invokeMethod('loadData', {
+                  'folders': folders,
+                }).then((result) => Log.i('load all data: $result'));
+              },
+              error: Log.e,
+            ),
+          );
+    } on PlatformException catch (e) {
+      Log.e(e.message);
     }
   }
 }
