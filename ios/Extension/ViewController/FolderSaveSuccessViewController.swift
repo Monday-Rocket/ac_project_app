@@ -53,7 +53,7 @@ class FolderSaveSuccessViewController: UIViewController {
         folderImageView.image = UIImage(named: "empty_image_folder")
       }
     }
-    visibleImageView.image = folder?.visible == 1 ? nil : UIImage(named: "ic_lock")
+    visibleImageView.image = folder?.visible == 1 ? nil : UIImage(named: "ic_lock_png")
     
     titleTextView.text = saveType == SaveType.New ? "새 폴더에 저장 완료!" : "선택한 폴더에 저장 완료!"
   }
