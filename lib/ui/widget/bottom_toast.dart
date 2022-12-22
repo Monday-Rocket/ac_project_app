@@ -20,7 +20,6 @@ void showBottomToast(String text, {double? bottomPadding}) {
             color: Colors.white,
             fontWeight: FontWeight.bold,
             fontSize: 13,
-            height: 15.5 / 13,
             letterSpacing: -0.1,
           ),
         ),

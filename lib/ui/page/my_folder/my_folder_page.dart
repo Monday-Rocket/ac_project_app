@@ -80,10 +80,7 @@ class _MyFolderPageState extends State<MyFolderPage>
                             final profile = state.profile;
                             return InkWell(
                               onTap: () {
-                                // FIXME Reload Image
-                                context
-                                    .read<GetProfileInfoCubit>()
-                                    .loadProfileData();
+                                showBottomToast('폴더가 삭제되었어요!');
                               },
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,

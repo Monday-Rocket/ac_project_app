@@ -17,6 +17,7 @@ const e6Grey700 = Color(0xE7424852);
 
 const grey800 = Color(0xFF30343E);
 const grey900 = Color(0xFF191F28);
+const f3Grey900 = Color(0xF3191F28);
 
 const blackBold = Color(0xFF13181E);
 
