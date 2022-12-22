@@ -294,7 +294,14 @@ class HomePage extends StatelessWidget {
                                           .state as ProfileLoadedState;
                                       if (profileState.profile.id ==
                                           link.user!.id) {
-                                        showMyLinkOptionsDialog(link, context);
+                                        showMyLinkOptionsDialog(
+                                          link,
+                                          context,
+                                          popCallback: () => refresh(
+                                            context,
+                                            totalLinks,
+                                          ),
+                                        );
                                       } else {
                                         showLinkOptionsDialog(
                                           link,

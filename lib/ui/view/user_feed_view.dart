@@ -117,23 +117,26 @@ class UserFeedView extends StatelessWidget {
         padding: const EdgeInsets.only(left: 20, right: 8),
       ),
       actions: [
-        if (!isMine) InkWell(
-          onTap: () => showUserOptionDialog(
-            context,
-            user,
-            callback: () {
-              Navigator.pop(context);
-            },
-          ),
-          child: Container(
-            margin: const EdgeInsets.only(right: 24),
-            child: SvgPicture.asset(
-              'assets/images/more.svg',
-              width: 25,
-              height: 25,
+        if (!isMine)
+          InkWell(
+            onTap: () => showUserOptionDialog(
+              context,
+              user,
+              callback: () {
+                Navigator.pop(context);
+              },
             ),
-          ),
-        ) else const SizedBox.shrink(),
+            child: Container(
+              margin: const EdgeInsets.only(right: 24),
+              child: SvgPicture.asset(
+                'assets/images/more.svg',
+                width: 25,
+                height: 25,
+              ),
+            ),
+          )
+        else
+          const SizedBox.shrink(),
       ],
       backgroundColor: Colors.transparent,
       systemOverlayStyle: SystemUiOverlayStyle.dark,
@@ -443,7 +446,14 @@ class UserFeedView extends StatelessWidget {
                                   ),
                                   InkWell(
                                     onTap: () => isMine
-                                        ? showMyLinkOptionsDialog(link, context)
+                                        ? showMyLinkOptionsDialog(
+                                            link,
+                                            context,
+                                            popCallback: () => refresh(
+                                              context,
+                                              totalLinks,
+                                            ),
+                                          )
                                         : showLinkOptionsDialog(
                                             link,
                                             parentContext,

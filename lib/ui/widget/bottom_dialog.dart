@@ -21,7 +21,7 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:share_plus/share_plus.dart';
 
-Future<bool?> showMyLinkOptionsDialog(Link link, BuildContext parentContext) {
+Future<bool?> showMyLinkOptionsDialog(Link link, BuildContext parentContext, {void Function()? popCallback}) {
   return showModalBottomSheet<bool?>(
     backgroundColor: Colors.transparent,
     context: parentContext,
@@ -72,7 +72,11 @@ Future<bool?> showMyLinkOptionsDialog(Link link, BuildContext parentContext) {
                               onTap: () {
                                 DeleteLink.delete(link).then((result) {
                                   Navigator.pop(context);
-                                  Navigator.pop(parentContext, 'deleted');
+                                  if (popCallback != null) {
+                                    popCallback.call();
+                                  } else {
+                                    Navigator.pop(parentContext, 'deleted');
+                                  }
                                   if (result) {
                                     showBottomToast('링크가 삭제되었어요!');
                                   }
