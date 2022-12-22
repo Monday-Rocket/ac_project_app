@@ -15,16 +15,19 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
+import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.FragmentActivity
 import com.mr.ac_project_app.R
-import com.mr.ac_project_app.view.SaveSuccessActivity
 import com.mr.ac_project_app.databinding.ActivityNewFolderBinding
 import com.mr.ac_project_app.dialog.ConfirmDialogInterface
 import com.mr.ac_project_app.dialog.MessageDialog
 import com.mr.ac_project_app.model.FolderModel
 import com.mr.ac_project_app.model.SaveType
+import com.mr.ac_project_app.ui.InsetsWithKeyboardAnimationCallback
+import com.mr.ac_project_app.ui.InsetsWithKeyboardCallback
+import com.mr.ac_project_app.view.SaveSuccessActivity
 import com.mr.ac_project_app.view.share.ShareActivity
 
 class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
@@ -39,6 +42,13 @@ class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
         super.onCreate(savedInstanceState)
         binding = ActivityNewFolderBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val insetsWithKeyboardCallback = InsetsWithKeyboardCallback(window)
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root, insetsWithKeyboardCallback)
+        ViewCompat.setWindowInsetsAnimationCallback(binding.root, insetsWithKeyboardCallback)
+
+        val insetsWithKeyboardAnimationCallback = InsetsWithKeyboardAnimationCallback(binding.bodyLayout)
+        ViewCompat.setWindowInsetsAnimationCallback(binding.bodyLayout, insetsWithKeyboardAnimationCallback)
 
         binding.background.setOnClickListener {
             val dialog = MessageDialog(
