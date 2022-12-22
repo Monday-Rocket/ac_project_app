@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:ac_project_app/provider/api/folders/folder_api.dart';
+import 'package:ac_project_app/provider/share_db.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart' as path;
@@ -91,7 +92,8 @@ class ShareDataProvider {
 
   static Future<void> clearAllData() async {
     try {
-      final result = await _platform.invokeMethod('clearAllData');
+      final result = await _platform.invokeMethod('clearData');
+      await ShareDB.deleteAllFolder();
       Log.i('clear all data: $result');
     } on PlatformException catch (e) {
       Log.e(e.message);

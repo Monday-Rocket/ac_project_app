@@ -37,17 +37,6 @@ class MainActivity : FlutterActivity() {
                         result.success(false)
                     }
                 }
-                "clearAllData" -> {
-                    try {
-                        SharedPrefHelper.clear(context)
-                        ShareDBFunctions.clear(applicationContext)
-                        result.success(true)
-
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                        result.success(false)
-                    }
-                }
                 "loadData" -> {
                     try {
                         val arguments = call.arguments as HashMap<*, *>

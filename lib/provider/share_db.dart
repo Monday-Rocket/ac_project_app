@@ -65,4 +65,10 @@ class ShareDB {
     );
     await db.close();
   }
+
+  static Future<void> deleteAllFolder() async {
+    final db = await _getDB();
+    await db.execute('delete from folder');
+    await db.close();
+  }
 }

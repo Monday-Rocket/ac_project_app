@@ -80,12 +80,6 @@ object ShareDBFunctions {
         return folders
     }
 
-    fun clear(context: Context) {
-        val dbHelper = ShareDbHelper(context)
-        val db = dbHelper.writableDatabase
-        db.execSQL("delete from ${ShareContract.Folder.table}")
-    }
-
     fun saveNewFolder(
         dbHelper: ShareDbHelper,
         name: String,
