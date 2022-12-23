@@ -594,28 +594,32 @@ void saveEmptyFolder(
   );
 
   context.read<FolderNameCubit>().add(folder).then((result) {
-    Navigator.pop(context);
-    showBottomToast('새로운 폴더가 생성되었어요!');
+    if (result) {
+      Navigator.pop(context);
+      showBottomToast('새로운 폴더가 생성되었어요!');
 
-    if (isFromUpload ?? false) {
-      parentContext
-          .read<GetFoldersCubit>()
-          .getFoldersWithoutUnclassified()
-          .then((_) {
-        runCallback(
-          parentContext,
-          moveToMyLinksView: moveToMyLinksView,
-          callback: callback,
-        );
-      });
+      if (isFromUpload ?? false) {
+        parentContext
+            .read<GetFoldersCubit>()
+            .getFoldersWithoutUnclassified()
+            .then((_) {
+          runCallback(
+            parentContext,
+            moveToMyLinksView: moveToMyLinksView,
+            callback: callback,
+          );
+        });
+      } else {
+        parentContext.read<GetFoldersCubit>().getFolders().then((_) {
+          runCallback(
+            parentContext,
+            moveToMyLinksView: moveToMyLinksView,
+            callback: callback,
+          );
+        });
+      }
     } else {
-      parentContext.read<GetFoldersCubit>().getFolders().then((_) {
-        runCallback(
-          parentContext,
-          moveToMyLinksView: moveToMyLinksView,
-          callback: callback,
-        );
-      });
+      showBottomToast('중복된 폴더 이름입니다!');
     }
   });
 }

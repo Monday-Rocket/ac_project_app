@@ -12,8 +12,10 @@ class FolderNameCubit extends Cubit<String> {
 
   FolderApi folderApi = FolderApi();
 
-  Future<void> add(Folder folder) async {
-    await folderApi.add(folder);
-    await ShareDB.insert(folder);
+  Future<bool> add(Folder folder) async {
+    if (await folderApi.add(folder)) {
+      return ShareDB.insert(folder);
+    }
+    return false;
   }
 }
