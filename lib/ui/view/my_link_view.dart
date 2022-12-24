@@ -49,7 +49,7 @@ class MyLinkView extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           buildTitleBar(folder),
-                          buildContentsCountText(folder),
+                          buildContentsCountText(cubitContext),
                           buildSearchBar(context),
                           buildTabBar(folders, tabIndex, folder, links),
                           buildBodyList(
@@ -112,11 +112,12 @@ class MyLinkView extends StatelessWidget {
     );
   }
 
-  Container buildContentsCountText(Folder folder) {
+  Container buildContentsCountText(BuildContext context) {
+    final count = context.read<LinksFromSelectedFolderCubit>().totalCount;
     return Container(
       margin: const EdgeInsets.only(left: 24, top: 3),
       child: Text(
-        '콘텐츠 ${addCommasFrom(folder.links)}개',
+        '콘텐츠 ${addCommasFrom(count)}개',
         style: const TextStyle(
           color: greyText,
           fontWeight: FontWeight.w500,

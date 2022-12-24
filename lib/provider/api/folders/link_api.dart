@@ -67,8 +67,9 @@ class LinkApi {
 
   Future<Result<SearchedLinks>> getJobGroupLinks(
       int jobGroup, int pageNum) async {
-    final result = await client
-        .getUri('/job-groups/$jobGroup/links?page_no=$pageNum&page_size=10');
+    final result = await client.getUri('/job-groups/$jobGroup/links?'
+        'page_no=$pageNum&'
+        'page_size=10');
     return result.when(
       success: (data) {
         return Result.success(
@@ -80,8 +81,9 @@ class LinkApi {
   }
 
   Future<Result<SearchedLinks>> getUnClassifiedLinks(int pageNum) async {
-    final result = await client
-        .getUri('/links/unclassified?page_no=$pageNum&page_size=10');
+    final result = await client.getUri('/links/unclassified?'
+        'page_no=$pageNum&'
+        'page_size=10');
     return result.when(
       success: (data) {
         return Result.success(
@@ -104,13 +106,14 @@ class LinkApi {
     );
   }
 
-  Future<Result<SearchedLinks>> searchOtherLinks(String text, int pageNum) async {
+  Future<Result<SearchedLinks>> searchOtherLinks(
+      String text, int pageNum) async {
     final result = await client.getUri(
       '/links/search?'
-          'my_links_only=false&'
-          'keyword=$text&'
-          'page_no=$pageNum&'
-          'page_size=10',
+      'my_links_only=false&'
+      'keyword=$text&'
+      'page_no=$pageNum&'
+      'page_size=10',
     );
     return result.when(
       success: (data) {
@@ -125,10 +128,10 @@ class LinkApi {
   Future<Result<SearchedLinks>> searchMyLinks(String text, int pageNum) async {
     final result = await client.getUri(
       '/links/search?'
-          'my_links_only=true&'
-          'keyword=$text&'
-          'page_no=$pageNum&'
-          'page_size=10',
+      'my_links_only=true&'
+      'keyword=$text&'
+      'page_no=$pageNum&'
+      'page_size=10',
     );
     return result.when(
       success: (data) {
@@ -137,6 +140,23 @@ class LinkApi {
         );
       },
       error: Result.error,
+    );
+  }
+
+  Future<bool> changeFolder(Link link, int folderId) async {
+    final result = await client.patchUri(
+      '/links/${link.id}',
+      body: {
+        'folder_id': folderId,
+      },
+    );
+    return result.when(
+      success: (_) {
+        return true;
+      },
+      error: (_) {
+        return false;
+      },
     );
   }
 }
