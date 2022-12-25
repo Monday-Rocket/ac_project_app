@@ -1,4 +1,6 @@
 import 'package:ac_project_app/const/colors.dart';
+import 'package:ac_project_app/cubits/folders/folders_state.dart';
+import 'package:ac_project_app/cubits/folders/get_my_folders_cubit.dart';
 import 'package:ac_project_app/cubits/folders/get_selected_folder_cubit.dart';
 import 'package:ac_project_app/cubits/links/link_list_state.dart';
 import 'package:ac_project_app/cubits/links/links_from_selected_folder_cubit.dart';
@@ -20,63 +22,85 @@ class MyLinkView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final arguments = getArguments(context);
-    final folders = arguments['folders'] as List<Folder>;
     final tabIndex = arguments['tabIndex'] as int;
-
+    var folders = arguments['folders'] as List<Folder>;
     final width = MediaQuery.of(context).size.width;
     final links = <Link>[];
 
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create: (_) => GetSelectedFolderCubit(folders[tabIndex]),
-        ),
-        BlocProvider(
-          create: (_) => LinksFromSelectedFolderCubit(folders[tabIndex], 0),
-        ),
-      ],
-      child: BlocBuilder<GetSelectedFolderCubit, Folder>(
-        builder: (context, folder) {
-          return Scaffold(
-            appBar: buildBackAppBar(context),
-            backgroundColor: Colors.white,
-            body: SafeArea(
-              child: BlocBuilder<LinksFromSelectedFolderCubit, LinkListState>(
-                builder: (cubitContext, state) {
-                  return Stack(
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          buildTitleBar(folder),
-                          buildContentsCountText(cubitContext),
-                          buildSearchBar(context),
-                          buildTabBar(folders, tabIndex, folder, links),
-                          buildBodyList(
-                            folder: folder,
-                            width: width,
-                            context: cubitContext,
-                            totalLinks: links,
-                            state: state,
-                          ),
-                        ],
-                      ),
-                      if (state is LinkListLoadingState ||
-                          state is LinkListInitialState)
-                        Center(
-                          child: Container(
-                            margin: const EdgeInsets.only(bottom: 30),
-                            child: const CircularProgressIndicator(
-                              color: primary600,
-                            ),
-                          ),
-                        )
-                      else
-                        const SizedBox.shrink(),
-                    ],
-                  );
-                },
+    return BlocProvider(
+      create: (_) => GetFoldersCubit(),
+      child: BlocBuilder<GetFoldersCubit, FoldersState>(
+        builder: (foldersContext, folderState) {
+          if (folderState is FolderLoadedState) {
+            folders = folderState.folders;
+          }
+
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: (_) => GetSelectedFolderCubit(folders[tabIndex]),
               ),
+              BlocProvider(
+                create: (_) =>
+                    LinksFromSelectedFolderCubit(folders[tabIndex], 0),
+              ),
+            ],
+            child: BlocBuilder<GetSelectedFolderCubit, Folder>(
+              builder: (context, folder) {
+                return Scaffold(
+                  appBar: buildBackAppBar(context),
+                  backgroundColor: Colors.white,
+                  body: SafeArea(
+                    child: BlocBuilder<LinksFromSelectedFolderCubit,
+                        LinkListState>(
+                      builder: (cubitContext, state) {
+                        return Stack(
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                buildTitleBar(folder),
+                                buildContentsCountText(cubitContext),
+                                buildSearchBar(context, links),
+                                buildTabBar(
+                                  folders,
+                                  tabIndex,
+                                  folder,
+                                  links,
+                                  onChangeIndex: (int index) {
+                                    // tabIndex = index;
+                                  },
+                                ),
+                                buildBodyList(
+                                  folder: folder,
+                                  width: width,
+                                  context: cubitContext,
+                                  totalLinks: links,
+                                  state: state,
+                                  folderState: folderState,
+                                  foldersContext: foldersContext,
+                                ),
+                              ],
+                            ),
+                            if (state is LinkListLoadingState ||
+                                state is LinkListInitialState)
+                              Center(
+                                child: Container(
+                                  margin: const EdgeInsets.only(bottom: 30),
+                                  child: const CircularProgressIndicator(
+                                    color: primary600,
+                                  ),
+                                ),
+                              )
+                            else
+                              const SizedBox.shrink(),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                );
+              },
             ),
           );
         },
@@ -127,7 +151,7 @@ class MyLinkView extends StatelessWidget {
     );
   }
 
-  Widget buildSearchBar(BuildContext context) {
+  Widget buildSearchBar(BuildContext context, List<Link> totalLinks) {
     return Container(
       margin: const EdgeInsets.only(top: 23, left: 23, right: 23),
       child: Row(
@@ -160,7 +184,11 @@ class MyLinkView extends StatelessWidget {
             ),
           ),
           InkWell(
-            onTap: () => Navigator.pushNamed(context, Routes.upload),
+            onTap: () => Navigator.pushNamed(context, Routes.upload).then((_) {
+              // update
+              totalLinks.clear();
+              context.read<GetFoldersCubit>().getFolders();
+            }),
             child: Padding(
               padding: const EdgeInsets.all(6),
               child: SvgPicture.asset('assets/images/btn_add.svg'),
@@ -175,8 +203,9 @@ class MyLinkView extends StatelessWidget {
     List<Folder> folders,
     int tabIndex,
     Folder folder,
-    List<Link> totalLinks,
-  ) {
+    List<Link> totalLinks, {
+    required void Function(int index) onChangeIndex,
+  }) {
     return Container(
       margin: const EdgeInsets.only(top: 30, left: 12, right: 20),
       padding: const EdgeInsets.only(bottom: 18),
@@ -254,6 +283,7 @@ class MyLinkView extends StatelessWidget {
                       labelPadding: const EdgeInsets.symmetric(horizontal: 13),
                       tabs: tabs,
                       onTap: (index) {
+                        onChangeIndex.call(index);
                         totalLinks.clear();
                         context
                             .read<GetSelectedFolderCubit>()
@@ -279,11 +309,13 @@ class MyLinkView extends StatelessWidget {
     required BuildContext context,
     required List<Link> totalLinks,
     required LinkListState state,
+    required FoldersState folderState,
+    required BuildContext foldersContext,
   }) {
     if (folder.links == 0) {
       return buildEmptyList();
     } else {
-      if (state is LinkListLoadedState) {
+      if (state is LinkListLoadedState && folderState is FolderLoadedState) {
         final links = state.links;
         totalLinks.addAll(links);
       }
@@ -302,9 +334,7 @@ class MyLinkView extends StatelessWidget {
               final link = totalLinks[index];
               return InkWell(
                 onTap: () {
-                  context
-                      .read<LinksFromSelectedFolderCubit>()
-                      .loading();
+                  context.read<LinksFromSelectedFolderCubit>().loading();
                   Navigator.pushNamed(
                     context,
                     Routes.linkDetail,
@@ -318,6 +348,8 @@ class MyLinkView extends StatelessWidget {
                     } else {
                       // update
                       totalLinks.clear();
+
+                      foldersContext.read<GetFoldersCubit>().getFolders();
                       context
                           .read<LinksFromSelectedFolderCubit>()
                           .getSelectedLinks(folder, 0);
