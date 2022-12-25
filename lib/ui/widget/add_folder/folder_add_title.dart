@@ -16,7 +16,7 @@ Container buildFolderSelectTitle(BuildContext context, String text) {
         InkWell(
           onTap: () => showAddFolderDialog(
             context,
-            isFromUpload: true,
+            hasNotUnclassified: true,
           ),
           child: Padding(
             padding: const EdgeInsets.all(8),

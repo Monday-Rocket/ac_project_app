@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_positional_boolean_parameters
 
 import 'package:ac_project_app/const/colors.dart';
+import 'package:ac_project_app/cubits/folders/folders_state.dart';
 import 'package:ac_project_app/cubits/folders/get_my_folders_cubit.dart';
 import 'package:ac_project_app/cubits/links/upload_link_cubit.dart';
 import 'package:ac_project_app/cubits/links/upload_result_state.dart';
@@ -99,12 +100,18 @@ class _UploadViewState extends State<UploadView> {
                         buildSubTitle('링크'),
                         buildLinkTextField(),
                         buildFolderSelectTitle(context, '폴더 선택'),
-                        buildFolderList(
-                          callback: (index, folderId) => setState(() {
-                            selectedIndex = index;
-                            selectedFolderId = folderId;
-                          }),
-                          selectedIndex: selectedIndex,
+                        BlocBuilder<GetFoldersCubit, FoldersState>(
+                          builder: (folderContext, state) {
+                            return buildFolderList(
+                              folderContext: folderContext,
+                              state: state,
+                              callback: (index, folderId) => setState(() {
+                                selectedIndex = index;
+                                selectedFolderId = folderId;
+                              }),
+                              selectedIndex: selectedIndex,
+                            );
+                          },
                         ),
                         const SizedBox(height: 35),
                         buildSubTitle('링크 코멘트'),

@@ -65,4 +65,8 @@ class LinksFromSelectedFolderCubit extends Cubit<LinkListState> {
 
     return data.contents ?? [];
   }
+
+  void loading() {
+    emit(LinkListLoadingState());
+  }
 }

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/folders/folder_name_cubit.dart';
+import 'package:ac_project_app/cubits/folders/folders_state.dart';
 import 'package:ac_project_app/cubits/folders/get_my_folders_cubit.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/link/link.dart';
@@ -112,53 +113,62 @@ Future<bool?> showChangeFolderDialog(Link link, BuildContext parentContext) {
     builder: (BuildContext context) {
       return Wrap(
         children: [
-          BlocProvider<GetFoldersCubit>(
+          BlocProvider(
             create: (_) => GetFoldersCubit(excludeUnclassified: true),
-            child: DecoratedBox(
-              decoration: _dialogDecoration(),
-              child: Padding(
-                padding: EdgeInsets.only(
-                  top: 29,
-                  bottom: (Platform.isAndroid
-                          ? MediaQuery.of(context).padding.bottom
-                          : 16) +
-                      30,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    buildTitle(context, '이동할 폴더를 선택해주세요', titleLeft: 24),
-                    Container(
-                      margin: const EdgeInsets.only(top: 17, bottom: 20),
-                      child: const Divider(
-                        height: 1,
-                        thickness: 1,
-                        color: grey100,
-                      ),
+            child: BlocBuilder<GetFoldersCubit, FoldersState>(
+              builder: (foldersContext, state) {
+                return DecoratedBox(
+                  decoration: _dialogDecoration(),
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      top: 29,
+                      bottom: (Platform.isAndroid
+                              ? MediaQuery.of(context).padding.bottom
+                              : 16) +
+                          30,
                     ),
-                    Container(
-                      margin: const EdgeInsets.only(left: 24),
-                      child: buildFolderSelectTitle(context, '폴더 목록'),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        buildTitle(context, '이동할 폴더를 선택해주세요', titleLeft: 24),
+                        Container(
+                          margin: const EdgeInsets.only(top: 17, bottom: 20),
+                          child: const Divider(
+                            height: 1,
+                            thickness: 1,
+                            color: grey100,
+                          ),
+                        ),
+                        Container(
+                          margin: const EdgeInsets.only(left: 24),
+                          child:
+                              buildFolderSelectTitle(foldersContext, '폴더 목록'),
+                        ),
+                        Container(
+                          margin: const EdgeInsets.only(left: 24),
+                          child: buildFolderList(
+                            folderContext: foldersContext,
+                            state: state,
+                            callback: (_, folderId) {
+                              LinkApi()
+                                  .changeFolder(link, folderId)
+                                  .then((result) {
+                                Navigator.pop(context);
+                                Navigator.pop(context);
+                                if (result) {
+                                  showBottomToast('선택한 폴더로 이동 완료!');
+                                } else {
+                                  showBottomToast('폴더 이동 실패!');
+                                }
+                              });
+                            },
+                          ),
+                        ),
+                      ],
                     ),
-                    Container(
-                      margin: const EdgeInsets.only(left: 24),
-                      child: buildFolderList(
-                        callback: (_, folderId) {
-                          LinkApi().changeFolder(link, folderId).then((result) {
-                            Navigator.pop(context);
-                            Navigator.pop(context);
-                            if (result) {
-                              showBottomToast('선택한 폴더로 이동 완료!');
-                            } else {
-                              showBottomToast('폴더 이동 실패!');
-                            }
-                          });
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+                  ),
+                );
+              },
             ),
           ),
         ],
@@ -402,7 +412,7 @@ void saveEmptyFolder(
   void Function(BuildContext context, List<Folder> folders, int index)?
       moveToMyLinksView,
   void Function()? callback,
-  bool? isFromUpload,
+  bool? hasNotUnclassified,
 }) {
   if (folderName.isEmpty) {
     return;
@@ -418,7 +428,7 @@ void saveEmptyFolder(
       Navigator.pop(context);
       showBottomToast('새로운 폴더가 생성되었어요!');
 
-      if (isFromUpload ?? false) {
+      if (hasNotUnclassified ?? false) {
         parentContext
             .read<GetFoldersCubit>()
             .getFoldersWithoutUnclassified()

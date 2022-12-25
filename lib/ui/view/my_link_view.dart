@@ -304,7 +304,7 @@ class MyLinkView extends StatelessWidget {
                 onTap: () {
                   context
                       .read<LinksFromSelectedFolderCubit>()
-                      .emit(LinkListLoadingState());
+                      .loading();
                   Navigator.pushNamed(
                     context,
                     Routes.linkDetail,

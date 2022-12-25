@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:ac_project_app/const/colors.dart';
@@ -15,12 +14,12 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 Future<bool?> showAddFolderDialog(
-    BuildContext parentContext, {
-      void Function(BuildContext context, List<Folder> folders, int index)?
+  BuildContext parentContext, {
+  void Function(BuildContext context, List<Folder> folders, int index)?
       moveToMyLinksView,
-      void Function()? callback,
-      bool? isFromUpload,
-    }) async {
+  void Function()? callback,
+  bool? hasNotUnclassified,
+}) async {
   final formKey = GlobalKey<FormState>();
 
   return showModalBottomSheet<bool>(
@@ -79,7 +78,7 @@ Future<bool?> showAddFolderDialog(
                                         visibleState,
                                         moveToMyLinksView: moveToMyLinksView,
                                         callback: callback,
-                                        isFromUpload: isFromUpload,
+                                        hasNotUnclassified: hasNotUnclassified,
                                       ),
                                       child: Text(
                                         '완료',
@@ -115,24 +114,24 @@ Future<bool?> showAddFolderDialog(
                                         ),
                                       ),
                                       suffix: context
-                                          .read<FolderNameCubit>()
-                                          .state
-                                          .isEmpty
+                                              .read<FolderNameCubit>()
+                                              .state
+                                              .isEmpty
                                           ? const SizedBox.shrink()
                                           : InkWell(
-                                        onTap: () {
-                                          context
-                                              .read<FolderNameCubit>()
-                                              .update('');
-                                          context
-                                              .read<ButtonStateCubit>()
-                                              .disable();
-                                        },
-                                        child: const Icon(
-                                          Icons.close_rounded,
-                                          size: 19,
-                                        ),
-                                      ),
+                                              onTap: () {
+                                                context
+                                                    .read<FolderNameCubit>()
+                                                    .update('');
+                                                context
+                                                    .read<ButtonStateCubit>()
+                                                    .disable();
+                                              },
+                                              child: const Icon(
+                                                Icons.close_rounded,
+                                                size: 19,
+                                              ),
+                                            ),
                                       hintStyle: const TextStyle(
                                         color: grey400,
                                         fontSize: 17,
@@ -165,7 +164,7 @@ Future<bool?> showAddFolderDialog(
                                         visibleState,
                                         moveToMyLinksView: moveToMyLinksView,
                                         callback: callback,
-                                        isFromUpload: isFromUpload,
+                                        hasNotUnclassified: hasNotUnclassified,
                                       );
                                     },
                                   ),
@@ -190,15 +189,15 @@ Future<bool?> showAddFolderDialog(
                                 ),
                                 InkWell(
                                   onTap:
-                                  context.read<FolderVisibleCubit>().toggle,
+                                      context.read<FolderVisibleCubit>().toggle,
                                   child: visibleState ==
-                                      FolderVisibleState.invisible
+                                          FolderVisibleState.invisible
                                       ? SvgPicture.asset(
-                                    'assets/images/toggle_on.svg',
-                                  )
+                                          'assets/images/toggle_on.svg',
+                                        )
                                       : SvgPicture.asset(
-                                    'assets/images/toggle_off.svg',
-                                  ),
+                                          'assets/images/toggle_off.svg',
+                                        ),
                                 ),
                               ],
                             ),
@@ -216,9 +215,9 @@ Future<bool?> showAddFolderDialog(
                                   style: ElevatedButton.styleFrom(
                                     minimumSize: const Size.fromHeight(55),
                                     backgroundColor:
-                                    state == ButtonState.disabled
-                                        ? secondary
-                                        : primary600,
+                                        state == ButtonState.disabled
+                                            ? secondary
+                                            : primary600,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(12),
                                     ),
@@ -230,7 +229,7 @@ Future<bool?> showAddFolderDialog(
                                     visibleState,
                                     moveToMyLinksView: moveToMyLinksView,
                                     callback: callback,
-                                    isFromUpload: isFromUpload,
+                                    hasNotUnclassified: hasNotUnclassified,
                                   ),
                                   child: const Text(
                                     '폴더에 저장하기',
