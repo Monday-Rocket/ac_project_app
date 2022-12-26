@@ -18,6 +18,7 @@ class LinksFromSelectedFolderCubit extends Cubit<LinkListState> {
   HasMoreCubit hasMore = HasMoreCubit();
   Folder? currentFolder;
   int page = 0;
+  int totalCount = 0;
 
   Future<void> getSelectedLinks(Folder folder, int pageNum) async {
     emit(LinkListLoadingState());
@@ -28,6 +29,7 @@ class LinksFromSelectedFolderCubit extends Cubit<LinkListState> {
       final result = await linkApi.getLinksFromSelectedFolder(folder, pageNum);
       result.when(
         success: (data) {
+          totalCount = data.totalCount ?? 0;
           final links = _setScrollState(data);
           emit(LinkListLoadedState(links));
         },
@@ -39,6 +41,7 @@ class LinksFromSelectedFolderCubit extends Cubit<LinkListState> {
       final result = await linkApi.getUnClassifiedLinks(pageNum);
       result.when(
         success: (data) {
+          totalCount = data.totalCount ?? 0;
           final links = _setScrollState(data);
           emit(LinkListLoadedState(links));
         },
@@ -61,5 +64,9 @@ class LinksFromSelectedFolderCubit extends Cubit<LinkListState> {
     hasMore.emit(hasPage ? ScrollableType.can : ScrollableType.cannot);
 
     return data.contents ?? [];
+  }
+
+  void loading() {
+    emit(LinkListLoadingState());
   }
 }

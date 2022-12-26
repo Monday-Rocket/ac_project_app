@@ -6,7 +6,9 @@ import 'package:ac_project_app/cubits/folders/get_my_folders_cubit.dart';
 import 'package:ac_project_app/cubits/links/upload_link_cubit.dart';
 import 'package:ac_project_app/cubits/links/upload_result_state.dart';
 import 'package:ac_project_app/cubits/sign_up/button_state_cubit.dart';
-import 'package:ac_project_app/ui/widget/bottom_dialog.dart';
+import 'package:ac_project_app/ui/widget/add_folder/folder_add_title.dart';
+import 'package:ac_project_app/ui/widget/add_folder/horizontal_folder_list.dart';
+import 'package:ac_project_app/ui/widget/add_folder/subtitle.dart';
 import 'package:ac_project_app/ui/widget/buttons/bottom_sheet_button.dart';
 import 'package:ac_project_app/ui/widget/dialog.dart';
 import 'package:ac_project_app/util/get_widget_arguments.dart';
@@ -97,8 +99,20 @@ class _UploadViewState extends State<UploadView> {
                       children: [
                         buildSubTitle('링크'),
                         buildLinkTextField(),
-                        buildFolderSelectTitle(context),
-                        buildFolderList(),
+                        buildFolderSelectTitle(context, '폴더 선택'),
+                        BlocBuilder<GetFoldersCubit, FoldersState>(
+                          builder: (folderContext, state) {
+                            return buildFolderList(
+                              folderContext: folderContext,
+                              state: state,
+                              callback: (index, folderId) => setState(() {
+                                selectedIndex = index;
+                                selectedFolderId = folderId;
+                              }),
+                              selectedIndex: selectedIndex,
+                            );
+                          },
+                        ),
                         const SizedBox(height: 35),
                         buildSubTitle('링크 코멘트'),
                         buildCommentTextField(visible, height),
@@ -198,33 +212,6 @@ class _UploadViewState extends State<UploadView> {
                   height: 16.7 / 14,
                   fontWeight: FontWeight.w400,
                 ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Container buildFolderSelectTitle(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(
-        right: 16,
-        bottom: 3,
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          buildSubTitle('폴더 선택'),
-          InkWell(
-            onTap: () => showAddFolderDialog(
-              context,
-              isFromUpload: true,
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(8),
-              child: SvgPicture.asset(
-                'assets/images/btn_add.svg',
               ),
             ),
           ),
@@ -343,156 +330,5 @@ class _UploadViewState extends State<UploadView> {
         showError(context);
       }
     });
-  }
-
-  BlocBuilder<GetFoldersCubit, FoldersState> buildFolderList() {
-    return BlocBuilder<GetFoldersCubit, FoldersState>(
-      builder: (folderContext, state) {
-        if (state is FolderLoadedState) {
-          final folders = state.folders;
-          return Container(
-            constraints: const BoxConstraints(
-              minHeight: 115,
-              maxHeight: 130,
-            ),
-            child: ListView.builder(
-              itemCount: folders.length,
-              shrinkWrap: true,
-              scrollDirection: Axis.horizontal,
-              itemBuilder: (_, index) {
-                final folder = folders[index];
-                final rightPadding = index != folders.length - 1 ? 12 : 24;
-                final visible = folder.visible ?? false;
-                return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      selectedIndex = index;
-                      selectedFolderId = folder.id;
-                    });
-                  },
-                  child: Container(
-                    margin: EdgeInsets.only(
-                      right: rightPadding.toDouble(),
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Stack(
-                          children: [
-                            Container(
-                              width: 95,
-                              height: 95,
-                              decoration: const BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(32)),
-                                color: grey100,
-                              ),
-                              child: ClipRRect(
-                                borderRadius: const BorderRadius.all(
-                                  Radius.circular(32),
-                                ),
-                                child: ColoredBox(
-                                  color: grey100,
-                                  child: folder.thumbnail != null &&
-                                      (folder.thumbnail?.isNotEmpty ??
-                                          false)
-                                      ? Image.network(
-                                    folder.thumbnail!,
-                                    width: 95,
-                                    height: 95,
-                                    fit: BoxFit.cover,
-                                    errorBuilder: (_, __, ___) =>
-                                        emptyFolderView(),
-                                  )
-                                      : emptyFolderView(),
-                                ),
-                              ),
-                            ),
-                            Visibility(
-                              visible: selectedIndex == index,
-                              child: Container(
-                                width: 95,
-                                height: 95,
-                                decoration: const BoxDecoration(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(32)),
-                                  color: secondary400,
-                                ),
-                              ),
-                            ),
-                            if (!visible)
-                              SizedBox(
-                                width: 95,
-                                height: 95,
-                                child: Align(
-                                  alignment: Alignment.bottomRight,
-                                  child: Padding(
-                                    padding:
-                                    const EdgeInsets.only(bottom: 3),
-                                    child: Image.asset(
-                                      'assets/images/ic_lock.png',
-                                    ),
-                                  ),
-                                ),
-                              )
-                            else
-                              const SizedBox.shrink(),
-                          ],
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          folder.name ?? '',
-                          style: const TextStyle(
-                            color: grey700,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 12,
-                            letterSpacing: -0.3,
-                            height: 14.3 / 12,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-          );
-        } else {
-          return const SizedBox(height: 115);
-        }
-      },
-    );
-  }
-
-  double getBottomMargin(bool visible) {
-    return visible ? 16 : 37;
-  }
-
-  Text buildSubTitle(String text) {
-    return Text(
-      text,
-      style: const TextStyle(
-        fontWeight: FontWeight.w500,
-        fontSize: 16,
-        height: 19 / 16,
-        letterSpacing: -0.3,
-        color: grey800,
-      ),
-    );
-  }
-
-  Container emptyFolderView() {
-    return Container(
-      width: 95,
-      height: 95,
-      color: primary100,
-      child: Center(
-        child: SvgPicture.asset(
-          'assets/images/folder.svg',
-          width: 36,
-          height: 36,
-        ),
-      ),
-    );
   }
 }
