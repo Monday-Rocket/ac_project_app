@@ -26,26 +26,27 @@ class UploadView extends StatefulWidget {
 class _UploadViewState extends State<UploadView> {
   final linkTextController = TextEditingController();
   final commentTextController = TextEditingController();
+
+  final parentScrollController = ScrollController();
   final firstScrollController = ScrollController();
   final secondScrollController = ScrollController();
   ButtonState buttonState = ButtonState.disabled;
-
   int selectedIndex = -1;
-
   int? selectedFolderId;
 
   @override
-  void initState() {
-    Future.microtask(() {
-      final args = getArguments(context);
-      final url = args['url'] as String? ?? '';
-      linkTextController.text = url;
-    });
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final args = getArguments(context);
+    final url = args['url'] as String? ?? '';
+    if (url.isNotEmpty) {
+      linkTextController.text = url;
+    }
+    final isCopied = args['isCopied'] as bool? ?? false;
+    if (isCopied) {
+      buttonState = isCopied ? ButtonState.enabled : ButtonState.disabled;
+    }
+    final height = MediaQuery.of(context).size.height;
+
     return MultiBlocProvider(
       providers: [
         BlocProvider<GetFoldersCubit>(
@@ -85,7 +86,8 @@ class _UploadViewState extends State<UploadView> {
                 ),
               ),
               body: SingleChildScrollView(
-                reverse: true,
+                reverse: visible,
+                controller: parentScrollController,
                 physics: const ClampingScrollPhysics(),
                 child: SafeArea(
                   child: Container(
@@ -95,77 +97,11 @@ class _UploadViewState extends State<UploadView> {
                       children: [
                         buildSubTitle('링크'),
                         buildLinkTextField(),
-                        Container(
-                          margin: const EdgeInsets.only(
-                            right: 16,
-                            bottom: 3,
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              buildSubTitle('폴더 선택'),
-                              InkWell(
-                                onTap: () => showAddFolderDialog(context,
-                                    isFromUpload: true),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8),
-                                  child: SvgPicture.asset(
-                                    'assets/images/btn_add.svg',
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                        buildFolderSelectTitle(context),
                         buildFolderList(),
                         const SizedBox(height: 35),
                         buildSubTitle('링크 코멘트'),
-                        Container(
-                          margin: const EdgeInsets.only(
-                            top: 14,
-                            right: 24,
-                            bottom: 90,
-                          ),
-                          decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(12)),
-                            color: grey100,
-                          ),
-                          child: SingleChildScrollView(
-                            controller: secondScrollController,
-                            padding: EdgeInsets.zero,
-                            child: SizedBox(
-                              height: 80,
-                              child: TextField(
-                                controller: commentTextController,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  height: 16.7 / 14,
-                                  color: grey600,
-                                  letterSpacing: -0.3,
-                                ),
-                                cursorColor: primary600,
-                                keyboardType: TextInputType.multiline,
-                                maxLines: null,
-                                decoration: const InputDecoration(
-                                  border: InputBorder.none,
-                                  focusedBorder: InputBorder.none,
-                                  isDense: true,
-                                  contentPadding: EdgeInsets.symmetric(
-                                    vertical: 15,
-                                    horizontal: 16,
-                                  ),
-                                  hintText: '저장한 링크에 대해 간단하게 메모해보세요',
-                                  hintStyle: TextStyle(
-                                    color: grey400,
-                                    fontSize: 14,
-                                    letterSpacing: -0.3,
-                                  ),
-                                ),
-                                onChanged: (value) => setState(() {}),
-                              ),
-                            ),
-                          ),
-                        ),
+                        buildCommentTextField(visible, height),
                         SizedBox(
                           height: keyboardHeight,
                         )
@@ -185,6 +121,114 @@ class _UploadViewState extends State<UploadView> {
             );
           },
         ),
+      ),
+    );
+  }
+
+  Container buildCommentTextField(bool visible, double height) {
+    return Container(
+      margin: const EdgeInsets.only(
+        top: 14,
+        right: 24,
+        bottom: 90,
+      ),
+      height: 110,
+      decoration: const BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(12)),
+        color: grey100,
+      ),
+      child: Column(
+        children: [
+          SingleChildScrollView(
+            controller: secondScrollController,
+            padding: EdgeInsets.zero,
+            child: SizedBox(
+              height: 80,
+              child: TextField(
+                controller: commentTextController,
+                style: const TextStyle(
+                  fontSize: 14,
+                  height: 19.6 / 14,
+                  color: grey600,
+                  letterSpacing: -0.3,
+                ),
+                cursorColor: primary600,
+                keyboardType: TextInputType.multiline,
+                maxLines: null,
+                maxLength: 500,
+                decoration: const InputDecoration(
+                  border: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  isDense: true,
+                  contentPadding: EdgeInsets.symmetric(
+                    vertical: 15,
+                    horizontal: 16,
+                  ),
+                  hintText: '저장한 링크에 대해 간단하게 메모해보세요',
+                  hintStyle: TextStyle(
+                    color: grey400,
+                    fontSize: 14,
+                    letterSpacing: -0.3,
+                  ),
+                  counterText: '',
+                ),
+                onTap: () {
+                  if (visible) {
+                    parentScrollController.animateTo(
+                      0,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.ease,
+                    );
+                  }
+                },
+                onChanged: (value) => setState(() {}),
+              ),
+            ),
+          ),
+          Align(
+            alignment: Alignment.bottomRight,
+            child: Padding(
+              padding: const EdgeInsets.only(right: 14),
+              child: Text(
+                '${commentTextController.text.length}/500',
+                style: const TextStyle(
+                  color: grey400,
+                  fontSize: 14,
+                  letterSpacing: -0.3,
+                  height: 16.7 / 14,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Container buildFolderSelectTitle(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(
+        right: 16,
+        bottom: 3,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          buildSubTitle('폴더 선택'),
+          InkWell(
+            onTap: () => showAddFolderDialog(
+              context,
+              isFromUpload: true,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(8),
+              child: SvgPicture.asset(
+                'assets/images/btn_add.svg',
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -343,43 +387,25 @@ class _UploadViewState extends State<UploadView> {
                                     BorderRadius.all(Radius.circular(32)),
                                 color: grey100,
                               ),
-                              child: Stack(
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: const BorderRadius.all(
-                                      Radius.circular(32),
-                                    ),
-                                    child: Image.network(
-                                      folder.thumbnail ?? '',
-                                      fit: BoxFit.cover,
-                                      errorBuilder: (_, __, ___) {
-                                        return Container(
-                                          width: 95,
-                                          height: 95,
-                                          decoration: const BoxDecoration(
-                                            borderRadius: BorderRadius.all(
-                                              Radius.circular(32),
-                                            ),
-                                            color: grey100,
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                  if (!visible)
-                                    Align(
-                                      alignment: Alignment.bottomRight,
-                                      child: Padding(
-                                        padding:
-                                            const EdgeInsets.only(bottom: 3),
-                                        child: SvgPicture.asset(
-                                          'assets/images/ic_lock.svg',
-                                        ),
-                                      ),
-                                    )
-                                  else
-                                    const SizedBox.shrink(),
-                                ],
+                              child: ClipRRect(
+                                borderRadius: const BorderRadius.all(
+                                  Radius.circular(32),
+                                ),
+                                child: ColoredBox(
+                                  color: grey100,
+                                  child: folder.thumbnail != null &&
+                                      (folder.thumbnail?.isNotEmpty ??
+                                          false)
+                                      ? Image.network(
+                                    folder.thumbnail!,
+                                    width: 95,
+                                    height: 95,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (_, __, ___) =>
+                                        emptyFolderView(),
+                                  )
+                                      : emptyFolderView(),
+                                ),
                               ),
                             ),
                             Visibility(
@@ -394,6 +420,23 @@ class _UploadViewState extends State<UploadView> {
                                 ),
                               ),
                             ),
+                            if (!visible)
+                              SizedBox(
+                                width: 95,
+                                height: 95,
+                                child: Align(
+                                  alignment: Alignment.bottomRight,
+                                  child: Padding(
+                                    padding:
+                                    const EdgeInsets.only(bottom: 3),
+                                    child: Image.asset(
+                                      'assets/images/ic_lock.png',
+                                    ),
+                                  ),
+                                ),
+                              )
+                            else
+                              const SizedBox.shrink(),
                           ],
                         ),
                         const SizedBox(height: 6),
@@ -434,6 +477,21 @@ class _UploadViewState extends State<UploadView> {
         height: 19 / 16,
         letterSpacing: -0.3,
         color: grey800,
+      ),
+    );
+  }
+
+  Container emptyFolderView() {
+    return Container(
+      width: 95,
+      height: 95,
+      color: primary100,
+      child: Center(
+        child: SvgPicture.asset(
+          'assets/images/folder.svg',
+          width: 36,
+          height: 36,
+        ),
       ),
     );
   }

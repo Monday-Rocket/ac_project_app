@@ -34,7 +34,8 @@ class SignUpNicknameView extends StatelessWidget {
               return KeyboardDismissOnTap(
                 child: KeyboardVisibilityBuilder(
                   builder: (context, visible) {
-                    final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+                    final keyboardHeight =
+                        MediaQuery.of(context).viewInsets.bottom;
                     return Scaffold(
                       resizeToAvoidBottomInset: false,
                       appBar: buildBackAppBar(context),
@@ -65,7 +66,11 @@ class SignUpNicknameView extends StatelessWidget {
     );
   }
 
-  Widget buildBody(BuildContext context, ButtonState state, double keyboardHeight) {
+  Widget buildBody(
+    BuildContext context,
+    ButtonState state,
+    double keyboardHeight,
+  ) {
     return SafeArea(
       child: Container(
         margin: const EdgeInsets.fromLTRB(24, 16, 24, 16),
@@ -126,8 +131,8 @@ class SignUpNicknameView extends StatelessWidget {
           decoration: const InputDecoration(
             labelText: '닉네임',
             labelStyle: TextStyle(
-              color: Color(0xFF9097A3),
               fontWeight: FontWeight.w500,
+              color: Color(0xFF9097A3),
             ),
             focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: primary800, width: 2),

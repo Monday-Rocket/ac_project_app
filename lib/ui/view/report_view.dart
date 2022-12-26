@@ -3,6 +3,7 @@ import 'package:ac_project_app/models/report/report.dart';
 import 'package:ac_project_app/models/report/report_result_type.dart';
 import 'package:ac_project_app/models/report/report_type.dart';
 import 'package:ac_project_app/provider/api/report/report_api.dart';
+import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/dialog.dart';
 import 'package:ac_project_app/util/get_widget_arguments.dart';
 import 'package:extended_text/extended_text.dart';
@@ -73,7 +74,8 @@ class _ReportViewState extends State<ReportView> {
           ),
           actions: [
             TextButton(
-              onPressed: () => reportData(context, targetType, id, textController.text),
+              onPressed: () =>
+                  reportData(context, targetType, id, textController.text),
               style: TextButton.styleFrom(
                 disabledForegroundColor: grey400,
                 foregroundColor: primary1000,
@@ -180,11 +182,12 @@ class _ReportViewState extends State<ReportView> {
                       padding: EdgeInsets.zero,
                       child: Container(
                         height: 98,
-                        margin: const EdgeInsets.only(bottom: 8),
+                        margin: const EdgeInsets.only(bottom: 14),
                         child: Stack(
                           children: [
                             TextField(
                               controller: textController,
+                              enabled: radioValue == 6,
                               style: const TextStyle(
                                 fontSize: 14,
                                 height: 16.7 / 14,
@@ -193,6 +196,7 @@ class _ReportViewState extends State<ReportView> {
                               cursorColor: primary600,
                               keyboardType: TextInputType.multiline,
                               maxLines: null,
+                              maxLength: 500,
                               decoration: const InputDecoration(
                                 border: InputBorder.none,
                                 focusedBorder: InputBorder.none,
@@ -208,6 +212,7 @@ class _ReportViewState extends State<ReportView> {
                                   color: grey400,
                                   fontSize: 14,
                                 ),
+                                counterText: '',
                               ),
                               onChanged: (value) => setState(() {}),
                             ),
@@ -219,6 +224,7 @@ class _ReportViewState extends State<ReportView> {
                                   '${textController.text.length}/500',
                                   style: const TextStyle(
                                     color: grey400,
+                                    fontWeight: FontWeight.w400,
                                     fontSize: 14,
                                     letterSpacing: -0.3,
                                     height: 16.7 / 14,
@@ -240,7 +246,8 @@ class _ReportViewState extends State<ReportView> {
     );
   }
 
-  void reportData(BuildContext context, String targetType, int id, String text) =>
+  void reportData(
+          BuildContext context, String targetType, int id, String text) =>
       ReportApi()
           .report(
         Report(
@@ -253,6 +260,10 @@ class _ReportViewState extends State<ReportView> {
           .then((type) {
         if (type == ReportResultType.success) {
           Navigator.pop(context);
+          Future.delayed(
+            const Duration(milliseconds: 300),
+            () => showBottomToast('신고가 접수되었어요!'),
+          );
         } else if (type == ReportResultType.duplicated) {
           showPopUp(
             title: '이미 신고한 게시물이에요',

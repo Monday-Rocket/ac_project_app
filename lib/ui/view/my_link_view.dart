@@ -39,6 +39,7 @@ class MyLinkView extends StatelessWidget {
         builder: (context, folder) {
           return Scaffold(
             appBar: buildBackAppBar(context),
+            backgroundColor: Colors.white,
             body: SafeArea(
               child: BlocBuilder<LinksFromSelectedFolderCubit, LinkListState>(
                 builder: (cubitContext, state) {
@@ -62,8 +63,7 @@ class MyLinkView extends StatelessWidget {
                       ),
                       if (state is LinkListLoadingState ||
                           state is LinkListInitialState)
-                        Align(
-                          alignment: Alignment.bottomCenter,
+                        Center(
                           child: Container(
                             margin: const EdgeInsets.only(bottom: 30),
                             child: const CircularProgressIndicator(
@@ -101,8 +101,8 @@ class MyLinkView extends StatelessWidget {
           if (!(folder.visible ?? false))
             Container(
               margin: const EdgeInsets.only(left: 8),
-              child: SvgPicture.asset(
-                'assets/images/ic_lock.svg',
+              child: Image.asset(
+                'assets/images/ic_lock.png',
               ),
             )
           else
@@ -121,7 +121,6 @@ class MyLinkView extends StatelessWidget {
           color: greyText,
           fontWeight: FontWeight.w500,
           fontSize: 14,
-          height: 24.5 / 14,
         ),
       ),
     );
@@ -143,22 +142,17 @@ class MyLinkView extends StatelessWidget {
               ),
               child: Container(
                 decoration: const BoxDecoration(
-                  color: grey100,
+                  color: ccGrey100,
                   borderRadius: BorderRadius.all(Radius.circular(7)),
                 ),
+                width: double.infinity,
+                height: 36,
                 margin: const EdgeInsets.only(right: 6),
-                child: TextField(
-                  enabled: false,
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                    isDense: true,
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                    ),
-                    prefixIcon: Image.asset(
-                      'assets/images/folder_search_icon.png',
-                    ),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: Image.asset('assets/images/folder_search_icon.png'),
                   ),
                 ),
               ),
@@ -176,10 +170,15 @@ class MyLinkView extends StatelessWidget {
     );
   }
 
-  Widget buildTabBar(List<Folder> folders, int tabIndex, Folder folder,
-      List<Link> totalLinks) {
+  Widget buildTabBar(
+    List<Folder> folders,
+    int tabIndex,
+    Folder folder,
+    List<Link> totalLinks,
+  ) {
     return Container(
       margin: const EdgeInsets.only(top: 30, left: 12, right: 20),
+      padding: const EdgeInsets.only(bottom: 18),
       child: DefaultTabController(
         length: folders.length,
         initialIndex: tabIndex,
@@ -227,7 +226,7 @@ class MyLinkView extends StatelessWidget {
                     return TabBar(
                       isScrollable: true,
                       physics: const ClampingScrollPhysics(),
-                      unselectedLabelColor: lightGrey700,
+                      unselectedLabelColor: grey700,
                       labelColor: primaryTab,
                       labelStyle: const TextStyle(
                         fontFamily: R_Font.PRETENDARD,
@@ -251,6 +250,7 @@ class MyLinkView extends StatelessWidget {
                           right: 15,
                         ),
                       ),
+                      labelPadding: const EdgeInsets.symmetric(horizontal: 13),
                       tabs: tabs,
                       onTap: (index) {
                         totalLinks.clear();
@@ -301,6 +301,9 @@ class MyLinkView extends StatelessWidget {
               final link = totalLinks[index];
               return InkWell(
                 onTap: () {
+                  context
+                      .read<LinksFromSelectedFolderCubit>()
+                      .emit(LinkListLoadingState());
                   Navigator.pushNamed(
                     context,
                     Routes.linkDetail,
@@ -325,48 +328,50 @@ class MyLinkView extends StatelessWidget {
                     vertical: 18,
                     horizontal: 24,
                   ),
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(vertical: 5),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        SizedBox(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: 115,
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(vertical: 5),
                           width: (width - 24 * 2) - 159 - 20,
                           child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    link.title ?? '',
-                                    maxLines: 1,
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                      color: blackBold,
-                                      overflow: TextOverflow.ellipsis,
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      link.title ?? '',
+                                      maxLines: 1,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                        color: blackBold,
+                                        overflow: TextOverflow.ellipsis,
+                                        height: 19 / 16,
+                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(
-                                    height: 7,
-                                  ),
-                                  Text(
-                                    link.describe ?? '\n\n',
-                                    maxLines: 2,
-                                    style: const TextStyle(
-                                      fontSize: 12,
-                                      color: greyText,
-                                      overflow: TextOverflow.ellipsis,
+                                    const SizedBox(height: 7),
+                                    Text(
+                                      link.describe ?? '\n\n',
+                                      maxLines: 2,
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        color: greyText,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                              Container(
-                                margin: const EdgeInsets.only(top: 30),
+                              Align(
+                                alignment: Alignment.bottomLeft,
                                 child: Text(
                                   link.url ?? '',
                                   maxLines: 1,
@@ -380,7 +385,10 @@ class MyLinkView extends StatelessWidget {
                             ],
                           ),
                         ),
-                        ClipRRect(
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 4),
+                        child: ClipRRect(
                           borderRadius: const BorderRadius.all(
                             Radius.circular(7),
                           ),
@@ -409,15 +417,21 @@ class MyLinkView extends StatelessWidget {
                                     height: 116,
                                   ),
                           ),
-                        )
-                      ],
-                    ),
+                        ),
+                      )
+                    ],
                   ),
                 ),
               );
             },
             separatorBuilder: (BuildContext context, int index) {
-              return const Divider(height: 1, color: greyTab);
+              return const Divider(
+                height: 1,
+                thickness: 1,
+                color: greyTab,
+                indent: 24,
+                endIndent: 24,
+              );
             },
           ),
         ),

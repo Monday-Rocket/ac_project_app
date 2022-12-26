@@ -1,3 +1,7 @@
+// ignore_for_file: avoid_positional_boolean_parameters
+
+import 'dart:io';
+
 import 'package:ac_project_app/const/colors.dart';
 import 'package:flutter/material.dart';
 
@@ -10,7 +14,7 @@ Widget buildBottomSheetButton({
   return SafeArea(
     child: Padding(
       padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom + ((keyboardVisible ?? false) ? 16 : 0),
+        bottom: getBottomPadding(context, keyboardVisible),
         left: 24,
         right: 24,
       ),
@@ -36,4 +40,11 @@ Widget buildBottomSheetButton({
       ),
     ),
   );
+}
+
+double getBottomPadding(BuildContext context, bool? keyboardVisible) {
+  final defaultValue = Platform.isAndroid ? 16 : 8;
+  final keyboardPadding = (keyboardVisible ?? false) ? 16 : defaultValue;
+
+  return MediaQuery.of(context).viewInsets.bottom + keyboardPadding;
 }

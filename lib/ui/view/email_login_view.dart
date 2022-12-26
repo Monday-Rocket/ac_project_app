@@ -3,8 +3,11 @@
 import 'dart:async';
 
 import 'package:ac_project_app/const/colors.dart';
+import 'package:ac_project_app/cubits/login/login_cubit.dart';
+import 'package:ac_project_app/cubits/login/login_type.dart';
 import 'package:ac_project_app/provider/api/user/user_api.dart';
 import 'package:ac_project_app/provider/login/email_login.dart';
+import 'package:ac_project_app/provider/share_data_provider.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/buttons/bottom_sheet_button.dart';
@@ -14,6 +17,7 @@ import 'package:ac_project_app/util/logger.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 
 class EmailLoginView extends StatefulWidget {
@@ -138,7 +142,7 @@ class _EmailLoginViewState extends State<EmailLoginView>
                       if (isEmailSent) {
                         showBottomToast('이미 이메일이 발송 되었습니다.');
                       } else {
-                        Email.send(context, emailString);
+                        Email.send(context, emailString, '로그인');
                         setState(() {
                           isEmailSent = true;
                         });
@@ -225,6 +229,8 @@ class _EmailLoginViewState extends State<EmailLoginView>
                 () => showBottomToast('가입된 계정이 없어 회원 가입 화면으로 이동합니다.'),
               );
             } else {
+              ShareDataProvider.loadServerData();
+
               Navigator.pushNamedAndRemoveUntil(
                 context,
                 Routes.home,

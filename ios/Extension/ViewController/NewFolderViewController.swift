@@ -22,8 +22,6 @@ class NewFolderViewController : UIViewController {
   @IBOutlet weak var firstSaveButton : UIButton!
   @IBOutlet weak var secondSaveButton: UIButton!
   
-  var keyHeight: CGFloat?
-  
   var link: String?
   var imageLink: String?
   var newFolderVisible = false
@@ -36,6 +34,7 @@ class NewFolderViewController : UIViewController {
     
     // MARK: - 상단 Round
     layoutView?.layer.cornerRadius = 30
+    layoutView?.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
     
     // MARK: - 배경 누를 때 팝업
     self.backgroundView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.showConfirmDialog(_:))))
@@ -92,7 +91,7 @@ class NewFolderViewController : UIViewController {
     border.frame = CGRect(
       x: 0,
       y: newFolderNameField.frame.size.height + 9,
-      width: newFolderNameField.frame.size.width,
+      width: UIScreen.main.bounds.width - 48,
       height: 2
     )
     border.backgroundColor = UIColor.primary600.cgColor

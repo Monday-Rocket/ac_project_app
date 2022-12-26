@@ -23,6 +23,7 @@ class CommentViewController: UIViewController {
     
       // MARK: - 상단 Round
     self.layoutView?.layer.cornerRadius = 30
+    self.layoutView?.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
     
     self.saveCommentButton?.tintColor = .secondary
     
@@ -42,9 +43,13 @@ class CommentViewController: UIViewController {
     guard let comment = self.commentTextView.text, let savedLink = self.link else {
       return
     }
-    UserDefaultsHelper.saveComment(savedLink, comment)
     
-    self.showSuccessDialog()
+    if comment.count > 500 {
+      self.showCommentOverflowDialog()
+    } else {
+      UserDefaultsHelper.saveComment(savedLink, comment)
+      self.showSuccessDialog()
+    }
   }
   
   func showSuccessDialog() {
@@ -76,6 +81,17 @@ class CommentViewController: UIViewController {
     dialogVC.confirmButtonCompletionClosure = {
       self.hideExtensionWithCompletionHandler()
     }
+    
+    self.present(dialogVC, animated: true, completion: nil)
+  }
+  
+  @objc func showCommentOverflowDialog() {
+    let sb = UIStoryboard.init(name: "Dialog", bundle: nil)
+    
+    let dialogVC = sb.instantiateViewController(withIdentifier: "CommentOverflowDialog") as! CommentOverflowDialogViewController
+    
+    dialogVC.modalPresentationStyle = .overCurrentContext
+    dialogVC.modalTransitionStyle = .crossDissolve
     
     self.present(dialogVC, animated: true, completion: nil)
   }

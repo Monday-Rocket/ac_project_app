@@ -7,6 +7,7 @@ import 'package:ac_project_app/ui/widget/only_back_app_bar.dart';
 import 'package:ac_project_app/ui/widget/text/custom_font.dart';
 import 'package:ac_project_app/util/get_widget_arguments.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class TermsView extends StatefulWidget {
   const TermsView({super.key});
@@ -107,139 +108,86 @@ class _TermsViewState extends State<TermsView> {
                   ),
                 ),
                 Container(
-                  margin: const EdgeInsets.only(top: 21, bottom: 19),
+                  margin: const EdgeInsets.only(top: 21),
                   child: const Divider(
                     height: 1,
                     color: greyTab,
                   ),
                 ),
-                Column(
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          secondCheck = !secondCheck;
-                          firstCheck = secondCheck && thirdCheck;
-                        });
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 15),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                AnimatedContainer(
-                                  duration: const Duration(
-                                    milliseconds: 200,
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(2),
-                                    child: secondCheck
-                                        ? const Icon(
-                                            Icons.check,
-                                            size: 18,
-                                            color: primary800,
-                                          )
-                                        : const Icon(
-                                            Icons.check,
-                                            size: 18,
-                                            color: grey300,
-                                          ),
-                                  ),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      secondCheck = !secondCheck;
+                      firstCheck = secondCheck && thirdCheck;
+                    });
+                  },
+                  child: ColoredBox(
+                    color: Colors.white,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 19, bottom: 9),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              AnimatedContainer(
+                                duration: const Duration(
+                                  milliseconds: 200,
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                    left: 11,
-                                  ),
-                                  child: const Text('개인정보 처리방침')
-                                      .weight(FontWeight.w500)
-                                      .fontSize(15),
-                                ),
-                              ],
-                            ),
-                            Center(
-                              child: InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    secondOpened = !secondOpened;
-                                  });
-                                },
-                                child: AnimatedContainer(
-                                  duration: const Duration(
-                                    milliseconds: 200,
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(2),
-                                    child: secondOpened
-                                        ? const Icon(
-                                            Icons.keyboard_arrow_down_sharp,
-                                            size: 20,
-                                            color: grey500,
-                                          )
-                                        : const Icon(
-                                            Icons.keyboard_arrow_right_sharp,
-                                            size: 20,
-                                            color: grey500,
-                                          ),
-                                  ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(2),
+                                  child: secondCheck
+                                      ? const Icon(
+                                          Icons.check,
+                                          size: 18,
+                                          color: primary800,
+                                        )
+                                      : const Icon(
+                                          Icons.check,
+                                          size: 18,
+                                          color: grey300,
+                                        ),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    AnimatedContainer(
-                      height: secondOpened ? 140 : 0,
-                      duration: const Duration(milliseconds: 150),
-                      decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(5),
-                        ),
-                        color: grey100,
-                      ),
-                      child: secondOpened
-                          ? Scrollbar(
-                              controller: secondController,
-                              child: SingleChildScrollView(
-                                controller: secondController,
-                                padding: EdgeInsets.zero,
-                                child: const Padding(
-                                  padding: EdgeInsets.only(
-                                    left: 24,
-                                    top: 14,
-                                    right: 24,
-                                  ),
-                                  child: Text(
-                                    firstCheckText,
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w400,
-                                      color: grey600,
-                                    ),
-                                  ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 11,
                                 ),
+                                child: const Text('개인정보 수집 및 이용 동의')
+                                    .weight(FontWeight.w500)
+                                    .fontSize(15),
                               ),
-                            )
-                          : const SizedBox.shrink(),
+                              GestureDetector(
+                                onTap: () => launchUrl(
+                                  Uri.parse(
+                                    approveFirstLink,
+                                  ),
+                                  mode: LaunchMode
+                                      .externalApplication,
+                                ),
+                                child: const Text('[보기]')
+                                    .weight(FontWeight.w500)
+                                    .fontSize(15),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                    AnimatedContainer(
-                      height: secondOpened ? 15 : 0,
-                      duration: const Duration(milliseconds: 150),
-                    ),
-                  ],
+                  ),
                 ),
-                Column(
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          thirdCheck = !thirdCheck;
-                          firstCheck = secondCheck && thirdCheck;
-                        });
-                      },
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      thirdCheck = !thirdCheck;
+                      firstCheck = secondCheck && thirdCheck;
+                    });
+                  },
+                  child: ColoredBox(
+                    color: Colors.white,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 9),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -269,80 +217,28 @@ class _TermsViewState extends State<TermsView> {
                                 padding: const EdgeInsets.only(
                                   left: 11,
                                 ),
-                                child: const Text('서비스 이용방침')
+                                child: const Text('서비스 이용약관')
+                                    .weight(FontWeight.w500)
+                                    .fontSize(15),
+                              ),
+                              GestureDetector(
+                                onTap: () => launchUrl(
+                                  Uri.parse(
+                                    approveSecondLink,
+                                  ),
+                                  mode: LaunchMode
+                                      .externalApplication,
+                                ),
+                                child: const Text('[보기]')
                                     .weight(FontWeight.w500)
                                     .fontSize(15),
                               ),
                             ],
                           ),
-                          InkWell(
-                            onTap: () {
-                              setState(() {
-                                thirdOpened = !thirdOpened;
-                              });
-                            },
-                            child: AnimatedContainer(
-                              duration: const Duration(
-                                milliseconds: 200,
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(2),
-                                child: thirdOpened
-                                    ? const Icon(
-                                        Icons.keyboard_arrow_down_sharp,
-                                        size: 20,
-                                        color: grey500,
-                                      )
-                                    : const Icon(
-                                        Icons.keyboard_arrow_right_sharp,
-                                        size: 20,
-                                        color: grey500,
-                                      ),
-                              ),
-                            ),
-                          ),
                         ],
                       ),
                     ),
-                    AnimatedContainer(
-                      height: thirdOpened ? 15 : 0,
-                      duration: const Duration(milliseconds: 150),
-                    ),
-                    AnimatedContainer(
-                      height: thirdOpened ? 140 : 0,
-                      duration: const Duration(milliseconds: 150),
-                      decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(5),
-                        ),
-                        color: grey100,
-                      ),
-                      child: thirdOpened
-                          ? Scrollbar(
-                              controller: thirdController,
-                              child: SingleChildScrollView(
-                                controller: thirdController,
-                                padding: EdgeInsets.zero,
-                                child: const Padding(
-                                  padding: EdgeInsets.only(
-                                    left: 24,
-                                    top: 14,
-                                    right: 24,
-                                  ),
-                                  child: Text(
-                                    secondCheckText,
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w400,
-                                      color: grey600,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            )
-                          : const SizedBox.shrink(),
-                    ),
-                  ],
+                  ),
                 ),
               ],
             ),

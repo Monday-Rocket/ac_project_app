@@ -5,6 +5,8 @@ import 'package:ac_project_app/cubits/folders/get_user_folders_cubit.dart';
 import 'package:ac_project_app/cubits/home/get_job_list_cubit.dart';
 import 'package:ac_project_app/cubits/home/topic_list_state.dart';
 import 'package:ac_project_app/cubits/links/links_from_selected_job_group_cubit.dart';
+import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
+import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/models/user/detail_user.dart';
 import 'package:ac_project_app/resource.dart';
@@ -40,21 +42,20 @@ class HomePage extends StatelessWidget {
                     ),
                     child: Container(
                       decoration: const BoxDecoration(
-                        color: grey100,
+                        color: ccGrey100,
                         borderRadius: BorderRadius.all(Radius.circular(7)),
                       ),
+                      width: double.infinity,
+                      height: 36,
                       margin: const EdgeInsets.only(right: 6),
-                      child: TextField(
-                        enabled: false,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                          isDense: true,
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                          ),
-                          prefixIcon: Image.asset(
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 10),
+                          child: Image.asset(
                             'assets/images/folder_search_icon.png',
+                            width: 24,
+                            height: 24,
                           ),
                         ),
                       ),
@@ -79,7 +80,7 @@ class HomePage extends StatelessWidget {
     final width = MediaQuery.of(parentContext).size.width;
     return BlocBuilder<LinksFromSelectedJobGroupCubit, List<Link>>(
       builder: (context, links) {
-        totalLinks.addAll(links);
+        addLinks(context, totalLinks, links);
         return Expanded(
           child: NotificationListener<ScrollEndNotification>(
             onNotification: (scrollEnd) {
@@ -117,15 +118,22 @@ class HomePage extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           GestureDetector(
-                            onTap: () async => Navigator.of(context).pushNamed(
-                              Routes.userFeed,
-                              arguments: {
-                                'user': link.user,
-                                'folders': await context
-                                    .read<GetUserFoldersCubit>()
-                                    .getFolders(link.user!.id!)
-                              },
-                            ),
+                            onTap: () async {
+                              final profileState = context
+                                  .read<GetProfileInfoCubit>()
+                                  .state as ProfileLoadedState;
+                              await Navigator.of(context).pushNamed(
+                                Routes.userFeed,
+                                arguments: {
+                                  'user': link.user,
+                                  'folders': await context
+                                      .read<GetUserFoldersCubit>()
+                                      .getFolders(link.user!.id!),
+                                  'isMine':
+                                      profileState.profile.id == link.user!.id,
+                                },
+                              );
+                            },
                             child: Row(
                               children: [
                                 Image.asset(
@@ -163,7 +171,7 @@ class HomePage extends StatelessWidget {
                                             left: 4,
                                           ),
                                           decoration: const BoxDecoration(
-                                            color: primary200,
+                                            color: primary66_200,
                                             borderRadius: BorderRadius.all(
                                               Radius.circular(4),
                                             ),
@@ -265,6 +273,7 @@ class HomePage extends StatelessWidget {
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
                                   SizedBox(
                                     width: width - (24 * 2 + 25),
@@ -279,17 +288,36 @@ class HomePage extends StatelessWidget {
                                     ),
                                   ),
                                   InkWell(
-                                    onTap: () => showLinkOptionsDialog(
-                                      link,
-                                      parentContext,
-                                      callback: () => refresh(context, totalLinks),
-                                    ),
+                                    onTap: () {
+                                      final profileState = context
+                                          .read<GetProfileInfoCubit>()
+                                          .state as ProfileLoadedState;
+                                      if (profileState.profile.id ==
+                                          link.user!.id) {
+                                        showMyLinkOptionsDialog(
+                                          link,
+                                          context,
+                                          popCallback: () => refresh(
+                                            context,
+                                            totalLinks,
+                                          ),
+                                        );
+                                      } else {
+                                        showLinkOptionsDialog(
+                                          link,
+                                          context,
+                                          callback: () =>
+                                              refresh(context, totalLinks),
+                                        );
+                                      }
+                                    },
                                     child: SvgPicture.asset(
                                       'assets/images/more_vert.svg',
                                     ),
                                   ),
                                 ],
                               ),
+                              const SizedBox(height: 6),
                               Text(
                                 link.url ?? '',
                                 maxLines: 1,
@@ -308,7 +336,7 @@ class HomePage extends StatelessWidget {
                 },
                 separatorBuilder: (_, __) => const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24),
-                  child: Divider(height: 1, color: grey900),
+                  child: Divider(height: 1, thickness: 1, color: ccGrey200),
                 ),
               ),
             ),
@@ -316,6 +344,14 @@ class HomePage extends StatelessWidget {
         );
       },
     );
+  }
+
+  void addLinks(BuildContext context, List<Link> totalLinks, List<Link> links) {
+    if (context.read<LinksFromSelectedJobGroupCubit>().hasRefresh) {
+      totalLinks.clear();
+      context.read<LinksFromSelectedJobGroupCubit>().hasRefresh = false;
+    }
+    totalLinks.addAll(links);
   }
 
   Widget buildJobListView(
@@ -370,8 +406,9 @@ class HomePage extends StatelessWidget {
                     }
                     return TabBar(
                       isScrollable: true,
-                      unselectedLabelColor: lightGrey700,
+                      unselectedLabelColor: grey700,
                       labelColor: primaryTab,
+                      labelPadding: const EdgeInsets.symmetric(horizontal: 13),
                       labelStyle: const TextStyle(
                         fontFamily: R_Font.PRETENDARD,
                         fontSize: 16,
@@ -414,7 +451,6 @@ class HomePage extends StatelessWidget {
   }
 
   Future<void> refresh(BuildContext context, List<Link> totalLinks) async {
-    totalLinks.clear();
-    unawaited(context.read<LinksFromSelectedJobGroupCubit>().refresh());
+    context.read<LinksFromSelectedJobGroupCubit>().refresh();
   }
 }

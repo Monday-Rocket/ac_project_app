@@ -57,12 +57,37 @@ class ShareDB {
     await db.close();
   }
 
-  static Future<void> insert(Folder folder) async {
+  static Future<bool> insert(Folder folder) async {
     final db = await _getDB();
-    await db.rawInsert(
+    final result = await db.rawInsert(
       'INSERT into folder(name, visible) values(?, ?)',
       [folder.name, if (folder.visible!) 1 else 0],
     );
     await db.close();
+    return result != 0;
+  }
+
+  static Future<void> deleteAllFolder() async {
+    final db = await _getDB();
+    await db.execute('delete from folder');
+    await db.close();
+  }
+
+  static Future<bool> loadData(List<Folder> folders) async {
+    try {
+      final db = await _getDB();
+      for (final folder in folders) {
+        await db.insert('folder', {
+          'name': folder.name ?? '',
+          'visible': folder.visible! ? 1 : 0,
+          'imageLink': folder.thumbnail ?? '',
+          'time': folder.time,
+        });
+      }
+      return true;
+    } catch (e) {
+      Log.e(e.toString());
+      return false;
+    }
   }
 }

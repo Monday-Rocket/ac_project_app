@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 
+import 'package:ac_project_app/const/strings.dart';
 import 'package:ac_project_app/models/net/api_result.dart';
 import 'package:ac_project_app/models/result.dart';
 import 'package:ac_project_app/util/logger.dart';
@@ -11,8 +12,6 @@ import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 
 class CustomClient extends http.BaseClient {
-  static const baseUrl =
-      'http://ac-project-api.ap-northeast-2.elasticbeanstalk.com';
   final http.Client _inner = http.Client();
 
   @override
@@ -126,6 +125,14 @@ class CustomClient extends http.BaseClient {
           Log.e(apiResult.error!.message);
           return Result.error('${apiResult.status}');
         }
+      } else if (response.statusCode == 400) {
+        // 중복 에러
+        final apiResult = ApiResult.fromJson(
+          jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>,
+        );
+        // 결과 출력
+        Log.e(apiResult);
+        return Result.error('${apiResult.status}');
       }
       final errorMessage = 'Network Error: ${response.statusCode}';
       Log.e(errorMessage);

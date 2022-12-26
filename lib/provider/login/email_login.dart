@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:math';
 
+import 'package:ac_project_app/provider/share_data_provider.dart';
 import 'package:ac_project_app/ui/widget/dialog.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -18,7 +20,7 @@ class Email {
     return userCredential.user != null;
   }
 
-  static Future<void> send(BuildContext context, String email) async {
+  static Future<void> send(BuildContext context, String email, String type) async {
     try {
       Log.i('이메일 전송');
       await FirebaseAuth.instance
@@ -35,7 +37,8 @@ class Email {
           .then((value) {
         showPopUp(
           title: '이메일 전송됨',
-          content: '전송된 메일을 확인하고 로그인 링크를 클릭해주세요',
+          content: '메일주소로 인증 메일이 발송되었습니다\n'
+              '이메일의 링크로 $type을 완료해주세요',
           parentContext: context,
           callback: () => Navigator.pop(context),
         );

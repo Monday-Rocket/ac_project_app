@@ -44,6 +44,11 @@ class MultiPlatformApp {
             bottomSheetTheme: const BottomSheetThemeData(
               backgroundColor: Colors.white,
             ),
+            elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ButtonStyle(
+                shadowColor: MaterialStateProperty.all(primary700),
+              ),
+            ),
           ),
         ),
       ),

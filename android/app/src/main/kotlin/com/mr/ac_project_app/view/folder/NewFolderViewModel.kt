@@ -1,9 +1,8 @@
 package com.mr.ac_project_app.view.folder
 
 import android.app.Application
-import android.content.ContentValues
 import androidx.lifecycle.AndroidViewModel
-import com.mr.ac_project_app.data.ShareContract
+import com.mr.ac_project_app.data.ShareDBFunctions
 import com.mr.ac_project_app.data.ShareDbHelper
 import com.mr.ac_project_app.data.SharedPrefHelper
 import com.mr.ac_project_app.utils.convert
@@ -44,18 +43,6 @@ class NewFolderViewModel(application: Application): AndroidViewModel(application
             apply()
         }
 
-        val db = dbHelper.writableDatabase
-        val cv = ContentValues().apply {
-            put(ShareContract.Folder.folderName, name)
-            put(ShareContract.Folder.visible, visible)
-            put(ShareContract.Folder.imageLink, imageLink)
-        }
-        db.insert(
-            ShareContract.Folder.table,
-            null,
-            cv
-        )
-        db.close()
-
+        ShareDBFunctions.saveNewFolder(dbHelper, name, visible, imageLink)
     }
 }

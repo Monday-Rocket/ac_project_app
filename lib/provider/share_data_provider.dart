@@ -3,6 +3,8 @@ import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:ac_project_app/provider/api/folders/folder_api.dart';
+import 'package:ac_project_app/provider/share_db.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart' as path;
@@ -27,7 +29,7 @@ class ShareDataProvider {
           'describe': item['comment'],
           'image': item['image_link'],
           'folder_name': item['folder_name'],
-          'time': item['created_at']
+          'created_at': item['created_at']
         });
       }
 
@@ -50,7 +52,7 @@ class ShareDataProvider {
         final folder = {
           'name': json['name'],
           'visible': json['visible'],
-          'time': json['created_at']
+          'created_at': json['created_at']
         };
         result.add(folder);
       }
@@ -85,6 +87,31 @@ class ShareDataProvider {
     } on PlatformException catch (e) {
       Log.e(e.message);
       rethrow;
+    }
+  }
+
+  static Future<void> clearAllData() async {
+    try {
+      final result = await _platform.invokeMethod('clearData');
+      await ShareDB.deleteAllFolder();
+      Log.i('clear all data: $result');
+    } on PlatformException catch (e) {
+      Log.e(e.message);
+    }
+  }
+
+  static void loadServerData() {
+    try {
+      FolderApi().getMyFoldersWithoutUnclassified().then(
+            (result) => result.when(
+              success: (folders) {
+                ShareDB.loadData(folders).then((result) => Log.i('load all data: $result'));
+              },
+              error: Log.e,
+            ),
+          );
+    } on PlatformException catch (e) {
+      Log.e(e.message);
     }
   }
 }

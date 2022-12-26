@@ -15,16 +15,19 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
+import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.FragmentActivity
 import com.mr.ac_project_app.R
-import com.mr.ac_project_app.view.SaveSuccessActivity
 import com.mr.ac_project_app.databinding.ActivityNewFolderBinding
 import com.mr.ac_project_app.dialog.ConfirmDialogInterface
 import com.mr.ac_project_app.dialog.MessageDialog
 import com.mr.ac_project_app.model.FolderModel
 import com.mr.ac_project_app.model.SaveType
+import com.mr.ac_project_app.ui.InsetsWithKeyboardAnimationCallback
+import com.mr.ac_project_app.ui.InsetsWithKeyboardCallback
+import com.mr.ac_project_app.view.SaveSuccessActivity
 import com.mr.ac_project_app.view.share.ShareActivity
 
 class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
@@ -39,6 +42,13 @@ class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
         super.onCreate(savedInstanceState)
         binding = ActivityNewFolderBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val insetsWithKeyboardCallback = InsetsWithKeyboardCallback(window)
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root, insetsWithKeyboardCallback)
+        ViewCompat.setWindowInsetsAnimationCallback(binding.root, insetsWithKeyboardCallback)
+
+        val insetsWithKeyboardAnimationCallback = InsetsWithKeyboardAnimationCallback(binding.bodyLayout)
+        ViewCompat.setWindowInsetsAnimationCallback(binding.bodyLayout, insetsWithKeyboardAnimationCallback)
 
         binding.background.setOnClickListener {
             val dialog = MessageDialog(
@@ -90,6 +100,7 @@ class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
             )
             movingIntent.putExtra("saveType", SaveType.New)
             movingIntent.putExtra("link", link)
+            movingIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(movingIntent)
             finish()
             overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit)
@@ -117,6 +128,7 @@ class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
     private fun setBackButton() {
         binding.backButton.setOnClickListener {
             val intent = Intent(this@NewFolderActivity, ShareActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
             finish()
             overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit)

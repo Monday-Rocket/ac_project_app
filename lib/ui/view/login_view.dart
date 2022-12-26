@@ -10,6 +10,7 @@ import 'package:ac_project_app/cubits/login/login_user_state.dart';
 import 'package:ac_project_app/models/user/user.dart' as custom;
 import 'package:ac_project_app/provider/api/user/user_api.dart';
 import 'package:ac_project_app/provider/login/email_login.dart';
+import 'package:ac_project_app/provider/share_data_provider.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/text/custom_font.dart';
@@ -19,6 +20,7 @@ import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class LoginView extends StatelessWidget {
   const LoginView({super.key});
@@ -94,6 +96,7 @@ class LoginView extends StatelessWidget {
                 () => showBottomToast('가입된 계정이 없어 회원 가입 화면으로 이동합니다.'),
               );
             } else {
+              ShareDataProvider.loadServerData();
               Navigator.pushNamedAndRemoveUntil(
                 context,
                 Routes.home,
@@ -165,14 +168,10 @@ class LoginView extends StatelessWidget {
         var secondCheck = false;
         var thirdCheck = false;
 
-        var secondOpened = false;
-        var thirdOpened = false;
         return Wrap(
           children: [
             StatefulBuilder(
               builder: (context, setState) {
-                final secondController = ScrollController();
-                final thirdController = ScrollController();
                 return DecoratedBox(
                   decoration: const BoxDecoration(
                     color: Colors.white,
@@ -186,8 +185,10 @@ class LoginView extends StatelessWidget {
                       top: 33,
                       left: 24,
                       right: 24,
+                      bottom: 20,
                     ),
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(bottom: 37),
@@ -224,49 +225,56 @@ class LoginView extends StatelessWidget {
                               }
                             });
                           },
-                          child: Padding(
-                            padding: const EdgeInsets.only(bottom: 28),
-                            child: Row(
-                              children: [
-                                Center(
-                                  child: AnimatedContainer(
-                                    duration: const Duration(milliseconds: 200),
-                                    decoration: BoxDecoration(
-                                      color: firstCheck ? primary800 : grey100,
-                                      borderRadius: const BorderRadius.all(
-                                        Radius.circular(8),
+                          child: ColoredBox(
+                            color: Colors.white,
+                            child: Padding(
+                              padding: const EdgeInsets.only(bottom: 28),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Center(
+                                    child: AnimatedContainer(
+                                      duration:
+                                          const Duration(milliseconds: 200),
+                                      decoration: BoxDecoration(
+                                        color:
+                                            firstCheck ? primary800 : grey100,
+                                        borderRadius: const BorderRadius.all(
+                                          Radius.circular(8),
+                                        ),
+                                        border: Border.all(
+                                          width: 0,
+                                          color: Colors.transparent,
+                                        ),
                                       ),
-                                      border: Border.all(
-                                        width: 0,
-                                        color: Colors.transparent,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(2),
+                                        child: firstCheck
+                                            ? const Icon(
+                                                Icons.check,
+                                                size: 18,
+                                                color: Colors.white,
+                                              )
+                                            : const Icon(
+                                                Icons.check,
+                                                size: 18,
+                                                color: grey300,
+                                              ),
                                       ),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(2),
-                                      child: firstCheck
-                                          ? const Icon(
-                                              Icons.check,
-                                              size: 18,
-                                              color: Colors.white,
-                                            )
-                                          : const Icon(
-                                              Icons.check,
-                                              size: 18,
-                                              color: grey300,
-                                            ),
                                     ),
                                   ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 11),
-                                  child:
-                                      const Text('전체 동의').bold().fontSize(17),
-                                ),
-                              ],
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 11),
+                                    child:
+                                        const Text('전체 동의').bold().fontSize(17),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
                         Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             GestureDetector(
                               onTap: () {
@@ -275,111 +283,58 @@ class LoginView extends StatelessWidget {
                                   firstCheck = secondCheck && thirdCheck;
                                 });
                               },
-                              child: Padding(
-                                padding: const EdgeInsets.only(bottom: 15),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        AnimatedContainer(
-                                          duration:
-                                              const Duration(milliseconds: 200),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(2),
-                                            child: secondCheck
-                                                ? const Icon(
-                                                    Icons.check,
-                                                    size: 18,
-                                                    color: primary800,
-                                                  )
-                                                : const Icon(
-                                                    Icons.check,
-                                                    size: 18,
-                                                    color: grey300,
-                                                  ),
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 11),
-                                          child: const Text('개인정보 처리방침')
-                                              .weight(FontWeight.w500)
-                                              .fontSize(15),
-                                        ),
-                                      ],
-                                    ),
-                                    Center(
-                                      child: InkWell(
-                                        onTap: () {
-                                          setState(() {
-                                            secondOpened = !secondOpened;
-                                          });
-                                        },
-                                        child: AnimatedContainer(
-                                          duration:
-                                              const Duration(milliseconds: 200),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(2),
-                                            child: secondOpened
-                                                ? const Icon(
-                                                    Icons
-                                                        .keyboard_arrow_down_sharp,
-                                                    size: 20,
-                                                    color: grey500,
-                                                  )
-                                                : const Icon(
-                                                    Icons
-                                                        .keyboard_arrow_right_sharp,
-                                                    size: 20,
-                                                    color: grey500,
-                                                  ),
-                                          ),
+                              child: ColoredBox(
+                                color: Colors.white,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(bottom: 15),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      AnimatedContainer(
+                                        duration:
+                                            const Duration(milliseconds: 200),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(2),
+                                          child: secondCheck
+                                              ? const Icon(
+                                                  Icons.check,
+                                                  size: 18,
+                                                  color: primary800,
+                                                )
+                                              : const Icon(
+                                                  Icons.check,
+                                                  size: 18,
+                                                  color: grey300,
+                                                ),
                                         ),
                                       ),
-                                    ),
-                                  ],
+                                      Row(
+                                        children: [
+                                          Padding(
+                                            padding:
+                                                const EdgeInsets.only(left: 11),
+                                            child: const Text('개인정보 수집 및 이용 동의')
+                                                .weight(FontWeight.w500)
+                                                .fontSize(15),
+                                          ),
+                                          GestureDetector(
+                                            onTap: () => launchUrl(
+                                              Uri.parse(
+                                                approveFirstLink,
+                                              ),
+                                              mode: LaunchMode
+                                                  .externalApplication,
+                                            ),
+                                            child: const Text('[보기]')
+                                                .weight(FontWeight.w500)
+                                                .fontSize(15),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                            AnimatedContainer(
-                              height: secondOpened ? 140 : 0,
-                              duration: const Duration(milliseconds: 150),
-                              decoration: const BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(5)),
-                                color: grey100,
-                              ),
-                              child: secondOpened
-                                  ? Scrollbar(
-                                      controller: secondController,
-                                      child: SingleChildScrollView(
-                                        controller: secondController,
-                                        padding: EdgeInsets.zero,
-                                        child: const Padding(
-                                          padding: EdgeInsets.only(
-                                            left: 24,
-                                            top: 14,
-                                            right: 24,
-                                          ),
-                                          child: Text(
-                                            firstCheckText,
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w400,
-                                              color: grey600,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    )
-                                  : const SizedBox.shrink(),
-                            ),
-                            AnimatedContainer(
-                              height: secondOpened ? 15 : 0,
-                              duration: const Duration(milliseconds: 150),
                             ),
                           ],
                         ),
@@ -392,109 +347,58 @@ class LoginView extends StatelessWidget {
                                   firstCheck = secondCheck && thirdCheck;
                                 });
                               },
-                              child: Padding(
-                                padding: const EdgeInsets.only(bottom: 28),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        AnimatedContainer(
-                                          duration:
-                                              const Duration(milliseconds: 200),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(2),
-                                            child: thirdCheck
-                                                ? const Icon(
-                                                    Icons.check,
-                                                    size: 18,
-                                                    color: primary800,
-                                                  )
-                                                : const Icon(
-                                                    Icons.check,
-                                                    size: 18,
-                                                    color: grey300,
-                                                  ),
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 11),
-                                          child: const Text('서비스 이용방침')
-                                              .weight(FontWeight.w500)
-                                              .fontSize(15),
-                                        ),
-                                      ],
-                                    ),
-                                    InkWell(
-                                      onTap: () {
-                                        setState(() {
-                                          thirdOpened = !thirdOpened;
-                                        });
-                                      },
-                                      child: AnimatedContainer(
+                              child: ColoredBox(
+                                color: Colors.white,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(bottom: 28),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      AnimatedContainer(
                                         duration:
                                             const Duration(milliseconds: 200),
                                         child: Padding(
                                           padding: const EdgeInsets.all(2),
-                                          child: thirdOpened
+                                          child: thirdCheck
                                               ? const Icon(
-                                                  Icons
-                                                      .keyboard_arrow_down_sharp,
-                                                  size: 20,
-                                                  color: grey500,
+                                                  Icons.check,
+                                                  size: 18,
+                                                  color: primary800,
                                                 )
                                               : const Icon(
-                                                  Icons
-                                                      .keyboard_arrow_right_sharp,
-                                                  size: 20,
-                                                  color: grey500,
+                                                  Icons.check,
+                                                  size: 18,
+                                                  color: grey300,
                                                 ),
                                         ),
                                       ),
-                                    ),
-                                  ],
+                                      Row(
+                                        children: [
+                                          Padding(
+                                            padding:
+                                                const EdgeInsets.only(left: 11),
+                                            child: const Text('서비스 이용약관')
+                                                .weight(FontWeight.w500)
+                                                .fontSize(15),
+                                          ),
+                                          GestureDetector(
+                                            onTap: () => launchUrl(
+                                              Uri.parse(
+                                                approveSecondLink,
+                                              ),
+                                              mode: LaunchMode
+                                                  .externalApplication,
+                                            ),
+                                            child: const Text('[보기]')
+                                                .weight(FontWeight.w500)
+                                                .fontSize(15),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                            AnimatedContainer(
-                              height: thirdOpened ? 15 : 0,
-                              duration: const Duration(milliseconds: 150),
-                            ),
-                            AnimatedContainer(
-                              height: thirdOpened ? 140 : 0,
-                              duration: const Duration(milliseconds: 150),
-                              decoration: const BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(5)),
-                                color: grey100,
-                              ),
-                              child: thirdOpened
-                                  ? Scrollbar(
-                                      controller: thirdController,
-                                      child: SingleChildScrollView(
-                                        controller: thirdController,
-                                        padding: EdgeInsets.zero,
-                                        child: const Padding(
-                                          padding: EdgeInsets.only(
-                                            left: 24,
-                                            top: 14,
-                                            right: 24,
-                                          ),
-                                          child: Text(
-                                            secondCheckText,
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w400,
-                                              color: grey600,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    )
-                                  : const SizedBox.shrink(),
                             ),
                           ],
                         ),
@@ -589,6 +493,7 @@ class LoginView extends StatelessWidget {
               ),
             ),
           ),
+          const SizedBox(height: 12),
         ],
       ),
     );
