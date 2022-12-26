@@ -80,10 +80,7 @@ class _MyFolderPageState extends State<MyFolderPage>
                             final profile = state.profile;
                             return InkWell(
                               onTap: () {
-                                // FIXME Reload Image
-                                context
-                                    .read<GetProfileInfoCubit>()
-                                    .loadProfileData();
+                                showBottomToast('폴더가 삭제되었어요!');
                               },
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
@@ -249,8 +246,11 @@ class _MyFolderPageState extends State<MyFolderPage>
             shrinkWrap: true,
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             itemCount: folders.length,
-            separatorBuilder: (ctx, index) =>
-                const Divider(thickness: 1, height: 1),
+            separatorBuilder: (ctx, index) => const Divider(
+              thickness: 1,
+              height: 1,
+              color: greyTab,
+            ),
             itemBuilder: (ctx, index) {
               final folder = folders[index];
               final visible = folder.visible ?? true;
@@ -301,9 +301,10 @@ class _MyFolderPageState extends State<MyFolderPage>
                                     Align(
                                       alignment: Alignment.bottomRight,
                                       child: Padding(
-                                        padding: const EdgeInsets.only(bottom: 3),
-                                        child: SvgPicture.asset(
-                                          'assets/images/ic_lock.svg',
+                                        padding:
+                                            const EdgeInsets.only(bottom: 3),
+                                        child: Image.asset(
+                                          'assets/images/ic_lock.png',
                                         ),
                                       ),
                                     )
@@ -343,7 +344,8 @@ class _MyFolderPageState extends State<MyFolderPage>
                           const SizedBox.shrink()
                         else
                           InkWell(
-                            onTap: () => showFolderOptionsDialog(folder, context),
+                            onTap: () =>
+                                showFolderOptionsDialog(folder, context),
                             child: Padding(
                               padding: const EdgeInsets.all(8),
                               child: SvgPicture.asset('assets/images/more.svg'),
@@ -404,7 +406,9 @@ class _MyFolderPageState extends State<MyFolderPage>
               child: Padding(
                 padding: EdgeInsets.only(
                   top: 29,
-                  bottom: Platform.isAndroid ? MediaQuery.of(context).padding.bottom : 0,
+                  bottom: Platform.isAndroid
+                      ? MediaQuery.of(context).padding.bottom
+                      : 0,
                 ),
                 child: Column(
                   children: [

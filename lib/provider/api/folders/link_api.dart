@@ -42,7 +42,7 @@ class LinkApi {
         return UploadResultState.success;
       },
       error: (msg) {
-        if (msg == '2001') {
+        if (msg == '3000' || msg == '2001') {
           return UploadResultState.duplicated;
         }
         return UploadResultState.apiError;

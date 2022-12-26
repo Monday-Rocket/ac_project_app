@@ -1,19 +1,14 @@
 package com.mr.ac_project_app.view.share
 
 import android.app.Application
-import android.content.ContentValues
-import android.database.Cursor
 import android.text.TextUtils
-import android.util.Log
 import android.webkit.URLUtil
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import com.mr.ac_project_app.LinkPoolApp
-import com.mr.ac_project_app.data.ShareContract
+import com.mr.ac_project_app.data.ShareDBFunctions
 import com.mr.ac_project_app.data.ShareDbHelper
 import com.mr.ac_project_app.data.SharedPrefHelper
 import com.mr.ac_project_app.model.FolderModel
-import com.mr.ac_project_app.model.FolderType
 import com.mr.ac_project_app.utils.convert
 import com.mr.ac_project_app.utils.getCurrentDateTime
 import kotlinx.coroutines.CoroutineScope
@@ -119,76 +114,10 @@ class ShareViewModel(application: Application) : AndroidViewModel(application) {
             putString(savedLink.value, json.convert())
             apply()
         }
-
-        val db = dbHelper.writableDatabase
-        val cv = ContentValues().apply {
-            put(ShareContract.Folder.imageLink, folder.imageUrl)
-        }
-        db.update(
-            ShareContract.Folder.table,
-            cv,
-            "${ShareContract.Folder.folderName} = ?",
-            arrayOf(folder.name)
-        )
-        db.close()
+        ShareDBFunctions.saveLink(dbHelper, folder)
     }
 
-    fun getFoldersFromDB(): MutableList<FolderModel> {
-        val db = dbHelper.readableDatabase
-        val folderColumns =
-            arrayOf(
-                ShareContract.Folder.seq,
-                ShareContract.Folder.folderName,
-                ShareContract.Folder.visible,
-                ShareContract.Folder.imageLink
-            )
-
-        val folderCursor =
-            db.query(
-                ShareContract.Folder.table,
-                folderColumns,
-                null,
-                null,
-                null,
-                null,
-                "${ShareContract.Folder.time} DESC"
-            )
-
-        val folders = mutableListOf<FolderModel>()
-        folders.addAll(
-            getFolders(
-                folderCursor,
-            )
-        )
-        db.close()
-        return folders
+    fun getFoldersFromDB(): Collection<FolderModel> {
+        return ShareDBFunctions.getFoldersFromDB(dbHelper)
     }
-
-    private fun getFolders(
-        folderCursor: Cursor
-    ): MutableList<FolderModel> {
-        val folders = mutableListOf<FolderModel>()
-        with(folderCursor) {
-            while (moveToNext()) {
-                val folderName =
-                    getString(getColumnIndexOrThrow(ShareContract.Folder.folderName))
-                val visible = getInt(getColumnIndexOrThrow(ShareContract.Folder.visible)) == 1
-                val imageLink =
-                    getString(getColumnIndexOrThrow(ShareContract.Folder.imageLink))
-
-                folders.add(
-                    FolderModel(
-                        FolderType.One,
-                        imageLink,
-                        folderName,
-                        visible
-                    )
-                )
-            }
-        }
-        folderCursor.close()
-        return folders
-    }
-
-
 }

@@ -53,10 +53,6 @@ class GetFoldersCubit extends Cubit<FoldersState> {
     }
   }
 
-  List<Folder> getTotalFolders() {
-    return folders;
-  }
-
   Future<bool> transferVisible(Folder folder) async {
     final result = await folderApi.changeVisible(folder);
     await ShareDB.changeVisible(folder);

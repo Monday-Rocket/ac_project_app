@@ -10,6 +10,7 @@ import 'package:ac_project_app/cubits/login/login_user_state.dart';
 import 'package:ac_project_app/models/user/user.dart' as custom;
 import 'package:ac_project_app/provider/api/user/user_api.dart';
 import 'package:ac_project_app/provider/login/email_login.dart';
+import 'package:ac_project_app/provider/share_data_provider.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/text/custom_font.dart';
@@ -95,6 +96,7 @@ class LoginView extends StatelessWidget {
                 () => showBottomToast('가입된 계정이 없어 회원 가입 화면으로 이동합니다.'),
               );
             } else {
+              ShareDataProvider.loadServerData();
               Navigator.pushNamedAndRemoveUntil(
                 context,
                 Routes.home,

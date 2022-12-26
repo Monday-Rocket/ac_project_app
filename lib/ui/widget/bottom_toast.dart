@@ -6,7 +6,7 @@ void showBottomToast(String text, {double? bottomPadding}) {
   showToastWidget(
     Container(
       margin:
-          EdgeInsets.only(left: 24, right: 24, bottom: bottomPadding ?? 100),
+      EdgeInsets.only(left: 24, right: 24, bottom: bottomPadding ?? 100),
       width: double.infinity,
       height: 38,
       decoration: const BoxDecoration(
@@ -20,12 +20,13 @@ void showBottomToast(String text, {double? bottomPadding}) {
             color: Colors.white,
             fontWeight: FontWeight.bold,
             fontSize: 13,
-            height: 15.5 / 13,
             letterSpacing: -0.1,
           ),
         ),
       ),
     ),
     position: const ToastPosition(align: Alignment.bottomCenter),
+    animationCurve: Curves.ease,
+    animationDuration: Duration.zero,
   );
 }

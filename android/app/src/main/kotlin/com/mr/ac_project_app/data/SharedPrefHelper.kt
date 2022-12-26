@@ -18,4 +18,18 @@ object SharedPrefHelper {
             Context.MODE_PRIVATE
         )
     }
+
+    fun clear(context: Context) {
+        val linkSharedPref = getNewLinks(context)
+        val folderSharedPref = getNewFolders(context)
+        with(linkSharedPref.edit()) {
+            clear()
+            apply()
+        }
+
+        with(folderSharedPref.edit()) {
+            clear()
+            apply()
+        }
+    }
 }

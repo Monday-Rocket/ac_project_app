@@ -6,10 +6,13 @@ import 'package:ac_project_app/cubits/links/edit_state.dart';
 import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/models/link/link.dart';
+import 'package:ac_project_app/provider/comment_temp_data_provider.dart';
 import 'package:ac_project_app/ui/widget/bottom_dialog.dart';
 import 'package:ac_project_app/ui/widget/buttons/bottom_sheet_button.dart';
+import 'package:ac_project_app/ui/widget/dialog.dart';
 import 'package:ac_project_app/util/date_utils.dart';
 import 'package:ac_project_app/util/get_widget_arguments.dart';
+import 'package:ac_project_app/util/logger.dart';
 import 'package:ac_project_app/util/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -47,75 +50,142 @@ class LinkDetailView extends StatelessWidget {
         child: KeyboardVisibilityBuilder(
           builder: (context, visible) {
             return BlocBuilder<DetailEditCubit, EditState>(
-              builder: (cubitContext, state) {
+              builder: (cubitContext, editState) {
                 final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
-                return Scaffold(
-                  resizeToAvoidBottomInset: false,
-                  appBar: AppBar(
-                    backgroundColor: Colors.transparent,
-                    elevation: 0,
-                    leading: IconButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      icon: SvgPicture.asset('assets/images/ic_back.svg'),
-                      padding: const EdgeInsets.only(left: 20, right: 8),
-                    ),
-                    actions: [
-                      InkWell(
-                        onTap: () => isMyLink
-                            ? showMyLinkOptionsDialog(link, context)
-                            : showLinkOptionsDialog(
-                                link,
-                                context,
-                                callback: () => Navigator.pop(context),
-                              ),
-                        child: Container(
-                          margin: const EdgeInsets.only(right: 24),
-                          child: SvgPicture.asset(
-                            'assets/images/more.svg',
-                            width: 25,
-                            height: 25,
-                          ),
-                        ),
-                      ),
-                    ],
-                    systemOverlayStyle: SystemUiOverlayStyle.dark,
-                  ),
-                  body: buildBody(
-                    scrollController,
-                    state,
-                    link,
-                    cubitContext,
-                    isMyLink,
-                    keyboardHeight,
-                  ),
-                  bottomSheet: Builder(
-                    builder: (_) {
-                      if (state == EditState.edit) {
-                        return buildBottomSheetButton(
-                          context: context,
-                          text: '확인',
-                          keyboardVisible: visible,
-                          onPressed: () => cubitContext
-                              .read<DetailEditCubit>()
-                              .saveComment(link)
-                              .then(
-                                (value) =>
-                                    value ? Navigator.pop(context) : null,
-                              ),
-                        );
-                      } else {
-                        return const SizedBox.shrink();
-                      }
+                if (editState == EditState.edit) {
+                  return WillPopScope(
+                    onWillPop: () async {
+                      goBackPage(editState, context, link.id);
+                      return true;
                     },
-                  ),
-                );
+                    child: buildMainScreen(
+                      editState,
+                      context,
+                      isMyLink,
+                      link,
+                      scrollController,
+                      cubitContext,
+                      keyboardHeight,
+                      visible,
+                    ),
+                  );
+                } else {
+                  return buildMainScreen(
+                    editState,
+                    context,
+                    isMyLink,
+                    link,
+                    scrollController,
+                    cubitContext,
+                    keyboardHeight,
+                    visible,
+                  );
+                }
               },
             );
           },
         ),
       ),
+    );
+  }
+
+  Scaffold buildMainScreen(
+    EditState editState,
+    BuildContext context,
+    bool isMyLink,
+    Link link,
+    ScrollController scrollController,
+    BuildContext cubitContext,
+    double keyboardHeight,
+    bool visible,
+  ) {
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          onPressed: () {
+            goBackPage(editState, context, link.id);
+          },
+          icon: SvgPicture.asset('assets/images/ic_back.svg'),
+          padding: const EdgeInsets.only(left: 20, right: 8),
+        ),
+        actions: [
+          InkWell(
+            onTap: () => isMyLink
+                ? showMyLinkOptionsDialog(link, context)
+                : showLinkOptionsDialog(
+                    link,
+                    context,
+                    callback: () => Navigator.pop(context),
+                  ),
+            child: Container(
+              margin: const EdgeInsets.only(right: 24),
+              child: SvgPicture.asset(
+                'assets/images/more.svg',
+                width: 25,
+                height: 25,
+              ),
+            ),
+          ),
+        ],
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
+      ),
+      body: buildBody(
+        scrollController,
+        editState,
+        link,
+        cubitContext,
+        isMyLink,
+        keyboardHeight,
+      ),
+      bottomSheet: Builder(
+        builder: (_) {
+          if (editState == EditState.edit) {
+            return buildBottomSheetButton(
+              context: context,
+              text: '확인',
+              keyboardVisible: visible,
+              onPressed: () =>
+                  cubitContext.read<DetailEditCubit>().saveComment(link).then(
+                        (value) => value ? Navigator.pop(context) : null,
+                      ),
+            );
+          } else {
+            return const SizedBox.shrink();
+          }
+        },
+      ),
+    );
+  }
+
+  void goBackPage(EditState editState, BuildContext context, int? linkId) {
+    if (editState == EditState.edit) {
+      showWaitDialog(
+        context,
+        callback: () {
+          final value = context.read<DetailEditCubit>().textController.text;
+          saveKeyValue(linkId!.toString(), value).then((value) {
+            Navigator.pop(context); // 창 닫기
+            Navigator.pop(context); // 뒤로 가기
+          });
+        },
+      );
+    } else {
+      Navigator.pop(context);
+    }
+  }
+
+  void showWaitDialog(
+    BuildContext context, {
+    required void Function() callback,
+  }) {
+    showPopUp(
+      title: '작성을 중단하시겠어요?',
+      content: '작성 중인 내용은 임시저장돼요',
+      parentContext: context,
+      callback: callback,
     );
   }
 
@@ -250,18 +320,10 @@ class LinkDetailView extends StatelessWidget {
                   visible: isMyLink,
                   child: GestureDetector(
                     onTap: () {
-                      FocusManager.instance.primaryFocus?.unfocus();
-                      Future.delayed(
-                        const Duration(milliseconds: 200),
-                        cubitContext.read<DetailEditCubit>().toggle,
-                      );
+                      toggleEditorWithDialog(state, cubitContext, link.id);
                     },
                     onDoubleTap: () {
-                      FocusManager.instance.primaryFocus?.unfocus();
-                      Future.delayed(
-                        const Duration(milliseconds: 200),
-                        cubitContext.read<DetailEditCubit>().toggle,
-                      );
+                      toggleEditorWithDialog(state, cubitContext, link.id);
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(12),
@@ -294,7 +356,7 @@ class LinkDetailView extends StatelessWidget {
                           link.describe ?? '',
                           style: const TextStyle(
                             fontSize: 16,
-                            color: lightGrey700,
+                            color: e6Grey700,
                             letterSpacing: -0.1,
                             height: 26 / 16,
                           ),
@@ -352,6 +414,42 @@ class LinkDetailView extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  void toggleEditorWithDialog(
+    EditState state,
+    BuildContext cubitContext,
+    int? linkId,
+  ) {
+    if (state == EditState.edit) {
+      showWaitDialog(
+        cubitContext,
+        callback: () {
+          final value =
+              cubitContext.read<DetailEditCubit>().textController.text;
+          Log.i('value: $value');
+          saveKeyValue(linkId!.toString(), value).then(
+            (_) => toggleEditor(cubitContext)
+                .then((_) => Navigator.pop(cubitContext)),
+          );
+        },
+      );
+    } else {
+      getValueFromKey(linkId!.toString()).then((temp) {
+        if (temp.isNotEmpty) {
+          cubitContext.read<DetailEditCubit>().textController.text = temp;
+        }
+        toggleEditor(cubitContext);
+      });
+    }
+  }
+
+  Future<void> toggleEditor(BuildContext cubitContext) async {
+    FocusManager.instance.primaryFocus?.unfocus();
+    await Future.delayed(
+      const Duration(milliseconds: 200),
+      cubitContext.read<DetailEditCubit>().toggle,
     );
   }
 }

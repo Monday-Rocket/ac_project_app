@@ -1,11 +1,14 @@
 // ignore_for_file: strict_raw_type
 
+import 'dart:async';
+
 import 'package:ac_project_app/models/job/topic.dart';
 import 'package:ac_project_app/models/result.dart';
 import 'package:ac_project_app/models/user/detail_user.dart';
 import 'package:ac_project_app/models/user/user.dart';
 import 'package:ac_project_app/provider/api/custom_client.dart';
 import 'package:ac_project_app/provider/logout.dart';
+import 'package:ac_project_app/provider/share_data_provider.dart';
 
 class UserApi {
   final client = CustomClient();
@@ -66,6 +69,11 @@ class UserApi {
   }
 
   Future<bool> deleteUser() async {
+    // 1. 공유패널 데이터 비우기
+    unawaited(ShareDataProvider.clearAllData());
+
+    // 2. 데이터 삭제
+    // 3. 로그아웃
     final result = await client.deleteUri('/users');
     return result.when(
       success: (_) async => logoutWithoutPush(),

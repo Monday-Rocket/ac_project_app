@@ -137,7 +137,7 @@ class _EmailSignUpViewState extends State<EmailSignUpView>
                       if (isEmailSent) {
                         showBottomToast('이미 이메일이 발송 되었습니다.');
                       } else {
-                        Email.send(context, emailString);
+                        Email.send(context, emailString, '가입');
                         setState(() {
                           isEmailSent = true;
                         });

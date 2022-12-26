@@ -141,54 +141,57 @@ class _SearchViewState extends State<SearchView> {
                                 vertical: 18,
                                 horizontal: 24,
                               ),
-                              child: Container(
-                                margin: const EdgeInsets.symmetric(vertical: 5),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    SizedBox(
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SizedBox(
+                                    height: 115,
+                                    child: Container(
+                                      margin: const EdgeInsets.symmetric(
+                                          vertical: 5),
                                       width: (width - 24 * 2) - 159 - 20,
                                       child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                link.title ?? '',
-                                                maxLines: 1,
-                                                style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16,
-                                                  color: blackBold,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  link.title ?? '',
+                                                  maxLines: 1,
+                                                  style: const TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 16,
+                                                    color: blackBold,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    height: 19 / 16,
+                                                  ),
                                                 ),
-                                              ),
-                                              const SizedBox(
-                                                height: 7,
-                                              ),
-                                              Text(
-                                                link.describe ?? '\n\n',
-                                                maxLines: 2,
-                                                style: const TextStyle(
-                                                  fontSize: 12,
-                                                  color: greyText,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
+                                                const SizedBox(height: 7),
+                                                Text(
+                                                  link.describe ?? '\n\n',
+                                                  maxLines: 2,
+                                                  style: const TextStyle(
+                                                    fontSize: 12,
+                                                    color: greyText,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
                                                 ),
-                                              ),
-                                            ],
+                                              ],
+                                            ),
                                           ),
-                                          Container(
-                                            margin:
-                                                const EdgeInsets.only(top: 30),
+                                          Align(
+                                            alignment: Alignment.bottomLeft,
                                             child: Text(
                                               link.url ?? '',
                                               maxLines: 1,
@@ -202,7 +205,10 @@ class _SearchViewState extends State<SearchView> {
                                         ],
                                       ),
                                     ),
-                                    ClipRRect(
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 4),
+                                    child: ClipRRect(
                                       borderRadius: const BorderRadius.all(
                                         Radius.circular(7),
                                       ),
@@ -233,9 +239,9 @@ class _SearchViewState extends State<SearchView> {
                                                 height: 116,
                                               ),
                                       ),
-                                    )
-                                  ],
-                                ),
+                                    ),
+                                  )
+                                ],
                               ),
                             ),
                           );

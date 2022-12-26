@@ -21,7 +21,7 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:share_plus/share_plus.dart';
 
-Future<bool?> showMyLinkOptionsDialog(Link link, BuildContext parentContext) {
+Future<bool?> showMyLinkOptionsDialog(Link link, BuildContext parentContext, {void Function()? popCallback}) {
   return showModalBottomSheet<bool?>(
     backgroundColor: Colors.transparent,
     context: parentContext,
@@ -38,7 +38,7 @@ Future<bool?> showMyLinkOptionsDialog(Link link, BuildContext parentContext) {
                     top: 29,
                     bottom: Platform.isAndroid
                         ? MediaQuery.of(context).padding.bottom
-                        : 0,
+                        : 16,
                   ),
                   child: Column(
                     children: [
@@ -72,7 +72,11 @@ Future<bool?> showMyLinkOptionsDialog(Link link, BuildContext parentContext) {
                               onTap: () {
                                 DeleteLink.delete(link).then((result) {
                                   Navigator.pop(context);
-                                  Navigator.pop(parentContext, 'deleted');
+                                  if (popCallback != null) {
+                                    popCallback.call();
+                                  } else {
+                                    Navigator.pop(parentContext, 'deleted');
+                                  }
                                   if (result) {
                                     showBottomToast('링크가 삭제되었어요!');
                                   }
@@ -116,7 +120,7 @@ Future<bool?> showLinkOptionsDialog(
                     top: 29,
                     bottom: Platform.isAndroid
                         ? MediaQuery.of(context).padding.bottom
-                        : 0,
+                        : 16,
                   ),
                   child: Column(
                     children: [
@@ -215,7 +219,7 @@ Future<bool?> showUserOptionDialog(
                     top: 29,
                     bottom: Platform.isAndroid
                         ? MediaQuery.of(context).padding.bottom
-                        : 0,
+                        : 16,
                   ),
                   child: Column(
                     children: [
@@ -520,7 +524,9 @@ Future<bool?> showAddFolderDialog(
                               return Container(
                                 margin: EdgeInsets.only(
                                   top: 50,
-                                  bottom: Platform.isAndroid ? MediaQuery.of(context).padding.bottom : 0,
+                                  bottom: Platform.isAndroid
+                                      ? MediaQuery.of(context).padding.bottom
+                                      : 16,
                                 ),
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
@@ -588,28 +594,32 @@ void saveEmptyFolder(
   );
 
   context.read<FolderNameCubit>().add(folder).then((result) {
-    Navigator.pop(context);
-    showBottomToast('새로운 폴더가 생성되었어요!');
+    if (result) {
+      Navigator.pop(context);
+      showBottomToast('새로운 폴더가 생성되었어요!');
 
-    if (isFromUpload ?? false) {
-      parentContext
-          .read<GetFoldersCubit>()
-          .getFoldersWithoutUnclassified()
-          .then((_) {
-        runCallback(
-          parentContext,
-          moveToMyLinksView: moveToMyLinksView,
-          callback: callback,
-        );
-      });
+      if (isFromUpload ?? false) {
+        parentContext
+            .read<GetFoldersCubit>()
+            .getFoldersWithoutUnclassified()
+            .then((_) {
+          runCallback(
+            parentContext,
+            moveToMyLinksView: moveToMyLinksView,
+            callback: callback,
+          );
+        });
+      } else {
+        parentContext.read<GetFoldersCubit>().getFolders().then((_) {
+          runCallback(
+            parentContext,
+            moveToMyLinksView: moveToMyLinksView,
+            callback: callback,
+          );
+        });
+      }
     } else {
-      parentContext.read<GetFoldersCubit>().getFolders().then((_) {
-        runCallback(
-          parentContext,
-          moveToMyLinksView: moveToMyLinksView,
-          callback: callback,
-        );
-      });
+      showBottomToast('중복된 폴더 이름입니다!');
     }
   });
 }

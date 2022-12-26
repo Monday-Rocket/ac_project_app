@@ -324,6 +324,104 @@
             </objects>
             <point key="canvasLocation" x="1185" y="-25"/>
         </scene>
+        <!--Comment Overflow Dialog View Controller-->
+        <scene sceneID="cZd-Di-ts9">
+            <objects>
+                <viewController storyboardIdentifier="CommentOverflowDialog" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Mad-pS-gew" customClass="CommentOverflowDialogViewController" customModule="Extension" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="m32-tb-Vj5">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Kqq-jb-Bs0">
+                                <rect key="frame" x="0.0" y="59" width="393" height="759"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain"/>
+                                <connections>
+                                    <action selector="onCloseClick:" destination="Mad-pS-gew" eventType="touchDown" id="zpV-SD-sFR"/>
+                                </connections>
+                            </button>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ixK-nP-2dX">
+                                <rect key="frame" x="54" y="325.66666666666669" width="285" height="201.00000000000006"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="업로드 실패" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Vyo-rd-p8b">
+                                        <rect key="frame" x="97" y="32" width="91.333333333333314" height="24"/>
+                                        <fontDescription key="fontDescription" name="Pretendard-Bold" family="Pretendard" pointSize="20"/>
+                                        <color key="textColor" name="grey900"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="링크 코멘트는 500자 이내로 작성해주세요" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Bt9-tI-Caa">
+                                        <rect key="frame" x="64.000000000000014" y="66" width="157.33333333333337" height="33.666666666666657"/>
+                                        <fontDescription key="fontDescription" name="Pretendard-Medium" family="Pretendard" pointSize="14"/>
+                                        <color key="textColor" name="grey500"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="C9w-Ig-Dab">
+                                        <rect key="frame" x="20" y="132.66666666666663" width="245" height="52.666666666666657"/>
+                                        <color key="tintColor" name="primary600"/>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="filled" title="확인하기">
+                                            <fontDescription key="titleFontDescription" name="Pretendard-Bold" family="Pretendard" pointSize="16"/>
+                                        </buttonConfiguration>
+                                        <connections>
+                                            <action selector="onCloseClick:" destination="Mad-pS-gew" eventType="touchDown" id="trG-mP-auD"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rGJ-Uw-ABT">
+                                        <rect key="frame" x="247" y="14" width="24" height="24"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="24" id="tBj-kc-BBc"/>
+                                            <constraint firstAttribute="height" constant="24" id="w1V-rl-1Yh"/>
+                                        </constraints>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="plain" image="btn_x_primary"/>
+                                        <connections>
+                                            <action selector="onCloseClick:" destination="Mad-pS-gew" eventType="touchDown" id="U7q-Ax-WGm"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstItem="C9w-Ig-Dab" firstAttribute="top" secondItem="Bt9-tI-Caa" secondAttribute="bottom" constant="33" id="4JO-dF-sfj"/>
+                                    <constraint firstAttribute="trailing" secondItem="rGJ-Uw-ABT" secondAttribute="trailing" constant="14" id="EEa-JZ-L92"/>
+                                    <constraint firstItem="C9w-Ig-Dab" firstAttribute="leading" secondItem="ixK-nP-2dX" secondAttribute="leading" constant="20" id="Jkj-UL-c6U"/>
+                                    <constraint firstAttribute="trailing" secondItem="C9w-Ig-Dab" secondAttribute="trailing" constant="20" id="WRF-n9-X9l"/>
+                                    <constraint firstItem="rGJ-Uw-ABT" firstAttribute="top" secondItem="ixK-nP-2dX" secondAttribute="top" constant="14" id="YdF-eP-L2c"/>
+                                    <constraint firstAttribute="height" constant="201" id="a1Z-sR-cpw"/>
+                                    <constraint firstItem="Bt9-tI-Caa" firstAttribute="centerX" secondItem="ixK-nP-2dX" secondAttribute="centerX" id="ciJ-bI-v4e"/>
+                                    <constraint firstAttribute="width" constant="285" id="fZx-aC-83Z"/>
+                                    <constraint firstItem="Bt9-tI-Caa" firstAttribute="top" secondItem="Vyo-rd-p8b" secondAttribute="bottom" constant="10" id="hnK-rU-ztR"/>
+                                    <constraint firstItem="Vyo-rd-p8b" firstAttribute="top" secondItem="ixK-nP-2dX" secondAttribute="top" constant="32" id="n6G-EO-cZB"/>
+                                    <constraint firstAttribute="bottom" secondItem="C9w-Ig-Dab" secondAttribute="bottom" constant="15.666666666666742" id="qiq-fk-HaP"/>
+                                    <constraint firstItem="Vyo-rd-p8b" firstAttribute="centerX" secondItem="ixK-nP-2dX" secondAttribute="centerX" id="thX-pe-Ivj"/>
+                                </constraints>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounce" value="YES"/>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                        <integer key="value" value="20"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </view>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="WZc-io-9lr"/>
+                        <color key="backgroundColor" red="0.098039215690000001" green="0.1215686275" blue="0.15686274510000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="Kqq-jb-Bs0" firstAttribute="top" secondItem="WZc-io-9lr" secondAttribute="top" id="2Ac-jn-2Ne"/>
+                            <constraint firstItem="ixK-nP-2dX" firstAttribute="centerY" secondItem="m32-tb-Vj5" secondAttribute="centerY" id="ATW-uk-FWG"/>
+                            <constraint firstItem="Kqq-jb-Bs0" firstAttribute="leading" secondItem="WZc-io-9lr" secondAttribute="leading" id="BkV-Cj-zwo"/>
+                            <constraint firstItem="Kqq-jb-Bs0" firstAttribute="trailing" secondItem="WZc-io-9lr" secondAttribute="trailing" id="JN8-wb-U4F"/>
+                            <constraint firstItem="ixK-nP-2dX" firstAttribute="centerX" secondItem="m32-tb-Vj5" secondAttribute="centerX" id="acW-gZ-zzq"/>
+                            <constraint firstItem="Kqq-jb-Bs0" firstAttribute="bottom" secondItem="WZc-io-9lr" secondAttribute="bottom" id="zjL-LX-UQI"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="button" destination="C9w-Ig-Dab" id="zMK-YJ-I3W"/>
+                        <outlet property="contentLabel" destination="Bt9-tI-Caa" id="uTB-S8-8xa"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="81A-5t-BGX" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1900" y="-25.35211267605634"/>
+        </scene>
     </scenes>
     <color key="tintColor" name="primary600"/>
     <resources>

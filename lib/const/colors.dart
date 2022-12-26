@@ -2,15 +2,22 @@ import 'dart:ui';
 
 const greyLoginText = Color(0xFF757575);
 const grey100 = Color(0xFFF5F7FA);
+const ccGrey100 = Color(0xCCF5F7FA);
+
 const grey200 = Color(0xFFE6EAF1);
+const ccGrey200 = Color(0xCCE6EAF1);
+
 const grey300 = Color(0xFFCFD4DE);
 const grey400 = Color(0xFFB0B8C1);
 const grey500 = Color(0xFF7A828B);
 const grey600 = Color(0xFF606873);
 const grey700 = Color(0xFF424852);
 const lightGrey700 = Color(0x80424852);
+const e6Grey700 = Color(0xE7424852);
+
 const grey800 = Color(0xFF30343E);
 const grey900 = Color(0xFF191F28);
+const f3Grey900 = Color(0xF3191F28);
 
 const blackBold = Color(0xFF13181E);
 
@@ -19,6 +26,8 @@ const greyTab = Color(0xFFECEDEE);
 
 const primary100 = Color(0xFFF6F7FE);
 const primary200 = Color(0xFFD8D0FF);
+const primary66_200 = Color(0x66D8D0FF);
+
 const primary400 = Color(0xFFA07EFF);
 const primary600 = Color(0xFF804DFF);
 const primary700 = Color(0xFF741FFF);

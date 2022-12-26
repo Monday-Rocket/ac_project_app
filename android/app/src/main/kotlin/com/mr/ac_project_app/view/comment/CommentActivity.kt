@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
-import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -15,17 +14,22 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.activity.viewModels
+import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.FragmentActivity
 import com.mr.ac_project_app.MainActivity
 import com.mr.ac_project_app.R
 import com.mr.ac_project_app.databinding.ActivityCommentBinding
+import com.mr.ac_project_app.dialog.CloseDialogInterface
 import com.mr.ac_project_app.dialog.ConfirmDialogInterface
+import com.mr.ac_project_app.dialog.ErrorDialogInterface
 import com.mr.ac_project_app.dialog.MessageDialog
 import com.mr.ac_project_app.model.SaveType
+import com.mr.ac_project_app.ui.InsetsWithKeyboardAnimationCallback
+import com.mr.ac_project_app.ui.InsetsWithKeyboardCallback
 
-class CommentActivity : FragmentActivity(), ConfirmDialogInterface {
+class CommentActivity : FragmentActivity(), ConfirmDialogInterface, ErrorDialogInterface, CloseDialogInterface {
 
     private lateinit var binding: ActivityCommentBinding
 
@@ -36,6 +40,13 @@ class CommentActivity : FragmentActivity(), ConfirmDialogInterface {
 
         binding = ActivityCommentBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val insetsWithKeyboardCallback = InsetsWithKeyboardCallback(window)
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root, insetsWithKeyboardCallback)
+        ViewCompat.setWindowInsetsAnimationCallback(binding.root, insetsWithKeyboardCallback)
+
+        val insetsWithKeyboardAnimationCallback = InsetsWithKeyboardAnimationCallback(binding.bodyLayout)
+        ViewCompat.setWindowInsetsAnimationCallback(binding.bodyLayout, insetsWithKeyboardAnimationCallback)
 
         val saveType = intent.getSerializableExtra("saveType") as SaveType
 
@@ -52,19 +63,33 @@ class CommentActivity : FragmentActivity(), ConfirmDialogInterface {
         binding.saveCommentButton.setOnClickListener {
 
             val link = intent.getStringExtra("link") ?: ""
-            viewModel.addComment(link, binding.commentTextField.text.toString())
+            val comment = binding.commentTextField.text
 
-            val saveText = if (saveType == SaveType.New) "새" else "선택한"
-            val contentText = "$saveText 폴더에 링크와 코멘트가 담겼어요"
-            val dialog = MessageDialog(
-                title = "저장완료!",
-                content = contentText,
-                confirmDialogInterface = this,
-                imageId = null,
-                buttonText = "확인하기"
-            )
-            dialog.isCancelable = true
-            dialog.show(supportFragmentManager, "Comment Saved Dialog")
+            if (comment.length > 500) {
+                val dialog = MessageDialog(
+                    title = "업로드 실패",
+                    content = "링크 코멘트는 500자 이내로\n작성해주세요",
+                    errorDialogInterface = this,
+                    imageId = null,
+                    buttonText = "확인",
+                )
+                dialog.isCancelable = true
+                dialog.show(supportFragmentManager, "Comment Not Saved Dialog")
+            } else {
+                viewModel.addComment(link, comment.toString())
+
+                val saveText = if (saveType == SaveType.New) "새" else "선택한"
+                val contentText = "$saveText 폴더에 링크와 코멘트가 담겼어요"
+                val dialog = MessageDialog(
+                    title = "저장완료!",
+                    content = contentText,
+                    confirmDialogInterface = this,
+                    imageId = null,
+                    buttonText = "확인하기"
+                )
+                dialog.isCancelable = true
+                dialog.show(supportFragmentManager, "Comment Saved Dialog")
+            }
         }
     }
 
@@ -90,7 +115,7 @@ class CommentActivity : FragmentActivity(), ConfirmDialogInterface {
             title = "코멘트를 작성중이에요",
             content = "코멘트 작성을 그만두셔도\n" +
                     "링크는 선택한 폴더에 저장돼요!",
-            confirmDialogInterface = this,
+            closeDialogInterface = this,
             imageId = R.drawable.comments_icon,
             buttonText = "다음에 만들기"
         )
@@ -128,7 +153,7 @@ class CommentActivity : FragmentActivity(), ConfirmDialogInterface {
                         }
                     }
                 } catch (e: Exception) {
-                    return true;
+                    return true
                 }
                 return false
             }
@@ -154,5 +179,13 @@ class CommentActivity : FragmentActivity(), ConfirmDialogInterface {
         val intent = Intent(this@CommentActivity, MainActivity::class.java)
         startActivity(intent)
         finish()
+    }
+
+    override fun onErrorConfirmedClick() {
+
+    }
+
+    override fun onCloseClick() {
+        finishAffinity()
     }
 }

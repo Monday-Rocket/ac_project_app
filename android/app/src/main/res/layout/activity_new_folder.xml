@@ -33,18 +33,19 @@
         <TextView
             android:id="@+id/title_text"
             android:layout_width="wrap_content"
-            android:layout_height="28dp"
-            android:layout_marginTop="30dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginEnd="0dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="60dp"
             android:drawablePadding="8dp"
             android:fontFamily="@font/pretendard_bold"
             android:text="@string/new_folder_title"
             android:textColor="@color/grey900"
             android:textSize="20sp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/folder_name_edit_text"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             tools:ignore="UseCompatTextViewDrawableXml" />
 
         <TextView
@@ -81,53 +82,55 @@
             android:id="@+id/folder_name_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="60dp"
             android:layout_marginHorizontal="24dp"
-            android:hint="@string/new_folder_name"
-            android:textColorHint="@color/grey400"
-            android:fontFamily="@font/pretendard_medium"
-            android:textSize="17sp"
-            android:textColor="@color/grey800"
-            android:theme="@style/EditTextTheme"
+            android:layout_marginBottom="16dp"
             android:drawableEnd="@drawable/btn_x_small"
+            android:fontFamily="@font/pretendard_medium"
+            android:hint="@string/new_folder_name"
             android:imeOptions="actionDone"
             android:inputType="text"
-            app:layout_constraintTop_toBottomOf="@id/title_text"
-            app:layout_constraintStart_toStartOf="parent"
+            android:textColor="@color/grey800"
+            android:textColorHint="@color/grey400"
+            android:textSize="17sp"
+            android:theme="@style/EditTextTheme"
+            app:layout_constraintBottom_toTopOf="@+id/folder_visible_text"
             app:layout_constraintEnd_toEndOf="parent"
-            tools:targetApi="o">
-        </EditText>
+            app:layout_constraintStart_toStartOf="parent"
+            tools:targetApi="o"
+            android:importantForAutofill="no" />
 
         <TextView
             android:id="@+id/folder_visible_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/invisible_folder"
+            android:layout_marginStart="24dp"
+            android:layout_marginBottom="50dp"
             android:fontFamily="@font/pretendard_medium"
+            android:text="@string/invisible_folder"
             android:textColor="@color/grey800"
             android:textSize="16sp"
-            android:layout_marginTop="16dp"
-            android:layout_marginStart="24dp"
-            app:layout_constraintTop_toBottomOf="@id/folder_name_edit_text"
+            app:layout_constraintBottom_toTopOf="@+id/save_folder_button"
             app:layout_constraintStart_toStartOf="parent" />
 
         <ToggleButton
             android:id="@+id/visible_toggle_button"
             android:layout_width="40dp"
             android:layout_height="24dp"
-            app:layout_constraintStart_toEndOf="@id/folder_visible_text"
-            app:layout_constraintTop_toBottomOf="@id/folder_name_edit_text"
-            android:background="@drawable/toggle_button"
-            android:textOn=""
-            android:textOff=""
-            android:text=""
             android:layout_marginStart="10dp"
-            android:layout_marginTop="16dp"/>
+            android:layout_marginBottom="48dp"
+            android:background="@drawable/toggle_button"
+            android:text=""
+            android:textOff=""
+            android:textOn=""
+            app:layout_constraintBottom_toTopOf="@+id/save_folder_button"
+            app:layout_constraintStart_toEndOf="@id/folder_visible_text" />
 
         <Button
             android:id="@+id/save_folder_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginBottom="16dp"
             android:background="@drawable/save_button"
             android:enabled="false"
             android:fontFamily="@font/pretendard_bold"
@@ -136,13 +139,9 @@
             android:text="@string/save_folder"
             android:textColor="@android:color/white"
             android:textSize="16sp"
-            android:layout_marginHorizontal="24dp"
-            android:layout_marginTop="50dp"
-            android:layout_marginBottom="16dp"
-            app:layout_constraintTop_toBottomOf="@id/folder_visible_text"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

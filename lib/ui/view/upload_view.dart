@@ -148,7 +148,7 @@ class _UploadViewState extends State<UploadView> {
                 controller: commentTextController,
                 style: const TextStyle(
                   fontSize: 14,
-                  height: 16.7 / 14,
+                  height: 19.6 / 14,
                   color: grey600,
                   letterSpacing: -0.3,
                 ),
@@ -196,6 +196,7 @@ class _UploadViewState extends State<UploadView> {
                   fontSize: 14,
                   letterSpacing: -0.3,
                   height: 16.7 / 14,
+                  fontWeight: FontWeight.w400,
                 ),
               ),
             ),
@@ -386,42 +387,25 @@ class _UploadViewState extends State<UploadView> {
                                     BorderRadius.all(Radius.circular(32)),
                                 color: grey100,
                               ),
-                              child: Stack(
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: const BorderRadius.all(
-                                      Radius.circular(32),
-                                    ),
-                                    child: ColoredBox(
-                                      color: grey100,
-                                      child: folder.thumbnail != null &&
-                                              (folder.thumbnail?.isNotEmpty ??
-                                                  false)
-                                          ? Image.network(
-                                              folder.thumbnail!,
-                                              width: 95,
-                                              height: 95,
-                                              fit: BoxFit.cover,
-                                              errorBuilder: (_, __, ___) =>
-                                                  emptyFolderView(),
-                                            )
-                                          : emptyFolderView(),
-                                    ),
-                                  ),
-                                  if (!visible)
-                                    Align(
-                                      alignment: Alignment.bottomRight,
-                                      child: Padding(
-                                        padding:
-                                            const EdgeInsets.only(bottom: 3),
-                                        child: SvgPicture.asset(
-                                          'assets/images/ic_lock.svg',
-                                        ),
-                                      ),
-                                    )
-                                  else
-                                    const SizedBox.shrink(),
-                                ],
+                              child: ClipRRect(
+                                borderRadius: const BorderRadius.all(
+                                  Radius.circular(32),
+                                ),
+                                child: ColoredBox(
+                                  color: grey100,
+                                  child: folder.thumbnail != null &&
+                                      (folder.thumbnail?.isNotEmpty ??
+                                          false)
+                                      ? Image.network(
+                                    folder.thumbnail!,
+                                    width: 95,
+                                    height: 95,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (_, __, ___) =>
+                                        emptyFolderView(),
+                                  )
+                                      : emptyFolderView(),
+                                ),
                               ),
                             ),
                             Visibility(
@@ -436,6 +420,23 @@ class _UploadViewState extends State<UploadView> {
                                 ),
                               ),
                             ),
+                            if (!visible)
+                              SizedBox(
+                                width: 95,
+                                height: 95,
+                                child: Align(
+                                  alignment: Alignment.bottomRight,
+                                  child: Padding(
+                                    padding:
+                                    const EdgeInsets.only(bottom: 3),
+                                    child: Image.asset(
+                                      'assets/images/ic_lock.png',
+                                    ),
+                                  ),
+                                ),
+                              )
+                            else
+                              const SizedBox.shrink(),
                           ],
                         ),
                         const SizedBox(height: 6),
