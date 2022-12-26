@@ -118,7 +118,7 @@ class LoginView extends StatelessWidget {
   }
 
   void showErrorBanner(BuildContext context, String message) {
-    showBottomToast('로그인 실패: $message');
+    Log.e('로그인 에러: $message');
   }
 
   Future<void> moveToNext(
