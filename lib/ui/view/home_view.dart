@@ -51,14 +51,6 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        systemNavigationBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.dark,
-      ),
-    );
-
     final args = getArguments(context);
 
     return MultiBlocProvider(

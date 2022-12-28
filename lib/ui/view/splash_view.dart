@@ -89,15 +89,6 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
     final devicePixelRatio = MediaQuery.of(context).devicePixelRatio;
     final distance = (height / 3) / devicePixelRatio;
 
-    //Setting SysemUIOverlay
-    SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
-        systemStatusBarContrastEnforced: true,
-        systemNavigationBarColor: Colors.transparent,
-        systemNavigationBarDividerColor: Colors.transparent,
-      ),
-    );
-
     SystemChrome.setEnabledSystemUIMode(
       SystemUiMode.edgeToEdge,
       overlays: [SystemUiOverlay.top],

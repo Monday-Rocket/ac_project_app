@@ -7,6 +7,7 @@ import 'package:ac_project_app/provider/share_db.dart';
 import 'package:ac_project_app/resource.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oktoast/oktoast.dart';
 
@@ -21,6 +22,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    //Setting SystemUIOverlay
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        systemNavigationBarColor: Colors.transparent,
+        systemNavigationBarDividerColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+      ),
+    );
+
     return MultiPlatformApp.create();
   }
 }
