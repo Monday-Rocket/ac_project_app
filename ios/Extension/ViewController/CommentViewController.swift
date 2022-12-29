@@ -31,7 +31,8 @@ class CommentViewController: UIViewController {
     
     self.commentTextView.textColor = .grey400
     self.commentTextView.tintColor = .grey700
-    self.commentTextView.textContainerInset = UIEdgeInsets(top: 15.0, left: 16.0, bottom: 15.0, right: 16.0)
+    self.commentTextView.contentInset = UIEdgeInsets(top: 15.0, left: 16.0, bottom: 15.0, right: 16.0)
+    self.commentTextView.textContainerInset = UIEdgeInsets.zero
     self.commentTextView.delegate = self
     
     
