@@ -80,7 +80,7 @@ class _MyFolderPageState extends State<MyFolderPage>
                             final profile = state.profile;
                             return InkWell(
                               onTap: () {
-                                showBottomToast('폴더가 삭제되었어요!');
+                                showBottomToast( context:context, '폴더가 삭제되었어요!');
                               },
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
@@ -593,7 +593,7 @@ class _MyFolderPageState extends State<MyFolderPage>
                           Navigator.pop(context, true);
                           cubit.getFolders();
                           if (result) {
-                            showBottomToast('폴더가 삭제되었어요!');
+                            showBottomToast(context:context,'폴더가 삭제되었어요!');
                           }
                         });
                       },
@@ -612,7 +612,8 @@ class _MyFolderPageState extends State<MyFolderPage>
     ).then((bool? value) {
       Navigator.pop(context);
       if (value ?? false) {
-        showBottomToast('폴더가 삭제되었어요!');
+        // 삭제 토스트가 두번뜨는 이슈 수정
+        //showBottomToast(context:context,'폴더가 삭제되었어요!');
       }
     });
   }

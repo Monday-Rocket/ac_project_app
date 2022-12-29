@@ -1,4 +1,5 @@
 import 'package:ac_project_app/const/colors.dart';
+import 'package:ac_project_app/const/consts.dart';
 import 'package:ac_project_app/cubits/folders/folder_view_type_cubit.dart';
 import 'package:ac_project_app/cubits/folders/get_my_folders_cubit.dart';
 import 'package:ac_project_app/cubits/folders/get_user_folders_cubit.dart';
@@ -11,6 +12,7 @@ import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/page/home/home_page.dart';
 import 'package:ac_project_app/ui/page/my_folder/my_folder_page.dart';
 import 'package:ac_project_app/ui/page/my_page/my_page.dart';
+import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/util/get_widget_arguments.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -151,9 +153,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
                       context.read<LinksFromSelectedJobGroupCubit>().refresh();
                       context.read<HomeViewCubit>().moveTo(index);
                     } else if (index == 1) {
-                      Navigator.pushNamed(context, Routes.upload).then(
-                        (value) => setState(() {}),
-                      );
+                      pushUploadView(context);
                     } else if (index == 2) {
                       context.read<GetFoldersCubit>().getFolders();
                       context.read<HomeViewCubit>().moveTo(index);
@@ -165,6 +165,25 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
               );
             },
           );
+        },
+      ),
+    );
+  }
+
+  void pushUploadView(BuildContext context) {
+    Navigator.pushNamed(context, Routes.upload).then(
+      (value) => setState(
+        () {
+          if (NavigatorPopResult.saveLink == value) {
+            showBottomToast(
+              context: context,
+              '링크가 저장되었어요!',
+              callback: () {
+                context.read<GetFoldersCubit>().getFolders();
+                context.read<HomeViewCubit>().moveTo(2);
+              },
+            );
+          }
         },
       ),
     );
