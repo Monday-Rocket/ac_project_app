@@ -11,7 +11,7 @@ class ShareDB {
     const folderDDL = '''
   create table if not exists folder( 
     seq integer primary key autoincrement, 
-    name varchar(200) not null, 
+    name varchar(200) not null unique, 
     visible boolean not null default 1,
     imageLink varchar(2000),
     time timestamp default current_timestamp not null 

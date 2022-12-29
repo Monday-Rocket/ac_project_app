@@ -10,7 +10,7 @@ class ShareDbHelper(context: Context) :
         db.execSQL("""
             create table if not exists ${ShareContract.Folder.table} (
                 ${ShareContract.Folder.seq} int primary key,
-                ${ShareContract.Folder.folderName} varchar(200) not null,
+                ${ShareContract.Folder.folderName} varchar(200) not null unique,
                 ${ShareContract.Folder.visible} boolean not null default 1,
                 ${ShareContract.Folder.imageLink} varchar(2000),
                 ${ShareContract.Folder.time} timestamp default current_timestamp not null
