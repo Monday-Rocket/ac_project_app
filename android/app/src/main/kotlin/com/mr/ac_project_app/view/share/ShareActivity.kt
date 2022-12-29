@@ -95,12 +95,16 @@ class ShareActivity : ComponentActivity() {
             savedLink = intent.getStringExtra("android.intent.extra.PROCESS_TEXT") ?: ""
         }
 
-        val hasError = viewModel.saveLink(savedLink)
-        if (hasError) {
-            val intent = Intent(this@ShareActivity, LinkErrorActivity::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            startActivity(intent)
-            finish()
+        if (TextUtils.isEmpty(savedLink)) {
+            // just back
+        } else {
+            val hasError = viewModel.saveLink(savedLink)
+            if (hasError) {
+                val intent = Intent(this@ShareActivity, LinkErrorActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+                finish()
+            }
         }
     }
 
