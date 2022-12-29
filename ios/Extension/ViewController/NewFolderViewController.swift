@@ -79,6 +79,7 @@ class NewFolderViewController : UIViewController {
     self.newFolderNameField.layer.sublayers![0].backgroundColor = UIColor.error.cgColor
     self.errorText.isHidden = false
     self.errorTextConstraint.constant = 16
+    self.newFolderNameField.becomeFirstResponder()
     self.view.layoutIfNeeded()
   }
   
