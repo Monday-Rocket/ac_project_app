@@ -23,25 +23,17 @@ extension UIViewController: UITextFieldDelegate {
     if let keyboardFrame: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
       let keyboardRectangle = keyboardFrame.cgRectValue
       let keyboardHeight = keyboardRectangle.height
-      UIView.animate(withDuration: 0.1) {
-        self.view.transform = CGAffineTransform(translationX: 0, y: -keyboardHeight)
-      }
+      self.view.window?.frame.origin.y = -keyboardHeight
     }
   }
   
   @objc func keyboardWillHide(notification: NSNotification) {
     NSLog("❇️ key board hide!")
-    UIView.animate(withDuration: 0.1) {
-      self.view.transform = CGAffineTransform(translationX: 0, y: 0)
-    }
+    self.view.window?.frame.origin.y = 0
+//    self.view.transform = CGAffineTransform(translationX: 0, y: 0)
   }
   
   @objc func hideKeyboard(_ sender: Any) {
-//    if self.view.window?.frame.origin.y != 0 {
-//      UIView.animate(withDuration: 0.1) {
-//        self.view.window?.frame.origin.y += 200
-//      }
-//    }
     view.endEditing(true)
   }
   
