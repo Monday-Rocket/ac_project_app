@@ -1,0 +1,56 @@
+# frozen_string_literal: true
+
+default_platform(:ios)
+
+platform :ios do
+  def updateVersion(options)
+    if options[:version]
+      version = options[:version]
+    else
+      version = prompt(text: "Enter the version type or specific version\n(major, minor, patch or 1.0.0): ")
+    end
+
+    re = /\d+.\d+.\d+/
+    versionNum = version[re, 0]
+
+    if versionNum
+      increment_version_number(
+        version_number: versionNum
+      )
+    elsif version == 'major' || version == 'minor' || version == 'patch'
+      increment_version_number(
+        bump_type: version
+      )
+    else
+      UI.user_error!('[ERROR] Wrong version!!!!!!')
+    end
+  end
+
+  desc 'Update version'
+  lane :version do |options|
+    updateVersion(options)
+    increment_build_number(xcodeproj: 'Runner.xcodeproj')
+  end
+
+  desc 'Submit review only'
+  lane :submit_review do |_options|
+    upload_to_app_store(
+      submit_for_review: true,
+      automatic_release: true,
+      force: true,
+      skip_metadata: true,
+      skip_screenshots: true,
+      skip_binary_upload: true
+    )
+  end
+
+  desc 'Push a new beta build to TestFlight'
+  lane :beta do |options|
+    match(type: "appstore")
+    build_app(
+      workspace: 'Runner.xcworkspace',
+      scheme: 'Runner',
+    )
+    upload_to_testflight(api_key: api_key)
+  end
+end
