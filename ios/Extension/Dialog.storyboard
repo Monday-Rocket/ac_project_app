@@ -259,7 +259,7 @@
                                         <rect key="frame" x="20" y="183.66666666666669" width="245" height="52.333333333333343"/>
                                         <color key="tintColor" name="primary600"/>
                                         <state key="normal" title="Button"/>
-                                        <buttonConfiguration key="configuration" style="filled" title="다음에 만들기">
+                                        <buttonConfiguration key="configuration" style="filled" title="다음에 작성하기">
                                             <fontDescription key="titleFontDescription" name="Pretendard-Bold" family="Pretendard" pointSize="16"/>
                                         </buttonConfiguration>
                                         <connections>
