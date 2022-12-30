@@ -26,3 +26,12 @@ fun getCurrentDateTime(): String {
     Log.i(LinkPoolApp.TAG, time)
     return time
 }
+
+fun getShortText(folderName: String): String {
+    val short = if (folderName.length > 7) {
+        folderName.substring(0, 7) + "..."
+    } else {
+        folderName
+    }
+    return short
+}

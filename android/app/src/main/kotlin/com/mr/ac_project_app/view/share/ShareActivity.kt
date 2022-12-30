@@ -5,11 +5,10 @@ import android.graphics.Rect
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
-import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
+import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.mr.ac_project_app.view.folder.NewFolderActivity
 import com.mr.ac_project_app.R
 import com.mr.ac_project_app.databinding.ActivityShareBinding
 import com.mr.ac_project_app.model.FolderModel
@@ -18,9 +17,10 @@ import com.mr.ac_project_app.ui.RecyclerViewAdapter
 import com.mr.ac_project_app.utils.toDp
 import com.mr.ac_project_app.view.LinkErrorActivity
 import com.mr.ac_project_app.view.SaveSuccessActivity
+import com.mr.ac_project_app.view.folder.NewFolderActivity
 
 
-class ShareActivity : ComponentActivity() {
+class ShareActivity : FragmentActivity() {
 
     private lateinit var binding: ActivityShareBinding
     private val viewModel: ShareViewModel by viewModels()
@@ -43,7 +43,7 @@ class ShareActivity : ComponentActivity() {
             val intent = Intent(this@ShareActivity, NewFolderActivity::class.java)
             intent.putExtra("link", viewModel.savedLink.value)
             intent.putExtra("imageLink", viewModel.imageLink.value)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
             startActivity(intent)
             finish()
             overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit)
@@ -72,7 +72,7 @@ class ShareActivity : ComponentActivity() {
             intent.putExtra("folder", folder)
             intent.putExtra("link", viewModel.savedLink.value)
             intent.putExtra("saveType", SaveType.Selected)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
             startActivity(intent)
             overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit)
             finish()
@@ -101,7 +101,7 @@ class ShareActivity : ComponentActivity() {
             val hasError = viewModel.saveLink(savedLink)
             if (hasError) {
                 val intent = Intent(this@ShareActivity, LinkErrorActivity::class.java)
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 startActivity(intent)
                 finish()
             }

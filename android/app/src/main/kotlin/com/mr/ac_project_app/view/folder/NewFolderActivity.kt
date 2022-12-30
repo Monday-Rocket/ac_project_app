@@ -102,7 +102,7 @@ class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
                 )
                 movingIntent.putExtra("saveType", SaveType.New)
                 movingIntent.putExtra("link", link)
-                movingIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                movingIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 startActivity(movingIntent)
                 finish()
                 overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit)
@@ -138,7 +138,7 @@ class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
     private fun setBackButton() {
         binding.backButton.setOnClickListener {
             val intent = Intent(this@NewFolderActivity, ShareActivity::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
             startActivity(intent)
             finish()
             overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit)
