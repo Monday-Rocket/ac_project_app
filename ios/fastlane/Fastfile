@@ -3,6 +3,11 @@
 default_platform(:ios)
 
 platform :ios do
+
+  before_all do
+    ENV['FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD']= 'azxg-efnj-ykvh-niwj'
+  end
+
   def updateVersion(options)
     if options[:version]
       version = options[:version]
@@ -46,11 +51,24 @@ platform :ios do
 
   desc 'Push a new beta build to TestFlight'
   lane :beta do |options|
-    match(type: "appstore")
+    sync_code_signing(
+        type: "appstore",
+        app_identifier: 'com.mr.acProjectApp',
+        readonly: true
+    )
+    sync_code_signing(
+      type: "appstore",
+      app_identifier: 'com.mr.acProjectApp.Extension',
+      readonly: true
+    )
+
     build_app(
       workspace: 'Runner.xcworkspace',
       scheme: 'Runner',
+      export_method: "app-store",
     )
-    upload_to_testflight(api_key: api_key)
+    upload_to_testflight(
+      skip_waiting_for_build_processing: true
+    )
   end
 end
