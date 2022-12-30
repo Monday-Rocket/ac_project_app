@@ -195,8 +195,12 @@ extension ShareViewController: UICollectionViewDataSource, UICollectionViewDeleg
       for: indexPath) as? CustomListViewCell else { fatalError("cell init error!") }
     
     let item = dataArray[indexPath.row]
-    
-    cell.folderNameView.text = item.name
+    let folderName = item.name
+    if folderName.count > 7 {
+      cell.folderNameView.text = String(folderName.prefix(7)) + "..."
+    } else {
+      cell.folderNameView.text = folderName
+    }
     cell.visibleView.image = item.visible == 1 ? nil : UIImage(named: "ic_lock_png")
     
     cell.imageView.contentMode = .scaleAspectFill

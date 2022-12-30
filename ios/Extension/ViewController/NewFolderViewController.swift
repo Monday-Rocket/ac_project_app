@@ -45,15 +45,14 @@ class NewFolderViewController : UIViewController {
     self.firstSaveButton?.tintColor = UIColor.secondary
     self.secondSaveButton?.tintColor = UIColor.grey300
     
+    // MARK: - 키보드 처리
+    setKeyboardObserver()
     self.setNameTextField()
     
     self.visibleToggleButton.isUserInteractionEnabled = true
     self.visibleToggleButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.onTogglePressed(_:))))
     
     NSLog("❇️ link: \(link ?? ""), image: \(imageLink ?? "")")
-    
-    // MARK: - 키보드 처리
-    setKeyboardObserver()
     
     self.newFolderNameField.returnKeyType = .done
     
@@ -98,6 +97,7 @@ class NewFolderViewController : UIViewController {
   }
   
   fileprivate func setNameTextField() {
+    newFolderNameField.delegate = self
     newFolderNameField.addTarget(self, action: #selector(self.onFolderNameChange(_:)), for: .editingChanged)
     newFolderNameField.textColor = UIColor.grey800
     newFolderNameField.tintColor = UIColor.primary600
