@@ -92,6 +92,7 @@
             android:paddingHorizontal="16dp"
             android:minLines="2"
             android:gravity="top"
+            android:maxLength="500"
             android:background="@drawable/comment_background"
             app:layout_constraintTop_toBottomOf="@id/link_subtitle"
             app:layout_constraintStart_toStartOf="parent"

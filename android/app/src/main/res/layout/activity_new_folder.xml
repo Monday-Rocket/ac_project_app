@@ -80,24 +80,41 @@
 
         <EditText
             android:id="@+id/folder_name_edit_text"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="24dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginStart="20.3dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="0dp"
             android:drawableEnd="@drawable/btn_x_small"
             android:fontFamily="@font/pretendard_medium"
             android:hint="@string/new_folder_name"
             android:imeOptions="actionDone"
+            android:importantForAutofill="no"
             android:inputType="text"
             android:textColor="@color/grey800"
             android:textColorHint="@color/grey400"
             android:textSize="17sp"
             android:theme="@style/EditTextTheme"
-            app:layout_constraintBottom_toTopOf="@+id/folder_visible_text"
+            android:maxLength="10"
+            app:layout_constraintBottom_toTopOf="@+id/error_text"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            tools:targetApi="o"
-            android:importantForAutofill="no" />
+            tools:targetApi="o" />
+
+        <TextView
+            android:id="@+id/error_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginBottom="16dp"
+            android:fontFamily="@font/pretendard_medium"
+            android:text="@string/errorText"
+            android:textColor="@color/error"
+            android:textSize="11sp"
+            android:visibility="gone"
+            tools:visibility="visible"
+            app:layout_constraintBottom_toTopOf="@id/visible_toggle_button"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
             android:id="@+id/folder_visible_text"

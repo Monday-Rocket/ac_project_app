@@ -16,4 +16,6 @@
     <color name="grey800">#30343E</color>
     <color name="trans_grey800">#8830343E</color>
     <color name="grey900">#191F28</color>
+
+    <color name="error">#F81D51</color>
 </resources>

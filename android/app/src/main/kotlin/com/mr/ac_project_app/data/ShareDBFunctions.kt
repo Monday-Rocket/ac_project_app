@@ -1,11 +1,9 @@
 package com.mr.ac_project_app.data
 
 import android.content.ContentValues
-import android.content.Context
 import android.database.Cursor
 import com.mr.ac_project_app.model.FolderModel
 import com.mr.ac_project_app.model.FolderType
-import java.util.HashMap
 
 object ShareDBFunctions {
 
@@ -85,18 +83,20 @@ object ShareDBFunctions {
         name: String,
         visible: Boolean,
         imageLink: String
-    ) {
+    ): Boolean {
         val db = dbHelper.writableDatabase
         val cv = ContentValues().apply {
             put(ShareContract.Folder.folderName, name)
             put(ShareContract.Folder.visible, visible)
             put(ShareContract.Folder.imageLink, imageLink)
         }
-        db.insert(
+        val result = db.insert(
             ShareContract.Folder.table,
             null,
             cv
         )
         db.close()
+
+        return result != -1L
     }
 }

@@ -310,7 +310,7 @@ class _UploadViewState extends State<UploadView> {
       if (result == UploadResultState.success) {
         showPopUp(
           title: '저장완료!',
-          content: '링크와 코멘트가 담겼어요',
+          content: '링크가 폴더에 담겼어요',
           parentContext: context,
           callback: () {
             Navigator.pop(context);

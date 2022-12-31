@@ -18,4 +18,5 @@
     <string name="preference_new_links">new_links</string>
     <string name="preference_new_folders">new_folders</string>
     <string name="empty_folder_text">폴더추가</string>
+    <string name="errorText">이미 사용하고 있는 폴더명이예요. 새로운 폴더명을 입력해주세요</string>
 </resources>

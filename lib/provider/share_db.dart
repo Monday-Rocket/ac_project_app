@@ -1,6 +1,7 @@
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/provider/share_data_provider.dart';
 import 'package:ac_project_app/util/logger.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
 class ShareDB {
@@ -11,7 +12,7 @@ class ShareDB {
     const folderDDL = '''
   create table if not exists folder( 
     seq integer primary key autoincrement, 
-    name varchar(200) not null, 
+    name varchar(200) not null unique, 
     visible boolean not null default 1,
     imageLink varchar(2000),
     time timestamp default current_timestamp not null 
@@ -20,7 +21,7 @@ class ShareDB {
 
     final database = await openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: (db, version) async {
         Log.i('DB 생성됨');
         await db.execute(folderDDL);
@@ -30,6 +31,9 @@ class ShareDB {
           Log.i('DB upgraded: $newVersion');
           await db.execute('drop table folder;');
           await db.execute(folderDDL);
+          await SharedPreferences.getInstance().then((prefs) {
+            prefs.setBool('isFirst', true);
+          });
         }
       },
     );

@@ -37,3 +37,6 @@ Runner/GeneratedPluginRegistrant.*
 Podfile.lock
 Runner/GoogleService-Info.plist
 firebase_app_id_file.json
+fastlane/README.md
+Runner.ipa
+Runner.app.*

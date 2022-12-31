@@ -35,7 +35,12 @@ class FolderSaveSuccessViewController: UIViewController {
     
     self.backgroundView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.hideExtensionWithCompletionHandler(_:))))
     
-    folderNameTextView.text = folder?.name
+    let folderName: String = folder?.name ?? ""
+    if folderName.count > 7 {
+      folderNameTextView.text = String(folderName.prefix(7)) + "..."
+    } else {
+      folderNameTextView.text = folderName
+    }
     
     let imageLink = folder?.imageLink ?? ""
     
