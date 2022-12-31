@@ -14,3 +14,5 @@ key.properties
 signing.properties
 
 app/google-services.json
+*.json
+fastlane/README.md

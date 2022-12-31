@@ -1,0 +1,100 @@
+# frozen_string_literal: true
+
+default_platform(:android)
+
+platform :android do
+  def increment_version_code
+    path = '../app/build.gradle'
+    re = /versionCode\s+(\d+)/
+
+    s = File.read(path)
+    versionCode = s[re, 1].to_i
+    s[re, 1] = (versionCode + 1).to_s
+
+    f = File.new(path, 'w')
+    f.write(s)
+    f.close
+  end
+
+  def increment_version_number(bump_type: nil, version_number: nil)
+    path = '../app/build.gradle'
+    re = /versionName\s+("\d+.\d+.\d+")/
+    s = File.read(path)
+    versionName = s[re, 1].gsub!('"', '').split('.')
+
+    major = versionName[0].to_i
+    minor = versionName[1].to_i
+    patch = versionName[2].to_i
+
+    if bump_type == 'major'
+      major += 1
+      minor = 0
+      patch = 0
+    elsif bump_type == 'minor'
+      minor += 1
+      patch = 0
+    elsif bump_type == 'patch'
+      patch += 1
+    end
+
+    s[re, 1] = if version_number
+                 "\"#{version_number}\""
+               else
+                 "\"#{major}.#{minor}.#{patch}\""
+               end
+
+    f = File.new(path, 'w')
+    f.write(s)
+    f.close
+    increment_version_code
+  end
+
+  def updateVersion(options)
+    version = options[:version] || prompt(text: "Enter the version type or specific version\n(major, minor, patch or 1.0.0): ")
+
+    re = /\d+.\d+.\d+/
+    versionNum = version[re, 0]
+
+    if versionNum
+      increment_version_number(
+        version_number: versionNum
+      )
+    elsif %w[major minor patch].include?(version)
+      increment_version_number(
+        bump_type: version
+      )
+    else
+      UI.user_error!('[ERROR] Wrong version!!!!!!')
+    end
+  end
+
+  desc 'Update version'
+  lane :version do |options|
+    updateVersion(options)
+  end
+
+  desc 'Submit a new Beta'
+  lane :beta do |_options|
+    gradle(task: 'clean bundleRelease')
+    upload_to_play_store(
+      skip_upload_metadata: true,
+      skip_upload_screenshots: true,
+      skip_upload_images: true,
+      skip_upload_apk: true,
+      track: 'internal',
+      aab: '../build/app/outputs/bundle/release/app-release.aab'
+    )
+  end
+
+  desc 'Deploy a new version to the Google Play'
+  lane :release do |_options|
+    gradle(task: 'clean bundleRelease')
+    upload_to_play_store(
+      skip_upload_metadata: true,
+      skip_upload_screenshots: true,
+      skip_upload_images: true,
+      skip_upload_apk: true,
+      aab: '../build/app/outputs/bundle/release/app-release.aab'
+    )
+  end
+end
