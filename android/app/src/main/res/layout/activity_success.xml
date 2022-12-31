@@ -72,21 +72,6 @@
             app:layout_constraintTop_toBottomOf="@id/title_success_text_view">
 
             <include
-                android:id="@+id/triple_layout"
-                layout="@layout/triple_folder"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone" />
-
-            <include
-                android:id="@+id/double_layout"
-                layout="@layout/double_folder"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                tools:visibility="visible" />
-
-            <include
                 android:id="@+id/one_layout"
                 layout="@layout/one_folder"
                 android:layout_width="wrap_content"

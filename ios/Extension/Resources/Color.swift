@@ -56,4 +56,9 @@ extension UIColor {
   static var grey800: UIColor {
     return UIColor(rgb: 0x30343E)
   }
+  
+  // MARK: - RED
+  static var error: UIColor {
+    return UIColor(rgb: 0xF81D51)
+  }
 }
