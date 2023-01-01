@@ -1,8 +1,5 @@
 name: Deploy iOS and Android App to App Store and Play Store
 on:
-  push:
-    branches:
-      - master
   pull_request:
     branches:
       - master
@@ -22,17 +19,32 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.1.2'
-      - name: Install Fastlane
-        run: cd ios && bundle install && cd ..
-      - name: Install packages
-        run: flutter pub get
-      - name: Install pods
-        run: cd ios && pod install && cd ..
-      - name: Prebuild
+      - run: flutter clean
+      - run: flutter pub get
+      - run: echo '${{ secrets.FIREBASE_OPTIONS }}' > ./lib/firebase_options.dart
+      - run: echo '${{ secrets.FIREBASE_APP_ID_FILE }}' > ./ios/firebase_app_id_file.json
+      - run: echo '${{ secrets.GOOGLE_SERVICE_IOS }}' > ./ios/Runner/GoogleService-Info.plist
+      - name: Flutter release build ios
         run: flutter build ios --release --no-codesign
-      - name: Execute Fastlane command
-        run: cd ios && fastlane beta
-        timeout-minutes: 40
+      - name: Deploy iOS Beta to TestFlight via Fastlane
+        uses: maierj/fastlane-action@v1.4.0
+        with:
+          lane: closed_beta
+          subdirectory: ios
+        env:
+          ITC_TEAM_ID: '${{ secrets.ITC_TEAM_ID }}'
+          APPLICATION_ID: '${{ secrets.APPLICATION_ID }}'
+          BUNDLE_IDENTIFIER: '${{ secrets.BUNDLE_IDENTIFIER }}'
+          EXTENSION_IDENTIFIER: '${{ secrets.EXTENSION_IDENTIFIER }}'
+          DEVELOPER_PORTAL_TEAM_ID: '${{ secrets.DEVELOPER_PORTAL_TEAM_ID }}'
+          FASTLANE_APPLE_ID: '${{ secrets.FASTLANE_APPLE_EMAIL_ID }}'
+          FASTLANE_PASSWORD: '${{ secrets.FASTLANE_PASSWORD }}'
+          FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: '${{ secrets.APP_SPECIFIC_PASSWORD }}'
+          MATCH_PASSWORD: '${{ secrets.MATCH_PASSWORD }}'
+          GIT_AUTHORIZATION: '${{ secrets.GIT_AUTHORIZATION }}'
+          PROVISIONING_PROFILE_SPECIFIER: '${{ secrets.PROVISIONING_PROFILE_SPECIFIER }}'
+          TEMP_KEYCHAIN_PASSWORD: '${{ secrets.TEMP_KEYCHAIN_PASSWORD }}'
+          TEMP_KEYCHAIN_USER: '${{ secrets.TEMP_KEYCHAIN_USER }}'
   # internal test
   release-android:
     name: Build and release Android app
@@ -53,6 +65,11 @@ jobs:
         run: cd android && bundle install && cd ..
       - name: Install packages
         run: flutter pub get
+      - run: echo '${{ secrets.SIGNING_PROPERTIES }}' > ./android/signing.properties
+      - run: echo '${{ secrets.PLAY_STORE_SERVICE_ACCOUNT }}' > ./android/pc-api-5940945835938803721-498-fd0016af1dc3.json
+      - run: echo '${{ secrets.ANDROID_KEYSTORE_BASE64 }}' | base64 -d > ./android/monday-key.jks
+      - run: echo '${{ secrets.FIREBASE_OPTIONS }}' > ./lib/firebase_options.dart
+      - run: echo '${{ secrets.GOOGLE_SERVICES_ANDROID }}' > ./android/app/google-services.json
       - name: Prebuild
         run: flutter build appbundle
       - name: Execute Fastlane command

@@ -75,22 +75,14 @@ platform :android do
 
   desc 'Submit a new Beta'
   lane :beta do |_options|
-    gradle(
-      task: 'clean bundleRelease',
-      properties: {
-        "android.injected.signing.store.file" => ENV["ANDROID_KEYSTORE_BASE64"],
-        "android.injected.signing.store.password" => ENV["ANDROID_KEYSTORE_PASSWORD"],
-        "android.injected.signing.key.alias" => ENV["ANDROID_KEY_ALIAS"],
-        "android.injected.signing.key.password" => ENV["ANDROID_KEY_PASSWORD"],
-      }
-    )
+
     upload_to_play_store(
-      json_key: ENV["ANDROID_JSON_KEY_FILE"],
       skip_upload_metadata: true,
       skip_upload_screenshots: true,
       skip_upload_images: true,
       skip_upload_apk: true,
       track: 'internal',
+      release_status: 'draft',
       aab: '../build/app/outputs/bundle/release/app-release.aab'
     )
   end

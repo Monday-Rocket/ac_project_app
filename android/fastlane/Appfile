@@ -1,1 +1,2 @@
-package_name("com.mr.ac_project_app") # e.g. com.krausefx.app
+json_key_file("pc-api-5940945835938803721-498-fd0016af1dc3.json")
+package_name("com.mr.ac_project_app")
