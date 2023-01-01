@@ -1,8 +1,10 @@
 // ignore_for_file: avoid_positional_boolean_parameters
 
 import 'package:ac_project_app/const/colors.dart';
+import 'package:ac_project_app/const/consts.dart';
 import 'package:ac_project_app/cubits/folders/folders_state.dart';
 import 'package:ac_project_app/cubits/folders/get_my_folders_cubit.dart';
+import 'package:ac_project_app/cubits/home_view_cubit.dart';
 import 'package:ac_project_app/cubits/links/upload_link_cubit.dart';
 import 'package:ac_project_app/cubits/links/upload_result_state.dart';
 import 'package:ac_project_app/cubits/sign_up/button_state_cubit.dart';
@@ -51,6 +53,9 @@ class _UploadViewState extends State<UploadView> {
 
     return MultiBlocProvider(
       providers: [
+        BlocProvider(
+          create: (_) => HomeViewCubit((args['index'] as int?) ?? 0),
+        ),
         BlocProvider<GetFoldersCubit>(
           create: (_) => GetFoldersCubit(excludeUnclassified: true),
         ),
@@ -308,15 +313,7 @@ class _UploadViewState extends State<UploadView> {
         )
         .then((result) {
       if (result == UploadResultState.success) {
-        showPopUp(
-          title: '저장완료!',
-          content: '링크가 폴더에 담겼어요',
-          parentContext: context,
-          callback: () {
-            Navigator.pop(context);
-            Navigator.pop(context);
-          },
-        );
+        Navigator.pop(context, NavigatorPopResult.saveLink);
       } else if (result == UploadResultState.duplicated) {
         showPopUp(
           title: '업로드 실패',

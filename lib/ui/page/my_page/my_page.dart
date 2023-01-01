@@ -38,7 +38,7 @@ class MyPage extends StatelessWidget {
                             Routes.home,
                             arguments: {'index': 3},
                           );
-                          showBottomToast('프로필 이미지를 변경했어요!');
+                          showBottomToast(context: context, '프로필 이미지를 변경했어요!');
                         }
                       });
                     },
@@ -169,7 +169,7 @@ class MyPage extends StatelessWidget {
                         Navigator.pushReplacementNamed(context, Routes.login);
                       } else {
                         Navigator.of(context).pop(true);
-                        showBottomToast('회원탈퇴 실패');
+                        showBottomToast(context: context, '회원탈퇴 실패');
                       }
                     });
                   },

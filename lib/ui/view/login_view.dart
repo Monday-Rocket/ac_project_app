@@ -93,7 +93,8 @@ class LoginView extends StatelessWidget {
               ).then((_) => context.read<LoginCubit>().showNothing());
               Future.delayed(
                 const Duration(milliseconds: 500),
-                () => showBottomToast('가입된 계정이 없어 회원 가입 화면으로 이동합니다.'),
+                () => showBottomToast(
+                    context: context, '가입된 계정이 없어 회원 가입 화면으로 이동합니다.'),
               );
             } else {
               ShareDataProvider.loadServerData();

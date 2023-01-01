@@ -262,7 +262,7 @@ class _ReportViewState extends State<ReportView> {
           Navigator.pop(context);
           Future.delayed(
             const Duration(milliseconds: 300),
-            () => showBottomToast('신고가 접수되었어요!'),
+            () => showBottomToast(context: context, '신고가 접수되었어요!'),
           );
         } else if (type == ReportResultType.duplicated) {
           showPopUp(
