@@ -21,9 +21,9 @@ jobs:
           ruby-version: '3.1.2'
       - run: flutter clean
       - run: flutter pub get
-      - run: echo '${{ secrets.FIREBASE_OPTIONS }}' > ./lib/firebase_options.dart
-      - run: echo '${{ secrets.FIREBASE_APP_ID_FILE }}' > ./ios/firebase_app_id_file.json
-      - run: echo '${{ secrets.GOOGLE_SERVICE_IOS }}' > ./ios/Runner/GoogleService-Info.plist
+      - run: echo "${{ secrets.FIREBASE_OPTIONS }}" | base64 -d > ./lib/firebase_options.dart
+      - run: echo '${{ secrets.FIREBASE_APP_ID_FILE }}' | base64 -d > ./ios/firebase_app_id_file.json
+      - run: echo '${{ secrets.GOOGLE_SERVICE_IOS }}' | base64 -d > ./ios/Runner/GoogleService-Info.plist
       - name: Flutter release build ios
         run: flutter build ios --release --no-codesign
       - name: Deploy iOS Beta to TestFlight via Fastlane
@@ -65,57 +65,12 @@ jobs:
         run: cd android && bundle install && cd ..
       - name: Install packages
         run: flutter pub get
-      - run: echo '${{ secrets.SIGNING_PROPERTIES }}' > ./android/signing.properties
-      - run: echo '${{ secrets.PLAY_STORE_SERVICE_ACCOUNT }}' > ./android/pc-api-5940945835938803721-498-fd0016af1dc3.json
+      - run: echo '${{ secrets.SIGNING_PROPERTIES }}' | base64 -d > ./android/signing.properties
+      - run: echo '${{ secrets.PLAY_STORE_SERVICE_ACCOUNT }}' | base64 -d > ./android/pc-api-5940945835938803721-498-fd0016af1dc3.json
       - run: echo '${{ secrets.ANDROID_KEYSTORE_BASE64 }}' | base64 -d > ./android/monday-key.jks
-      - run: echo '${{ secrets.FIREBASE_OPTIONS }}' > ./lib/firebase_options.dart
-      - run: echo '${{ secrets.GOOGLE_SERVICES_ANDROID }}' > ./android/app/google-services.json
+      - run: echo "${{ secrets.FIREBASE_OPTIONS }}" | base64 -d > ./lib/firebase_options.dart
+      - run: echo '${{ secrets.GOOGLE_SERVICES_ANDROID }}' | base64 -d > ./android/app/google-services.json
       - name: Prebuild
         run: flutter build appbundle
       - name: Execute Fastlane command
         run: cd android && fastlane beta
-
-
-#  build_android:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v2
-#      - uses: actions/setup-java@v2
-#        with:
-#          distribution: 'adopt'
-#          java-version: '12.x'
-#      - name: Download Android keystore
-#        id: android_keystore
-#        uses: timheuer/base64-to-file@v1.0.3
-#        with:
-#          fileName: key.jks
-#          encodedString: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
-#      - name: Create key.properties
-#        run: |
-#          echo "storeFile=${{ steps.android_keystore.outputs.filePath }}" > android/key.properties
-#          echo "storePassword=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" >> android/key.properties
-#          echo "keyPassword=${{ secrets.ANDROID_KEY_PASSWORD }}" >> android/key.properties
-#          echo "keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}" >> android/key.properties
-#
-#      - uses: subosito/flutter-action@v1
-#        with:
-#          flutter-version: '3.3.9' # change accordingly
-#          channel: 'stable'
-#      - run: flutter pub get
-#      - run: flutter build appbundle
-#      - name: Create github artifact release # disable this to save storage
-#        uses: ncipollo/release-action@v1
-#        with:
-#          artifacts: "build/app/outputs/bundle/release/app-release.aab"
-#          token: ${{ secrets.GITHUB_TOKEN }} # this is automatically provided by github
-#        commit:
-#      - name: Upload app bundle artifact
-#        uses: actions/upload-artifact@v2
-#        with:
-#          name: appbundle
-#          path: build/app/outputs/bundle/release/app-release.aab
-#      - name: Run Fastlane
-#        uses: maierj/fastlane-action@v1.4.0
-#        with:
-#          lane: upload_to_google_play_store
-#          subdirectory: android
