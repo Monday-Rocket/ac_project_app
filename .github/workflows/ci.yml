@@ -21,7 +21,7 @@ jobs:
           ruby-version: '3.1.2'
       - run: flutter clean
       - run: flutter pub get
-      - run: echo '${{ secrets.FIREBASE_OPTIONS }}' > ./lib/firebase_options.dart
+      - run: echo "${{ secrets.FIREBASE_OPTIONS }}" > ./lib/firebase_options.dart
       - run: echo '${{ secrets.FIREBASE_APP_ID_FILE }}' > ./ios/firebase_app_id_file.json
       - run: echo '${{ secrets.GOOGLE_SERVICE_IOS }}' > ./ios/Runner/GoogleService-Info.plist
       - name: Flutter release build ios
@@ -68,7 +68,7 @@ jobs:
       - run: echo '${{ secrets.SIGNING_PROPERTIES }}' > ./android/signing.properties
       - run: echo '${{ secrets.PLAY_STORE_SERVICE_ACCOUNT }}' > ./android/pc-api-5940945835938803721-498-fd0016af1dc3.json
       - run: echo '${{ secrets.ANDROID_KEYSTORE_BASE64 }}' | base64 -d > ./android/monday-key.jks
-      - run: echo '${{ secrets.FIREBASE_OPTIONS }}' > ./lib/firebase_options.dart
+      - run: echo "${{ secrets.FIREBASE_OPTIONS }}" > ./lib/firebase_options.dart
       - run: echo '${{ secrets.GOOGLE_SERVICES_ANDROID }}' > ./android/app/google-services.json
       - name: Prebuild
         run: flutter build appbundle
