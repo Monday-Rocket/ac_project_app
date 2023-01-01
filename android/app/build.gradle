@@ -84,12 +84,19 @@ android {
             minifyEnabled true
             signingConfig signingConfigs.release
 
-            ndk {
-                debugSymbolLevel 'FULL'
-            }
+            ndk.debugSymbolLevel = "FULL"
         }
     }
     namespace 'com.mr.ac_project_app'
+
+    packagingOptions {
+        dex {
+            useLegacyPackaging true
+        }
+        jniLibs {
+            useLegacyPackaging true
+        }
+    }
 
 }
 
