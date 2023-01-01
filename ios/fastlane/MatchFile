@@ -1,0 +1,9 @@
+git_url("https://github.com/Monday-Rocket/App-Fastlane-Cert")
+git_branch("master")
+
+storage_mode("git")
+
+type("appstore") # The default type, can be: appstore, adhoc, enterprise or development
+
+app_identifier(["com.mr.acProjectApp", "com.mr.acProjectApp.Extension"])
+username("kms0644804@naver.com") # Your Apple Developer Portal username

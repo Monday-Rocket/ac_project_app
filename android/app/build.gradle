@@ -91,34 +91,6 @@ android {
     }
     namespace 'com.mr.ac_project_app'
 
-    applicationVariants.all { variant ->
-        variant.outputs.all { output ->
-
-            if (variant.buildType.name in ["release"]) {
-                def prefixFirstName = "acp"
-
-                if (variant.versionName != null) {
-                    def outputFileName = "${prefixFirstName}_${variant.versionName}.aab"
-                    def taskSuffix = variant.name.capitalize()
-                    def bundleTaskName = "bundle${taskSuffix}"
-
-                    def copyDir = new File("../../../../Release/")
-                    def copyTaskName = "archive${taskSuffix}Copy"
-
-                    if (tasks.findByName(bundleTaskName)) {
-                        def copyTask = tasks.create(copyTaskName, Copy) {
-                            from "${buildDir.path}/outputs/bundle/release/"
-                            into copyDir.path
-                            include "app-release.aab"
-                            rename "app-release.aab", outputFileName
-                        }
-
-                        tasks[bundleTaskName].finalizedBy = [copyTask]
-                    }
-                }
-            }
-        }
-    }
 }
 
 flutter {
@@ -126,7 +98,9 @@ flutter {
 }
 
 dependencies {
+    //noinspection GradleDependency,DifferentStdlibGradleVersion
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    //noinspection GradleDependency
     implementation 'androidx.appcompat:appcompat:1.4.2'
     implementation 'androidx.activity:activity-ktx:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
@@ -135,4 +109,8 @@ dependencies {
     implementation 'org.jsoup:jsoup:1.13.1'
     implementation 'com.jakewharton.threetenabp:threetenabp:1.4.3'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.14.2'
+}
+
+configurations.all {
+    exclude group: 'com.google.android.gms', module: 'play-services-safetynet'
 }

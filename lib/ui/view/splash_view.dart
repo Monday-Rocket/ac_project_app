@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/provider/api/user/user_api.dart';
+import 'package:ac_project_app/provider/share_data_provider.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,11 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
   @override
   void initState() {
     setAnimationController();
+    _loginAfterAnimation();
+    super.initState();
+  }
+
+  void _loginAfterAnimation() {
     Future.delayed(const Duration(milliseconds: 1500), () {
       final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
@@ -31,6 +37,7 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
               if (data.is_new ?? false) {
                 Navigator.pushReplacementNamed(context, Routes.login);
               } else {
+                ShareDataProvider.loadServerDataAtFirst();
                 Navigator.pushReplacementNamed(
                   context,
                   Routes.home,
@@ -49,7 +56,6 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
         unawaited(Navigator.pushReplacementNamed(context, Routes.login));
       }
     });
-    super.initState();
   }
 
   void setAnimationController() {

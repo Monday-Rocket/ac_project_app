@@ -31,9 +31,9 @@ class CommentViewController: UIViewController {
     
     self.commentTextView.textColor = .grey400
     self.commentTextView.tintColor = .grey700
-    self.commentTextView.textContainerInset = UIEdgeInsets(top: 15.0, left: 16.0, bottom: 15.0, right: 16.0)
+    self.commentTextView.contentInset = UIEdgeInsets(top: 15.0, left: 16.0, bottom: 15.0, right: 16.0)
+    self.commentTextView.textContainerInset = UIEdgeInsets.zero
     self.commentTextView.delegate = self
-    
     
       // MARK: - 키보드 처리
     setKeyboardObserver()
@@ -127,5 +127,11 @@ extension CommentViewController: UITextViewDelegate {
     let comment = textView.text!
     
     self.saveCommentButton.tintColor = comment.isEmpty ? .secondary : .primary600
+  }
+  
+  func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+    guard let str = textView.text else { return true }
+    let newLength = str.count + text.count - range.length
+    return newLength <= 500
   }
 }

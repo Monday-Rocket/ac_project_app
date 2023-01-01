@@ -117,7 +117,7 @@ class CommentActivity : FragmentActivity(), ConfirmDialogInterface, ErrorDialogI
                     "링크는 선택한 폴더에 저장돼요!",
             closeDialogInterface = this,
             imageId = R.drawable.comments_icon,
-            buttonText = "다음에 만들기"
+            buttonText = "다음에 작성하기"
         )
         dialog.isCancelable = true
         dialog.show(supportFragmentManager, "Comment Cancel Dialog")

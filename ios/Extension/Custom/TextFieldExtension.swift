@@ -23,31 +23,33 @@ extension UIViewController: UITextFieldDelegate {
     if let keyboardFrame: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
       let keyboardRectangle = keyboardFrame.cgRectValue
       let keyboardHeight = keyboardRectangle.height
-      UIView.animate(withDuration: 0.1) {
-        self.view.transform = CGAffineTransform(translationX: 0, y: -keyboardHeight)
-      }
+      self.view.window?.frame.origin.y = -keyboardHeight
     }
   }
   
   @objc func keyboardWillHide(notification: NSNotification) {
     NSLog("❇️ key board hide!")
-    UIView.animate(withDuration: 0.1) {
-      self.view.transform = CGAffineTransform(translationX: 0, y: 0)
-    }
+    self.view.window?.frame.origin.y = 0
+//    self.view.transform = CGAffineTransform(translationX: 0, y: 0)
   }
   
   @objc func hideKeyboard(_ sender: Any) {
-//    if self.view.window?.frame.origin.y != 0 {
-//      UIView.animate(withDuration: 0.1) {
-//        self.view.window?.frame.origin.y += 200
-//      }
-//    }
     view.endEditing(true)
   }
   
   public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
     textField.resignFirstResponder()
     return true
+  }
+  
+  public func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+    guard let textFieldText = textField.text,
+          let rangeOfTextToReplace = Range(range, in: textFieldText) else {
+      return false
+    }
+    let substringToReplace = textFieldText[rangeOfTextToReplace]
+    let count = textFieldText.count - substringToReplace.count + string.count
+    return count <= 10
   }
   
 }

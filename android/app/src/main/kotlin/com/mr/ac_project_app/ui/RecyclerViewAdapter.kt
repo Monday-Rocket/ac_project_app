@@ -12,6 +12,7 @@ import com.bumptech.glide.Glide
 import com.mr.ac_project_app.R
 import com.mr.ac_project_app.model.FolderModel
 import com.mr.ac_project_app.model.FolderType
+import com.mr.ac_project_app.utils.getShortText
 
 class RecyclerViewAdapter(private val modelList: ArrayList<FolderModel>, private val onFolderSelected: (Int) -> Unit) :
     RecyclerView.Adapter<ViewHolder>() {
@@ -34,7 +35,7 @@ class RecyclerViewAdapter(private val modelList: ArrayList<FolderModel>, private
                 onFolderSelected(bindingAdapterPosition)
             }
 
-            textView.text = folderModel.name
+            textView.text = getShortText(folderModel.name)
 
             if (folderModel.visible) {
                 lockImageView.visibility = View.GONE
@@ -65,7 +66,7 @@ class RecyclerViewAdapter(private val modelList: ArrayList<FolderModel>, private
                 onFolderSelected(bindingAdapterPosition)
             }
 
-            textView.text = folderModel.name
+            textView.text = getShortText(folderModel.name)
 
             if (folderModel.visible) {
                 lockImageView.visibility = View.GONE
@@ -89,16 +90,15 @@ class RecyclerViewAdapter(private val modelList: ArrayList<FolderModel>, private
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-
-        when (viewType) {
+        return when (viewType) {
             FolderType.One.ordinal -> {
-                return OneFolderViewHolder(
+                OneFolderViewHolder(
                     itemView = LayoutInflater.from(parent.context)
                         .inflate(R.layout.one_folder, parent, false)
                 )
             }
             else -> {
-                return NoneFolderViewHolder(
+                NoneFolderViewHolder(
                     itemView = LayoutInflater.from(parent.context)
                         .inflate(R.layout.one_folder, parent, false)
                 )

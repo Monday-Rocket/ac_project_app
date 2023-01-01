@@ -3,6 +3,7 @@ package com.mr.ac_project_app.view.folder
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.graphics.Rect
 import android.os.Bundle
 import android.text.Editable
@@ -81,29 +82,39 @@ class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
             val link = intent.getStringExtra("link") ?: ""
             val imageLink = intent.getStringExtra("imageLink") ?: ""
 
-            viewModel.saveNewFolder(
+            val saveResult = viewModel.saveNewFolder(
                 binding.folderNameEditText.text.toString(),
                 link,
                 folderVisibility,
                 imageLink
             )
 
-            val movingIntent = Intent(this@NewFolderActivity, SaveSuccessActivity::class.java)
-            val folderName = binding.folderNameEditText.text.toString()
-            movingIntent.putExtra(
-                "folder",
-                FolderModel.create(
-                    imageLink,
-                    folderName,
-                    folderVisibility
+            if (saveResult) {
+                val movingIntent = Intent(this@NewFolderActivity, SaveSuccessActivity::class.java)
+                val folderName = binding.folderNameEditText.text.toString()
+                movingIntent.putExtra(
+                    "folder",
+                    FolderModel.create(
+                        imageLink,
+                        folderName,
+                        folderVisibility
+                    )
                 )
-            )
-            movingIntent.putExtra("saveType", SaveType.New)
-            movingIntent.putExtra("link", link)
-            movingIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            startActivity(movingIntent)
-            finish()
-            overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit)
+                movingIntent.putExtra("saveType", SaveType.New)
+                movingIntent.putExtra("link", link)
+                movingIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                startActivity(movingIntent)
+                finish()
+                overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit)
+            } else {
+                binding.folderNameEditText.backgroundTintList = ColorStateList.valueOf(getColor(R.color.error))
+                binding.errorText.visibility = View.VISIBLE
+
+                // show keyboard
+                binding.folderNameEditText.requestFocus()
+                val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.showSoftInput(binding.folderNameEditText, 0)
+            }
         }
 
     }
@@ -116,8 +127,7 @@ class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
                 v.getGlobalVisibleRect(outRect)
                 if (!outRect.contains(event.rawX.toInt(), event.rawY.toInt())) {
                     v.clearFocus()
-                    val imm: InputMethodManager =
-                        getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                     imm.hideSoftInputFromWindow(v.getWindowToken(), 0)
                 }
             }
@@ -128,7 +138,7 @@ class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
     private fun setBackButton() {
         binding.backButton.setOnClickListener {
             val intent = Intent(this@NewFolderActivity, ShareActivity::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
             startActivity(intent)
             finish()
             overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit)
@@ -146,8 +156,8 @@ class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
 
     @SuppressLint("ClickableViewAccessibility")
     private fun setFolderNameEditText() {
+        binding.folderNameEditText.isFocusableInTouchMode = true
         binding.folderNameEditText.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
-
         binding.folderNameEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
 

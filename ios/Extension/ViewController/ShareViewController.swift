@@ -88,15 +88,23 @@ class ShareViewController: UIViewController {
   private func getLink() {
     if let extensionItem = self.extensionContext?.inputItems[0] as? NSExtensionItem {
       if let itemProviders = extensionItem.attachments{
-        for itemProvider in itemProviders{
-          if itemProvider.hasItemConformingToTypeIdentifier(UTType.url.identifier){
-            itemProvider.loadItem(forTypeIdentifier: UTType.url.identifier, options: nil){
+        for itemProvider in itemProviders {
+          
+          let isUrl = itemProvider.hasItemConformingToTypeIdentifier(UTType.url.identifier)
+          let isText = itemProvider.hasItemConformingToTypeIdentifier(UTType.plainText.identifier)
+          
+          if itemProviders.count > 1 && !isUrl {
+            continue
+          }
+          
+          if isUrl == true {
+            itemProvider.loadItem(forTypeIdentifier: UTType.url.identifier, options: nil) {
               (data, error) in
               let text = (data as? NSURL)?.absoluteString ?? ""
               NSLog("❇️ link: \(text)")
               self.saveLink(text)
             }
-          } else if itemProvider.hasItemConformingToTypeIdentifier(UTType.plainText.identifier) {
+          } else if isText == true {
             itemProvider.loadItem(forTypeIdentifier: UTType.plainText.identifier, options: nil) {
               (data, error) in
               let text = data as? String ?? ""
@@ -108,7 +116,6 @@ class ShareViewController: UIViewController {
       }
     }
   }
-  
   
   private func saveLink(_ link: String) {
     
@@ -188,8 +195,12 @@ extension ShareViewController: UICollectionViewDataSource, UICollectionViewDeleg
       for: indexPath) as? CustomListViewCell else { fatalError("cell init error!") }
     
     let item = dataArray[indexPath.row]
-    
-    cell.folderNameView.text = item.name
+    let folderName = item.name
+    if folderName.count > 7 {
+      cell.folderNameView.text = String(folderName.prefix(7)) + "..."
+    } else {
+      cell.folderNameView.text = folderName
+    }
     cell.visibleView.image = item.visible == 1 ? nil : UIImage(named: "ic_lock_png")
     
     cell.imageView.contentMode = .scaleAspectFill

@@ -5,6 +5,7 @@ import 'package:ac_project_app/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> initSettings() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,4 +22,15 @@ Future<void> initSettings() async {
   } else {
     Firebase.app();
   }
+  _saveFirstInstalled();
+}
+
+void _saveFirstInstalled() {
+  SharedPreferences.getInstance().then((SharedPreferences prefs) {
+    final isFirst = prefs.getBool('isFirst') ?? true;
+    if (isFirst) {
+      prefs.setBool('isFirst', true);
+    }
+  });
+
 }

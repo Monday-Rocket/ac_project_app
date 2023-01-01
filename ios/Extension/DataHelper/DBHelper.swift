@@ -53,7 +53,7 @@ class DBHelper {
     let query = """
 CREATE TABLE IF NOT EXISTS folder(
   seq INT PRIMARY KEY,
-  name VARCHAR(200),
+  name VARCHAR(200) UNIQUE,
   visible INT NOT NULL DEFAULT 1,
   imageLink VARCHAR(2000),
   time TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL

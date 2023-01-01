@@ -21,6 +21,9 @@ class NewFolderViewController : UIViewController {
 
   @IBOutlet weak var firstSaveButton : UIButton!
   @IBOutlet weak var secondSaveButton: UIButton!
+  @IBOutlet weak var errorText: UILabel!
+  @IBOutlet weak var errorTextConstraint: NSLayoutConstraint!
+  
   
   var link: String?
   var imageLink: String?
@@ -42,6 +45,8 @@ class NewFolderViewController : UIViewController {
     self.firstSaveButton?.tintColor = UIColor.secondary
     self.secondSaveButton?.tintColor = UIColor.grey300
     
+    // MARK: - 키보드 처리
+    setKeyboardObserver()
     self.setNameTextField()
     
     self.visibleToggleButton.isUserInteractionEnabled = true
@@ -49,10 +54,11 @@ class NewFolderViewController : UIViewController {
     
     NSLog("❇️ link: \(link ?? ""), image: \(imageLink ?? "")")
     
-    // MARK: - 키보드 처리
-    setKeyboardObserver()
-    
     self.newFolderNameField.returnKeyType = .done
+    
+    self.errorText.isHidden = true
+    self.errorTextConstraint.constant = 0
+    self.view.layoutIfNeeded()
   }
   
   override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -65,6 +71,15 @@ class NewFolderViewController : UIViewController {
       )
       viewController.saveType = SaveType.New
     }
+  }
+  
+  func showErrorText() {
+    self.newFolderNameField.text = ""
+    self.newFolderNameField.layer.sublayers![0].backgroundColor = UIColor.error.cgColor
+    self.errorText.isHidden = false
+    self.errorTextConstraint.constant = 16
+    self.newFolderNameField.becomeFirstResponder()
+    self.view.layoutIfNeeded()
   }
   
   @IBAction func didEndOnExit(_ sender: Any) {
@@ -82,6 +97,7 @@ class NewFolderViewController : UIViewController {
   }
   
   fileprivate func setNameTextField() {
+    newFolderNameField.delegate = self
     newFolderNameField.addTarget(self, action: #selector(self.onFolderNameChange(_:)), for: .editingChanged)
     newFolderNameField.textColor = UIColor.grey800
     newFolderNameField.tintColor = UIColor.primary600
@@ -139,11 +155,13 @@ class NewFolderViewController : UIViewController {
     
     if self.link != nil, !(folderName?.isEmpty ?? true) {
       let result = dbHelper.insertData(name: folderName!, visible: visible, imageLink: imageLink)
-      UserDefaultsHelper.saveNewFolder(self.link!, folderName!, self.newFolderVisible)
-      
+      if result {
+        UserDefaultsHelper.saveNewFolder(self.link!, folderName!, self.newFolderVisible)
+        performSegue(withIdentifier: "saveSuccessSegue", sender: self)
+      } else {
+        showErrorText()
+      }
       NSLog("❇️ new folder save result: \(result)")
-      
-      performSegue(withIdentifier: "saveSuccessSegue", sender: self)
     }
   }
   

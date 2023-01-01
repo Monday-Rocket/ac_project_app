@@ -46,6 +46,7 @@
         <activity
             android:name="com.mr.ac_project_app.view.share.ShareActivity"
             android:exported="true"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/TransparentCompat"
             tools:ignore="LockedOrientationActivity">

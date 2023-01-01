@@ -4,8 +4,8 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
-import androidx.activity.ComponentActivity
 import androidx.core.content.res.ResourcesCompat
+import androidx.fragment.app.FragmentActivity
 import com.bumptech.glide.Glide
 import com.mr.ac_project_app.MainActivity
 import com.mr.ac_project_app.R
@@ -13,9 +13,10 @@ import com.mr.ac_project_app.databinding.ActivitySuccessBinding
 import com.mr.ac_project_app.model.FolderModel
 import com.mr.ac_project_app.model.FolderType
 import com.mr.ac_project_app.model.SaveType
+import com.mr.ac_project_app.utils.getShortText
 import com.mr.ac_project_app.view.comment.CommentActivity
 
-class SaveSuccessActivity: ComponentActivity() {
+class SaveSuccessActivity: FragmentActivity() {
 
     private lateinit var binding: ActivitySuccessBinding
 
@@ -48,7 +49,7 @@ class SaveSuccessActivity: ComponentActivity() {
             val movingIntent = Intent(this@SaveSuccessActivity, CommentActivity::class.java)
             movingIntent.putExtra("saveType", saveType)
             movingIntent.putExtra("link", link)
-            movingIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            movingIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
             startActivity(movingIntent)
             finish()
             overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit)
@@ -56,7 +57,7 @@ class SaveSuccessActivity: ComponentActivity() {
 
         binding.moveToAppButton.setOnClickListener {
             val intent = Intent(this@SaveSuccessActivity, MainActivity::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
             startActivity(intent)
             finish()
         }
@@ -73,7 +74,7 @@ class SaveSuccessActivity: ComponentActivity() {
 
                     binding.oneLayout.root.visibility = View.VISIBLE
 
-                    binding.oneLayout.folderText.text = folder.name
+                    binding.oneLayout.folderText.text = getShortText(folder.name)
                     binding.oneLayout.folderText.background =
                         ResourcesCompat.getDrawable(resources, R.drawable.folder_text_back, null)
 
@@ -91,7 +92,7 @@ class SaveSuccessActivity: ComponentActivity() {
                 else -> {
                     binding.oneLayout.root.visibility = View.VISIBLE
 
-                    binding.oneLayout.folderText.text = folder.name
+                    binding.oneLayout.folderText.text = getShortText(folder.name)
                     binding.oneLayout.folderText.background =
                         ResourcesCompat.getDrawable(resources, R.drawable.folder_text_back, null)
 
