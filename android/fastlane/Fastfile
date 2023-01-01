@@ -75,7 +75,6 @@ platform :android do
 
   desc 'Submit a new Beta'
   lane :beta do |_options|
-
     upload_to_play_store(
       skip_upload_metadata: true,
       skip_upload_screenshots: true,
