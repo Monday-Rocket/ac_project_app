@@ -1,6 +1,6 @@
 name: Deploy iOS and Android App to App Store and Play Store
 on:
-  pull_request:
+  push:
     branches:
       - master
 jobs:

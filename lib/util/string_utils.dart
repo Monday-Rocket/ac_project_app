@@ -24,16 +24,15 @@ String makeImagePath(String image) =>
 
 bool isLinkVerified(Link link) =>
     link.image != null &&
-        link.image!.isNotEmpty &&
-        link.image!.contains('http');
+    link.image!.isNotEmpty &&
+    link.image!.contains('http');
 
 String makeLinkTimeString(String timeString) {
-
   final formattedString = '${timeString}Z';
 
   final time = DateTime.tryParse(formattedString);
   if (time == null) {
-    return '알 수 없음';  /* TODO 예외 상황 */
+    return '알 수 없음'; /* TODO 예외 상황 */
   } else {
     final now = DateTime.now().toUtc();
     final duration = now.difference(time);
@@ -57,4 +56,11 @@ String getCurrentTime() {
 
   final now = DateTime.now().toUtc();
   return '${dateFormatter.format(now)}T${timeFormatter.format(now)}Z';
+}
+
+String getShortTitle(String title) {
+  if (title.length > 30) {
+    return title.substring(0, 30);
+  }
+  return title;
 }

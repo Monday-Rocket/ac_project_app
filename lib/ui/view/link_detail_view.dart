@@ -261,7 +261,7 @@ class LinkDetailView extends StatelessWidget {
                         ),
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.fromLTRB(19, 23, 19, 33),
+                        padding: const EdgeInsets.fromLTRB(19, 23, 47, 33),
                         child: SizedBox(
                           width: double.infinity,
                           child: Column(
@@ -269,6 +269,8 @@ class LinkDetailView extends StatelessWidget {
                             children: [
                               Text(
                                 getSafeTitleText(link.title),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
                                   fontSize: 17,
                                   color: blackBold,
