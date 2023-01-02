@@ -63,7 +63,10 @@ Future<bool?> showMyLinkOptionsDialog(
                             Clipboard.setData(
                               ClipboardData(text: link.url ?? ''),
                             ).then(
-                              (value) => showBottomToast('링크 주소가 복사 되었어요!'),
+                              (value) => showBottomToast(
+                                context: context,
+                                '링크 주소가 복사 되었어요!',
+                              ),
                             );
                           },
                         ),
@@ -78,7 +81,10 @@ Future<bool?> showMyLinkOptionsDialog(
                                 Navigator.pop(parentContext, 'deleted');
                               }
                               if (result) {
-                                showBottomToast('링크가 삭제되었어요!');
+                                showBottomToast(
+                                  context: context,
+                                  '링크가 삭제되었어요!',
+                                );
                               }
                             });
                           },
@@ -156,9 +162,15 @@ Future<bool?> showChangeFolderDialog(Link link, BuildContext parentContext) {
                                 Navigator.pop(context);
                                 Navigator.pop(context);
                                 if (result) {
-                                  showBottomToast('선택한 폴더로 이동 완료!');
+                                  showBottomToast(
+                                    context: context,
+                                    '선택한 폴더로 이동 완료!',
+                                  );
                                 } else {
-                                  showBottomToast('폴더 이동 실패!');
+                                  showBottomToast(
+                                    context: context,
+                                    '폴더 이동 실패!',
+                                  );
                                 }
                               });
                             },
@@ -426,7 +438,7 @@ void saveEmptyFolder(
   context.read<FolderNameCubit>().add(folder).then((result) {
     if (result) {
       Navigator.pop(context);
-      showBottomToast('새로운 폴더가 생성되었어요!');
+      showBottomToast(context: context, '새로운 폴더가 생성되었어요!');
 
       if (hasNotUnclassified ?? false) {
         parentContext
@@ -449,7 +461,7 @@ void saveEmptyFolder(
         });
       }
     } else {
-      showBottomToast('중복된 폴더 이름입니다!');
+      showBottomToast(context: context, '중복된 폴더 이름입니다!');
     }
   });
 }

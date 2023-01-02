@@ -135,7 +135,7 @@ class _EmailSignUpViewState extends State<EmailSignUpView>
               onPressed: buttonState
                   ? () {
                       if (isEmailSent) {
-                        showBottomToast('이미 이메일이 발송 되었습니다.');
+                        showBottomToast(context:context,'이미 이메일이 발송 되었습니다.');
                       } else {
                         Email.send(context, emailString, '가입');
                         setState(() {
@@ -221,7 +221,7 @@ class _EmailSignUpViewState extends State<EmailSignUpView>
                 },
               );
             } else {
-              showBottomToast('가입된 계정이 이미 있습니다!');
+              showBottomToast(context:context,'가입된 계정이 이미 있습니다!');
             }
           },
           error: (msg) {

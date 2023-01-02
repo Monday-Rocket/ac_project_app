@@ -1,74 +1,63 @@
-# frozen_string_literal: true
-
+# Replace evverything in Fastfile with below code
 default_platform(:ios)
-
+APPLICATION_ID = ENV["APPLICATION_ID"]
+BUNDLE_IDENTIFIER = ENV["BUNDLE_IDENTIFIER"]
+EXTENSION_IDENTIFIER = ENV["EXTENSION_IDENTIFIER"]
+PROVISIONING_PROFILE_SPECIFIER = ENV["PROVISIONING_PROFILE_SPECIFIER"]
+EXTENSION_PROVISIONING_PROFILE_SPECIFIER = ENV["EXTENSION_PROVISIONING_PROFILE_SPECIFIER"]
+TEMP_KEYCHAIN_USER = ENV["TEMP_KEYCHAIN_USER"]
+TEMP_KEYCHAIN_PASSWORD = ENV["TEMP_KEYCHAIN_PASSWORD"]
+def delete_temp_keychain(name)
+  delete_keychain(
+    name: name
+  ) if File.exist? File.expand_path("~/Library/Keychains/#{name}-db")
+end
+def create_temp_keychain(name, password)
+  create_keychain(
+    name: name,
+    password: password,
+    unlock: true,
+    timeout: 0,
+    lock_when_sleeps: false
+  )
+end
+def ensure_temp_keychain(name, password)
+  delete_temp_keychain(name)
+  create_temp_keychain(name, password)
+end
 platform :ios do
-
-  before_all do
-    ENV['FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD']= 'azxg-efnj-ykvh-niwj'
-  end
-
-  def updateVersion(options)
-    if options[:version]
-      version = options[:version]
-    else
-      version = prompt(text: "Enter the version type or specific version\n(major, minor, patch or 1.0.0): ")
-    end
-
-    re = /\d+.\d+.\d+/
-    versionNum = version[re, 0]
-
-    if versionNum
-      increment_version_number(
-        version_number: versionNum
-      )
-    elsif version == 'major' || version == 'minor' || version == 'patch'
-      increment_version_number(
-        bump_type: version
-      )
-    else
-      UI.user_error!('[ERROR] Wrong version!!!!!!')
-    end
-  end
-
-  desc 'Update version'
-  lane :version do |options|
-    updateVersion(options)
-    increment_build_number(xcodeproj: 'Runner.xcodeproj')
-  end
-
-  desc 'Submit review only'
-  lane :submit_review do |_options|
-    upload_to_app_store(
-      submit_for_review: true,
-      automatic_release: true,
-      force: true,
-      skip_metadata: true,
-      skip_screenshots: true,
-      skip_binary_upload: true
+  lane :closed_beta do
+    keychain_name = TEMP_KEYCHAIN_USER
+    keychain_password = TEMP_KEYCHAIN_PASSWORD
+    ensure_temp_keychain(keychain_name, keychain_password)
+    match(
+      type: 'appstore',
+      app_identifier: ["#{BUNDLE_IDENTIFIER}", "#{EXTENSION_IDENTIFIER}"],
+      git_basic_authorization: Base64.strict_encode64(ENV["GIT_AUTHORIZATION"]),
+      readonly: true,
+      keychain_name: keychain_name,
+      keychain_password: keychain_password
     )
-  end
-
-  desc 'Push a new beta build to TestFlight'
-  lane :beta do |options|
-    sync_code_signing(
-        type: "appstore",
-        app_identifier: 'com.mr.acProjectApp',
-        readonly: true
-    )
-    sync_code_signing(
-      type: "appstore",
-      app_identifier: 'com.mr.acProjectApp.Extension',
-      readonly: true
-    )
-
-    build_app(
-      workspace: 'Runner.xcworkspace',
-      scheme: 'Runner',
+    gym(
+      configuration: "Release",
+      workspace: "Runner.xcworkspace",
+      scheme: "Runner",
       export_method: "app-store",
+      export_options: {
+        provisioningProfiles: {
+          APPLICATION_ID => PROVISIONING_PROFILE_SPECIFIER
+        }
+      }
     )
-    upload_to_testflight(
-      skip_waiting_for_build_processing: true
+    pilot(
+      apple_id: "#{APPLICATION_ID}",
+      app_identifier: "#{BUNDLE_IDENTIFIER}",
+      skip_waiting_for_build_processing: true,
+      skip_submission: true,
+      distribute_external: false,
+      notify_external_testers: false,
+      ipa: "./Runner.ipa"
     )
+    delete_temp_keychain(keychain_name)
   end
 end

@@ -84,41 +84,20 @@ android {
             minifyEnabled true
             signingConfig signingConfigs.release
 
-            ndk {
-                debugSymbolLevel 'FULL'
-            }
+            ndk.debugSymbolLevel = "FULL"
         }
     }
     namespace 'com.mr.ac_project_app'
 
-    applicationVariants.all { variant ->
-        variant.outputs.all { output ->
-
-            if (variant.buildType.name in ["release"]) {
-                def prefixFirstName = "acp"
-
-                if (variant.versionName != null) {
-                    def outputFileName = "${prefixFirstName}_${variant.versionName}.aab"
-                    def taskSuffix = variant.name.capitalize()
-                    def bundleTaskName = "bundle${taskSuffix}"
-
-                    def copyDir = new File("../../../../Release/")
-                    def copyTaskName = "archive${taskSuffix}Copy"
-
-                    if (tasks.findByName(bundleTaskName)) {
-                        def copyTask = tasks.create(copyTaskName, Copy) {
-                            from "${buildDir.path}/outputs/bundle/release/"
-                            into copyDir.path
-                            include "app-release.aab"
-                            rename "app-release.aab", outputFileName
-                        }
-
-                        tasks[bundleTaskName].finalizedBy = [copyTask]
-                    }
-                }
-            }
+    packagingOptions {
+        dex {
+            useLegacyPackaging true
+        }
+        jniLibs {
+            useLegacyPackaging true
         }
     }
+
 }
 
 flutter {

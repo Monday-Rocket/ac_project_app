@@ -438,6 +438,7 @@ class HomePage extends StatelessWidget {
                             .read<LinksFromSelectedJobGroupCubit>()
                             .getSelectedJobLinks(selectedJobGroupId, 0);
                         totalLinks.clear();
+
                       },
                     );
                   },
