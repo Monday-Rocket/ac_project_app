@@ -15,7 +15,7 @@ class UploadLinkCubit extends Cubit<UploadResultState> {
         Link(
           url: url,
           image: metadata.image,
-          title: metadata.title,
+          title: getShortTitle(metadata.title ?? ''),
           describe: describe,
           folderId: folderId,
           time: getCurrentTime(),

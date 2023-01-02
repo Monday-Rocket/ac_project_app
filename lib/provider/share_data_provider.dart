@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:ac_project_app/provider/api/folders/folder_api.dart';
 import 'package:ac_project_app/provider/share_db.dart';
 import 'package:ac_project_app/util/logger.dart';
+import 'package:ac_project_app/util/string_utils.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart' as path;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -26,7 +27,7 @@ class ShareDataProvider {
         Log.i(item);
         links.add({
           'url': url,
-          'title': item['title'],
+          'title': getShortTitle(item['title'] as String? ?? ''),
           'describe': item['comment'],
           'image': item['image_link'],
           'folder_name': item['folder_name'],
