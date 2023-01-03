@@ -317,12 +317,16 @@ class _MyFolderPageState extends State<MyFolderPage>
                               mainAxisSize: MainAxisSize.min,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  folder.name!,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                    color: blackBold,
+                                SizedBox(
+                                  width: 120,
+                                  child: Text(
+                                    folder.name!,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                      color: blackBold,
+                                    ),
                                   ),
                                 ),
                                 const SizedBox(
