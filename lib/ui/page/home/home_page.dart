@@ -23,7 +23,6 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final totalLinks = <Link>[];
     return BlocBuilder<GetJobListCubit, JobListState>(
       builder: (jobContext, state) {
         if (state is LoadedState) {
@@ -62,8 +61,8 @@ class HomePage extends StatelessWidget {
                     ),
                   ),
                 ),
-                buildJobListView(jobContext, state.jobs, totalLinks),
-                buildListBody(jobContext, totalLinks),
+                buildJobListView(jobContext, state.jobs),
+                buildListBody(jobContext),
               ],
             ),
           );
@@ -76,11 +75,17 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget buildListBody(BuildContext parentContext, List<Link> totalLinks) {
+  Widget buildListBody(BuildContext parentContext) {
     final width = MediaQuery.of(parentContext).size.width;
     return BlocBuilder<LinksFromSelectedJobGroupCubit, List<Link>>(
       builder: (context, links) {
-        addLinks(context, totalLinks, links);
+        final totalLinks =
+            context.watch<LinksFromSelectedJobGroupCubit>().totalLinks;
+        if (context.read<LinksFromSelectedJobGroupCubit>().hasRefresh) {
+          totalLinks.clear();
+          context.read<LinksFromSelectedJobGroupCubit>().hasRefresh = false;
+        }
+        totalLinks.addAll(links);
         return Expanded(
           child: NotificationListener<ScrollEndNotification>(
             onNotification: (scrollEnd) {
@@ -96,6 +101,9 @@ class HomePage extends StatelessWidget {
               child: ListView.separated(
                 itemCount: totalLinks.length,
                 physics: const AlwaysScrollableScrollPhysics(),
+                controller: context
+                    .read<LinksFromSelectedJobGroupCubit>()
+                    .scrollController,
                 itemBuilder: (_, i) {
                   final link = totalLinks[i];
                   return GestureDetector(
@@ -357,7 +365,6 @@ class HomePage extends StatelessWidget {
   Widget buildJobListView(
     BuildContext jobContext,
     List<JobGroup> jobs,
-    List<Link> totalLinks,
   ) {
     return Container(
       margin: const EdgeInsets.only(top: 30 - 7, left: 12, right: 20),
@@ -436,9 +443,16 @@ class HomePage extends StatelessWidget {
                         final selectedJobGroupId = jobs[index].id!;
                         jobContext
                             .read<LinksFromSelectedJobGroupCubit>()
-                            .getSelectedJobLinks(selectedJobGroupId, 0);
-                        totalLinks.clear();
-
+                            .clear();
+                        jobContext
+                            .read<LinksFromSelectedJobGroupCubit>()
+                            .getSelectedJobLinks(selectedJobGroupId, 0)
+                            .then(
+                              (value) => jobContext
+                                  .read<LinksFromSelectedJobGroupCubit>()
+                                  .scrollController
+                                  .jumpTo(0),
+                            );
                       },
                     );
                   },
