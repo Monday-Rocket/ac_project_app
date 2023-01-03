@@ -1,12 +1,15 @@
 import 'package:ac_project_app/cubits/links/has_more_cubit.dart';
-import 'package:ac_project_app/cubits/links/link_list_state.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
+import 'package:ac_project_app/models/link/link.dart';
+import 'package:ac_project_app/models/link/searched_links.dart';
 import 'package:ac_project_app/provider/api/folders/link_api.dart';
+import 'package:ac_project_app/util/page_utils.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class FeedViewCubit extends Cubit<LinkListState> {
-  FeedViewCubit(List<Folder> folders) : super(LinkListInitialState()) {
-    emit(LinkListLoadingState());
+class FeedViewCubit extends Cubit<List<Link>> {
+  FeedViewCubit(List<Folder> folders) : super([]) {
+    emit([]);
     globalFolders.addAll(folders);
     if (folders.isNotEmpty) {
       getLinks(0, page);
@@ -19,45 +22,49 @@ class FeedViewCubit extends Cubit<LinkListState> {
 
   int currentIndex = 0;
   int page = 0;
+  final totalLinks = <Link>[];
+  bool hasRefresh = false;
+  final scrollController = ScrollController();
 
   Future<void> getLinks(int index, int pageNum) async {
+    hasRefresh = false;
     currentIndex = index;
 
     final folder = globalFolders[index];
     final result = await linkApi.getLinksFromSelectedFolder(folder, pageNum);
     result.when(
       success: (data) {
-        emit(LinkListLoadedState(data.contents ?? []));
+        final links = _setScrollState(data);
+        emit(links);
       },
       error: (msg) {
-        emit(LinkListErrorState(msg));
+
       },
     );
   }
 
-  Future<void> refresh() async {
-    emit(LinkListLoadingState());
-    final folder = globalFolders[currentIndex];
-    final result = await linkApi.getLinksFromSelectedFolder(folder, 0);
-    result.when(
-      success: (data) {
-        emit(LinkListLoadedState(data.contents ?? []));
-      },
-      error: (msg) {
-        emit(LinkListErrorState(msg));
-      },
-    );
+  void refresh() {
+    totalLinks.clear();
+    hasRefresh = true;
+    getLinks(currentIndex, 0);
   }
 
   void loadMore() {
     if (hasMore.state == ScrollableType.can) {
-      emit(LinkListLoadingState());
       getLinks(currentIndex, page + 1);
     }
   }
 
-  void selectFolder(int index) {
-    emit(LinkListLoadingState());
-    getLinks(index, 0);
+  Future<void> selectFolder(int index) async {
+    emit([]);
+    await getLinks(index, 0);
+  }
+
+  List<Link> _setScrollState(SearchedLinks data) {
+    page = data.pageNum ?? 0;
+    final hasPage = hasMorePage(data);
+    hasMore.emit(hasPage ? ScrollableType.can : ScrollableType.cannot);
+
+    return data.contents ?? [];
   }
 }
