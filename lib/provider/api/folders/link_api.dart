@@ -66,7 +66,9 @@ class LinkApi {
   }
 
   Future<Result<SearchedLinks>> getJobGroupLinks(
-      int jobGroup, int pageNum) async {
+    int jobGroup,
+    int pageNum,
+  ) async {
     final result = await client.getUri('/job-groups/$jobGroup/links?'
         'page_no=$pageNum&'
         'page_size=10');
@@ -107,7 +109,9 @@ class LinkApi {
   }
 
   Future<Result<SearchedLinks>> searchOtherLinks(
-      String text, int pageNum) async {
+    String text,
+    int pageNum,
+  ) async {
     final result = await client.getUri(
       '/links/search?'
       'my_links_only=false&'

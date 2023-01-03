@@ -117,9 +117,20 @@ class NewFolderViewController : UIViewController {
   @objc func onFolderNameChange(_ sender: Any?) {
     let text = self.newFolderNameField?.text ?? ""
     
+    if (self.errorText.isHidden == false) {
+      removeErrorText()
+    }
+    
     self.firstSaveButton?.tintColor = text.isEmpty ? UIColor.secondary : UIColor.primary600
     self.secondSaveButton?.tintColor = text.isEmpty ? UIColor.grey300 : UIColor.grey800
     
+  }
+  
+  func removeErrorText() {
+    self.newFolderNameField.layer.sublayers![0].backgroundColor = UIColor.primary600.cgColor
+    self.errorText.isHidden = true
+    self.errorTextConstraint.constant = 0
+    self.view.layoutIfNeeded()
   }
   
   @objc func showConfirmDialog(_ sender: UITapGestureRecognizer? = nil) {

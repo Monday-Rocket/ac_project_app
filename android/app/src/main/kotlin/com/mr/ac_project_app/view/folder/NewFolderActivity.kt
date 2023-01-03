@@ -107,6 +107,7 @@ class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
                 finish()
                 overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit)
             } else {
+                binding.errorText.text = ""
                 binding.folderNameEditText.backgroundTintList = ColorStateList.valueOf(getColor(R.color.error))
                 binding.errorText.visibility = View.VISIBLE
 
@@ -178,6 +179,10 @@ class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
                     binding.folderNameEditText.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
                     binding.completeText.setTextColor(getColor(R.color.grey300))
                     binding.saveFolderButton.isEnabled = false
+                }
+                if (binding.errorText.visibility == View.VISIBLE) {
+                    binding.folderNameEditText.backgroundTintList = ColorStateList.valueOf(getColor(R.color.primary600))
+                    binding.errorText.visibility = View.GONE
                 }
             }
 
