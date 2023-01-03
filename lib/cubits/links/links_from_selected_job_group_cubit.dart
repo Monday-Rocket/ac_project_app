@@ -3,6 +3,7 @@ import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/models/link/searched_links.dart';
 import 'package:ac_project_app/provider/api/folders/link_api.dart';
 import 'package:ac_project_app/util/page_utils.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LinksFromSelectedJobGroupCubit extends Cubit<List<Link>> {
@@ -16,6 +17,8 @@ class LinksFromSelectedJobGroupCubit extends Cubit<List<Link>> {
   int selectedJobId = 1;
   int page = 0;
   bool hasRefresh = false;
+  List<Link> totalLinks = [];
+  final scrollController = ScrollController();
 
   void initialize() {
     emit([]);
@@ -23,7 +26,7 @@ class LinksFromSelectedJobGroupCubit extends Cubit<List<Link>> {
   }
 
   Future<void> getSelectedJobLinks(int jobGroupId, int pageNum) async {
-    hasRefresh = true;
+    hasRefresh = false;
     selectedJobId = jobGroupId;
     final result = await linkApi.getJobGroupLinks(jobGroupId, pageNum);
     result.when(
@@ -35,7 +38,13 @@ class LinksFromSelectedJobGroupCubit extends Cubit<List<Link>> {
     );
   }
 
+  void clear() {
+    totalLinks.clear();
+    hasRefresh = true;
+  }
+
   void refresh() {
+    totalLinks.clear();
     hasRefresh = true;
     getSelectedJobLinks(selectedJobId, 0);
   }

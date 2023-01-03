@@ -5,7 +5,6 @@ import 'dart:async';
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/feed/feed_view_cubit.dart';
 import 'package:ac_project_app/cubits/folders/get_user_folders_cubit.dart';
-import 'package:ac_project_app/cubits/links/link_list_state.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/models/user/detail_user.dart';
@@ -29,7 +28,6 @@ class UserFeedView extends StatelessWidget {
     final user = args['user'] as DetailUser;
     final folders = args['folders'] as List<Folder>;
     final isMine = args['isMine'] as bool;
-    final totalLinks = <Link>[];
 
     return MultiBlocProvider(
       providers: [
@@ -75,23 +73,25 @@ class UserFeedView extends StatelessWidget {
                   Expanded(
                     child: Column(
                       children: [
-                        buildJobListView(context, totalLinks, folders),
-                        BlocBuilder<FeedViewCubit, LinkListState>(
-                          builder: (feedContext, state) {
-                            if (state is LinkListLoadedState) {
-                              final links = state.links;
-                              if (folders.isNotEmpty) {
-                                totalLinks.addAll(links);
-                              }
-                              return buildListBody(
-                                context,
-                                totalLinks,
-                                user,
-                                isMine,
-                              );
-                            } else {
-                              return const SizedBox.shrink();
+                        buildJobListView(context, folders),
+                        BlocBuilder<FeedViewCubit, List<Link>>(
+                          builder: (feedContext, links) {
+                            final totalLinks =
+                                feedContext.watch<FeedViewCubit>().totalLinks;
+                            if (feedContext.read<FeedViewCubit>().hasRefresh) {
+                              totalLinks.clear();
+                              feedContext.read<FeedViewCubit>().hasRefresh =
+                                  false;
                             }
+                            totalLinks.addAll(links);
+
+                            return buildListBody(
+                              context,
+                              totalLinks,
+                              user,
+                              isMine,
+                              feedContext,
+                            );
                           },
                         ),
                       ],
@@ -146,7 +146,6 @@ class UserFeedView extends StatelessWidget {
 
   Widget buildJobListView(
     BuildContext parentContext,
-    List<Link> totalLinks,
     List<Folder> folders,
   ) {
     return Container(
@@ -222,8 +221,9 @@ class UserFeedView extends StatelessWidget {
                       ),
                       tabs: tabs,
                       onTap: (index) {
-                        totalLinks.clear();
-                        context.read<FeedViewCubit>().selectFolder(index);
+                        final cubit = context.read<FeedViewCubit>();
+                        cubit.totalLinks.clear();
+                        cubit.selectFolder(index).then((value) => cubit.scrollController.jumpTo(0));
                       },
                     );
                   },
@@ -241,6 +241,7 @@ class UserFeedView extends StatelessWidget {
     List<Link> totalLinks,
     DetailUser user,
     bool isMine,
+    BuildContext feedContext,
   ) {
     final width = MediaQuery.of(parentContext).size.width;
     return Builder(
@@ -250,16 +251,17 @@ class UserFeedView extends StatelessWidget {
             onNotification: (scrollEnd) {
               final metrics = scrollEnd.metrics;
               if (metrics.atEdge && metrics.pixels != 0) {
-                context.read<FeedViewCubit>().loadMore();
+                feedContext.read<FeedViewCubit>().loadMore();
               }
               return true;
             },
             child: RefreshIndicator(
-              onRefresh: () => refresh(context, totalLinks),
+              onRefresh: () => refresh(feedContext, totalLinks),
               color: primary600,
               child: ListView.separated(
                 itemCount: totalLinks.length,
                 physics: const AlwaysScrollableScrollPhysics(),
+                controller: feedContext.read<FeedViewCubit>().scrollController,
                 itemBuilder: (_, i) {
                   final link = totalLinks[i];
                   return GestureDetector(
@@ -496,6 +498,6 @@ class UserFeedView extends StatelessWidget {
 
   Future<void> refresh(BuildContext context, List<Link> totalLinks) async {
     totalLinks.clear();
-    unawaited(context.read<FeedViewCubit>().refresh());
+    context.read<FeedViewCubit>().refresh();
   }
 }
