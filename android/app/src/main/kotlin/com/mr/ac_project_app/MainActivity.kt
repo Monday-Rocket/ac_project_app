@@ -1,7 +1,5 @@
 package com.mr.ac_project_app
 
-import android.util.Log
-import com.mr.ac_project_app.data.ShareDBFunctions
 import com.mr.ac_project_app.data.SharedPrefHelper
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine

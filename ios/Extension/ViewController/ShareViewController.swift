@@ -1,9 +1,9 @@
-//
-//  ShareViewController.swift
-//  sharetest
-//
-//  Created by 유재선 on 2022/09/18.
-//
+  //
+  //  ShareViewController.swift
+  //  sharetest
+  //
+  //  Created by 유재선 on 2022/09/18.
+  //
 
 import UIKit
 import Social
@@ -119,7 +119,7 @@ class ShareViewController: UIViewController {
   
   private func saveLink(_ link: String) {
     
-    // 링크가 아니면 저장 안함
+      // 링크가 아니면 저장 안함
     guard (link.starts(with: "http://") || link.starts(with: "https://")) && !link.isEmpty else {
       self.showLinkErrorDialog()
       return
@@ -131,7 +131,11 @@ class ShareViewController: UIViewController {
       switch result {
         case .success(let og):
           NSLog("🌏 \(String(describing: og[.imageUrl])) \(String(describing: og[.imageSecure_url])) \(String(describing: og[.image]))")
-          self.titleText = og[.title] ?? ""
+          
+          let rawTitle = og[.title] ?? ""
+          let safeTitle = String(htmlEncodedString: rawTitle) ?? ""
+          
+          self.titleText = Data(safeTitle.utf8).base64EncodedString()
           self.linkImageUrl = (og[.image] ?? "")
           UserDefaultsHelper.saveLinkWithoutFolder(link, self.linkImageUrl, self.titleText)
           break
@@ -175,7 +179,7 @@ extension ShareViewController: UICollectionViewDataSource, UICollectionViewDeleg
     guard self.link != nil else {
       return
     }
-    // , (comma)로 guard 조건 추가할 때 Optional 체크 안하는지 확인 필요
+      // , (comma)로 guard 조건 추가할 때 Optional 체크 안하는지 확인 필요
     guard (self.link!.starts(with: "http://") || self.link!.starts(with: "https://")) else {
       return
     }

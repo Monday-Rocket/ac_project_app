@@ -25,9 +25,10 @@ class ShareDataProvider {
         final item =
             jsonDecode(newLinks[url].toString()) as Map<String, dynamic>;
         Log.i(item);
+        final shortTitle = getShortTitle(item['title'] as String? ?? '');
         links.add({
           'url': url,
-          'title': getShortTitle(item['title'] as String? ?? ''),
+          'title': shortTitle,
           'describe': item['comment'],
           'image': item['image_link'],
           'folder_name': item['folder_name'],
@@ -107,7 +108,8 @@ class ShareDataProvider {
       FolderApi().getMyFoldersWithoutUnclassified().then(
             (result) => result.when(
               success: (folders) {
-                ShareDB.loadData(folders).then((result) => Log.i('load all data: $result'));
+                ShareDB.loadData(folders)
+                    .then((result) => Log.i('load all data: $result'));
               },
               error: Log.e,
             ),

@@ -10,6 +10,7 @@ import com.mr.ac_project_app.data.ShareDbHelper
 import com.mr.ac_project_app.data.SharedPrefHelper
 import com.mr.ac_project_app.model.FolderModel
 import com.mr.ac_project_app.utils.convert
+import com.mr.ac_project_app.utils.encodeBase64
 import com.mr.ac_project_app.utils.getCurrentDateTime
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -79,7 +80,7 @@ class ShareViewModel(application: Application) : AndroidViewModel(application) {
                 }
             }
             val tempImage = linkOpenGraph["image"] ?: ""
-            val tempTitle = linkOpenGraph["title"] ?: ""
+            val tempTitle = encodeBase64(linkOpenGraph["title"] ?: "")
             imageLink.postValue(tempImage)
             title.postValue(tempTitle)
             saveLinkWithoutFolder(link, tempTitle, tempImage)

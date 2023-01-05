@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:ac_project_app/models/link/link.dart';
+import 'package:ac_project_app/util/logger.dart';
 import 'package:intl/intl.dart';
 
 Object toEncodableFallback(dynamic object) {
@@ -59,8 +60,17 @@ String getCurrentTime() {
 }
 
 String getShortTitle(String title) {
-  if (title.length > 30) {
-    return title.substring(0, 30);
+  try {
+    final encoded = utf8.fuse(base64);
+    final decodedTitle = encoded.decode(title);
+
+    if (decodedTitle.length > 30) {
+      return decodedTitle.substring(0, 30);
+    }
+    return decodedTitle;
+  } on FormatException catch (e) {
+    Log.e(e);
+    Log.e(e.message);
+    return '';
   }
-  return title;
 }
