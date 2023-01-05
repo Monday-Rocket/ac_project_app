@@ -1,4 +1,5 @@
 import 'package:ac_project_app/const/colors.dart';
+import 'package:ac_project_app/const/enums.dart';
 import 'package:ac_project_app/cubits/folders/folders_state.dart';
 import 'package:ac_project_app/cubits/folders/get_my_folders_cubit.dart';
 import 'package:ac_project_app/cubits/folders/get_selected_folder_cubit.dart';
@@ -31,7 +32,7 @@ class MyLinkView extends StatelessWidget {
       create: (_) => GetFoldersCubit(),
       child: BlocBuilder<GetFoldersCubit, FoldersState>(
         builder: (foldersContext, folderState) {
-          if (folderState is FolderLoadedState) {
+          if (folderState.status == CommonStatus.loaded) {
             folders = folderState.folders;
           }
 
@@ -315,7 +316,7 @@ class MyLinkView extends StatelessWidget {
     if (folder.links == 0) {
       return buildEmptyList();
     } else {
-      if (state is LinkListLoadedState && folderState is FolderLoadedState) {
+      if (state is LinkListLoadedState && folderState.status == CommonStatus.loaded) {
         final links = state.links;
         totalLinks.addAll(links);
       }
