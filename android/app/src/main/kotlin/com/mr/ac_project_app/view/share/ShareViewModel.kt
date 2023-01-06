@@ -30,14 +30,14 @@ class ShareViewModel(application: Application) : AndroidViewModel(application) {
         dbHelper = ShareDbHelper(context = getApplication<Application>().applicationContext)
     }
 
-    fun saveLink(link: String): Boolean {
+    fun saveLink(link: String, originLink: String): Boolean {
         if (isLinkSaved.value!!) {
             return false
         }
         if (TextUtils.isEmpty(link) || !URLUtil.isValidUrl(link)) {
             return true
         }
-        savedLink.postValue(link)
+        this.savedLink.postValue(originLink)
         CoroutineScope(Dispatchers.IO).launch {
             val linkOpenGraph = HashMap<String, String>()
             val document = Jsoup.connect(link).get()
@@ -83,7 +83,7 @@ class ShareViewModel(application: Application) : AndroidViewModel(application) {
             val tempTitle = encodeBase64(linkOpenGraph["title"] ?: "")
             imageLink.postValue(tempImage)
             title.postValue(tempTitle)
-            saveLinkWithoutFolder(link, tempTitle, tempImage)
+            saveLinkWithoutFolder(originLink, tempTitle, tempImage)
             isLinkSaved.postValue(true)
         }
         return false
