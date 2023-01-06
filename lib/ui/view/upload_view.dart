@@ -136,6 +136,7 @@ class _UploadViewState extends State<UploadView> {
                 onPressed: buttonState == ButtonState.enabled
                     ? () => completeRegister(context)
                     : null,
+                buttonShadow: false
               ),
             );
           },
