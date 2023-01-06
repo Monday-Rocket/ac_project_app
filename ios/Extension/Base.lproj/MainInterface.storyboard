@@ -209,9 +209,14 @@
                                             <action selector="addNewFolder:" destination="j1y-V4-xli" eventType="touchUpInside" id="bEW-up-p3e"/>
                                         </connections>
                                     </button>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="h0l-Ip-QfQ">
+                                        <rect key="frame" x="0.0" y="0.0" width="430" height="308"/>
+                                        <color key="backgroundColor" red="0.41897526853118711" green="0.43066837718959872" blue="0.45371685606060608" alpha="0.5" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </view>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
+                                    <constraint firstAttribute="bottom" secondItem="h0l-Ip-QfQ" secondAttribute="bottom" id="24i-7o-VzO"/>
                                     <constraint firstAttribute="trailing" secondItem="26V-wP-wEK" secondAttribute="trailing" id="3bd-QO-Ex2"/>
                                     <constraint firstItem="BzQ-i1-hFr" firstAttribute="leading" secondItem="HJZ-Dr-si8" secondAttribute="trailing" constant="13" id="44b-vY-IVL"/>
                                     <constraint firstItem="Alu-mA-075" firstAttribute="leading" secondItem="ual-lW-pEE" secondAttribute="leading" constant="24" id="A5e-Li-xmk"/>
@@ -230,6 +235,7 @@
                                     <constraint firstItem="26V-wP-wEK" firstAttribute="leading" secondItem="hid-p6-z53" secondAttribute="leading" id="icw-kt-4o6"/>
                                     <constraint firstAttribute="trailing" secondItem="p7f-yK-ZWm" secondAttribute="trailing" constant="20" symbolic="YES" id="mGL-kZ-BDm"/>
                                     <constraint firstItem="26V-wP-wEK" firstAttribute="top" secondItem="QtK-qM-Rgq" secondAttribute="bottom" constant="11" id="ma4-R0-6Sb"/>
+                                    <constraint firstItem="h0l-Ip-QfQ" firstAttribute="top" secondItem="ual-lW-pEE" secondAttribute="top" id="pCp-eP-CKI"/>
                                     <constraint firstAttribute="bottom" secondItem="26V-wP-wEK" secondAttribute="bottom" constant="37" id="sWU-60-xhH"/>
                                     <constraint firstAttribute="trailing" secondItem="QtK-qM-Rgq" secondAttribute="trailing" constant="24" id="voz-BA-fmc"/>
                                 </constraints>
@@ -248,12 +254,15 @@
                             <constraint firstItem="1Xd-am-t49" firstAttribute="trailing" secondItem="gz1-WP-NYa" secondAttribute="trailing" id="8M2-vg-X3D"/>
                             <constraint firstItem="gz1-WP-NYa" firstAttribute="top" secondItem="1Xd-am-t49" secondAttribute="top" id="Llz-3g-v8f"/>
                             <constraint firstItem="ual-lW-pEE" firstAttribute="leading" secondItem="wbc-yd-nQP" secondAttribute="leading" id="a3N-jS-9A9"/>
+                            <constraint firstItem="h0l-Ip-QfQ" firstAttribute="leading" secondItem="1Xd-am-t49" secondAttribute="leading" id="dri-nA-dn1"/>
                             <constraint firstItem="gz1-WP-NYa" firstAttribute="leading" secondItem="1Xd-am-t49" secondAttribute="leading" id="gJ5-wF-HYp"/>
+                            <constraint firstItem="1Xd-am-t49" firstAttribute="trailing" secondItem="h0l-Ip-QfQ" secondAttribute="trailing" id="ln1-Bj-4F7"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="uMx-Ee-cbR"/>
                     <connections>
                         <outlet property="backgroundView" destination="gz1-WP-NYa" id="SuH-k5-2Z9"/>
+                        <outlet property="blockingView" destination="h0l-Ip-QfQ" id="d42-XC-I3G"/>
                         <outlet property="checkImageView" destination="HJZ-Dr-si8" id="SoA-lF-EtK"/>
                         <outlet property="closeButton" destination="p7f-yK-ZWm" id="cvu-sn-BtC"/>
                         <outlet property="emptyFolderButton" destination="Alu-mA-075" id="SLo-EN-jtW"/>
@@ -847,7 +856,7 @@
         </designable>
     </designables>
     <inferredMetricsTieBreakers>
-        <segue reference="9Bv-zS-hgp"/>
+        <segue reference="KSu-dh-boo"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" red="0.78431367870000002" green="0.74901962280000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
     <resources>

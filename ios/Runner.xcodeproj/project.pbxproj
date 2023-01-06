@@ -31,6 +31,7 @@
 		AE2AAE1D292D3BAD00289C80 /* Pretendard-Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = AE2AAE19292D3BAD00289C80 /* Pretendard-Thin.otf */; };
 		AE2AAE1E292D3BAD00289C80 /* Pretendard-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = AE2AAE1A292D3BAD00289C80 /* Pretendard-Medium.otf */; };
 		AE62B8F6291DC5440018002C /* LabelExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE62B8F5291DC5440018002C /* LabelExtension.swift */; };
+		AE635A5F296804BB005540F0 /* URLExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE635A5E296804BB005540F0 /* URLExtension.swift */; };
 		AE83E34A291CA20100A43A2D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AE83E349291CA20100A43A2D /* Assets.xcassets */; };
 		AE83E34C291CB70C00A43A2D /* FolderSaveSuccessViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE83E34B291CB70C00A43A2D /* FolderSaveSuccessViewController.swift */; };
 		AE83E34E291CB8FB00A43A2D /* SaveType.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE83E34D291CB8FB00A43A2D /* SaveType.swift */; };
@@ -117,6 +118,7 @@
 		AE2AAE19292D3BAD00289C80 /* Pretendard-Thin.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-Thin.otf"; sourceTree = "<group>"; };
 		AE2AAE1A292D3BAD00289C80 /* Pretendard-Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-Medium.otf"; sourceTree = "<group>"; };
 		AE62B8F5291DC5440018002C /* LabelExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelExtension.swift; sourceTree = "<group>"; };
+		AE635A5E296804BB005540F0 /* URLExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLExtension.swift; sourceTree = "<group>"; };
 		AE66222428DCA79100E5DE18 /* Extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Extension.entitlements; sourceTree = "<group>"; };
 		AE66222828DCB16400E5DE18 /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
 		AE83E349291CA20100A43A2D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -279,6 +281,7 @@
 				AE62B8F5291DC5440018002C /* LabelExtension.swift */,
 				AEB8CBF42920B0CF00886882 /* TextFieldExtension.swift */,
 				AEBD53C929671F8A00BB7732 /* StringExtension.swift */,
+				AE635A5E296804BB005540F0 /* URLExtension.swift */,
 			);
 			path = Custom;
 			sourceTree = "<group>";
@@ -536,6 +539,7 @@
 				AEFAAC81291D586A00ED5DDC /* UserDefaultsHelper.swift in Sources */,
 				AE0A99EC294830F10023DAFB /* LinkErrorDialogViewController.swift in Sources */,
 				AEFAAC84291D6E1600ED5DDC /* CommentViewController.swift in Sources */,
+				AE635A5F296804BB005540F0 /* URLExtension.swift in Sources */,
 				AEDF4C8D291D8226000FC3D7 /* CustomeUIButton.swift in Sources */,
 				0F872E3E28D875E3002954CC /* ShareViewController.swift in Sources */,
 				AE83E34E291CB8FB00A43A2D /* SaveType.swift in Sources */,
