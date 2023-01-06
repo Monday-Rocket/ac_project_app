@@ -27,7 +27,7 @@ class UrlLoader {
   static Future<Metadata> _getMetadata(String url, String realUrl) async {
     final extractedMetadata = await _extract(url, realUrl);
     if (extractedMetadata == null) {
-      final response = await http.get(Uri.parse(url));
+      final response = await http.get(Uri.parse(url), headers: {'User-Agent': 'facebookexternalhit/1.1'});
       final document = MetadataFetch.responseToDocument(response);
       final openGraph = MetadataParser.openGraph(document)..url = realUrl;
       return openGraph;

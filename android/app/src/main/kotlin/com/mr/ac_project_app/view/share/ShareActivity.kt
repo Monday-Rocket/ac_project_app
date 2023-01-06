@@ -122,14 +122,9 @@ class ShareActivity : FragmentActivity() {
                         val sanitizer = UrlQuerySanitizer(link)
 
                         for (item in sanitizer.parameterList) {
-                            if (item.mParameter.equals("dst")) {
-                                link = link.dropLast(1)
-                                break
-                            }
                             if (item.mParameter.equals("url")) {
-                                link = item.mValue + "&"
-                            } else {
-                                link += item.mParameter + "=" + item.mValue + "&"
+                                link = item.mValue
+                                break
                             }
                         }
                     }
