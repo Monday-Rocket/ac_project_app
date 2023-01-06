@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:ac_project_app/cubits/links/upload_result_state.dart';
 import 'package:ac_project_app/cubits/url_data_cubit.dart';
 import 'package:ac_project_app/models/link/link.dart';
@@ -11,11 +13,13 @@ class UploadLinkCubit extends Cubit<UploadResultState> {
   Future<UploadResultState> completeRegister(String url, String describe, int? folderId) async {
     try {
       final metadata = await UrlLoader.loadData(url);
+      final rawTitle = metadata.title ?? '';
+      final encoded = base64Encode(utf8.encode(rawTitle));
       final result = await LinkApi().postLink(
         Link(
           url: url,
           image: metadata.image,
-          title: getShortTitle(metadata.title ?? ''),
+          title: getShortTitle(encoded),
           describe: describe,
           folderId: folderId,
           time: getCurrentTime(),
