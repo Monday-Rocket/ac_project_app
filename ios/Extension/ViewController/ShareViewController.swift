@@ -10,6 +10,7 @@ import Social
 import MobileCoreServices
 import UniformTypeIdentifiers
 import OpenGraph
+import WebKit
 
 class ShareViewController: UIViewController {
   
@@ -24,6 +25,10 @@ class ShareViewController: UIViewController {
   @IBOutlet weak var emptyFolderButton: UIButton!
   
   @IBOutlet weak var emptyFolderViewConstraints: NSLayoutConstraint!
+  @IBOutlet weak var blockingView: UIView!
+  @IBOutlet weak var noticeDescription: UILabel!
+  
+  var webView: WKWebView = WKWebView()
   var dataArray : [Folder] = []
   
   let dbHelper = DBHelper.shared
@@ -45,6 +50,8 @@ class ShareViewController: UIViewController {
     self.backgroundView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.hideExtensionWithCompletionHandler(_:))))
     
     self.loadFolders()
+    
+    self.noticeDescription.setLineHeight(lineHeight: 15)
     
     NSLog(UserDefaultsHelper.getNewLinks().description)
     NSLog(UserDefaultsHelper.getNewFolders().description)
@@ -117,6 +124,79 @@ class ShareViewController: UIViewController {
     }
   }
   
+  fileprivate func saveOpenGraphData(_ link: String, _ rawTitle: String, _ og: OpenGraph) {
+    let safeTitle = String(htmlEncodedString: rawTitle) ?? ""
+    
+    self.titleText = Data(safeTitle.utf8).base64EncodedString()
+    self.linkImageUrl = (og[.image] ?? "")
+    UserDefaultsHelper.saveLinkWithoutFolder(link, self.linkImageUrl, self.titleText)
+  }
+  
+  // webview에서 새로운 redirect url 기다린다.
+  fileprivate func waitSecondUrl(_ originalLink: String) async {
+    for i in 0...10 {
+      try? await Task.sleep(nanoseconds: 0_300_000_000)
+      if self.webView.isLoading == false {
+        
+        let changed = self.webView.url!.absoluteString.removingPercentEncoding ?? ""
+        NSLog("changed: \(changed)")
+        guard let queryItems = URLComponents(string: changed)!.queryItems else {
+          return
+        }
+        var found = false
+        for item in queryItems {
+          if item.name == "url" {
+            if let newLink = URL(string: item.value!) {
+              OpenGraph.fetch(url: newLink, headers: ["User-Agent": "facebookexternalhit/1.1"], completion: { secondResult in
+                switch secondResult {
+                  case .success(let og2):
+                    self.saveOpenGraphData(originalLink, og2[.title] ?? "", og2)
+                    DispatchQueue.main.sync {
+                      self.blockingView.isHidden = true
+                      self.layoutView.layoutIfNeeded()
+                    }
+                    break
+                  default:
+                    break
+                }
+              })
+              found = true
+            }
+            break
+          }
+        }
+        // for YouTube
+        if found == false {
+          
+          // only first url
+          let realLast = String(changed.split(separator: "&")[0])
+          NSLog("realLast: \(realLast)")
+          
+          if let newLink = URL(string: realLast) {
+            OpenGraph.fetch(url: newLink, headers: ["User-Agent": "facebookexternalhit/1.1"], completion: { secondResult in
+              switch secondResult {
+                case .success(let og2):
+                  self.saveOpenGraphData(originalLink, og2[.title] ?? "", og2)
+                  DispatchQueue.main.sync {
+                    self.blockingView.isHidden = true
+                    self.layoutView.layoutIfNeeded()
+                  }
+                  break
+                default:
+                  break
+              }
+            })
+          }
+        }
+        
+        
+        break
+      } else {
+        NSLog("🌏 sleep!: \(i)")
+      }
+    }
+  }
+  
   private func saveLink(_ link: String) {
     
     // 링크가 아니면 저장 안함
@@ -127,13 +207,27 @@ class ShareViewController: UIViewController {
     
     self.link = link
     
-    OpenGraph.fetch(url: URL(string: link)!, completion: { result in
+    Task {
+      // 만약을 위한 웹뷰 로딩
+      let url = URL(string: link)
+      let request = URLRequest(url: url!)
+      self.webView.load(request)
+    }
+    
+    OpenGraph.fetch(url: URL(string: link)!, headers: ["User-Agent": "facebookexternalhit/1.1"], completion: { result in
       switch result {
         case .success(let og):
-          NSLog("🌏 \(String(describing: og[.imageUrl])) \(String(describing: og[.imageSecure_url])) \(String(describing: og[.image]))")
-          self.titleText = og[.title] ?? ""
-          self.linkImageUrl = (og[.image] ?? "")
-          UserDefaultsHelper.saveLinkWithoutFolder(link, self.linkImageUrl, self.titleText)
+          if og[.title] == nil {
+            Task {
+              await self.waitSecondUrl(link)
+            }
+          } else {
+            self.saveOpenGraphData(link, og[.title] ?? "", og)
+            DispatchQueue.main.sync {
+              self.blockingView.isHidden = true
+              self.layoutView.layoutIfNeeded()
+            }
+          }
           break
         case .failure(let error):
           NSLog("🚨 open graph error: \(error.localizedDescription)")
@@ -158,6 +252,7 @@ class ShareViewController: UIViewController {
 }
 
 extension ShareViewController: UICollectionViewDataSource, UICollectionViewDelegate {
+  
   func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
     self.dataArray.count
   }
@@ -173,10 +268,6 @@ extension ShareViewController: UICollectionViewDataSource, UICollectionViewDeleg
   func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
     
     guard self.link != nil else {
-      return
-    }
-    // , (comma)로 guard 조건 추가할 때 Optional 체크 안하는지 확인 필요
-    guard (self.link!.starts(with: "http://") || self.link!.starts(with: "https://")) else {
       return
     }
     

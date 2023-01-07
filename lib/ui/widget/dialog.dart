@@ -71,6 +71,7 @@ void showPopUp({
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
+                          shadowColor: Colors.transparent,
                         ),
                         child: const Text(
                           '확인',
@@ -180,6 +181,7 @@ void showMyPageDialog({
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8),
                                 ),
+                                shadowColor: Colors.transparent,
                               ),
                               child: Text(
                                 leftText,
@@ -203,6 +205,7 @@ void showMyPageDialog({
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8),
                                 ),
+                                shadowColor: Colors.transparent,
                               ),
                               child: Text(
                                 rightText,

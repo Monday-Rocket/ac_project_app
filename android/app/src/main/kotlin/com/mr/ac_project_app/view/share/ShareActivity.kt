@@ -2,8 +2,10 @@ package com.mr.ac_project_app.view.share
 
 import android.content.Intent
 import android.graphics.Rect
+import android.net.UrlQuerySanitizer
 import android.os.Bundle
 import android.text.TextUtils
+import android.text.method.ScrollingMovementMethod
 import android.view.View
 import androidx.activity.viewModels
 import androidx.fragment.app.FragmentActivity
@@ -18,6 +20,10 @@ import com.mr.ac_project_app.utils.toDp
 import com.mr.ac_project_app.view.LinkErrorActivity
 import com.mr.ac_project_app.view.SaveSuccessActivity
 import com.mr.ac_project_app.view.folder.NewFolderActivity
+import kotlinx.coroutines.*
+import java.net.HttpURLConnection
+import java.net.URL
+import java.net.URLDecoder
 
 
 class ShareActivity : FragmentActivity() {
@@ -86,26 +92,60 @@ class ShareActivity : FragmentActivity() {
         } else {
             binding.emptyFolderImage.root.visibility = View.GONE
         }
+
+        binding.noticeDescriptionText.movementMethod = ScrollingMovementMethod()
     }
 
     override fun onResume() {
         super.onResume()
-        var savedLink = intent.getStringExtra(Intent.EXTRA_TEXT) ?: ""
-        if (TextUtils.isEmpty(savedLink)) {
-            savedLink = intent.getStringExtra("android.intent.extra.PROCESS_TEXT") ?: ""
+        var originLink = intent.getStringExtra(Intent.EXTRA_TEXT) ?: ""
+        if (TextUtils.isEmpty(originLink)) {
+            originLink = intent.getStringExtra("android.intent.extra.PROCESS_TEXT")
+                ?: ""
         }
 
-        if (TextUtils.isEmpty(savedLink)) {
-            // just back
+        if (TextUtils.isEmpty(originLink)) {
+            showErrorActivity()
         } else {
-            val hasError = viewModel.saveLink(savedLink)
-            if (hasError) {
-                val intent = Intent(this@ShareActivity, LinkErrorActivity::class.java)
-                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                startActivity(intent)
-                finish()
+            CoroutineScope(Dispatchers.IO).launch {
+                val huc = withContext(Dispatchers.IO) {
+                    URL(originLink).openConnection()
+                } as HttpURLConnection
+                huc.requestMethod = "GET"
+
+                if (huc.responseCode == HttpURLConnection.HTTP_OK) {
+                    var link = huc.url.toString()
+                    if (link.contains("%")) {
+                        link = withContext(Dispatchers.IO) {
+                            URLDecoder.decode(link, "UTF-8")
+                        }
+                    }
+                    val queryUrl = huc.url.query
+                    if (queryUrl != null && queryUrl.contains("url")) {
+                        val sanitizer = UrlQuerySanitizer(link)
+
+                        for (item in sanitizer.parameterList) {
+                            if (item.mParameter.equals("url")) {
+                                link = item.mValue
+                                break
+                            }
+                        }
+                    }
+
+                    val hasError = viewModel.saveLink(link, originLink)
+                    if (hasError) {
+                        showErrorActivity()
+                    }
+                }
             }
         }
+    }
+
+    private fun showErrorActivity() {
+        val intent = Intent(this@ShareActivity, LinkErrorActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+        startActivity(intent)
+        finish()
     }
 
     inner class HorizontalSpaceItemDecoration(private val space: Int) :

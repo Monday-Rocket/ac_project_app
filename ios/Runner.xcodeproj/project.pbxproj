@@ -30,6 +30,9 @@
 		AE2AAE1C292D3BAD00289C80 /* Pretendard-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = AE2AAE18292D3BAD00289C80 /* Pretendard-Regular.otf */; };
 		AE2AAE1D292D3BAD00289C80 /* Pretendard-Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = AE2AAE19292D3BAD00289C80 /* Pretendard-Thin.otf */; };
 		AE2AAE1E292D3BAD00289C80 /* Pretendard-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = AE2AAE1A292D3BAD00289C80 /* Pretendard-Medium.otf */; };
+		AE2D21D329692AF6000405D7 /* URLExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE2D21D229692AF6000405D7 /* URLExtension.swift */; };
+		AE2D21D529692B3B000405D7 /* StringExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE2D21D429692B3B000405D7 /* StringExtension.swift */; };
+		AE2D21D7296955D5000405D7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = AE2D21D6296955D5000405D7 /* GoogleService-Info.plist */; };
 		AE62B8F6291DC5440018002C /* LabelExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE62B8F5291DC5440018002C /* LabelExtension.swift */; };
 		AE83E34A291CA20100A43A2D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AE83E349291CA20100A43A2D /* Assets.xcassets */; };
 		AE83E34C291CB70C00A43A2D /* FolderSaveSuccessViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE83E34B291CB70C00A43A2D /* FolderSaveSuccessViewController.swift */; };
@@ -46,7 +49,6 @@
 		AEFAAC81291D586A00ED5DDC /* UserDefaultsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEFAAC80291D586A00ED5DDC /* UserDefaultsHelper.swift */; };
 		AEFAAC84291D6E1600ED5DDC /* CommentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEFAAC83291D6E1600ED5DDC /* CommentViewController.swift */; };
 		AEFAAC86291D791700ED5DDC /* PaddingTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEFAAC85291D791700ED5DDC /* PaddingTextField.swift */; };
-		AEFBE627295EC5B30012AD37 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = AEFBE626295EC5B30012AD37 /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -115,6 +117,9 @@
 		AE2AAE18292D3BAD00289C80 /* Pretendard-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-Regular.otf"; sourceTree = "<group>"; };
 		AE2AAE19292D3BAD00289C80 /* Pretendard-Thin.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-Thin.otf"; sourceTree = "<group>"; };
 		AE2AAE1A292D3BAD00289C80 /* Pretendard-Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-Medium.otf"; sourceTree = "<group>"; };
+		AE2D21D229692AF6000405D7 /* URLExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLExtension.swift; sourceTree = "<group>"; };
+		AE2D21D429692B3B000405D7 /* StringExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtension.swift; sourceTree = "<group>"; };
+		AE2D21D6296955D5000405D7 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		AE62B8F5291DC5440018002C /* LabelExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelExtension.swift; sourceTree = "<group>"; };
 		AE66222428DCA79100E5DE18 /* Extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Extension.entitlements; sourceTree = "<group>"; };
 		AE66222828DCB16400E5DE18 /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
@@ -133,7 +138,6 @@
 		AEFAAC80291D586A00ED5DDC /* UserDefaultsHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsHelper.swift; sourceTree = "<group>"; };
 		AEFAAC83291D6E1600ED5DDC /* CommentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentViewController.swift; sourceTree = "<group>"; };
 		AEFAAC85291D791700ED5DDC /* PaddingTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaddingTextField.swift; sourceTree = "<group>"; };
-		AEFBE626295EC5B30012AD37 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		FA8A6BAF1A9D06BD8C855795 /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -231,7 +235,7 @@
 				1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */,
 				74858FAE1ED2DC5600515810 /* AppDelegate.swift */,
 				74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */,
-				AEFBE626295EC5B30012AD37 /* GoogleService-Info.plist */,
+				AE2D21D6296955D5000405D7 /* GoogleService-Info.plist */,
 			);
 			path = Runner;
 			sourceTree = "<group>";
@@ -276,6 +280,8 @@
 				AEDF4C8C291D8226000FC3D7 /* CustomeUIButton.swift */,
 				AE62B8F5291DC5440018002C /* LabelExtension.swift */,
 				AEB8CBF42920B0CF00886882 /* TextFieldExtension.swift */,
+				AE2D21D229692AF6000405D7 /* URLExtension.swift */,
+				AE2D21D429692B3B000405D7 /* StringExtension.swift */,
 			);
 			path = Custom;
 			sourceTree = "<group>";
@@ -432,7 +438,7 @@
 			files = (
 				97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */,
 				3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */,
-				AEFBE627295EC5B30012AD37 /* GoogleService-Info.plist in Resources */,
+				AE2D21D7296955D5000405D7 /* GoogleService-Info.plist in Resources */,
 				97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */,
 				97C146FC1CF9000F007C117D /* Main.storyboard in Resources */,
 			);
@@ -533,10 +539,12 @@
 				AEFAAC81291D586A00ED5DDC /* UserDefaultsHelper.swift in Sources */,
 				AE0A99EC294830F10023DAFB /* LinkErrorDialogViewController.swift in Sources */,
 				AEFAAC84291D6E1600ED5DDC /* CommentViewController.swift in Sources */,
+				AE2D21D329692AF6000405D7 /* URLExtension.swift in Sources */,
 				AEDF4C8D291D8226000FC3D7 /* CustomeUIButton.swift in Sources */,
 				0F872E3E28D875E3002954CC /* ShareViewController.swift in Sources */,
 				AE83E34E291CB8FB00A43A2D /* SaveType.swift in Sources */,
 				AEDF4C96291DA5B3000FC3D7 /* LinkSavedDialogViewController.swift in Sources */,
+				AE2D21D529692B3B000405D7 /* StringExtension.swift in Sources */,
 				AE08C898291B99AD0019B578 /* Folder.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -598,7 +606,6 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = Extension/Extension.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 18;
@@ -621,7 +628,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.mr.acProjectApp.Extension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match Development com.mr.acProjectApp.Extension";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match AppStore com.mr.acProjectApp.Extension";
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
@@ -642,7 +648,6 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = Extension/Extension.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 18;
@@ -664,7 +669,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.mr.acProjectApp.Extension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match Development com.mr.acProjectApp.Extension";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match AppStore com.mr.acProjectApp.Extension";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -683,7 +687,6 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = Extension/Extension.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 18;
@@ -705,7 +708,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.mr.acProjectApp.Extension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match Development com.mr.acProjectApp.Extension";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match AppStore com.mr.acProjectApp.Extension";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -774,7 +776,6 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 18;
@@ -790,7 +791,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.mr.acProjectApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match Development com.mr.acProjectApp";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match AppStore com.mr.acProjectApp";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -920,7 +920,6 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 18;
@@ -936,7 +935,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.mr.acProjectApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match Development com.mr.acProjectApp";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match AppStore com.mr.acProjectApp";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -958,7 +956,6 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 18;
@@ -974,7 +971,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.mr.acProjectApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match Development com.mr.acProjectApp";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match AppStore com.mr.acProjectApp";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;

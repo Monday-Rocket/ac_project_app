@@ -1,7 +1,5 @@
 import 'dart:async';
-import 'dart:math';
 
-import 'package:ac_project_app/provider/share_data_provider.dart';
 import 'package:ac_project_app/ui/widget/dialog.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -20,7 +18,8 @@ class Email {
     return userCredential.user != null;
   }
 
-  static Future<void> send(BuildContext context, String email, String type) async {
+  static Future<void> send(
+      BuildContext context, String email, String type) async {
     try {
       Log.i('이메일 전송');
       await FirebaseAuth.instance
