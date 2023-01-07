@@ -147,7 +147,8 @@ class ChangeProfileView extends StatelessWidget {
                                               );
                                             }
                                             return ColorFiltered(
-                                              colorFilter: const ColorFilter.mode(
+                                              colorFilter:
+                                                  const ColorFilter.mode(
                                                 Color(0x60FFFFFF),
                                                 BlendMode.modulate,
                                               ),
@@ -162,29 +163,33 @@ class ChangeProfileView extends StatelessWidget {
                                   ),
                                 ),
                                 Container(
-                                  margin: const EdgeInsets.symmetric(
-                                      horizontal: 24),
+                                  margin: const EdgeInsets.only(
+                                    left: 24,
+                                    right: 24,
+                                    bottom: 8,
+                                  ),
                                   child: ElevatedButton(
                                     style: ElevatedButton.styleFrom(
                                       minimumSize: const Size.fromHeight(55),
-                                      backgroundColor: context
-                                              .watch<GetProfileImagesCubit>()
-                                              .selected
-                                          ? primary600
-                                          : secondary,
+                                      backgroundColor: primary600,
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(12),
                                       ),
                                       disabledBackgroundColor: secondary,
                                       disabledForegroundColor: Colors.white,
                                     ),
-                                    onPressed: () => context
-                                        .read<GetProfileInfoCubit>()
-                                        .updateProfileImage()
-                                        .then(
-                                          (value) =>
-                                              Navigator.pop(context, value),
-                                        ),
+                                    onPressed: context
+                                                .read<GetProfileImagesCubit>()
+                                                .selected ==
+                                            true
+                                        ? () => context
+                                            .read<GetProfileInfoCubit>()
+                                            .updateProfileImage()
+                                            .then(
+                                              (value) =>
+                                                  Navigator.pop(context, value),
+                                            )
+                                        : null,
                                     child: const Text(
                                       '변경하기',
                                       style: TextStyle(
