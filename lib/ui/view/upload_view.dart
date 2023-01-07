@@ -2,6 +2,7 @@
 
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/const/consts.dart';
+import 'package:ac_project_app/const/strings.dart';
 import 'package:ac_project_app/cubits/folders/folders_state.dart';
 import 'package:ac_project_app/cubits/folders/get_my_folders_cubit.dart';
 import 'package:ac_project_app/cubits/home_view_cubit.dart';
@@ -121,9 +122,11 @@ class _UploadViewState extends State<UploadView> {
                         const SizedBox(height: 35),
                         buildSubTitle('링크 코멘트'),
                         buildCommentTextField(visible, height),
+                        const SizedBox(height: 13),
+                        buildUploadWarning(true),
                         SizedBox(
                           height: keyboardHeight,
-                        )
+                        ),
                       ],
                     ),
                   ),
@@ -144,12 +147,60 @@ class _UploadViewState extends State<UploadView> {
     );
   }
 
+  Widget buildUploadWarning(bool visible) {
+    return Container(
+      margin: const EdgeInsets.only(
+        right: 24,
+      ),
+      height: 80,
+      decoration: const BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(12)),
+        color: grey50,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SvgPicture.asset('assets/images/wranning_mark.svg'),
+            const SizedBox(width: 5),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: const [
+                Text(
+                  warningMsgTitle,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    color: grey800,
+                    fontSize: 11,
+                    letterSpacing: -0.3,
+                  ),
+                ),
+                SizedBox(
+                  height: 6,
+                ),
+                Text(
+                  warningMsgContent,
+                  style: TextStyle(
+                    color: grey400,
+                    fontSize: 11,
+                    letterSpacing: -0.3,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Container buildCommentTextField(bool visible, double height) {
     return Container(
       margin: const EdgeInsets.only(
         top: 14,
         right: 24,
-        bottom: 90,
+        bottom: 0,
       ),
       height: 110,
       decoration: const BoxDecoration(

@@ -130,7 +130,7 @@ class _ReportViewState extends State<ReportView> {
                   ),
                   const SizedBox(height: 9),
                   const Text(
-                    '허위신고일 경우, 신고자의 서비스 활동이 제한될 수 있습니다.',
+                    '신고 누적 횟수가 3회 이상인 사용자는 서비스 이용이 정지되며,\n허위신고일 경우, 신고자의 서비스 활동이 제한될 수 있습니다.',
                     style: TextStyle(
                       fontSize: 12,
                       height: 18 / 12,
@@ -262,7 +262,10 @@ class _ReportViewState extends State<ReportView> {
           Navigator.pop(context);
           Future.delayed(
             const Duration(milliseconds: 300),
-            () => showBottomToast(context: context, '신고가 접수되었어요!'),
+            () => showBottomToast(
+                context: context,
+                '신고가 접수되었어요!',
+                subMsg: '신고에 대한 검토는 최대 24시간안에 진행될 예정이예요'),
           );
         } else if (type == ReportResultType.duplicated) {
           showPopUp(

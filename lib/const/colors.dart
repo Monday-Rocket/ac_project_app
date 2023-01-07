@@ -1,6 +1,8 @@
 import 'dart:ui';
 
 const greyLoginText = Color(0xFF757575);
+
+const grey50 = Color(0xFFFAFBFC);
 const grey100 = Color(0xFFF5F7FA);
 const ccGrey100 = Color(0xCCF5F7FA);
 
