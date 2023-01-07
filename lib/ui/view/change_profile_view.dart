@@ -147,7 +147,8 @@ class ChangeProfileView extends StatelessWidget {
                                               );
                                             }
                                             return ColorFiltered(
-                                              colorFilter: const ColorFilter.mode(
+                                              colorFilter:
+                                                  const ColorFilter.mode(
                                                 Color(0x60FFFFFF),
                                                 BlendMode.modulate,
                                               ),
@@ -163,7 +164,8 @@ class ChangeProfileView extends StatelessWidget {
                                 ),
                                 Container(
                                   margin: const EdgeInsets.symmetric(
-                                      horizontal: 24),
+                                    horizontal: 24,
+                                  ),
                                   child: ElevatedButton(
                                     style: ElevatedButton.styleFrom(
                                       minimumSize: const Size.fromHeight(55),
@@ -177,6 +179,7 @@ class ChangeProfileView extends StatelessWidget {
                                       ),
                                       disabledBackgroundColor: secondary,
                                       disabledForegroundColor: Colors.white,
+                                      shadowColor: Colors.transparent,
                                     ),
                                     onPressed: () => context
                                         .read<GetProfileInfoCubit>()
