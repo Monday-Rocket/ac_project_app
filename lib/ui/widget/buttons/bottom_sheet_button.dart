@@ -10,6 +10,7 @@ Widget buildBottomSheetButton({
   required String text,
   bool? keyboardVisible,
   void Function()? onPressed,
+  bool? buttonShadow = true,
 }) {
   return SafeArea(
     child: Padding(
@@ -27,6 +28,7 @@ Widget buildBottomSheetButton({
           ),
           disabledBackgroundColor: secondary,
           disabledForegroundColor: Colors.white,
+          shadowColor: buttonShadow! ? primary600 : Colors.transparent,
         ),
         onPressed: onPressed,
         child: Text(

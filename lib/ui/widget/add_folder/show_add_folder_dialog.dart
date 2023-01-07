@@ -221,6 +221,7 @@ Future<bool?> showAddFolderDialog(
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(12),
                                     ),
+                                    shadowColor: Colors.transparent,
                                   ),
                                   onPressed: () => saveEmptyFolder(
                                     context,

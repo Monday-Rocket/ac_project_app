@@ -177,6 +177,7 @@ class ChangeProfileView extends StatelessWidget {
                                       ),
                                       disabledBackgroundColor: secondary,
                                       disabledForegroundColor: Colors.white,
+                                      shadowColor: Colors.transparent,
                                     ),
                                     onPressed: context
                                                 .read<GetProfileImagesCubit>()
