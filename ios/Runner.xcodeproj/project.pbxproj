@@ -30,14 +30,14 @@
 		AE2AAE1C292D3BAD00289C80 /* Pretendard-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = AE2AAE18292D3BAD00289C80 /* Pretendard-Regular.otf */; };
 		AE2AAE1D292D3BAD00289C80 /* Pretendard-Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = AE2AAE19292D3BAD00289C80 /* Pretendard-Thin.otf */; };
 		AE2AAE1E292D3BAD00289C80 /* Pretendard-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = AE2AAE1A292D3BAD00289C80 /* Pretendard-Medium.otf */; };
+		AE2D21D329692AF6000405D7 /* URLExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE2D21D229692AF6000405D7 /* URLExtension.swift */; };
+		AE2D21D529692B3B000405D7 /* StringExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE2D21D429692B3B000405D7 /* StringExtension.swift */; };
 		AE62B8F6291DC5440018002C /* LabelExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE62B8F5291DC5440018002C /* LabelExtension.swift */; };
-		AE635A5F296804BB005540F0 /* URLExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE635A5E296804BB005540F0 /* URLExtension.swift */; };
 		AE83E34A291CA20100A43A2D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AE83E349291CA20100A43A2D /* Assets.xcassets */; };
 		AE83E34C291CB70C00A43A2D /* FolderSaveSuccessViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE83E34B291CB70C00A43A2D /* FolderSaveSuccessViewController.swift */; };
 		AE83E34E291CB8FB00A43A2D /* SaveType.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE83E34D291CB8FB00A43A2D /* SaveType.swift */; };
 		AE83E351291CC6AA00A43A2D /* PaddingLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE83E350291CC6AA00A43A2D /* PaddingLabel.swift */; };
 		AEB8CBF52920B0CF00886882 /* TextFieldExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEB8CBF42920B0CF00886882 /* TextFieldExtension.swift */; };
-		AEBD53CA29671F8A00BB7732 /* StringExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEBD53C929671F8A00BB7732 /* StringExtension.swift */; };
 		AEDF4C8D291D8226000FC3D7 /* CustomeUIButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEDF4C8C291D8226000FC3D7 /* CustomeUIButton.swift */; };
 		AEDF4C91291D9C25000FC3D7 /* FolderSaveCancelDialogViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEDF4C90291D9C25000FC3D7 /* FolderSaveCancelDialogViewController.swift */; };
 		AEDF4C93291D9C4D000FC3D7 /* Dialog.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AEDF4C92291D9C4D000FC3D7 /* Dialog.storyboard */; };
@@ -117,8 +117,9 @@
 		AE2AAE18292D3BAD00289C80 /* Pretendard-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-Regular.otf"; sourceTree = "<group>"; };
 		AE2AAE19292D3BAD00289C80 /* Pretendard-Thin.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-Thin.otf"; sourceTree = "<group>"; };
 		AE2AAE1A292D3BAD00289C80 /* Pretendard-Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-Medium.otf"; sourceTree = "<group>"; };
+		AE2D21D229692AF6000405D7 /* URLExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLExtension.swift; sourceTree = "<group>"; };
+		AE2D21D429692B3B000405D7 /* StringExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtension.swift; sourceTree = "<group>"; };
 		AE62B8F5291DC5440018002C /* LabelExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelExtension.swift; sourceTree = "<group>"; };
-		AE635A5E296804BB005540F0 /* URLExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLExtension.swift; sourceTree = "<group>"; };
 		AE66222428DCA79100E5DE18 /* Extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Extension.entitlements; sourceTree = "<group>"; };
 		AE66222828DCB16400E5DE18 /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
 		AE83E349291CA20100A43A2D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -126,7 +127,6 @@
 		AE83E34D291CB8FB00A43A2D /* SaveType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveType.swift; sourceTree = "<group>"; };
 		AE83E350291CC6AA00A43A2D /* PaddingLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaddingLabel.swift; sourceTree = "<group>"; };
 		AEB8CBF42920B0CF00886882 /* TextFieldExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldExtension.swift; sourceTree = "<group>"; };
-		AEBD53C929671F8A00BB7732 /* StringExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtension.swift; sourceTree = "<group>"; };
 		AEDF4C8C291D8226000FC3D7 /* CustomeUIButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomeUIButton.swift; sourceTree = "<group>"; };
 		AEDF4C90291D9C25000FC3D7 /* FolderSaveCancelDialogViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderSaveCancelDialogViewController.swift; sourceTree = "<group>"; };
 		AEDF4C92291D9C4D000FC3D7 /* Dialog.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Dialog.storyboard; sourceTree = "<group>"; };
@@ -280,8 +280,8 @@
 				AEDF4C8C291D8226000FC3D7 /* CustomeUIButton.swift */,
 				AE62B8F5291DC5440018002C /* LabelExtension.swift */,
 				AEB8CBF42920B0CF00886882 /* TextFieldExtension.swift */,
-				AEBD53C929671F8A00BB7732 /* StringExtension.swift */,
-				AE635A5E296804BB005540F0 /* URLExtension.swift */,
+				AE2D21D229692AF6000405D7 /* URLExtension.swift */,
+				AE2D21D429692B3B000405D7 /* StringExtension.swift */,
 			);
 			path = Custom;
 			sourceTree = "<group>";
@@ -539,12 +539,12 @@
 				AEFAAC81291D586A00ED5DDC /* UserDefaultsHelper.swift in Sources */,
 				AE0A99EC294830F10023DAFB /* LinkErrorDialogViewController.swift in Sources */,
 				AEFAAC84291D6E1600ED5DDC /* CommentViewController.swift in Sources */,
-				AE635A5F296804BB005540F0 /* URLExtension.swift in Sources */,
+				AE2D21D329692AF6000405D7 /* URLExtension.swift in Sources */,
 				AEDF4C8D291D8226000FC3D7 /* CustomeUIButton.swift in Sources */,
 				0F872E3E28D875E3002954CC /* ShareViewController.swift in Sources */,
 				AE83E34E291CB8FB00A43A2D /* SaveType.swift in Sources */,
 				AEDF4C96291DA5B3000FC3D7 /* LinkSavedDialogViewController.swift in Sources */,
-				AEBD53CA29671F8A00BB7732 /* StringExtension.swift in Sources */,
+				AE2D21D529692B3B000405D7 /* StringExtension.swift in Sources */,
 				AE08C898291B99AD0019B578 /* Folder.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
