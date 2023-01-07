@@ -5,6 +5,7 @@ import android.graphics.Rect
 import android.net.UrlQuerySanitizer
 import android.os.Bundle
 import android.text.TextUtils
+import android.text.method.ScrollingMovementMethod
 import android.view.View
 import androidx.activity.viewModels
 import androidx.fragment.app.FragmentActivity
@@ -91,6 +92,8 @@ class ShareActivity : FragmentActivity() {
         } else {
             binding.emptyFolderImage.root.visibility = View.GONE
         }
+
+        binding.noticeDescriptionText.movementMethod = ScrollingMovementMethod()
     }
 
     override fun onResume() {
@@ -98,7 +101,7 @@ class ShareActivity : FragmentActivity() {
         var originLink = intent.getStringExtra(Intent.EXTRA_TEXT) ?: ""
         if (TextUtils.isEmpty(originLink)) {
             originLink = intent.getStringExtra("android.intent.extra.PROCESS_TEXT")
-                ?: "https://naver.me/GUDWG42d"
+                ?: ""
         }
 
         if (TextUtils.isEmpty(originLink)) {

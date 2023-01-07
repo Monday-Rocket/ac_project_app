@@ -26,6 +26,7 @@ class ShareViewController: UIViewController {
   
   @IBOutlet weak var emptyFolderViewConstraints: NSLayoutConstraint!
   @IBOutlet weak var blockingView: UIView!
+  @IBOutlet weak var noticeDescription: UILabel!
   
   var webView: WKWebView = WKWebView()
   var dataArray : [Folder] = []
@@ -49,6 +50,8 @@ class ShareViewController: UIViewController {
     self.backgroundView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.hideExtensionWithCompletionHandler(_:))))
     
     self.loadFolders()
+    
+    self.noticeDescription.setLineHeight(lineHeight: 15)
     
     NSLog(UserDefaultsHelper.getNewLinks().description)
     NSLog(UserDefaultsHelper.getNewFolders().description)
@@ -204,10 +207,12 @@ class ShareViewController: UIViewController {
     
     self.link = link
     
-    // 만약을 위한 웹뷰 로딩
-    let url = URL(string: link)
-    let request = URLRequest(url: url!)
-    self.webView.load(request)
+    Task {
+      // 만약을 위한 웹뷰 로딩
+      let url = URL(string: link)
+      let request = URLRequest(url: url!)
+      self.webView.load(request)
+    }
     
     OpenGraph.fetch(url: URL(string: link)!, headers: ["User-Agent": "facebookexternalhit/1.1"], completion: { result in
       switch result {
