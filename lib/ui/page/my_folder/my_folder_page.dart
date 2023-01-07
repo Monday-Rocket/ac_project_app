@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:ac_project_app/const/colors.dart';
+import 'package:ac_project_app/const/enums.dart';
 import 'package:ac_project_app/cubits/folders/folder_view_type_cubit.dart';
 import 'package:ac_project_app/cubits/folders/folders_state.dart';
 import 'package:ac_project_app/cubits/folders/get_my_folders_cubit.dart';
@@ -171,16 +172,16 @@ class _MyFolderPageState extends State<MyFolderPage>
                       ),
                       Builder(
                         builder: (context) {
-                          if (folderState is FolderLoadingState) {
+                          if (folderState.status == CommonStatus.loading) {
                             return const Center(
                               child: CircularProgressIndicator(),
                             );
-                          } else if (folderState is FolderErrorState) {
-                            Log.e(folderState.props[0]);
+                          } else if (folderState.status == CommonStatus.error) {
+                            Log.e(folderState.error);
                             return const Center(
                               child: Icon(Icons.close),
                             );
-                          } else if (folderState is FolderLoadedState) {
+                          } else if (folderState.status == CommonStatus.loaded) {
                             if (folderState.folders.isEmpty) {
                               return const Expanded(
                                 child: Center(

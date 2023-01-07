@@ -1,32 +1,43 @@
+import 'package:ac_project_app/const/enums.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:equatable/equatable.dart';
 
-abstract class FoldersState extends Equatable {}
+class FoldersState extends Equatable {
+  const FoldersState({
+    required this.status,
+    required this.folders,
+    required this.error,
+  });
 
-class FolderInitialState extends FoldersState {
-  @override
-  List<Object> get props => [];
-}
+  factory FoldersState.initial() {
+    return const FoldersState(
+      status: CommonStatus.initial,
+      folders: [],
+      error: '',
+    );
+  }
 
-class FolderLoadingState extends FoldersState {
-  @override
-  List<Object> get props => [];
-}
-
-class FolderLoadedState extends FoldersState {
-  FolderLoadedState(this.folders);
-
+  final CommonStatus status;
   final List<Folder> folders;
+  final String error;
 
   @override
-  List<Object> get props => folders;
-}
-
-class FolderErrorState extends FoldersState {
-  FolderErrorState(this.message);
-
-  final String? message;
+  List<Object?> get props => [status, folders, error];
 
   @override
-  List<Object> get props => [message ?? ''];
+  String toString() {
+    return 'FoldersState{status: $status, folders: $folders, error: $error}';
+  }
+
+  FoldersState copyWith({
+    CommonStatus? status,
+    List<Folder>? folders,
+    String? error,
+  }) {
+    return FoldersState(
+      status: status ?? this.status,
+      folders: folders ?? this.folders,
+      error: error ?? this.error,
+    );
+  }
 }

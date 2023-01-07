@@ -1,0 +1,1 @@
+enum CommonStatus { initial, loading, loaded, error }

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:ac_project_app/const/enums.dart';
 import 'package:ac_project_app/cubits/folders/folders_state.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/provider/api/folders/folder_api.dart';
@@ -7,7 +8,7 @@ import 'package:ac_project_app/provider/share_db.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class GetFoldersCubit extends Cubit<FoldersState> {
-  GetFoldersCubit({bool? excludeUnclassified}) : super(FolderInitialState()) {
+  GetFoldersCubit({bool? excludeUnclassified}) : super(FoldersState.initial()) {
     if (excludeUnclassified ?? false) {
       getFoldersWithoutUnclassified();
     } else {
@@ -21,35 +22,37 @@ class GetFoldersCubit extends Cubit<FoldersState> {
 
   Future<void> getFolders() async {
     try {
-      emit(FolderLoadingState());
+      emit(state.copyWith(status: CommonStatus.loading));
 
       final result = await folderApi.getMyFolders();
       result.when(
         success: (list) {
           folders = list;
-          emit(FolderLoadedState(folders));
+          emit(state.copyWith(status: CommonStatus.loaded, folders: folders));
         },
-        error: (msg) => emit(FolderErrorState(msg)),
+        error: (msg) =>
+            emit(state.copyWith(status: CommonStatus.error, error: msg)),
       );
     } catch (e) {
-      emit(FolderErrorState(e.toString()));
+      emit(state.copyWith(status: CommonStatus.error, error: e.toString()));
     }
   }
 
   Future<void> getFoldersWithoutUnclassified() async {
     try {
-      emit(FolderLoadingState());
+      emit(state.copyWith(status: CommonStatus.loading));
 
       final result = await folderApi.getMyFoldersWithoutUnclassified();
       result.when(
         success: (list) {
           folders = list;
-          emit(FolderLoadedState(folders));
+          emit(state.copyWith(status: CommonStatus.loaded, folders: folders));
         },
-        error: (msg) => emit(FolderErrorState(msg)),
+        error: (msg) =>
+            emit(state.copyWith(status: CommonStatus.error, error: msg)),
       );
     } catch (e) {
-      emit(FolderErrorState(e.toString()));
+      emit(state.copyWith(status: CommonStatus.error, error: e.toString()));
     }
   }
 
@@ -69,7 +72,7 @@ class GetFoldersCubit extends Cubit<FoldersState> {
 
   void filter(String name) {
     if (name.isEmpty) {
-      emit(FolderLoadedState(folders));
+      emit(state.copyWith(status: CommonStatus.loaded, folders: folders));
       return;
     } else {
       final filtered = <Folder>[];
@@ -80,7 +83,7 @@ class GetFoldersCubit extends Cubit<FoldersState> {
         }
       }
 
-      emit(FolderLoadedState(filtered));
+      emit(state.copyWith(status: CommonStatus.loaded, folders: filtered));
     }
   }
 }

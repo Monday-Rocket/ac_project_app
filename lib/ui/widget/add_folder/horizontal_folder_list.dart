@@ -1,4 +1,5 @@
 import 'package:ac_project_app/const/colors.dart';
+import 'package:ac_project_app/const/enums.dart';
 import 'package:ac_project_app/cubits/folders/folders_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -9,7 +10,7 @@ Widget buildFolderList({
   required BuildContext folderContext,
   required FoldersState state,
 }) {
-  if (state is FolderLoadedState) {
+  if (state.status == CommonStatus.loaded) {
     final folders = state.folders;
     return Container(
       constraints: const BoxConstraints(
