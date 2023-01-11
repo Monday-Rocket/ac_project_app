@@ -75,6 +75,6 @@ jobs:
       - name: Prebuild
         run: flutter build appbundle
       - name: make native debug symbols
-        run: echo 'todo make native debug symbols'
+        run: cd build/app/intermediates/merged_native_libs/release/out/lib && zip -r android/native-debug-symbols.zip . && cd ../../../../../../../
       - name: Execute Fastlane command
         run: cd android && fastlane beta
