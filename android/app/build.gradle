@@ -42,7 +42,6 @@ apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
     compileSdkVersion 33
-    ndkVersion '25.1.8937393'
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -67,6 +66,7 @@ android {
         targetSdkVersion 33
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        ndk.debugSymbolLevel 'FULL'
     }
 
     signingConfigs {
@@ -83,20 +83,9 @@ android {
             shrinkResources true
             minifyEnabled true
             signingConfig signingConfigs.release
-
-            ndk.debugSymbolLevel = "FULL"
         }
     }
     namespace 'com.mr.ac_project_app'
-
-    packagingOptions {
-        dex {
-            useLegacyPackaging true
-        }
-        jniLibs {
-            useLegacyPackaging true
-        }
-    }
 
 }
 
