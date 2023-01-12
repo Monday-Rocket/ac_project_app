@@ -78,32 +78,27 @@ class _MyFolderPageState extends State<MyFolderPage>
                         builder: (context, state) {
                           if (state is ProfileLoadedState) {
                             final profile = state.profile;
-                            return InkWell(
-                              onTap: () {
-                                showBottomToast( context:context, '폴더가 삭제되었어요!');
-                              },
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Container(
-                                    width: 105,
-                                    height: 105,
-                                    margin: const EdgeInsetsDirectional.only(
-                                      top: 90,
-                                      bottom: 6,
-                                    ),
-                                    child: Image.asset(profile.profileImage),
+                            return Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                  width: 105,
+                                  height: 105,
+                                  margin: const EdgeInsetsDirectional.only(
+                                    top: 90,
+                                    bottom: 6,
                                   ),
-                                  Text(
-                                    profile.nickname,
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 28,
-                                      color: Color(0xff0e0e0e),
-                                    ),
+                                  child: Image.asset(profile.profileImage),
+                                ),
+                                Text(
+                                  profile.nickname,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 28,
+                                    color: Color(0xff0e0e0e),
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             );
                           } else {
                             return const SizedBox.shrink();
