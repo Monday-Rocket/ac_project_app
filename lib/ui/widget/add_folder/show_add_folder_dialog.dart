@@ -233,7 +233,7 @@ Future<bool?> showAddFolderDialog(
                                     hasNotUnclassified: hasNotUnclassified,
                                   ),
                                   child: const Text(
-                                    '폴더에 저장하기',
+                                    '폴더 생성하기',
                                     style: TextStyle(
                                       fontSize: 17,
                                       fontWeight: FontWeight.bold,
