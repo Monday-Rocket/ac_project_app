@@ -163,7 +163,7 @@ class _UploadViewState extends State<UploadView> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SvgPicture.asset('assets/images/wranning_mark.svg'),
+            SvgPicture.asset('assets/images/warning_mark.svg'),
             const SizedBox(width: 5),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
