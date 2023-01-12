@@ -84,6 +84,7 @@ class CommentActivity : FragmentActivity(), ConfirmDialogInterface, ErrorDialogI
                     title = "저장완료!",
                     content = contentText,
                     confirmDialogInterface = this,
+                    closeDialogInterface = this,
                     imageId = null,
                     buttonText = "확인하기"
                 )
