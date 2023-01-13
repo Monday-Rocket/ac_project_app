@@ -43,7 +43,7 @@ class MessageDialog(
             }
         } else {
             binding.dialogCloseButton.setOnClickListener {
-                this.confirmDialogInterface?.onButtonClick()
+                this.closeDialogInterface?.onCloseClick()
                 dismiss()
             }
         }

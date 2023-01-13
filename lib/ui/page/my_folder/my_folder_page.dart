@@ -78,32 +78,27 @@ class _MyFolderPageState extends State<MyFolderPage>
                         builder: (context, state) {
                           if (state is ProfileLoadedState) {
                             final profile = state.profile;
-                            return InkWell(
-                              onTap: () {
-                                showBottomToast( context:context, '폴더가 삭제되었어요!');
-                              },
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Container(
-                                    width: 105,
-                                    height: 105,
-                                    margin: const EdgeInsetsDirectional.only(
-                                      top: 90,
-                                      bottom: 6,
-                                    ),
-                                    child: Image.asset(profile.profileImage),
+                            return Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                  width: 105,
+                                  height: 105,
+                                  margin: const EdgeInsetsDirectional.only(
+                                    top: 90,
+                                    bottom: 6,
                                   ),
-                                  Text(
-                                    profile.nickname,
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 28,
-                                      color: Color(0xff0e0e0e),
-                                    ),
+                                  child: Image.asset(profile.profileImage),
+                                ),
+                                Text(
+                                  profile.nickname,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 28,
+                                    color: Color(0xff0e0e0e),
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             );
                           } else {
                             return const SizedBox.shrink();
@@ -154,18 +149,20 @@ class _MyFolderPageState extends State<MyFolderPage>
                                 ),
                               ),
                             ),
-                            InkWell(
-                              onTap: () => showAddFolderDialog(
-                                context,
-                                moveToMyLinksView: moveToMyLinksView,
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(6),
-                                child: SvgPicture.asset(
-                                  'assets/images/btn_add.svg',
+                            if (folderState is FolderLoadedState)
+                              InkWell(
+                                onTap: () => showAddFolderDialog(
+                                  context,
+                                  moveToMyLinksView: moveToMyLinksView,
+                                  folders: folderState.folders,
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(6),
+                                  child: SvgPicture.asset(
+                                    'assets/images/btn_add.svg',
+                                  ),
                                 ),
                               ),
-                            ),
                           ],
                         ),
                       ),
@@ -597,7 +594,7 @@ class _MyFolderPageState extends State<MyFolderPage>
                           Navigator.pop(context, true);
                           cubit.getFolders();
                           if (result) {
-                            showBottomToast(context:context,'폴더가 삭제되었어요!');
+                            showBottomToast(context: context, '폴더가 삭제되었어요!');
                           }
                         });
                       },
