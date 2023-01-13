@@ -70,8 +70,6 @@ jobs:
       - run: echo '${{ secrets.ANDROID_KEYSTORE_BASE64 }}' | base64 -d > ./android/monday-key.jks
       - run: echo "${{ secrets.FIREBASE_OPTIONS }}" | base64 -d > ./lib/firebase_options.dart
       - run: echo '${{ secrets.GOOGLE_SERVICES_ANDROID }}' | base64 -d > ./android/app/google-services.json
-      - name: Setup Android NDK
-        uses: nttld/setup-ndk@v1.2.0
       - name: Prebuild
         run: flutter build appbundle
       - name: make native debug symbols
