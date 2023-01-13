@@ -105,17 +105,23 @@ class _UploadViewState extends State<UploadView> {
                       children: [
                         buildSubTitle('링크'),
                         buildLinkTextField(),
-                        buildFolderSelectTitle(context, '폴더 선택'),
                         BlocBuilder<GetFoldersCubit, FoldersState>(
                           builder: (folderContext, state) {
-                            return buildFolderList(
-                              folderContext: folderContext,
-                              state: state,
-                              callback: (index, folderId) => setState(() {
-                                selectedIndex = index;
-                                selectedFolderId = folderId;
-                              }),
-                              selectedIndex: selectedIndex,
+                            return Column(
+                              children: [
+                                if (state is FolderLoadedState)
+                                  buildFolderSelectTitle(
+                                      context, '폴더 선택', state.folders),
+                                buildFolderList(
+                                  folderContext: folderContext,
+                                  state: state,
+                                  callback: (index, folderId) => setState(() {
+                                    selectedIndex = index;
+                                    selectedFolderId = folderId;
+                                  }),
+                                  selectedIndex: selectedIndex,
+                                ),
+                              ],
                             );
                           },
                         ),
@@ -139,7 +145,7 @@ class _UploadViewState extends State<UploadView> {
                 onPressed: buttonState == ButtonState.enabled
                     ? () => completeRegister(context)
                     : null,
-                buttonShadow: false
+                buttonShadow: false,
               ),
             );
           },
@@ -153,18 +159,18 @@ class _UploadViewState extends State<UploadView> {
       margin: const EdgeInsets.only(
         right: 24,
       ),
-      height: 80,
+      height: 78,
       decoration: const BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(12)),
+        borderRadius: BorderRadius.all(Radius.circular(8)),
         color: grey50,
       ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(12),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SvgPicture.asset('assets/images/warning_mark.svg'),
-            const SizedBox(width: 5),
+            const SizedBox(width: 4),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: const [
@@ -172,9 +178,8 @@ class _UploadViewState extends State<UploadView> {
                   warningMsgTitle,
                   style: TextStyle(
                     fontWeight: FontWeight.w500,
-                    color: grey800,
+                    color: grey600,
                     fontSize: 11,
-                    letterSpacing: -0.3,
                   ),
                 ),
                 SizedBox(
@@ -183,9 +188,9 @@ class _UploadViewState extends State<UploadView> {
                 Text(
                   warningMsgContent,
                   style: TextStyle(
+                    fontWeight: FontWeight.w500,
                     color: grey400,
                     fontSize: 11,
-                    letterSpacing: -0.3,
                   ),
                 ),
               ],

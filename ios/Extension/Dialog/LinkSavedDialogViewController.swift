@@ -46,6 +46,9 @@ class LinkSavedDialogViewController: UIViewController {
   }
   
   @IBAction func onClosePressed(_ sender: Any) {
-    self.onButtonPressed(sender)
+    if let callback = confirmButtonCompletionClosure {
+      callback()
+      self.dismiss(animated: true, completion: nil)
+    }
   }
 }
