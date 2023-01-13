@@ -105,17 +105,23 @@ class _UploadViewState extends State<UploadView> {
                       children: [
                         buildSubTitle('링크'),
                         buildLinkTextField(),
-                        buildFolderSelectTitle(context, '폴더 선택'),
                         BlocBuilder<GetFoldersCubit, FoldersState>(
                           builder: (folderContext, state) {
-                            return buildFolderList(
-                              folderContext: folderContext,
-                              state: state,
-                              callback: (index, folderId) => setState(() {
-                                selectedIndex = index;
-                                selectedFolderId = folderId;
-                              }),
-                              selectedIndex: selectedIndex,
+                            return Column(
+                              children: [
+                                if (state is FolderLoadedState)
+                                  buildFolderSelectTitle(
+                                      context, '폴더 선택', state.folders),
+                                buildFolderList(
+                                  folderContext: folderContext,
+                                  state: state,
+                                  callback: (index, folderId) => setState(() {
+                                    selectedIndex = index;
+                                    selectedFolderId = folderId;
+                                  }),
+                                  selectedIndex: selectedIndex,
+                                ),
+                              ],
                             );
                           },
                         ),
@@ -139,7 +145,7 @@ class _UploadViewState extends State<UploadView> {
                 onPressed: buttonState == ButtonState.enabled
                     ? () => completeRegister(context)
                     : null,
-                buttonShadow: false
+                buttonShadow: false,
               ),
             );
           },

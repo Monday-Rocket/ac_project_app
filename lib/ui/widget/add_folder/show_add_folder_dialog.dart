@@ -8,6 +8,8 @@ import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/ui/page/my_folder/folder_visible_state.dart';
 import 'package:ac_project_app/ui/widget/bottom_dialog.dart';
 import 'package:ac_project_app/ui/widget/text/custom_font.dart';
+import 'package:ac_project_app/util/list_utils.dart';
+import 'package:ac_project_app/util/logger.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
@@ -15,6 +17,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 Future<bool?> showAddFolderDialog(
   BuildContext parentContext, {
+  required List<Folder> folders,
   void Function(BuildContext context, List<Folder> folders, int index)?
       moveToMyLinksView,
   void Function()? callback,
@@ -109,9 +112,19 @@ Future<bool?> showAddFolderDialog(
                                     decoration: InputDecoration(
                                       focusedBorder: const UnderlineInputBorder(
                                         borderSide: BorderSide(
-                                          color: primary800,
-                                          width: 2,
-                                        ),
+                                            color: primary800, width: 2),
+                                      ),
+                                      errorStyle: const TextStyle(
+                                        color: redError,
+                                      ),
+                                      focusedErrorBorder:
+                                          const UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: redError, width: 2),
+                                      ),
+                                      enabledBorder: const UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: greyTab, width: 2),
                                       ),
                                       suffix: context
                                               .read<FolderNameCubit>()
@@ -140,9 +153,23 @@ Future<bool?> showAddFolderDialog(
                                       hintText: '새로운 폴더 이름',
                                     ),
                                     validator: (value) {
+                                      final isSameName = folders
+                                          .map((folder) => folder.name)
+                                          .toList()
+                                          .checkContains(value);
+
+                                      if (isSameName) {
+                                        return '이미 사용하고 있는 폴더명이예요. 새로운 폴더명을 입력해주세요.';
+                                      }
+
                                       return null;
                                     },
+                                    onSaved: (String? value) {
+                                      Log.i('onSaved $value');
+                                    },
                                     onChanged: (String? value) {
+                                      formKey.currentState?.validate();
+
                                       if (value?.isEmpty ?? true) {
                                         context
                                             .read<ButtonStateCubit>()

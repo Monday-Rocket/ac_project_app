@@ -3,7 +3,13 @@ import 'package:ac_project_app/ui/widget/add_folder/subtitle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-Container buildFolderSelectTitle(BuildContext context, String text) {
+import 'package:ac_project_app/models/folder/folder.dart';
+
+Container buildFolderSelectTitle(
+  BuildContext context,
+  String text,
+  List<Folder> folders,
+) {
   return Container(
     margin: const EdgeInsets.only(
       right: 16,
@@ -17,6 +23,7 @@ Container buildFolderSelectTitle(BuildContext context, String text) {
           onTap: () => showAddFolderDialog(
             context,
             hasNotUnclassified: true,
+            folders: folders,
           ),
           child: Padding(
             padding: const EdgeInsets.all(8),

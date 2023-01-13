@@ -149,18 +149,20 @@ class _MyFolderPageState extends State<MyFolderPage>
                                 ),
                               ),
                             ),
-                            InkWell(
-                              onTap: () => showAddFolderDialog(
-                                context,
-                                moveToMyLinksView: moveToMyLinksView,
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(6),
-                                child: SvgPicture.asset(
-                                  'assets/images/btn_add.svg',
+                            if (folderState is FolderLoadedState)
+                              InkWell(
+                                onTap: () => showAddFolderDialog(
+                                  context,
+                                  moveToMyLinksView: moveToMyLinksView,
+                                  folders: folderState.folders,
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(6),
+                                  child: SvgPicture.asset(
+                                    'assets/images/btn_add.svg',
+                                  ),
                                 ),
                               ),
-                            ),
                           ],
                         ),
                       ),
@@ -592,7 +594,7 @@ class _MyFolderPageState extends State<MyFolderPage>
                           Navigator.pop(context, true);
                           cubit.getFolders();
                           if (result) {
-                            showBottomToast(context:context,'폴더가 삭제되었어요!');
+                            showBottomToast(context: context, '폴더가 삭제되었어요!');
                           }
                         });
                       },
