@@ -43,7 +43,7 @@ class MultiPlatformApp {
       child: OKToast(
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
-          initialRoute: Routes.tutorial,
+          initialRoute: Routes.splash,
           onGenerateRoute: Pages.getPages,
           themeMode: ThemeMode.light,
           theme: ThemeData(
