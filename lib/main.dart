@@ -22,7 +22,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     //Setting SystemUIOverlay
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
@@ -44,7 +43,7 @@ class MultiPlatformApp {
       child: OKToast(
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
-          initialRoute: Routes.splash,
+          initialRoute: Routes.tutorial,
           onGenerateRoute: Pages.getPages,
           themeMode: ThemeMode.light,
           theme: ThemeData(
