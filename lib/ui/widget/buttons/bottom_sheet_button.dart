@@ -11,6 +11,7 @@ Widget buildBottomSheetButton({
   bool? keyboardVisible,
   void Function()? onPressed,
   bool? buttonShadow = true,
+  Color? backgroundColor,
 }) {
   return SafeArea(
     child: Padding(
@@ -22,7 +23,7 @@ Widget buildBottomSheetButton({
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           minimumSize: const Size.fromHeight(55),
-          backgroundColor: primary800,
+          backgroundColor: backgroundColor ?? primary800,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),

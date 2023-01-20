@@ -1,45 +1,45 @@
 import 'package:ac_project_app/ui/page/my_page/my_page.dart';
-import 'package:ac_project_app/ui/view/change_profile_view.dart';
-import 'package:ac_project_app/ui/view/email_login_view.dart';
-import 'package:ac_project_app/ui/view/email_sign_up_view.dart';
-import 'package:ac_project_app/ui/view/home_view.dart';
-import 'package:ac_project_app/ui/view/link_detail_view.dart';
-import 'package:ac_project_app/ui/view/login_view.dart';
-import 'package:ac_project_app/ui/view/my_link_view.dart';
+import 'package:ac_project_app/ui/view/links/home_view.dart';
+import 'package:ac_project_app/ui/view/links/link_detail_view.dart';
+import 'package:ac_project_app/ui/view/links/my_link_view.dart';
+import 'package:ac_project_app/ui/view/links/search_view.dart';
+import 'package:ac_project_app/ui/view/links/user_feed_view.dart';
 import 'package:ac_project_app/ui/view/report_view.dart';
-import 'package:ac_project_app/ui/view/search_view.dart';
-import 'package:ac_project_app/ui/view/sign_up_job_view.dart';
-import 'package:ac_project_app/ui/view/sign_up_nickname_view.dart';
 import 'package:ac_project_app/ui/view/splash_view.dart';
 import 'package:ac_project_app/ui/view/terms_view.dart';
+import 'package:ac_project_app/ui/view/tutorial_view.dart';
 import 'package:ac_project_app/ui/view/upload_view.dart';
-import 'package:ac_project_app/ui/view/user_feed_view.dart';
+import 'package:ac_project_app/ui/view/user/change_profile_view.dart';
+import 'package:ac_project_app/ui/view/user/email_login_view.dart';
+import 'package:ac_project_app/ui/view/user/email_sign_up_view.dart';
+import 'package:ac_project_app/ui/view/user/login_view.dart';
+import 'package:ac_project_app/ui/view/user/sign_up_job_view.dart';
+import 'package:ac_project_app/ui/view/user/sign_up_nickname_view.dart';
 import 'package:flutter/material.dart';
 
 class Routes {
-  static const splash = '/splash';
-
-  static const login = '/login';
-  static const terms = '/terms';
-  static const emailLogin = '/emailLogin';
-  static const emailSignUp = '/emailSignUp';
-
-  static const signUpNickname = '/signUpNickname';
-  static const singUpJob = '/signUpJob';
-
+  // links
   static const home = '/home';
-  static const myLinks = '/myLinks';
   static const linkDetail = '/linkDetail';
+  static const myLinks = '/myLinks';
+  static const search = '/search';
   static const userFeed = '/userFeed';
 
-  static const myPage = '/myPage';
+  // user
   static const profile = '/profile';
+  static const emailLogin = '/emailLogin';
+  static const emailSignUp = '/emailSignUp';
+  static const login = '/login';
+  static const singUpJob = '/signUpJob';
+  static const signUpNickname = '/signUpNickname';
 
-  static const search = '/search';
-
+  // etc
+  static const splash = '/splash';
+  static const terms = '/terms';
+  static const myPage = '/myPage';
   static const report = '/report';
-
   static const upload = '/upload';
+  static const tutorial = '/tutorial';
 }
 
 class Pages {
@@ -79,6 +79,8 @@ class Pages {
         return router.create(child: const ReportView());
       case Routes.upload:
         return router.create(child: const UploadView());
+      case Routes.tutorial:
+        return router.create(child: const TutorialView());
       default:
         return null;
     }

@@ -3,7 +3,7 @@ description: 비사이드 12기 먼데이 로켓팀 프로젝트
 
 publish_to: 'none'
 
-version: 1.0.24+24
+version: 1.0.25+25
 
 environment:
   sdk: ">=2.17.6 <3.0.0"
@@ -44,6 +44,7 @@ dependencies:
   share_plus: ^6.3.0
   flutter_keyboard_visibility: ^5.4.0
   extended_text: ^9.1.2
+  carousel_slider: ^4.2.1
 
   ## lint
   very_good_analysis: ^3.0.1
@@ -82,6 +83,7 @@ flutter:
     - assets/images/profile/
     - assets/images/login/
     - assets/images/
+    - assets/tutorials/
 
   fonts:
     - family: Pretendard

@@ -22,7 +22,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     //Setting SystemUIOverlay
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(

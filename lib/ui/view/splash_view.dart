@@ -8,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashView extends StatefulWidget {
   const SplashView({super.key});
@@ -29,34 +30,50 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
 
   void _loginAfterAnimation() {
     Future.delayed(const Duration(milliseconds: 1500), () {
-      final user = FirebaseAuth.instance.currentUser;
-      if (user != null) {
-        UserApi().postUsers().then((result) {
-          result.when(
-            success: (data) {
-              if (data.is_new ?? false) {
-                Navigator.pushReplacementNamed(context, Routes.login);
-              } else {
-                ShareDataProvider.loadServerDataAtFirst();
-                Navigator.pushReplacementNamed(
-                  context,
-                  Routes.home,
-                  arguments: {
-                    'index': 0,
-                  },
-                );
-              }
-            },
-            error: (_) => unawaited(
-              Navigator.pushReplacementNamed(context, Routes.login),
-            ),
-          );
-        });
-      } else {
-        unawaited(Navigator.pushReplacementNamed(context, Routes.login));
-      }
+      SharedPreferences.getInstance().then((SharedPreferences prefs) {
+        final tutorial = prefs.getBool('tutorial') ?? false;
+        if (tutorial) {
+          prefs.setBool('tutorial', false);
+          moveToTutorialView();
+        } else {
+          moveToNextView();
+        }
+      });
     });
   }
+
+  void moveToNextView() {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      UserApi().postUsers().then((result) {
+        result.when(
+          success: (data) {
+            if (data.is_new ?? false) {
+              moveToLoginView();
+            } else {
+              ShareDataProvider.loadServerDataAtFirst();
+              Navigator.pushReplacementNamed(
+                context,
+                Routes.home,
+                arguments: {
+                  'index': 0,
+                },
+              );
+            }
+          },
+          error: (_) => moveToLoginView(),
+        );
+      });
+    } else {
+      moveToLoginView();
+    }
+  }
+
+  void moveToLoginView() =>
+      Navigator.pushReplacementNamed(context, Routes.login);
+
+  void moveToTutorialView() =>
+      Navigator.pushReplacementNamed(context, Routes.tutorial);
 
   void setAnimationController() {
     firstAnimationController = AnimationController(
