@@ -1,4 +1,6 @@
 // 개인정보 수집 및 이용 동의
+import 'package:ac_project_app/models/tutorial/tutorial.dart';
+
 const approveFirstLink =
     'https://plip.kr/html/2e555eb1-0d11-48d2-9756-22e3bad18fb0.html';
 
@@ -23,3 +25,26 @@ const warningMsgTitle = '링크풀은 건전한 링크 관리 및 공유 문화�
 //warning message
 const warningMsgContent =
     '부적절하거나 불쾌감을 주는 공개 컨텐츠는 제재를 받을 수 있어요 \n링크풀과 함께 유익하고 건전한 공유 문화를 만들어가 주세요';
+
+final tutorials = [
+  Tutorial(
+    'assets/tutorials/tutorial1.png',
+    '즉시 저장 가능한 링크',
+    '검색하다 발견한 인사이트를\n간편하게 저장해보세요',
+  ),
+  Tutorial(
+    'assets/tutorials/tutorial2.png',
+    '폴더링으로 링크분류',
+    '링크를 카테고리별로 분류하고\n쉽게 찾아보세요',
+  ),
+  Tutorial(
+    'assets/tutorials/tutorial3.png',
+    '보기 쉬운 링크 관리',
+    '차곡차곡 정리해둔 내 링크\n언제든지 한 눈에 볼 수 있어요',
+  ),
+  Tutorial(
+    'assets/tutorials/tutorial4.png',
+    '노트로 상세한 기억 저장',
+    '방금 떠오른 아이디어,\n잊지 않도록 링크 노트에 메모해 보세요',
+  ),
+];

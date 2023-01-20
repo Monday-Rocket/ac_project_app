@@ -22,9 +22,12 @@ const grey900 = Color(0xFF191F28);
 const f3Grey900 = Color(0xF3191F28);
 
 const blackBold = Color(0xFF13181E);
+const blackTutorial = Color(0xFF1F1F1F);
 
 const greyText = Color(0xFF62666C);
 const greyTab = Color(0xFFECEDEE);
+const greyDot = Color(0xFFF0F2F5);
+const greyTutorial = Color(0xFF494F58);
 
 const primary100 = Color(0xFFF6F7FE);
 const primary200 = Color(0xFFD8D0FF);

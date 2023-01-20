@@ -18,7 +18,6 @@ Widget buildFolderList({
       ),
       child: ListView.builder(
         itemCount: folders.length,
-        shrinkWrap: true,
         scrollDirection: Axis.horizontal,
         itemBuilder: (_, index) {
           final folder = folders[index];
