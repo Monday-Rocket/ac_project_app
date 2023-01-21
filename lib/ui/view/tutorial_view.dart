@@ -19,6 +19,7 @@ class _TutorialViewState extends State<TutorialView> {
 
   @override
   Widget build(BuildContext context) {
+    final height = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
@@ -28,60 +29,61 @@ class _TutorialViewState extends State<TutorialView> {
             items: tutorials
                 .map(
                   (tutorial) => Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Image.asset(
-                        tutorial.image,
-                        fit: BoxFit.cover,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: tutorials.asMap().entries.map((entry) {
-                          return GestureDetector(
-                            onTap: () => _controller.animateToPage(entry.key),
-                            child: Container(
-                              width: 7,
-                              height: 7,
-                              margin: const EdgeInsets.symmetric(
-                                horizontal: 3,
-                              ),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: _current == entry.key
-                                    ? primary700
-                                    : greyDot,
-                              ),
-                            ),
-                          );
-                        }).toList(),
-                      ),
-                      const SizedBox(height: 22),
-                      Text(
-                        tutorial.title,
-                        style: const TextStyle(
-                          fontSize: 26,
-                          letterSpacing: -0.2,
-                          color: blackTutorial,
-                        ),
-                      ).bold(),
-                      const SizedBox(height: 10),
-                      Text(
-                        tutorial.subTitle,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: greyTutorial,
-                          letterSpacing: -0.3,
-                          height: 24 / 14,
-                        ),
-                      ),
-                    ],
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Image.asset(
+                    tutorial.image,
+                    height: height * 0.6,
+                    fit: BoxFit.cover,
                   ),
-                )
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: tutorials.asMap().entries.map((entry) {
+                      return GestureDetector(
+                        onTap: () => _controller.animateToPage(entry.key),
+                        child: Container(
+                          width: 7,
+                          height: 7,
+                          margin: const EdgeInsets.symmetric(
+                            horizontal: 3,
+                          ),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: _current == entry.key
+                                ? primary700
+                                : greyDot,
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                  const SizedBox(height: 22),
+                  Text(
+                    tutorial.title,
+                    style: const TextStyle(
+                      fontSize: 26,
+                      letterSpacing: -0.2,
+                      color: blackTutorial,
+                    ),
+                  ).bold(),
+                  const SizedBox(height: 10),
+                  Text(
+                    tutorial.subTitle,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: greyTutorial,
+                      letterSpacing: -0.3,
+                      height: 24 / 14,
+                    ),
+                  ),
+                ],
+              ),
+            )
                 .toList(),
             carouselController: _controller,
             options: CarouselOptions(
-              aspectRatio: 375 / 646,
+              height: height * 646 / 812,
               viewportFraction: 1,
               enableInfiniteScroll: false,
               onPageChanged: (index, reason) {

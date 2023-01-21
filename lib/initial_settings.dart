@@ -31,9 +31,9 @@ void _saveFirstInstalled() {
     if (isFirst) {
       prefs.setBool('isFirst', true);
     }
-    final tutorial = prefs.getBool('tutorial') ?? true;
+    final tutorial = prefs.getBool('tutorial2') ?? true;
     if (tutorial) {
-      prefs.setBool('tutorial', true);
+      prefs.setBool('tutorial2', true);
     }
   });
 }
