@@ -31,9 +31,9 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
   void _loginAfterAnimation() {
     Future.delayed(const Duration(milliseconds: 1500), () {
       SharedPreferences.getInstance().then((SharedPreferences prefs) {
-        final tutorial = prefs.getBool('tutorial') ?? false;
+        final tutorial = prefs.getBool('tutorial2') ?? false;
         if (tutorial) {
-          prefs.setBool('tutorial', false);
+          prefs.setBool('tutorial2', false);
           moveToTutorialView();
         } else {
           moveToNextView();
@@ -122,7 +122,7 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
       body: Stack(
         children: [
           buildWhiteIcon(distance),
-          buildBottomWave(width),
+          buildBottomWave(width, height),
           buildWhiteAppName(distance),
         ],
       ),
@@ -151,15 +151,16 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
     );
   }
 
-  Align buildBottomWave(double width) {
+  Align buildBottomWave(double width, double height) {
     return Align(
       alignment: Alignment.bottomCenter,
       child: FadeTransition(
         opacity: secondAnimationController,
         child: Image.asset(
           'assets/images/wave_back.png',
-          fit: BoxFit.cover,
+          fit: BoxFit.fill,
           width: width,
+          height: height * 463 / 812,
         ),
       ),
     );
