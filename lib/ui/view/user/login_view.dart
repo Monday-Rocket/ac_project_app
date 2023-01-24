@@ -459,7 +459,6 @@ class LoginView extends StatelessWidget {
           buildGoogleLoginButton(context),
           const SizedBox(height: 12),
           buildAppleLoginButton(context),
-          const SizedBox(height: 12),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: ElevatedButton(
@@ -569,48 +568,53 @@ class LoginView extends StatelessWidget {
     if (Platform.isAndroid) {
       return const SizedBox.shrink();
     }
-    return GestureDetector(
-      onTap: () => context.read<LoginCubit>().login(LoginType.apple),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24),
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: Colors.black,
-            borderRadius: const BorderRadius.all(Radius.circular(12)),
-            border: Border.all(color: const Color(0xffd9dee0)),
-          ),
+    return Column(
+      children: [
+        GestureDetector(
+          onTap: () => context.read<LoginCubit>().login(LoginType.apple),
           child: Padding(
-            padding: const EdgeInsets.only(top: 19, bottom: 23),
-            child: Center(
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Image.asset(R.ASSETS_IMAGES_LOGIN_APPLEICON_PNG),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8),
-                    child: const Text(
-                      'Apple',
-                      style: TextStyle(
-                        fontSize: 15,
-                        color: Colors.white,
-                        letterSpacing: -0.1,
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: Colors.black,
+                borderRadius: const BorderRadius.all(Radius.circular(12)),
+                border: Border.all(color: const Color(0xffd9dee0)),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.only(top: 19, bottom: 23),
+                child: Center(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Image.asset(R.ASSETS_IMAGES_LOGIN_APPLEICON_PNG),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8),
+                        child: const Text(
+                          'Apple',
+                          style: TextStyle(
+                            fontSize: 15,
+                            color: Colors.white,
+                            letterSpacing: -0.1,
+                          ),
+                        ).bold().roboto(),
                       ),
-                    ).bold().roboto(),
+                      const Text(
+                        '로 로그인',
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: Colors.white,
+                          letterSpacing: -0.1,
+                        ),
+                      ).bold(),
+                    ],
                   ),
-                  const Text(
-                    '로 로그인',
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: Colors.white,
-                      letterSpacing: -0.1,
-                    ),
-                  ).bold(),
-                ],
+                ),
               ),
             ),
           ),
         ),
-      ),
+        const SizedBox(height: 12),
+      ],
     );
   }
 }
