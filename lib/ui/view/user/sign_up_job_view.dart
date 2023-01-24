@@ -180,10 +180,13 @@ class SignUpJobView extends StatelessWidget {
     );
   }
 
-  Future<JobGroup?> getJobResult(BuildContext context) async {
+  Future<JobGroup?> getJobResult(BuildContext parentContext) async {
+
+    final bottomMargin = MediaQuery.of(parentContext).viewInsets.bottom + 16;
+
     return showModalBottomSheet<JobGroup?>(
       backgroundColor: Colors.transparent,
-      context: context,
+      context: parentContext,
       builder: (BuildContext context) {
         return Wrap(
           children: [
@@ -200,8 +203,11 @@ class SignUpJobView extends StatelessWidget {
                       ),
                     ),
                     child: Container(
-                      margin:
-                          const EdgeInsets.only(left: 24, right: 24, top: 32),
+                      margin: const EdgeInsets.only(
+                        left: 24,
+                        right: 24,
+                        top: 32,
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -222,7 +228,7 @@ class SignUpJobView extends StatelessWidget {
                                   ),
                                 );
                               }
-                              return buildJobListView(jobs);
+                              return buildJobListView(jobs, bottomMargin);
                             },
                           ),
                         ],
@@ -238,36 +244,40 @@ class SignUpJobView extends StatelessWidget {
     );
   }
 
-  Widget buildJobListView(List<JobGroup> jobs) {
+  Widget buildJobListView(List<JobGroup> jobs, double bottomMargin) {
     return Container(
       constraints: const BoxConstraints(
         maxHeight: 431,
       ),
+      padding: EdgeInsets.only(bottom: bottomMargin),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              shrinkWrap: true,
-              itemCount: jobs.length,
-              itemBuilder: (BuildContext context, int index) {
-                return TextButton(
-                  style: TextButton.styleFrom(
-                    alignment: Alignment.centerLeft,
-                  ),
-                  onPressed: () {
-                    Navigator.pop(context, jobs[index]);
-                  },
-                  child: Text(
-                    jobs[index].name ?? '',
-                    style: const TextStyle(
-                      color: Colors.black,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 30),
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                shrinkWrap: true,
+                itemCount: jobs.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return TextButton(
+                    style: TextButton.styleFrom(
+                      alignment: Alignment.centerLeft,
                     ),
-                    textAlign: TextAlign.start,
-                  ),
-                );
-              },
+                    onPressed: () {
+                      Navigator.pop(context, jobs[index]);
+                    },
+                    child: Text(
+                      jobs[index].name ?? '',
+                      style: const TextStyle(
+                        color: Colors.black,
+                      ),
+                      textAlign: TextAlign.start,
+                    ),
+                  );
+                },
+              ),
             ),
           ),
           const SizedBox(
