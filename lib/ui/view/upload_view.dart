@@ -15,6 +15,7 @@ import 'package:ac_project_app/ui/widget/add_folder/subtitle.dart';
 import 'package:ac_project_app/ui/widget/buttons/bottom_sheet_button.dart';
 import 'package:ac_project_app/ui/widget/dialog.dart';
 import 'package:ac_project_app/util/get_widget_arguments.dart';
+import 'package:ac_project_app/util/url_valid.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -28,7 +29,7 @@ class UploadView extends StatefulWidget {
   State<UploadView> createState() => _UploadViewState();
 }
 
-class _UploadViewState extends State<UploadView> {
+class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
   final linkTextController = TextEditingController();
   final commentTextController = TextEditingController();
 
@@ -38,6 +39,36 @@ class _UploadViewState extends State<UploadView> {
   ButtonState buttonState = ButtonState.disabled;
   int selectedIndex = -1;
   int? selectedFolderId;
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    Clipboard.getData(Clipboard.kTextPlain).then((value) {
+      final url = value?.text ?? '';
+      isValidUrl(url).then((result) {
+        if (result) {
+          linkTextController.text = url;
+        }
+      });
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // 클립보드에 링크 있으면 불러오기
+      Clipboard.getData(Clipboard.kTextPlain).then((value) {
+        linkTextController.text = value?.text ?? '';
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -206,7 +237,6 @@ class _UploadViewState extends State<UploadView> {
       margin: const EdgeInsets.only(
         top: 14,
         right: 24,
-        bottom: 0,
       ),
       height: 110,
       decoration: const BoxDecoration(
