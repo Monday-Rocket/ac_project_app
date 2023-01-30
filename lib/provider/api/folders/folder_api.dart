@@ -60,7 +60,8 @@ class FolderApi {
         final list = <Map<String, dynamic>>[];
 
         for (final data in folders as List<dynamic>) {
-          final folder = Folder.fromJson(data as LinkedHashMap<String, dynamic>);
+          final folder =
+              Folder.fromJson(data as LinkedHashMap<String, dynamic>);
           if (folder.name == 'unclassified') {
             continue;
           }
@@ -82,7 +83,7 @@ class FolderApi {
 
         for (final data in folders as List<dynamic>) {
           final folder =
-          Folder.fromJson(data as LinkedHashMap<String, dynamic>);
+              Folder.fromJson(data as LinkedHashMap<String, dynamic>);
           if (folder.name == 'unclassified') {
             continue;
           }
@@ -103,7 +104,7 @@ class FolderApi {
 
         for (final data in folders as List<dynamic>) {
           final folder =
-          Folder.fromJson(data as LinkedHashMap<String, dynamic>);
+              Folder.fromJson(data as LinkedHashMap<String, dynamic>);
           if (folder.name == 'unclassified') {
             folder
               ..name = '미분류'
@@ -169,6 +170,22 @@ class FolderApi {
     );
   }
 
+  Future<bool> patchFolder(int id, Map<String, dynamic> body) async {
+    final result = await client.patchUri(
+      '/folders/$id',
+      body: body,
+    );
+
+    return result.when(
+      success: (data) {
+        return true;
+      },
+      error: (msg) {
+        return false;
+      },
+    );
+  }
+
   Future<bool> changeVisible(Folder folder) async {
     final result = await client.patchUri(
       '/folders/${folder.id}',
@@ -195,7 +212,7 @@ class FolderApi {
 
         for (final data in folders as List<dynamic>) {
           final folder =
-          Folder.fromJson(data as LinkedHashMap<String, dynamic>);
+              Folder.fromJson(data as LinkedHashMap<String, dynamic>);
           if (folder.name == 'unclassified') {
             folder
               ..name = '미분류'

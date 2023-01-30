@@ -43,7 +43,7 @@ void showBottomToast(
               ),
             ),
       backgroundColor: grey900,
-      duration: const Duration(milliseconds: 5000),
+      duration: const Duration(milliseconds: 2000),
       behavior: SnackBarBehavior.floating,
       action: (callback == null)
           ? null

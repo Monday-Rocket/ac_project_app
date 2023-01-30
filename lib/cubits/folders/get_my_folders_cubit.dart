@@ -60,6 +60,13 @@ class GetFoldersCubit extends Cubit<FoldersState> {
     return result;
   }
 
+  Future<bool> changeName(Folder folder, String name) async {
+    final result = await folderApi.patchFolder(folder.id!, {'name': name});
+    await ShareDB.changeName(folder, name);
+    unawaited(getFolders());
+    return result;
+  }
+
   Future<bool> delete(Folder folder) async {
     final result = await folderApi.deleteFolder(folder);
     await ShareDB.deleteFolder(folder);
