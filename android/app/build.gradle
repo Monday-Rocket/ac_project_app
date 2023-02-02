@@ -21,6 +21,8 @@ if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
 
+def kakaoApiKey = localProperties.getProperty('kakao.api.key')
+
 def signingProperties = new Properties()
 def signingPropertiesFile = rootProject.file('signing.properties')
 if (signingPropertiesFile.exists()) {
@@ -67,6 +69,7 @@ android {
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         ndk.debugSymbolLevel 'FULL'
+        manifestPlaceholders.KAKAO_API_KEY = kakaoApiKey
     }
 
     signingConfigs {

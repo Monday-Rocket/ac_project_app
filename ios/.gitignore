@@ -40,3 +40,4 @@ firebase_app_id_file.json
 fastlane/README.md
 Runner.ipa
 Runner.app.*
+Secrets.xcconfig

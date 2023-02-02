@@ -44,6 +44,19 @@
             </intent-filter>
         </activity>
         <activity
+                android:name="com.kakao.sdk.flutter.AuthCodeCustomTabsActivity"
+                android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <!-- Redirect URI: "kakao${NATIVE_APP_KEY}://oauth" -->
+                <data android:host="oauth"
+                      android:scheme="kakao${KAKAO_API_KEY}" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name="com.mr.ac_project_app.view.share.ShareActivity"
             android:exported="true"
             android:launchMode="singleTop"
