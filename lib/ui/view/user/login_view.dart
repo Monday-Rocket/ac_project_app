@@ -464,6 +464,13 @@ class LoginView extends StatelessWidget {
             },
             child: Text('카카오 로그인 테스트'),
           ),
+          const SizedBox(height: 12),
+          ElevatedButton(
+            onPressed: () {
+              context.read<LoginCubit>().login(LoginType.naver);
+            },
+            child: Text('네이버 로그인 테스트'),
+          ),
           buildAppleLoginButton(context),
           const SizedBox(height: 12),
           Padding(

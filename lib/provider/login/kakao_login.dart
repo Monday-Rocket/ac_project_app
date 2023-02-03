@@ -12,6 +12,7 @@ class Kakao {
       // https://velog.io/@ember/Firebase-deploy-Forbidden-%ED%95%B4%EA%B2%B0
       final customToken = await FirebaseAuthRemoteDataSource().createCustomToken({
         'uid': user.id.toString(),
+        'serviceName': 'kakao',
       });
       final userCredential = await FirebaseAuth.instance.signInWithCustomToken(customToken);
       return userCredential.user != null;

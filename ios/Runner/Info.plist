@@ -6,6 +6,8 @@
 	<array>
 		<string>kakaokompassauth</string>
 		<string>kakaolink</string>
+		<string>naversearchapp</string>
+        <string>naversearchthirdlogin</string>
 	</array>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
@@ -73,6 +75,16 @@
 				<string>kakao${KAKAO_API_KEY}</string>
 			</array>
 		</dict>
+		<dict>
+            <key>CFBundleTypeRole</key>
+            <string>Editor</string>
+            <key>CFBundleURLName</key>
+            <string>naver</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+            	<string>naver</string>
+            </array>
+        </dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
@@ -88,6 +100,27 @@
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
+		<key>NSExceptionDomains</key>
+        <dict>
+           <key>naver.com</key>
+           <dict>
+              <key>NSExceptionAllowsInsecureHTTPLoads</key>
+              <true/>
+              <key>NSExceptionRequiresForwardSecrecy</key>
+              <false/>
+              <key>NSIncludesSubdomains</key>
+              <true/>
+           </dict>
+           <key>naver.net</key>
+           <dict>
+              <key>NSExceptionAllowsInsecureHTTPLoads</key>
+              <true/>
+              <key>NSExceptionRequiresForwardSecrecy</key>
+              <false/>
+              <key>NSIncludesSubdomains</key>
+              <true/>
+           </dict>
+        </dict>
 	</dict>
 	<key>NSBonjourServices</key>
 	<array>
@@ -120,5 +153,13 @@
 	<string>Light</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<key>naverConsumerKey</key>
+    <string>${NAVER_CLIENT_ID}</string>
+    <key>naverConsumerSecret</key>
+    <string>${NAVER_CLIENT_SECRET}</string>
+    <key>naverServiceAppName</key>
+    <string>${NAVER_CLIENT_NAME}</string>
+    <key>naverServiceAppUrlScheme</key>
+    <string>linkpool</string>
 </dict>
 </plist>

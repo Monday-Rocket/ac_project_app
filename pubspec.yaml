@@ -33,6 +33,7 @@ dependencies:
   uni_links: ^0.5.1
   kakao_flutter_sdk_user: ^1.4.0
   flutter_dotenv: ^5.0.2
+  flutter_naver_login: ^1.7.0
 
   ## Utils
   metadata_fetch: ^0.4.1
