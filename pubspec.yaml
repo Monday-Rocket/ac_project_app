@@ -45,7 +45,7 @@ dependencies:
   shimmer: ^2.0.0
   share_plus: ^6.3.0
   flutter_keyboard_visibility: ^5.4.0
-  extended_text: ^9.1.2
+  extended_text: ^10.0.0
   carousel_slider: ^4.2.1
 
   ## lint

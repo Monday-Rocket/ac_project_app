@@ -458,6 +458,12 @@ class LoginView extends StatelessWidget {
         children: [
           buildGoogleLoginButton(context),
           const SizedBox(height: 12),
+          ElevatedButton(
+            onPressed: () {
+              context.read<LoginCubit>().login(LoginType.kakao);
+            },
+            child: Text('카카오 로그인 테스트'),
+          ),
           buildAppleLoginButton(context),
           const SizedBox(height: 12),
           Padding(
