@@ -28,6 +28,7 @@ const greyText = Color(0xFF62666C);
 const greyTab = Color(0xFFECEDEE);
 const greyDot = Color(0xFFF0F2F5);
 const greyTutorial = Color(0xFF494F58);
+const greyEmailInfo = Color(0xff747c85);
 
 const primary100 = Color(0xFFF6F7FE);
 const primary200 = Color(0xFFD8D0FF);

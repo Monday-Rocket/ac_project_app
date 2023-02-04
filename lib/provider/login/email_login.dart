@@ -51,6 +51,14 @@ class Email {
       });
     } catch (e) {
       Log.e(e.toString());
+      showPopUp(
+        title: '일시적인 오류가 발생했어요',
+        content: '서비스 오류로 인해 일반 가입이 안되고 있어요 불편하시겠지만 다른 방식으로 이용해 주세요',
+        parentContext: context,
+        callback: () => Navigator.pop(context),
+        icon: true,
+        buttonText: '다른 방식으로 가입하기',
+      );
     }
   }
 }

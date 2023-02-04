@@ -44,86 +44,126 @@ class _EmailSignUpViewState extends State<EmailSignUpView>
               child: Container(
                 margin: const EdgeInsets.symmetric(horizontal: 24),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const SizedBox(height: 16),
-                    const Text(
-                      '가입에 필요한\n정보를 입력해주세요.',
-                      style: TextStyle(
-                        fontSize: 24,
-                        color: grey900,
-                        fontWeight: FontWeight.bold,
-                        height: 34 / 24,
-                        letterSpacing: -0.3,
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(top: 30, bottom: 23),
-                      child: Form(
-                        key: formKey,
-                        child: TextFormField(
-                          autofocus: true,
-                          style: const TextStyle(
-                            fontSize: 17,
-                            fontWeight: FontWeight.w500,
-                            color: blackBold,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 16),
+                        const Text(
+                          '가입에 필요한\n정보를 입력해주세요.',
+                          style: TextStyle(
+                            fontSize: 24,
+                            color: grey900,
+                            fontWeight: FontWeight.bold,
+                            height: 34 / 24,
+                            letterSpacing: -0.3,
                           ),
-                          decoration: InputDecoration(
-                            labelText: '이메일',
-                            labelStyle: const TextStyle(
-                              color: Color(0xFF9097A3),
-                              fontWeight: FontWeight.w500,
-                            ),
-                            focusedBorder: const UnderlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: primary800, width: 2),
-                            ),
-                            errorStyle: const TextStyle(
-                              color: redError,
-                            ),
-                            focusedErrorBorder: const UnderlineInputBorder(
-                              borderSide: BorderSide(color: redError, width: 2),
-                            ),
-                            enabledBorder: const UnderlineInputBorder(
-                              borderSide: BorderSide(color: greyTab, width: 2),
-                            ),
-                            contentPadding: EdgeInsets.zero,
-                            suffix: buttonState
-                                ? const Icon(
-                                    Icons.check,
-                                    color: primary700,
-                                    size: 16,
-                                  )
-                                : null,
-                          ),
-                          validator: validateEmail,
-                          onSaved: (String? value) {
-                            emailString = value ?? '';
-                          },
-                          onChanged: (String? value) {
-                            if (value?.isEmpty ?? true) {
-                              setState(() {
-                                buttonState = false;
-                              });
-                            }
-                            if (formKey.currentState != null) {
-                              if (!formKey.currentState!.validate()) {
-                                setState(() {
-                                  buttonState = false;
-                                });
-                                return;
-                              } else {
-                                formKey.currentState!.save();
-                                setState(() {
-                                  buttonState = true;
-                                });
-                              }
-                            }
-                          },
                         ),
-                      ),
+                        Container(
+                          margin: const EdgeInsets.only(top: 30, bottom: 23),
+                          child: Form(
+                            key: formKey,
+                            child: TextFormField(
+                              autofocus: true,
+                              style: const TextStyle(
+                                fontSize: 17,
+                                fontWeight: FontWeight.w500,
+                                color: blackBold,
+                              ),
+                              decoration: InputDecoration(
+                                labelText: '이메일',
+                                labelStyle: const TextStyle(
+                                  color: Color(0xFF9097A3),
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                focusedBorder: const UnderlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: primary800, width: 2),
+                                ),
+                                errorStyle: const TextStyle(
+                                  color: redError,
+                                ),
+                                focusedErrorBorder: const UnderlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: redError, width: 2),
+                                ),
+                                enabledBorder: const UnderlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: greyTab, width: 2),
+                                ),
+                                contentPadding: EdgeInsets.zero,
+                                suffix: buttonState
+                                    ? const Icon(
+                                        Icons.check,
+                                        color: primary700,
+                                        size: 16,
+                                      )
+                                    : null,
+                              ),
+                              validator: validateEmail,
+                              onSaved: (String? value) {
+                                emailString = value ?? '';
+                              },
+                              onChanged: (String? value) {
+                                if (value?.isEmpty ?? true) {
+                                  setState(() {
+                                    buttonState = false;
+                                  });
+                                }
+                                if (formKey.currentState != null) {
+                                  if (!formKey.currentState!.validate()) {
+                                    setState(() {
+                                      buttonState = false;
+                                    });
+                                    return;
+                                  } else {
+                                    formKey.currentState!.save();
+                                    setState(() {
+                                      buttonState = true;
+                                    });
+                                  }
+                                }
+                              },
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: keyboardHeight),
+                      ],
                     ),
-                    SizedBox(height: keyboardHeight),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 135),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            '인증메일을 받지 못하셨다면, 스팸 메일함을 확인하시거나 소셜 로그인 방식으로 회원가입을 진행해 주세요',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 14,
+                              letterSpacing: -0.1,
+                              height: 18.9 / 14,
+                              color: greyEmailInfo,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          GestureDetector(
+                            onTap: () => Navigator.pop(context),
+                            child: const Text(
+                              '첫 화면으로 돌아가기',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                letterSpacing: -0.1,
+                                height: 18.9 / 14,
+                                color: greyEmailInfo,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    )
                   ],
                 ),
               ),
@@ -135,7 +175,7 @@ class _EmailSignUpViewState extends State<EmailSignUpView>
               onPressed: buttonState
                   ? () {
                       if (isEmailSent) {
-                        showBottomToast(context:context,'이미 이메일이 발송 되었습니다.');
+                        showBottomToast(context: context, '이미 이메일이 발송 되었습니다.');
                       } else {
                         Email.send(context, emailString, '가입');
                         setState(() {
@@ -149,10 +189,6 @@ class _EmailSignUpViewState extends State<EmailSignUpView>
         },
       ),
     );
-  }
-
-  void backToLogin(BuildContext context) {
-    unawaited(Navigator.pushNamed(context, Routes.login));
   }
 
   @override
@@ -221,7 +257,7 @@ class _EmailSignUpViewState extends State<EmailSignUpView>
                 },
               );
             } else {
-              showBottomToast(context:context,'가입된 계정이 이미 있습니다!');
+              showBottomToast(context: context, '가입된 계정이 이미 있습니다!');
             }
           },
           error: (msg) {

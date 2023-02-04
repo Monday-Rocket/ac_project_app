@@ -8,6 +8,7 @@ void showPopUp({
   required BuildContext parentContext,
   required void Function()? callback,
   bool icon = false,
+  String buttonText = '확인',
 }) {
   final width = MediaQuery.of(parentContext).size.width;
   showDialog<dynamic>(
@@ -73,9 +74,9 @@ void showPopUp({
                           ),
                           shadowColor: Colors.transparent,
                         ),
-                        child: const Text(
-                          '확인',
-                          style: TextStyle(
+                        child: Text(
+                          buttonText,
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
