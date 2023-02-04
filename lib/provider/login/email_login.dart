@@ -22,24 +22,31 @@ class Email {
       BuildContext context, String email, String type) async {
     try {
       Log.i('이메일 전송');
-      await FirebaseAuth.instance
-          .sendSignInLinkToEmail(
-            email: email,
-            actionCodeSettings: ActionCodeSettings(
-              url: 'https://acprojectapp.page.link/jTpt?email=$email',
-              handleCodeInApp: true,
-              iOSBundleId: 'com.mr.acProjectApp',
-              androidPackageName: 'com.mr.ac_project_app',
-            ),
-          )
-          .catchError(Log.e)
-          .then((value) {
+      await FirebaseAuth.instance.sendSignInLinkToEmail(
+        email: email,
+        actionCodeSettings: ActionCodeSettings(
+          url: 'https://acprojectapp.page.link/jTpt?email=$email',
+          handleCodeInApp: true,
+          iOSBundleId: 'com.mr.acProjectApp',
+          androidPackageName: 'com.mr.ac_project_app',
+        ),
+      )
+          .catchError((dynamic error) {
         showPopUp(
-          title: '이메일 전송됨',
+          title: '인증 실패',
+          content: '다른 계정으로 시도 해보세요\nerror: ${error.toString()}',
+          parentContext: context,
+          callback: () => Navigator.pop(context),
+          icon: true,
+        );
+      }).then((value) {
+        showPopUp(
+          title: '인증 메일 발송',
           content: '메일주소로 인증 메일이 발송되었습니다\n'
               '이메일의 링크로 $type을 완료해주세요',
           parentContext: context,
           callback: () => Navigator.pop(context),
+          icon: true,
         );
       });
     } catch (e) {

@@ -48,6 +48,7 @@ dependencies:
   flutter_keyboard_visibility: ^5.4.0
   extended_text: ^10.0.0
   carousel_slider: ^4.2.1
+  lottie:
 
   ## lint
   very_good_analysis: ^3.0.1
@@ -88,6 +89,7 @@ flutter:
     - assets/images/
     - assets/tutorials/
     - .env
+    - assets/animations/
 
   fonts:
     - family: Pretendard

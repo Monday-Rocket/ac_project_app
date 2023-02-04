@@ -7,7 +7,7 @@ import 'package:ac_project_app/util/page_utils.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SearchLinksCubit extends Cubit<LinkListState> {
-  SearchLinksCubit(): super(LinkListInitialState());
+  SearchLinksCubit() : super(LinkListInitialState());
 
   final linkApi = LinkApi();
   HasMoreCubit hasMore = HasMoreCubit();
@@ -15,7 +15,7 @@ class SearchLinksCubit extends Cubit<LinkListState> {
   String currentText = '';
 
   Future<void> searchLinks(String text, int pageNum) async {
-
+    currentText = text;
     emit(LinkListLoadingState());
 
     final result = await linkApi.searchOtherLinks(text, pageNum);
@@ -31,7 +31,7 @@ class SearchLinksCubit extends Cubit<LinkListState> {
   }
 
   Future<void> searchMyLinks(String text, int pageNum) async {
-
+    currentText = text;
     emit(LinkListLoadingState());
 
     final result = await linkApi.searchMyLinks(text, pageNum);
@@ -61,5 +61,4 @@ class SearchLinksCubit extends Cubit<LinkListState> {
 
     return data.contents ?? [];
   }
-
 }

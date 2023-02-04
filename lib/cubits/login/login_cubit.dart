@@ -55,8 +55,10 @@ class LoginCubit extends Cubit<LoginUserState> {
 
       user.when(
         success: (data) {
-          // 1. 공유패널 데이터 가져오기
-          ShareDataProvider.loadServerData();
+          if (data.is_new == false) {
+            // 1. 공유패널 데이터 가져오기
+            ShareDataProvider.loadServerData();
+          }
 
           // 2. 로그인 이후 화면으로 이동
           emit(LoginLoadedState(data));
