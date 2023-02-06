@@ -22,6 +22,7 @@ class LinksFromSelectedJobGroupCubit extends Cubit<List<Link>> {
 
   void initialize() {
     emit([]);
+    getSelectedJobLinks(0, 0);
   }
 
   Future<void> getSelectedJobLinks(int jobGroupId, int pageNum) async {

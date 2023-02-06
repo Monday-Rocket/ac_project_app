@@ -84,9 +84,7 @@ class HomePage extends StatelessWidget {
 
   Widget buildListBody(BuildContext parentContext) {
     final width = MediaQuery.of(parentContext).size.width;
-    parentContext
-        .read<LinksFromSelectedJobGroupCubit>()
-        .getSelectedJobLinks(profile.jobGroup!.id!, 0);
+
     return BlocBuilder<LinksFromSelectedJobGroupCubit, List<Link>>(
       builder: (context, links) {
         final totalLinks =

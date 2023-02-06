@@ -15,6 +15,7 @@ extension SortMyJobs on List<JobGroup> {
     final tempJob = firstWhere((element) => element.id == myJobId);
     return this
       ..remove(tempJob)
-      ..insert(0, tempJob);
+      ..insert(0, tempJob)
+      ..insert(0, JobGroup(id: 0, name: '전체'));
   }
 }
