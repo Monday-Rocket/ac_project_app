@@ -40,7 +40,7 @@ class Email {
           .catchError((dynamic error) {
         showPopUp(
           title: '인증 실패',
-          content: '다른 계정으로 시도 해보세요\nerror: ${error.toString()}',
+          content: '다른 계정으로 시도 해보세요\nerror: $error',
           parentContext: context,
           callback: () => Navigator.pop(context),
           icon: true,
