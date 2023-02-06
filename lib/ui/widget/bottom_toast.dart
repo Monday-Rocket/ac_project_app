@@ -11,7 +11,12 @@ void showBottomToast(
 }) {
   ScaffoldMessenger.of(context!).showSnackBar(
     SnackBar(
-      margin: EdgeInsets.only(left: 24, right: 24, bottom: bottomPadding ?? 10),
+      margin: EdgeInsets.only(
+        left: 21,
+        right: 21,
+        bottom: bottomPadding ?? 11,
+        top: bottomPadding ?? 11,
+      ),
       content: subMsg == null
           ? Row(
               mainAxisAlignment: callback == null
@@ -21,26 +26,32 @@ void showBottomToast(
                 Text(text),
               ],
             )
-          : SizedBox(
-              height: 36,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    text,
-                    textAlign: TextAlign.start,
+          : Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  text,
+                  textAlign: TextAlign.start,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    height: 16 / 13,
+                    letterSpacing: -0.1,
                   ),
-                  Text(
-                    subMsg,
-                    textAlign: TextAlign.start,
-                    style: const TextStyle(
-                      color: grey400,
-                      fontSize: 14,
-                      letterSpacing: -0.2,
-                    ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  subMsg,
+                  textAlign: TextAlign.start,
+                  style: const TextStyle(
+                    color: grey400,
+                    fontSize: 13,
+                    letterSpacing: -0.1,
+                    height: 16 / 13,
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
       backgroundColor: grey900,
       duration: const Duration(milliseconds: 5000),

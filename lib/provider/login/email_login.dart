@@ -1,9 +1,11 @@
 import 'dart:async';
 
+import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/dialog.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Email {
@@ -19,10 +21,14 @@ class Email {
   }
 
   static Future<void> send(
-      BuildContext context, String email, String type) async {
+    BuildContext context,
+    String email,
+    String type,
+  ) async {
     try {
       Log.i('이메일 전송');
-      await FirebaseAuth.instance.sendSignInLinkToEmail(
+      await FirebaseAuth.instance
+          .sendSignInLinkToEmail(
         email: email,
         actionCodeSettings: ActionCodeSettings(
           url: 'https://acprojectapp.page.link/jTpt?email=$email',
@@ -47,15 +53,30 @@ class Email {
           parentContext: context,
           callback: () => Navigator.pop(context),
           icon: true,
+          iconImage: SvgPicture.asset('assets/images/check_icon.svg'),
         );
       });
     } catch (e) {
       Log.e(e.toString());
       showPopUp(
         title: '일시적인 오류가 발생했어요',
-        content: '서비스 오류로 인해 일반 가입이 안되고 있어요 불편하시겠지만 다른 방식으로 이용해 주세요',
+        content: '서비스 오류로 인해 일반 가입이 안되고 있어요\n불편하시겠지만 다른 방식으로 이용해 주세요',
         parentContext: context,
-        callback: () => Navigator.pop(context),
+        callback: () {
+          Navigator.pop(context);
+          Future.delayed(
+            const Duration(milliseconds: 400),
+            () => Navigator.pop(context),
+          );
+          Future.delayed(const Duration(milliseconds: 700), () {
+            showBottomToast(
+              context: context,
+              '오류 내용이 링크풀에 전달되었어요',
+              subMsg: '오류 내용을 확인하고 최대한 빨리 이 문제를 개선할게요',
+              bottomPadding: 11,
+            );
+          });
+        },
         icon: true,
         buttonText: '다른 방식으로 가입하기',
       );

@@ -9,6 +9,12 @@ void showPopUp({
   required void Function()? callback,
   bool icon = false,
   String buttonText = '확인',
+  Widget iconImage = const Icon(
+    Icons.error,
+    color: primary800,
+    size: 27,
+  ),
+  bool hasClose = false,
 }) {
   final width = MediaQuery.of(parentContext).size.width;
   showDialog<dynamic>(
@@ -25,22 +31,19 @@ void showPopUp({
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   SizedBox(
-                    height: icon ? 14 : 16,
+                    height: icon ? 26 : 16,
                   ),
-                  if (icon)
-                    const Icon(
-                      Icons.error,
-                      color: primary800,
-                      size: 27,
-                    ),
+                  if (icon) iconImage,
                   Container(
-                    margin: EdgeInsets.only(top: icon ? 7 : 0, bottom: 10),
+                    margin: EdgeInsets.only(top: icon ? 14 : 0, bottom: 10),
                     child: Text(
                       title,
                       style: const TextStyle(
                         fontFamily: R_Font.PRETENDARD,
                         fontSize: 20,
                         fontWeight: FontWeight.w700,
+                        letterSpacing: -0.2,
+                        height: 23.8 / 20,
                       ),
                     ),
                   ),
@@ -52,7 +55,7 @@ void showPopUp({
                       fontSize: 14,
                       letterSpacing: -0.1,
                       fontWeight: FontWeight.w500,
-                      height: 16.7 / 14,
+                      height: 18.9 / 14,
                     ),
                   ),
                   Container(
@@ -88,18 +91,21 @@ void showPopUp({
                 ],
               ),
             ),
-            Positioned(
-              right: 5,
-              top: 5,
-              child: IconButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: const Icon(
-                  Icons.close,
+            if (hasClose)
+              Positioned(
+                right: 5,
+                top: 5,
+                child: IconButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: const Icon(
+                    Icons.close,
+                  ),
                 ),
-              ),
-            ),
+              )
+            else
+              const SizedBox.shrink(),
           ],
         ),
       );
