@@ -17,7 +17,6 @@ class GetProfileInfoCubit extends Cubit<ProfileState> {
   final profileApi = ProfileApi();
 
   Future<void> loadProfileData() async {
-    if (state == ProfileLoadingState()) return;
     emit(ProfileLoadingState());
 
     final result = await userApi.getUsers();
@@ -29,7 +28,6 @@ class GetProfileInfoCubit extends Cubit<ProfileState> {
             Profile(
               id: user.id,
               nickname: user.nickname,
-              jobGroup: user.jobGroup,
               profileImage: makeImagePath(user.profileImg),
             ),
           ),
@@ -42,16 +40,15 @@ class GetProfileInfoCubit extends Cubit<ProfileState> {
   }
 
   void selectImage(int index) {
-    final profile = (state as ProfileLoadedState).profile;
+    final nickname = (state as ProfileLoadedState).profile.nickname;
     emit(ProfileLoadingState());
 
     imageNumber = '0${index + 1}';
     emit(
       ProfileLoadedState(
         Profile(
-          nickname: profile.nickname,
+          nickname: nickname,
           profileImage: makeImagePath(imageNumber!),
-          jobGroup: profile.jobGroup,
         ),
       ),
     );

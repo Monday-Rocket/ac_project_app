@@ -8,12 +8,10 @@ import 'package:ac_project_app/cubits/links/links_from_selected_job_group_cubit.
 import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/models/link/link.dart';
-import 'package:ac_project_app/models/profile/profile.dart';
 import 'package:ac_project_app/models/user/detail_user.dart';
 import 'package:ac_project_app/resource.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/bottom_dialog.dart';
-import 'package:ac_project_app/util/list_utils.dart';
 import 'package:ac_project_app/util/string_utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -21,9 +19,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({super.key, required this.profile});
-
-  final Profile profile;
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -65,10 +61,7 @@ class HomePage extends StatelessWidget {
                     ),
                   ),
                 ),
-                buildJobListView(
-                  jobContext,
-                  state.jobs.sortMyJobs(profile.jobGroup!.id!),
-                ),
+                buildJobListView(jobContext, state.jobs),
                 buildListBody(jobContext),
               ],
             ),
@@ -84,9 +77,6 @@ class HomePage extends StatelessWidget {
 
   Widget buildListBody(BuildContext parentContext) {
     final width = MediaQuery.of(parentContext).size.width;
-    parentContext
-        .read<LinksFromSelectedJobGroupCubit>()
-        .getSelectedJobLinks(profile.jobGroup!.id!, 0);
     return BlocBuilder<LinksFromSelectedJobGroupCubit, List<Link>>(
       builder: (context, links) {
         final totalLinks =
