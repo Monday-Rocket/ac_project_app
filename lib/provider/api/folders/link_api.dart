@@ -69,16 +69,9 @@ class LinkApi {
     int jobGroup,
     int pageNum,
   ) async {
-    Result<dynamic> result;
-    if (jobGroup == 0) {
-      result = await client.getUri('/links/all?'
-          'page_no=$pageNum&'
-          'page_size=10');
-    } else {
-      result = await client.getUri('/job-groups/$jobGroup/links?'
-          'page_no=$pageNum&'
-          'page_size=10');
-    }
+    final result = await client.getUri('/job-groups/$jobGroup/links?'
+        'page_no=$pageNum&'
+        'page_size=10');
 
     return result.when(
       success: (data) {
