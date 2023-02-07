@@ -8,8 +8,9 @@ import 'package:ac_project_app/models/folder/folder.dart';
 Container buildFolderSelectTitle(
   BuildContext context,
   String text,
-  List<Folder> folders,
-) {
+  List<Folder> folders, {
+  void Function()? callback,
+}) {
   return Container(
     margin: const EdgeInsets.only(
       right: 16,
@@ -24,6 +25,7 @@ Container buildFolderSelectTitle(
             context,
             hasNotUnclassified: true,
             folders: folders,
+            callback: callback,
           ),
           child: Padding(
             padding: const EdgeInsets.all(8),

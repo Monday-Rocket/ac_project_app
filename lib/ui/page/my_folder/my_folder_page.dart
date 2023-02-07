@@ -14,6 +14,7 @@ import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/add_folder/show_add_folder_dialog.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/custom_reorderable_list_view.dart';
+import 'package:ac_project_app/ui/widget/rename_folder/show_rename_folder_dialog.dart';
 import 'package:ac_project_app/ui/widget/text/custom_font.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:ac_project_app/util/number_commas.dart';
@@ -345,8 +346,11 @@ class _MyFolderPageState extends State<MyFolderPage>
                           const SizedBox.shrink()
                         else
                           InkWell(
-                            onTap: () =>
-                                showFolderOptionsDialog(folder, context),
+                            onTap: () => showFolderOptionsDialog(
+                              folders,
+                              folder,
+                              context,
+                            ),
                             child: Padding(
                               padding: const EdgeInsets.all(8),
                               child: SvgPicture.asset('assets/images/more.svg'),
@@ -385,10 +389,11 @@ class _MyFolderPageState extends State<MyFolderPage>
   }
 
   Future<bool?> showFolderOptionsDialog(
-    Folder folder,
+    List<Folder> folders,
+    Folder currFolder,
     BuildContext parentContext,
   ) async {
-    final visible = folder.visible ?? false;
+    final visible = currFolder.visible ?? false;
     return showModalBottomSheet<bool?>(
       backgroundColor: Colors.transparent,
       context: parentContext,
@@ -449,7 +454,7 @@ class _MyFolderPageState extends State<MyFolderPage>
                           InkWell(
                             onTap: () => changeFolderVisible(
                               parentContext,
-                              folder,
+                              currFolder,
                             ),
                             highlightColor: grey100,
                             child: Container(
@@ -477,7 +482,39 @@ class _MyFolderPageState extends State<MyFolderPage>
                             ),
                           ),
                           InkWell(
-                            onTap: () => deleteFolder(parentContext, folder),
+                            onTap: () => changeFolderName(
+                              parentContext,
+                              folders,
+                              currFolder,
+                            ),
+                            child: Container(
+                              decoration: const BoxDecoration(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(10),
+                                ),
+                                color: Colors.transparent,
+                              ),
+                              padding: const EdgeInsets.only(
+                                top: 14,
+                                bottom: 14,
+                                left: 24,
+                              ),
+                              child: const Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  '폴더명 변경',
+                                  style: TextStyle(
+                                    color: blackBold,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          InkWell(
+                            onTap: () =>
+                                deleteFolder(parentContext, currFolder),
                             child: Container(
                               decoration: const BoxDecoration(
                                 borderRadius: BorderRadius.all(
@@ -519,6 +556,24 @@ class _MyFolderPageState extends State<MyFolderPage>
   void changeFolderVisible(BuildContext context, Folder folder) {
     context.read<GetFoldersCubit>().transferVisible(folder).then((value) {
       Navigator.pop(context);
+    });
+  }
+
+  void changeFolderName(
+    BuildContext context,
+    List<Folder> folders,
+    Folder currFolder,
+  ) {
+    showRenameFolderDialog(
+      context,
+      currFolder: currFolder,
+      folders: folders,
+    ).then((value) {
+      value = value ?? false;
+      if (value) {
+        Navigator.pop(context, true);
+        context.read<GetFoldersCubit>().getFolders();
+      }
     });
   }
 

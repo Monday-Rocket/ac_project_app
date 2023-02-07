@@ -38,6 +38,7 @@ class _UploadViewState extends State<UploadView> {
   ButtonState buttonState = ButtonState.disabled;
   int selectedIndex = -1;
   int? selectedFolderId;
+  bool isSavedNewFolder = false;
 
   @override
   Widget build(BuildContext context) {
@@ -111,15 +112,25 @@ class _UploadViewState extends State<UploadView> {
                               children: [
                                 if (state is FolderLoadedState)
                                   buildFolderSelectTitle(
-                                      context, '폴더 선택', state.folders),
+                                    context,
+                                    '폴더 선택',
+                                    state.folders,
+                                    callback: () {
+                                      setState(() {
+                                        isSavedNewFolder = true;
+                                      });
+                                    },
+                                  ),
                                 buildFolderList(
                                   folderContext: folderContext,
                                   state: state,
                                   callback: (index, folderId) => setState(() {
                                     selectedIndex = index;
                                     selectedFolderId = folderId;
+                                    isSavedNewFolder = false;
                                   }),
                                   selectedIndex: selectedIndex,
+                                  isLast: isSavedNewFolder,
                                 ),
                               ],
                             );
