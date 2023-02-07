@@ -7,7 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LinksFromSelectedJobGroupCubit extends Cubit<List<Link>> {
-  LinksFromSelectedJobGroupCubit(): super([]) {
+  LinksFromSelectedJobGroupCubit() : super([]) {
     initialize();
   }
 
@@ -22,7 +22,7 @@ class LinksFromSelectedJobGroupCubit extends Cubit<List<Link>> {
 
   void initialize() {
     emit([]);
-    getSelectedJobLinks(1, 0);
+    getSelectedJobLinks(0, 0);
   }
 
   Future<void> getSelectedJobLinks(int jobGroupId, int pageNum) async {
