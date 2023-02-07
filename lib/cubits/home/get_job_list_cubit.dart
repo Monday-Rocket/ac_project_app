@@ -16,6 +16,7 @@ class GetJobListCubit extends Cubit<JobListState> {
     final result = await userApi.getJobGroups();
     result.when(
       success: (List<JobGroup> jobs) {
+        jobs.insert(0, JobGroup(id: 0, name: '전체'));
         emit(LoadedState(jobs));
       },
       error: (msg) {
