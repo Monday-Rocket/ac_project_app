@@ -53,28 +53,6 @@ class FolderApi {
     );
   }
 
-  Future<Result<List<Map<String, dynamic>>>> getFoldersForSharePanel() async {
-    final result = await client.getUri('/folders');
-    return result.when(
-      success: (folders) {
-        final list = <Map<String, dynamic>>[];
-
-        for (final data in folders as List<dynamic>) {
-          final folder =
-              Folder.fromJson(data as LinkedHashMap<String, dynamic>);
-          if (folder.name == 'unclassified') {
-            continue;
-          }
-
-          list.add(folder.toJson());
-        }
-
-        return Result.success(list);
-      },
-      error: Result.error,
-    );
-  }
-
   Future<Result<List<Folder>>> getMyFoldersWithoutUnclassified() async {
     final result = await client.getUri('/folders');
     return result.when(
@@ -201,29 +179,6 @@ class FolderApi {
       error: (msg) {
         return false;
       },
-    );
-  }
-
-  Future<Result<List<Folder>>> getSelectedUserFolders(int userId) async {
-    final result = await client.getUri('/users/$userId/folders');
-    return result.when(
-      success: (folders) {
-        final list = <Folder>[];
-
-        for (final data in folders as List<dynamic>) {
-          final folder =
-              Folder.fromJson(data as LinkedHashMap<String, dynamic>);
-          if (folder.name == 'unclassified') {
-            folder
-              ..name = '미분류'
-              ..isClassified = false;
-          }
-          list.add(folder);
-        }
-
-        return Result.success(list);
-      },
-      error: Result.error,
     );
   }
 }
