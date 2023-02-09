@@ -31,6 +31,9 @@ dependencies:
   firebase_auth: ^4.2.0
   firebase_dynamic_links: ^5.0.8
   uni_links: ^0.5.1
+  kakao_flutter_sdk_user: ^1.4.0
+  flutter_dotenv: ^5.0.2
+  flutter_naver_login: ^1.7.0
 
   ## Utils
   metadata_fetch: ^0.4.1
@@ -43,7 +46,7 @@ dependencies:
   shimmer: ^2.0.0
   share_plus: ^6.3.0
   flutter_keyboard_visibility: ^5.4.0
-  extended_text: ^9.1.2
+  extended_text: ^10.0.0
   carousel_slider: ^4.2.1
   lottie:
 
@@ -85,6 +88,7 @@ flutter:
     - assets/images/login/
     - assets/images/
     - assets/tutorials/
+    - .env
     - assets/animations/
 
   fonts:

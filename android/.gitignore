@@ -16,3 +16,4 @@ signing.properties
 app/google-services.json
 *.json
 fastlane/README.md
+app/src/main/res/values/strings_secret.xml

@@ -4,7 +4,7 @@ const greyLoginText = Color(0xFF757575);
 
 const grey50 = Color(0xFFFAFBFC);
 const grey100 = Color(0xFFF5F7FA);
-const ccGrey100 = Color(0xCCF5F7FA);
+const ccGrey100 = Color(0x99F5F7FA);
 
 const grey200 = Color(0xFFE6EAF1);
 const ccGrey200 = Color(0xCCE6EAF1);
@@ -28,6 +28,7 @@ const greyText = Color(0xFF62666C);
 const greyTab = Color(0xFFECEDEE);
 const greyDot = Color(0xFFF0F2F5);
 const greyTutorial = Color(0xFF494F58);
+const greyEmailInfo = Color(0xff747c85);
 
 const primary100 = Color(0xFFF6F7FE);
 const primary200 = Color(0xFFD8D0FF);

@@ -11,7 +11,6 @@ import 'package:ac_project_app/ui/view/tutorial_view.dart';
 import 'package:ac_project_app/ui/view/upload_view.dart';
 import 'package:ac_project_app/ui/view/user/change_profile_view.dart';
 import 'package:ac_project_app/ui/view/user/email_login_view.dart';
-import 'package:ac_project_app/ui/view/user/email_sign_up_view.dart';
 import 'package:ac_project_app/ui/view/user/login_view.dart';
 import 'package:ac_project_app/ui/view/user/sign_up_job_view.dart';
 import 'package:ac_project_app/ui/view/user/sign_up_nickname_view.dart';
@@ -28,7 +27,6 @@ class Routes {
   // user
   static const profile = '/profile';
   static const emailLogin = '/emailLogin';
-  static const emailSignUp = '/emailSignUp';
   static const login = '/login';
   static const singUpJob = '/signUpJob';
   static const signUpNickname = '/signUpNickname';
@@ -55,8 +53,6 @@ class Pages {
         return router.create(child: const TermsView());
       case Routes.emailLogin:
         return router.create(child: const EmailLoginView());
-      case Routes.emailSignUp:
-        return router.create(child: const EmailSignUpView());
       case Routes.home:
         return router.create(child: const HomeView());
       case Routes.myLinks:

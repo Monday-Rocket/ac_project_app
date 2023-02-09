@@ -247,7 +247,11 @@ class _ReportViewState extends State<ReportView> {
   }
 
   void reportData(
-          BuildContext context, String targetType, int id, String text) =>
+    BuildContext context,
+    String targetType,
+    int id,
+    String text,
+  ) =>
       ReportApi()
           .report(
         Report(
@@ -263,9 +267,10 @@ class _ReportViewState extends State<ReportView> {
           Future.delayed(
             const Duration(milliseconds: 300),
             () => showBottomToast(
-                context: context,
-                '신고가 접수되었어요!',
-                subMsg: '신고에 대한 검토는 최대 24시간안에 진행될 예정이예요'),
+              context: context,
+              '신고가 접수되었어요!',
+              subMsg: '신고에 대한 검토는 최대 24시간안에 진행될 예정이예요',
+            ),
           );
         } else if (type == ReportResultType.duplicated) {
           showPopUp(

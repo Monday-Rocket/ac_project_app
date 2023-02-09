@@ -16,6 +16,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class EmailLoginView extends StatefulWidget {
   const EmailLoginView({super.key});
@@ -50,7 +51,7 @@ class _EmailLoginViewState extends State<EmailLoginView>
                   children: [
                     const SizedBox(height: 16),
                     const Text(
-                      '로그인',
+                      '로그인에 필요한\n정보를 입력해주세요.',
                       style: TextStyle(
                         fontSize: 24,
                         color: grey900,
@@ -122,6 +123,66 @@ class _EmailLoginViewState extends State<EmailLoginView>
                               }
                             }
                           },
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Container(
+                      decoration: const BoxDecoration(
+                        color: grey100,
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(8),
+                        ),
+                      ),
+                      child: Center(
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(top: 14, bottom: 12),
+                              child: SvgPicture.asset(
+                                'assets/images/email_notice.svg',
+                              ),
+                            ),
+                            const Text(
+                              '인증메일을 받지 못하셨다면, 스팸 메일함을 확인하시거나\n소셜 로그인 방식으로 회원가입을 진행해 주세요',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 13,
+                                letterSpacing: -0.1,
+                                fontWeight: FontWeight.w400,
+                                color: grey500,
+                                height: 17.5 / 13,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 20),
+                              child: GestureDetector(
+                                onTap: () => Navigator.pop(context),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(6),
+                                    color: grey400,
+                                  ),
+                                  constraints: const BoxConstraints(
+                                    minHeight: 34,
+                                    maxWidth: 156,
+                                  ),
+                                  child: const Center(
+                                    child: Text(
+                                      '첫 화면으로 돌아가기',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        letterSpacing: -0.1,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            )
+                          ],
                         ),
                       ),
                     ),
@@ -224,7 +285,9 @@ class _EmailLoginViewState extends State<EmailLoginView>
               Future.delayed(
                 const Duration(milliseconds: 500),
                 () => showBottomToast(
-                    context: context, '가입된 계정이 없어 회원 가입 화면으로 이동합니다.'),
+                  context: context,
+                  '가입된 계정이 없어 회원 가입 화면으로 이동합니다.',
+                ),
               );
             } else {
               ShareDataProvider.loadServerData();
