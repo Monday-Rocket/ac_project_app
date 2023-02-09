@@ -16,10 +16,13 @@ class CustomClient extends http.BaseClient {
 
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
-    final idToken = await FirebaseAuth.instance.currentUser?.getIdToken();
-
     request.headers['Content-Type'] = 'application/json';
-    request.headers['x-auth-token'] = idToken ?? 'test-token';
+    try {
+      final idToken = await FirebaseAuth.instance.currentUser?.getIdToken();
+      request.headers['x-auth-token'] = idToken ?? 'test-token';
+    } catch (e) {
+      Log.e('토큰 없음');
+    }
     return _inner.send(request);
   }
 
@@ -105,6 +108,22 @@ class CustomClient extends http.BaseClient {
         headers: headers,
         body: makeBody(body),
         encoding: encoding,
+      ),
+    );
+  }
+
+  Future<Result<dynamic>> headUri(
+    String uri, {
+    Map<String, String>? headers,
+    dynamic body,
+    Encoding? encoding,
+  }) async {
+    final finalUrl = baseUrl + uri;
+    Log.i(finalUrl);
+    return _makeResult(
+      () async => super.head(
+        Uri.parse(finalUrl),
+        headers: headers,
       ),
     );
   }
