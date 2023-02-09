@@ -367,7 +367,9 @@ class _SearchViewState extends State<SearchView> {
   }
 
   Future<void> refresh(BuildContext context, List<Link> totalLinks) async {
-    totalLinks.clear();
-    unawaited(context.read<SearchLinksCubit>().refresh());
+    if (totalLinks.isNotEmpty) {
+      totalLinks.clear();
+      unawaited(context.read<SearchLinksCubit>().refresh());
+    }
   }
 }
