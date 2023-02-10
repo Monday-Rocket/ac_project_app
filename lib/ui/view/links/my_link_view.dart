@@ -6,9 +6,12 @@ import 'package:ac_project_app/cubits/links/link_list_state.dart';
 import 'package:ac_project_app/cubits/links/links_from_selected_folder_cubit.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/link/link.dart';
+import 'package:ac_project_app/provider/api/folders/link_api.dart';
 import 'package:ac_project_app/resource.dart';
 import 'package:ac_project_app/routes.dart';
+import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/only_back_app_bar.dart';
+import 'package:ac_project_app/ui/widget/slidable/link_slidable_widget.dart';
 import 'package:ac_project_app/util/get_widget_arguments.dart';
 import 'package:ac_project_app/util/number_commas.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -356,104 +359,27 @@ class MyLinkView extends StatelessWidget {
                     }
                   });
                 },
-                child: Container(
-                  margin: const EdgeInsets.symmetric(
-                    vertical: 18,
-                    horizontal: 24,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        height: 115,
-                        child: Container(
-                          margin: const EdgeInsets.symmetric(vertical: 5),
-                          width: (width - 24 * 2) - 159 - 20,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      link.title ?? '',
-                                      maxLines: 1,
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
-                                        color: blackBold,
-                                        overflow: TextOverflow.ellipsis,
-                                        height: 19 / 16,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 7),
-                                    Text(
-                                      link.describe ?? '\n\n',
-                                      maxLines: 2,
-                                      style: const TextStyle(
-                                        fontSize: 12,
-                                        color: greyText,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Align(
-                                alignment: Alignment.bottomLeft,
-                                child: Text(
-                                  link.url ?? '',
-                                  maxLines: 1,
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    color: Color(0xFFC0C2C4),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 4),
-                        child: ClipRRect(
-                          borderRadius: const BorderRadius.all(
-                            Radius.circular(7),
-                          ),
-                          child: ColoredBox(
-                            color: grey100,
-                            child: link.image != null && link.image!.isNotEmpty
-                                ? CachedNetworkImage(
-                                    imageUrl: link.image ?? '',
-                                    imageBuilder: (context, imageProvider) =>
-                                        Container(
-                                      width: 159,
-                                      height: 116,
-                                      decoration: BoxDecoration(
-                                        image: DecorationImage(
-                                          image: imageProvider,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                    ),
-                                    errorWidget: (_, __, ___) {
-                                      return const SizedBox();
-                                    },
-                                  )
-                                : const SizedBox(
-                                    width: 159,
-                                    height: 116,
-                                  ),
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
+                child: LinkSlidAbleWidget(
+                  index: index,
+                  link: link,
+                  child: buildBodyListItem(width, link),
+                  callback: () {
+                    LinkApi().deleteLink(link).then(
+                      (result) {
+                        if (result) {
+                          showBottomToast(
+                            context: context,
+                            '링크가 삭제되었어요!',
+                          );
+                        }
+                        totalLinks.clear();
+                        foldersContext.read<GetFoldersCubit>().getFolders();
+                        context
+                            .read<LinksFromSelectedFolderCubit>()
+                            .getSelectedLinks(folder, 0);
+                      },
+                    );
+                  },
                 ),
               );
             },
@@ -470,6 +396,110 @@ class MyLinkView extends StatelessWidget {
         ),
       );
     }
+  }
+
+  Container buildBodyListItem(double width, Link link) {
+    return Container(
+      margin: const EdgeInsets.symmetric(
+        vertical: 18,
+        horizontal: 24,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            height: 115,
+            child: Container(
+              margin: const EdgeInsets.symmetric(vertical: 5),
+              width: (width - 24 * 2) - 159 - 20,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          link.title ?? '',
+                          maxLines: 1,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color: blackBold,
+                            overflow: TextOverflow.ellipsis,
+                            height: 19 / 16,
+                          ),
+                        ),
+                        const SizedBox(height: 7),
+                        Text(
+                          link.describe ?? '\n\n',
+                          maxLines: 2,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: greyText,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.bottomLeft,
+                    child: Text(
+                      link.url ?? '',
+                      maxLines: 1,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Color(0xFFC0C2C4),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(right: 4),
+            child: ClipRRect(
+              borderRadius: const BorderRadius.all(
+                Radius.circular(7),
+              ),
+              child: ColoredBox(
+                color: grey100,
+                child: link.image != null && link.image!.isNotEmpty
+                    ? CachedNetworkImage(
+                        imageUrl: link.image ?? '',
+                        imageBuilder: (context, imageProvider) => Container(
+                          width: 159,
+                          height: 116,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: imageProvider,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        errorWidget: (_, __, ___) {
+                          return const SizedBox(
+                            width: 159,
+                            height: 116,
+                          );
+                        },
+                      )
+                    : const SizedBox(
+                        width: 159,
+                        height: 116,
+                      ),
+              ),
+            ),
+          )
+        ],
+      ),
+    );
   }
 
   Expanded buildEmptyList() {
