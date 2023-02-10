@@ -46,6 +46,25 @@ class ShareDB {
     return openDatabase(path);
   }
 
+  static Future<void> changeName(Folder folder, String name) async {
+    final db = await _getDB();
+
+    final rows = await db.query(
+      'folder',
+      where: 'name = ?',
+      whereArgs: [folder.name],
+    );
+    final seq = rows[0]['seq'];
+    await db.update(
+      'folder',
+      {'name': name},
+      where: 'seq = ?',
+      whereArgs: [seq],
+    );
+
+    await db.close();
+  }
+
   static Future<void> changeVisible(Folder folder) async {
     final db = await _getDB();
     await db.rawUpdate(

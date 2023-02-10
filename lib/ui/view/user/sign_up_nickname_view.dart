@@ -2,6 +2,7 @@
 
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/sign_up/button_state_cubit.dart';
+import 'package:ac_project_app/cubits/sign_up/nickname_check_cubit.dart';
 import 'package:ac_project_app/cubits/sign_up/nickname_cubit.dart';
 import 'package:ac_project_app/models/user/user.dart';
 import 'package:ac_project_app/routes.dart';
@@ -26,11 +27,15 @@ class SignUpNicknameView extends StatelessWidget {
         BlocProvider(
           create: (_) => ButtonStateCubit(),
         ),
+        BlocProvider(
+          create: (_) => NicknameCheckCubit(),
+        ),
       ],
       child: BlocBuilder<NicknameCubit, String?>(
         builder: (context, nickname) {
           return BlocBuilder<ButtonStateCubit, ButtonState>(
             builder: (context, state) {
+              final formKey = context.read<NicknameCubit>().formKey;
               return KeyboardDismissOnTap(
                 child: KeyboardVisibilityBuilder(
                   builder: (context, visible) {
@@ -39,20 +44,31 @@ class SignUpNicknameView extends StatelessWidget {
                     return Scaffold(
                       resizeToAvoidBottomInset: false,
                       appBar: buildBackAppBar(context),
-                      body: buildBody(context, state, keyboardHeight),
+                      body: buildBody(context, state, keyboardHeight, formKey),
                       bottomSheet: buildBottomSheetButton(
                         context: context,
                         text: '확인',
                         keyboardVisible: visible,
                         onPressed: state == ButtonState.enabled
-                            ? () => Navigator.pushNamed(
-                                  context,
-                                  Routes.singUpJob,
-                                  arguments: {
-                                    'nickname': nickname,
-                                    'user': user,
-                                  },
-                                )
+                            ? () {
+                                context
+                                    .read<NicknameCheckCubit>()
+                                    .isDuplicated(nickname!)
+                                    .then((bool result) {
+                                  if (result) {
+                                    Navigator.pushNamed(
+                                      context,
+                                      Routes.singUpJob,
+                                      arguments: {
+                                        'nickname': nickname,
+                                        'user': user,
+                                      },
+                                    );
+                                  } else {
+                                    formKey.currentState?.validate();
+                                  }
+                                });
+                              }
                             : null,
                       ),
                     );
@@ -70,6 +86,7 @@ class SignUpNicknameView extends StatelessWidget {
     BuildContext context,
     ButtonState state,
     double keyboardHeight,
+    GlobalKey<FormState> formKey,
   ) {
     return SafeArea(
       child: Container(
@@ -81,7 +98,7 @@ class SignUpNicknameView extends StatelessWidget {
             Stack(
               alignment: Alignment.centerRight,
               children: [
-                buildNicknameField(context, state),
+                buildNicknameField(context, state, formKey),
                 if (state == ButtonState.enabled)
                   const Padding(
                     padding: EdgeInsets.only(
@@ -115,8 +132,8 @@ class SignUpNicknameView extends StatelessWidget {
     );
   }
 
-  Widget buildNicknameField(BuildContext context, ButtonState state) {
-    final formKey = context.read<NicknameCubit>().formKey;
+  Widget buildNicknameField(
+      BuildContext context, ButtonState state, GlobalKey<FormState> formKey) {
     return Container(
       margin: const EdgeInsets.only(top: 30),
       child: Form(
@@ -160,6 +177,9 @@ class SignUpNicknameView extends StatelessWidget {
               return '닉네임을 아직 입력하지 않으셨어요';
             } else if (!regKr.hasMatch(value)) {
               return '닉네임은 한글, 영어, 숫자 2~8글자 입니다.';
+            } else if (context.read<NicknameCheckCubit>().state == false) {
+              context.read<NicknameCheckCubit>().reset();
+              return '이미 사용하고 있는 닉네임이예요';
             }
 
             return null;

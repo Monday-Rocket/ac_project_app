@@ -72,6 +72,7 @@ class LinkApi {
     final result = await client.getUri('/job-groups/$jobGroup/links?'
         'page_no=$pageNum&'
         'page_size=10');
+
     return result.when(
       success: (data) {
         return Result.success(

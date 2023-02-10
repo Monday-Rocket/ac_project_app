@@ -8,15 +8,30 @@ Widget buildFolderList({
   int? selectedIndex,
   required BuildContext folderContext,
   required FoldersState state,
+  bool? isLast,
 }) {
+  final scrollController = ScrollController();
   if (state is FolderLoadedState) {
     final folders = state.folders;
+
+    void gotoLastIndex() {
+      scrollController.animateTo(
+        scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOutCubic,
+      );
+
+      callback?.call(folders.length - 1, folders.last.id!);
+    }
+
+    if (isLast ?? false) Future.microtask(gotoLastIndex);
     return Container(
       constraints: const BoxConstraints(
         minHeight: 115,
         maxHeight: 130,
       ),
       child: ListView.builder(
+        controller: scrollController,
         itemCount: folders.length,
         scrollDirection: Axis.horizontal,
         itemBuilder: (_, index) {

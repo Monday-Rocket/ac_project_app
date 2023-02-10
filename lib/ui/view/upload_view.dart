@@ -14,7 +14,10 @@ import 'package:ac_project_app/ui/widget/add_folder/horizontal_folder_list.dart'
 import 'package:ac_project_app/ui/widget/add_folder/subtitle.dart';
 import 'package:ac_project_app/ui/widget/buttons/bottom_sheet_button.dart';
 import 'package:ac_project_app/ui/widget/dialog.dart';
+import 'package:ac_project_app/ui/widget/loading.dart';
 import 'package:ac_project_app/util/get_widget_arguments.dart';
+import 'package:ac_project_app/util/logger.dart';
+import 'package:ac_project_app/util/url_valid.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -28,7 +31,7 @@ class UploadView extends StatefulWidget {
   State<UploadView> createState() => _UploadViewState();
 }
 
-class _UploadViewState extends State<UploadView> {
+class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
   final linkTextController = TextEditingController();
   final commentTextController = TextEditingController();
 
@@ -38,6 +41,42 @@ class _UploadViewState extends State<UploadView> {
   ButtonState buttonState = ButtonState.disabled;
   int selectedIndex = -1;
   int? selectedFolderId;
+  bool isSavedNewFolder = false;
+  bool isLoading = false;
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    setClipboardUrl();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      setClipboardUrl();
+    }
+  }
+
+  // 클립보드에 링크 있으면 불러오기
+  void setClipboardUrl() {
+    Clipboard.getData(Clipboard.kTextPlain).then((value) {
+      isValidUrl(value?.text ?? '').then((result) {
+        if (result) {
+          setState(() {
+            linkTextController.text = value?.text ?? '';
+            buttonState = ButtonState.enabled;
+          });
+        }
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +89,7 @@ class _UploadViewState extends State<UploadView> {
     if (isCopied) {
       buttonState = isCopied ? ButtonState.enabled : ButtonState.disabled;
     }
+    Log.i('buttonState: ${buttonState.name}');
     final height = MediaQuery.of(context).size.height;
 
     return MultiBlocProvider(
@@ -93,50 +133,71 @@ class _UploadViewState extends State<UploadView> {
                   ),
                 ),
               ),
-              body: SingleChildScrollView(
-                reverse: visible,
-                controller: parentScrollController,
-                physics: const ClampingScrollPhysics(),
-                child: SafeArea(
-                  child: Container(
-                    margin: const EdgeInsets.only(left: 24, top: 20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        buildSubTitle('링크'),
-                        buildLinkTextField(),
-                        BlocBuilder<GetFoldersCubit, FoldersState>(
-                          builder: (folderContext, state) {
-                            return Column(
-                              children: [
-                                if (state is FolderLoadedState)
-                                  buildFolderSelectTitle(
-                                      context, '폴더 선택', state.folders),
-                                buildFolderList(
-                                  folderContext: folderContext,
-                                  state: state,
-                                  callback: (index, folderId) => setState(() {
-                                    selectedIndex = index;
-                                    selectedFolderId = folderId;
-                                  }),
-                                  selectedIndex: selectedIndex,
-                                ),
-                              ],
-                            );
-                          },
+              body: Stack(
+                children: [
+                  SingleChildScrollView(
+                    reverse: visible,
+                    controller: parentScrollController,
+                    physics: const ClampingScrollPhysics(),
+                    child: SafeArea(
+                      child: Container(
+                        margin: const EdgeInsets.only(left: 24, top: 20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            buildSubTitle('링크'),
+                            buildLinkTextField(),
+                            BlocBuilder<GetFoldersCubit, FoldersState>(
+                              builder: (folderContext, state) {
+                                return Column(
+                                  children: [
+                                    if (state is FolderLoadedState)
+                                      buildFolderSelectTitle(
+                                        context,
+                                        '폴더 선택',
+                                        state.folders,
+                                        callback: () {
+                                          setState(() {
+                                            isSavedNewFolder = true;
+                                          });
+                                        },
+                                      ),
+                                    buildFolderList(
+                                      folderContext: folderContext,
+                                      state: state,
+                                      callback: (index, folderId) =>
+                                          setState(() {
+                                        selectedIndex = index;
+                                        selectedFolderId = folderId;
+                                        isSavedNewFolder = false;
+                                      }),
+                                      selectedIndex: selectedIndex,
+                                      isLast: isSavedNewFolder,
+                                    ),
+                                  ],
+                                );
+                              },
+                            ),
+                            const SizedBox(height: 35),
+                            buildSubTitle('링크 코멘트'),
+                            buildCommentTextField(visible, height),
+                            const SizedBox(height: 13),
+                            buildUploadWarning(true),
+                            SizedBox(
+                              height: keyboardHeight,
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 35),
-                        buildSubTitle('링크 코멘트'),
-                        buildCommentTextField(visible, height),
-                        const SizedBox(height: 13),
-                        buildUploadWarning(true),
-                        SizedBox(
-                          height: keyboardHeight,
-                        ),
-                      ],
+                      ),
                     ),
                   ),
-                ),
+                  if (isLoading)
+                    Center(
+                      child: LoadingWidget(),
+                    )
+                  else
+                    const SizedBox.shrink()
+                ],
               ),
               bottomSheet: buildBottomSheetButton(
                 context: context,
@@ -206,7 +267,6 @@ class _UploadViewState extends State<UploadView> {
       margin: const EdgeInsets.only(
         top: 14,
         right: 24,
-        bottom: 0,
       ),
       height: 110,
       decoration: const BoxDecoration(
@@ -361,6 +421,10 @@ class _UploadViewState extends State<UploadView> {
   }
 
   void completeRegister(BuildContext context) {
+    setState(() {
+      buttonState = ButtonState.disabled; // 중복 터치 방지
+      isLoading = true;
+    });
     context
         .read<UploadLinkCubit>()
         .completeRegister(

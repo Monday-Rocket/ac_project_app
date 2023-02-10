@@ -94,7 +94,9 @@ class LoginView extends StatelessWidget {
               Future.delayed(
                 const Duration(milliseconds: 500),
                 () => showBottomToast(
-                    context: context, '가입된 계정이 없어 회원 가입 화면으로 이동합니다.'),
+                  context: context,
+                  '가입된 계정이 없어 회원 가입 화면으로 이동합니다.',
+                ),
               );
             } else {
               ShareDataProvider.loadServerData();
@@ -457,35 +459,39 @@ class LoginView extends StatelessWidget {
       child: Column(
         children: [
           buildGoogleLoginButton(context),
-          const SizedBox(height: 12),
-          buildAppleLoginButton(context),
-          const SizedBox(height: 12),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size.fromHeight(55),
-                backgroundColor: primary700,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
+          const SizedBox(height: 26),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              GestureDetector(
+                onTap: () => context.read<LoginCubit>().login(LoginType.kakao),
+                child: Image.asset('assets/images/kakao_icon.png'),
               ),
-              onPressed: () => Navigator.pushNamed(context, Routes.emailLogin),
-              child: const Text(
-                '일반 로그인',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 17,
-                ),
+              const SizedBox(width: 16),
+              GestureDetector(
+                onTap: () => context.read<LoginCubit>().login(LoginType.naver),
+                child: Image.asset('assets/images/naver_icon.png'),
               ),
-            ),
+              if (Platform.isIOS)
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const SizedBox(width: 16),
+                    GestureDetector(
+                      onTap: () => context.read<LoginCubit>().login(LoginType.apple),
+                      child: Image.asset('assets/images/apple_icon.png'),
+                    ),
+                  ],
+                )
+              else
+                const SizedBox.shrink(),
+            ],
           ),
-          const SizedBox(height: 21),
+          const SizedBox(height: 53),
           InkWell(
-            onTap: () => Navigator.pushNamed(context, Routes.emailSignUp),
+            onTap: () => Navigator.pushNamed(context, Routes.emailLogin),
             child: const Text(
-              '이메일로 회원가입',
+              '이메일로 로그인',
               style: TextStyle(
                 color: grey400,
                 fontWeight: FontWeight.w500,
@@ -569,48 +575,53 @@ class LoginView extends StatelessWidget {
     if (Platform.isAndroid) {
       return const SizedBox.shrink();
     }
-    return GestureDetector(
-      onTap: () => context.read<LoginCubit>().login(LoginType.apple),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24),
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: Colors.black,
-            borderRadius: const BorderRadius.all(Radius.circular(12)),
-            border: Border.all(color: const Color(0xffd9dee0)),
-          ),
+    return Column(
+      children: [
+        GestureDetector(
+          onTap: () => context.read<LoginCubit>().login(LoginType.apple),
           child: Padding(
-            padding: const EdgeInsets.only(top: 19, bottom: 23),
-            child: Center(
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Image.asset(R.ASSETS_IMAGES_LOGIN_APPLEICON_PNG),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8),
-                    child: const Text(
-                      'Apple',
-                      style: TextStyle(
-                        fontSize: 15,
-                        color: Colors.white,
-                        letterSpacing: -0.1,
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: Colors.black,
+                borderRadius: const BorderRadius.all(Radius.circular(12)),
+                border: Border.all(color: const Color(0xffd9dee0)),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.only(top: 19, bottom: 23),
+                child: Center(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Image.asset(R.ASSETS_IMAGES_LOGIN_APPLEICON_PNG),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8),
+                        child: const Text(
+                          'Apple',
+                          style: TextStyle(
+                            fontSize: 15,
+                            color: Colors.white,
+                            letterSpacing: -0.1,
+                          ),
+                        ).bold().roboto(),
                       ),
-                    ).bold().roboto(),
+                      const Text(
+                        '로 로그인',
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: Colors.white,
+                          letterSpacing: -0.1,
+                        ),
+                      ).bold(),
+                    ],
                   ),
-                  const Text(
-                    '로 로그인',
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: Colors.white,
-                      letterSpacing: -0.1,
-                    ),
-                  ).bold(),
-                ],
+                ),
               ),
             ),
           ),
         ),
-      ),
+        const SizedBox(height: 12),
+      ],
     );
   }
 }

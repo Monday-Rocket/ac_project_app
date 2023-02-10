@@ -19,7 +19,6 @@ class MyPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    context.read<GetProfileInfoCubit>().loadProfileData();
     return Column(
       children: [
         BlocBuilder<GetProfileInfoCubit, ProfileState>(

@@ -116,4 +116,13 @@ void main() {
       error: fail,
     );
   });
+
+  test('닉네임 중복 테스트', () async {
+    final mustBeFalse = await userApi.checkDuplicatedNickname('boring');
+    expect(mustBeFalse, false);
+
+    final mustBeTrue =
+        await userApi.checkDuplicatedNickname('this_is_not_exist');
+    expect(mustBeTrue, true);
+  });
 }
