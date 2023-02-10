@@ -21,8 +21,6 @@ if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
 
-def kakaoApiKey = localProperties.getProperty('kakao.api.key')
-
 def signingProperties = new Properties()
 def signingPropertiesFile = rootProject.file('signing.properties')
 if (signingPropertiesFile.exists()) {
@@ -33,6 +31,7 @@ if (signingPropertiesFile.exists()) {
 def _keyAlias = signingProperties.getProperty('key.alias')
 def _keyPassword = signingProperties.getProperty('key.password')
 def _storePassword = signingProperties.getProperty('store.password')
+def kakaoApiKey = signingProperties.getProperty('kakao.api.key')
 
 apply plugin: 'com.android.application'
 // START: FlutterFire Configuration
