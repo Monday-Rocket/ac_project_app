@@ -14,7 +14,9 @@ import 'package:ac_project_app/ui/widget/add_folder/horizontal_folder_list.dart'
 import 'package:ac_project_app/ui/widget/add_folder/subtitle.dart';
 import 'package:ac_project_app/ui/widget/buttons/bottom_sheet_button.dart';
 import 'package:ac_project_app/ui/widget/dialog.dart';
+import 'package:ac_project_app/ui/widget/loading.dart';
 import 'package:ac_project_app/util/get_widget_arguments.dart';
+import 'package:ac_project_app/util/logger.dart';
 import 'package:ac_project_app/util/url_valid.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -40,18 +42,12 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
   int selectedIndex = -1;
   int? selectedFolderId;
   bool isSavedNewFolder = false;
+  bool isLoading = false;
 
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
-    Clipboard.getData(Clipboard.kTextPlain).then((value) {
-      final url = value?.text ?? '';
-      isValidUrl(url).then((result) {
-        if (result) {
-          linkTextController.text = url;
-        }
-      });
-    });
+    setClipboardUrl();
     super.initState();
   }
 
@@ -64,11 +60,22 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      // 클립보드에 링크 있으면 불러오기
-      Clipboard.getData(Clipboard.kTextPlain).then((value) {
-        linkTextController.text = value?.text ?? '';
-      });
+      setClipboardUrl();
     }
+  }
+
+  // 클립보드에 링크 있으면 불러오기
+  void setClipboardUrl() {
+    Clipboard.getData(Clipboard.kTextPlain).then((value) {
+      isValidUrl(value?.text ?? '').then((result) {
+        if (result) {
+          setState(() {
+            linkTextController.text = value?.text ?? '';
+            buttonState = ButtonState.enabled;
+          });
+        }
+      });
+    });
   }
 
   @override
@@ -82,6 +89,7 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
     if (isCopied) {
       buttonState = isCopied ? ButtonState.enabled : ButtonState.disabled;
     }
+    Log.i('buttonState: ${buttonState.name}');
     final height = MediaQuery.of(context).size.height;
 
     return MultiBlocProvider(
@@ -125,60 +133,71 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
                   ),
                 ),
               ),
-              body: SingleChildScrollView(
-                reverse: visible,
-                controller: parentScrollController,
-                physics: const ClampingScrollPhysics(),
-                child: SafeArea(
-                  child: Container(
-                    margin: const EdgeInsets.only(left: 24, top: 20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        buildSubTitle('링크'),
-                        buildLinkTextField(),
-                        BlocBuilder<GetFoldersCubit, FoldersState>(
-                          builder: (folderContext, state) {
-                            return Column(
-                              children: [
-                                if (state is FolderLoadedState)
-                                  buildFolderSelectTitle(
-                                    context,
-                                    '폴더 선택',
-                                    state.folders,
-                                    callback: () {
-                                      setState(() {
-                                        isSavedNewFolder = true;
-                                      });
-                                    },
-                                  ),
-                                buildFolderList(
-                                  folderContext: folderContext,
-                                  state: state,
-                                  callback: (index, folderId) => setState(() {
-                                    selectedIndex = index;
-                                    selectedFolderId = folderId;
-                                    isSavedNewFolder = false;
-                                  }),
-                                  selectedIndex: selectedIndex,
-                                  isLast: isSavedNewFolder,
-                                ),
-                              ],
-                            );
-                          },
+              body: Stack(
+                children: [
+                  SingleChildScrollView(
+                    reverse: visible,
+                    controller: parentScrollController,
+                    physics: const ClampingScrollPhysics(),
+                    child: SafeArea(
+                      child: Container(
+                        margin: const EdgeInsets.only(left: 24, top: 20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            buildSubTitle('링크'),
+                            buildLinkTextField(),
+                            BlocBuilder<GetFoldersCubit, FoldersState>(
+                              builder: (folderContext, state) {
+                                return Column(
+                                  children: [
+                                    if (state is FolderLoadedState)
+                                      buildFolderSelectTitle(
+                                        context,
+                                        '폴더 선택',
+                                        state.folders,
+                                        callback: () {
+                                          setState(() {
+                                            isSavedNewFolder = true;
+                                          });
+                                        },
+                                      ),
+                                    buildFolderList(
+                                      folderContext: folderContext,
+                                      state: state,
+                                      callback: (index, folderId) =>
+                                          setState(() {
+                                        selectedIndex = index;
+                                        selectedFolderId = folderId;
+                                        isSavedNewFolder = false;
+                                      }),
+                                      selectedIndex: selectedIndex,
+                                      isLast: isSavedNewFolder,
+                                    ),
+                                  ],
+                                );
+                              },
+                            ),
+                            const SizedBox(height: 35),
+                            buildSubTitle('링크 코멘트'),
+                            buildCommentTextField(visible, height),
+                            const SizedBox(height: 13),
+                            buildUploadWarning(true),
+                            SizedBox(
+                              height: keyboardHeight,
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 35),
-                        buildSubTitle('링크 코멘트'),
-                        buildCommentTextField(visible, height),
-                        const SizedBox(height: 13),
-                        buildUploadWarning(true),
-                        SizedBox(
-                          height: keyboardHeight,
-                        ),
-                      ],
+                      ),
                     ),
                   ),
-                ),
+                  if (isLoading)
+                    Center(
+                      child: LoadingWidget(),
+                    )
+                  else
+                    const SizedBox.shrink()
+                ],
               ),
               bottomSheet: buildBottomSheetButton(
                 context: context,
@@ -402,6 +421,10 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
   }
 
   void completeRegister(BuildContext context) {
+    setState(() {
+      buttonState = ButtonState.disabled; // 중복 터치 방지
+      isLoading = true;
+    });
     context
         .read<UploadLinkCubit>()
         .completeRegister(

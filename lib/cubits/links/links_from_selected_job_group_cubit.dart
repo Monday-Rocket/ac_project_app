@@ -18,6 +18,7 @@ class LinksFromSelectedJobGroupCubit extends Cubit<List<Link>> {
   int page = 0;
   bool hasRefresh = false;
   List<Link> totalLinks = [];
+  bool hasLoadMore = false;
   final scrollController = ScrollController();
 
   void initialize() {
@@ -25,9 +26,12 @@ class LinksFromSelectedJobGroupCubit extends Cubit<List<Link>> {
     getSelectedJobLinks(0, 0);
   }
 
-  Future<void> getSelectedJobLinks(int jobGroupId, int pageNum) async {
+  Future<void> getSelectedJobLinks(int jobGroupId, int pageNum, {bool hasLoadMore = false}) async {
     hasRefresh = false;
     selectedJobId = jobGroupId;
+    if (hasLoadMore) {
+      await Future<dynamic>.delayed(const Duration(milliseconds: 200));
+    }
     final result = await linkApi.getJobGroupLinks(jobGroupId, pageNum);
     result.when(
       success: (data) {
@@ -49,16 +53,27 @@ class LinksFromSelectedJobGroupCubit extends Cubit<List<Link>> {
     getSelectedJobLinks(selectedJobId, 0);
   }
 
-  void loadMore() {
-    if (hasMore.state == ScrollableType.can) {
-      getSelectedJobLinks(selectedJobId, page + 1);
+  bool loadMore() {
+    emit([]);
+    hasLoadMore = hasMore.state == ScrollableType.can;
+    if (hasLoadMore) {
+      getSelectedJobLinks(selectedJobId, page + 1, hasLoadMore: hasLoadMore);
     }
+    return hasLoadMore;
+  }
+
+  void scrollEnd() {
+    scrollController.animateTo(
+      scrollController.position.maxScrollExtent,
+      duration: const Duration(milliseconds: 1),
+      curve: Curves.fastOutSlowIn,
+    );
   }
 
   List<Link> _setScrollState(SearchedLinks data) {
     page = data.pageNum ?? 0;
-    final hasPage = hasMorePage(data);
-    hasMore.emit(hasPage ? ScrollableType.can : ScrollableType.cannot);
+    hasLoadMore = hasMorePage(data);
+    hasMore.emit(hasLoadMore ? ScrollableType.can : ScrollableType.cannot);
 
     return data.contents ?? [];
   }
