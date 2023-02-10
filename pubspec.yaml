@@ -49,6 +49,7 @@ dependencies:
   extended_text: ^10.0.0
   carousel_slider: ^4.2.1
   lottie:
+  flutter_slidable: ^2.0.0
 
   ## lint
   very_good_analysis: ^3.0.1
