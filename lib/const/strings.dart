@@ -17,7 +17,7 @@ const helpLink =
     'https://linkpoolpd.notion.site/c6ea6729dfac4dbc89c95d294bca43f8';
 
 // API LINK
-const baseUrl = 'http://ac-project-api.ap-northeast-2.elasticbeanstalk.com';
+const baseUrl = 'https://api.linkpool.co.kr';
 
 //warning message
 const warningMsgTitle = '링크풀은 건전한 링크 관리 및 공유 문화를 지향해요';

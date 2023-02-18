@@ -35,6 +35,7 @@ class LinkApi {
         'describe': link.describe,
         'created_at': link.time,
         'folder_id': link.folderId,
+        'inflow_type': link.inflowType,
       },
     );
     return result.when(

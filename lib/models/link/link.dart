@@ -14,6 +14,7 @@ class Link {
     this.folderId,
     this.time,
     this.user,
+    this.inflowType,
   });
 
   factory Link.fromJson(Map<String, dynamic> json) => _$LinkFromJson(json);
@@ -31,4 +32,7 @@ class Link {
   String? time;
 
   final DetailUser? user;
+
+  @JsonKey(name: 'inflow_type')
+  String? inflowType;
 }
