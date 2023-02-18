@@ -9,6 +9,7 @@ import 'package:ac_project_app/cubits/home_view_cubit.dart';
 import 'package:ac_project_app/cubits/links/upload_link_cubit.dart';
 import 'package:ac_project_app/cubits/links/upload_result_state.dart';
 import 'package:ac_project_app/cubits/sign_up/button_state_cubit.dart';
+import 'package:ac_project_app/models/link/upload_type.dart';
 import 'package:ac_project_app/ui/widget/add_folder/folder_add_title.dart';
 import 'package:ac_project_app/ui/widget/add_folder/horizontal_folder_list.dart';
 import 'package:ac_project_app/ui/widget/add_folder/subtitle.dart';
@@ -204,7 +205,7 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
                 text: '등록완료',
                 keyboardVisible: visible,
                 onPressed: buttonState == ButtonState.enabled
-                    ? () => completeRegister(context)
+                    ? () => completeRegister(context, isCopied ? UploadType.bring : UploadType.create)
                     : null,
                 buttonShadow: false,
               ),
@@ -420,7 +421,7 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
     );
   }
 
-  void completeRegister(BuildContext context) {
+  void completeRegister(BuildContext context, UploadType uploadType) {
     setState(() {
       buttonState = ButtonState.disabled; // 중복 터치 방지
       isLoading = true;
@@ -431,6 +432,7 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
           linkTextController.text,
           commentTextController.text,
           selectedFolderId,
+          uploadType,
         )
         .then((result) {
       if (result == UploadResultState.success) {
