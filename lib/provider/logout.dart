@@ -1,7 +1,12 @@
+import 'dart:async';
+
+import 'package:ac_project_app/provider/login/kakao_login.dart';
+import 'package:ac_project_app/provider/login/naver_login.dart';
 import 'package:ac_project_app/provider/share_data_provider.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_naver_login/flutter_naver_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -22,6 +27,12 @@ void logout(BuildContext context) {
           firebaseLogout(context);
         });
         break;
+      case 'naver':
+        Naver.logout().then((value) => firebaseLogout(context));
+        break;
+      case 'kakao':
+        Kakao.logout().then((value) => firebaseLogout(context));
+        break;
       default:
         firebaseLogout(context);
         break;
@@ -29,7 +40,7 @@ void logout(BuildContext context) {
   });
 }
 
-Future<bool> logoutWithoutPush() async {
+Future<bool> logoutWithoutPush(BuildContext context) async {
   try {
     final prefs = await SharedPreferences.getInstance();
     final loginType = prefs.getString('loginType') ?? '';
@@ -40,12 +51,17 @@ Future<bool> logoutWithoutPush() async {
             'email',
           ],
         ).signOut();
-        await FirebaseAuth.instance.signOut();
+        break;
+      case 'naver':
+        await Naver.logout();
+        break;
+      case 'kakao':
+        await Kakao.logout();
         break;
       default:
-        await FirebaseAuth.instance.signOut();
         break;
     }
+    await FirebaseAuth.instance.signOut();
     return true;
   } catch (e) {
     return false;
