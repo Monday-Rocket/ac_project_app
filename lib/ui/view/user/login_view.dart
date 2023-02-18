@@ -7,6 +7,7 @@ import 'package:ac_project_app/const/strings.dart';
 import 'package:ac_project_app/cubits/login/login_cubit.dart';
 import 'package:ac_project_app/cubits/login/login_type.dart';
 import 'package:ac_project_app/cubits/login/login_user_state.dart';
+import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/user/user.dart' as custom;
 import 'package:ac_project_app/provider/api/user/user_api.dart';
 import 'package:ac_project_app/provider/login/email_login.dart';
@@ -463,28 +464,23 @@ class LoginView extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              if (Platform.isIOS)
+                GestureDetector(
+                  onTap: () => context.read<LoginCubit>().login(LoginType.apple),
+                  child: Assets.images.appleIcon.image(),
+                )
+              else
+                const SizedBox.shrink(),
+              const SizedBox(width: 16),
               GestureDetector(
                 onTap: () => context.read<LoginCubit>().login(LoginType.kakao),
-                child: Image.asset('assets/images/kakao_icon.png'),
+                child: Assets.images.kakaoIcon.image(),
               ),
               const SizedBox(width: 16),
               GestureDetector(
                 onTap: () => context.read<LoginCubit>().login(LoginType.naver),
-                child: Image.asset('assets/images/naver_icon.png'),
+                child: Assets.images.naverIcon.image(),
               ),
-              if (Platform.isIOS)
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const SizedBox(width: 16),
-                    GestureDetector(
-                      onTap: () => context.read<LoginCubit>().login(LoginType.apple),
-                      child: Image.asset('assets/images/apple_icon.png'),
-                    ),
-                  ],
-                )
-              else
-                const SizedBox.shrink(),
             ],
           ),
           const SizedBox(height: 53),
@@ -542,7 +538,7 @@ class LoginView extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Image.asset(R.ASSETS_IMAGES_LOGIN_GOOGLEICON_PNG),
+                  Assets.images.login.googleIcon.image(),
                   Padding(
                     padding: const EdgeInsets.only(left: 8),
                     child: const Text(
@@ -593,7 +589,7 @@ class LoginView extends StatelessWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Image.asset(R.ASSETS_IMAGES_LOGIN_APPLEICON_PNG),
+                      Assets.images.login.appleIcon.image(),
                       Padding(
                         padding: const EdgeInsets.only(left: 8),
                         child: const Text(
