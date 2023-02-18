@@ -11,6 +11,7 @@ import 'package:ac_project_app/provider/api/custom_client.dart';
 import 'package:ac_project_app/provider/logout.dart';
 import 'package:ac_project_app/provider/share_data_provider.dart';
 import 'package:ac_project_app/util/logger.dart';
+import 'package:flutter/material.dart';
 
 class UserApi {
   final client = CustomClient();
@@ -70,7 +71,7 @@ class UserApi {
     );
   }
 
-  Future<bool> deleteUser() async {
+  Future<bool> deleteUser(BuildContext context) async {
     // 1. 공유패널 데이터 비우기
     unawaited(ShareDataProvider.clearAllData());
 
@@ -78,7 +79,7 @@ class UserApi {
     // 3. 로그아웃
     final result = await client.deleteUri('/users');
     return result.when(
-      success: (_) async => logoutWithoutPush(),
+      success: (_) async => logoutWithoutPush(context),
       error: (_) => false,
     );
   }

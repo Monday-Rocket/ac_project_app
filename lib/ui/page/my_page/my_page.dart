@@ -162,7 +162,7 @@ class MyPage extends StatelessWidget {
                   leftText: '회원 탈퇴',
                   rightText: '탈퇴 취소',
                   leftCallback: () {
-                    UserApi().deleteUser().then((value) {
+                    UserApi().deleteUser(context).then((value) {
                       if (value) {
                         Navigator.of(context).pop(true);
                         Navigator.pushReplacementNamed(context, Routes.login);

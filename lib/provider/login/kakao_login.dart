@@ -1,13 +1,19 @@
+import 'dart:async';
+
+import 'package:ac_project_app/cubits/login/login_type.dart';
 import 'package:ac_project_app/provider/login/firebase_auth_remote_data_source.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Kakao {
   static Future<bool> login() async {
     final isLogin = await _login();
 
     if (isLogin) {
+      final prefs = await SharedPreferences.getInstance();
+      unawaited(prefs.setString('loginType', LoginType.kakao.name));
       final user = await UserApi.instance.me();
       // https://velog.io/@ember/Firebase-deploy-Forbidden-%ED%95%B4%EA%B2%B0
       final customToken = await FirebaseAuthRemoteDataSource().createCustomToken({
@@ -57,6 +63,15 @@ class Kakao {
         print('카카오계정으로 로그인 실패 $error');
         return false;
       }
+    }
+  }
+
+  static Future<void> logout() async {
+    try {
+      await UserApi.instance.logout();
+      print('로그아웃 성공, SDK에서 토큰 삭제');
+    } catch (error) {
+      print('로그아웃 실패, SDK에서 토큰 삭제 $error');
     }
   }
 }

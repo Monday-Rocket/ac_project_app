@@ -1,10 +1,16 @@
+import 'dart:async';
+
+import 'package:ac_project_app/cubits/login/login_type.dart';
 import 'package:ac_project_app/provider/login/firebase_auth_remote_data_source.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_naver_login/flutter_naver_login.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Naver {
   static Future<bool> login() async {
     final result = await FlutterNaverLogin.logIn();
+    final prefs = await SharedPreferences.getInstance();
+    unawaited(prefs.setString('loginType', LoginType.naver.name));
 
     if (result.status == NaverLoginStatus.loggedIn) {
       final customToken = await FirebaseAuthRemoteDataSource().createCustomToken({
@@ -15,6 +21,15 @@ class Naver {
       return userCredential.user != null;
     } else {
       return false;
+    }
+  }
+
+  static Future<void> logout() async {
+    final result = await FlutterNaverLogin.logOutAndDeleteToken();
+    if (result.status == NaverLoginStatus.cancelledByUser) {
+      print('logout');
+    } else {
+      print(result.status.name);
     }
   }
 }
