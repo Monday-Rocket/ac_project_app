@@ -2,17 +2,18 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:ac_project_app/const/colors.dart';
-import 'package:ac_project_app/const/resource.dart';
 import 'package:ac_project_app/const/strings.dart';
 import 'package:ac_project_app/cubits/login/login_cubit.dart';
 import 'package:ac_project_app/cubits/login/login_type.dart';
 import 'package:ac_project_app/cubits/login/login_user_state.dart';
+import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/user/user.dart' as custom;
 import 'package:ac_project_app/provider/api/user/user_api.dart';
 import 'package:ac_project_app/provider/login/email_login.dart';
 import 'package:ac_project_app/provider/share_data_provider.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
+import 'package:ac_project_app/ui/widget/buttons/apple/apple_login_button.dart';
 import 'package:ac_project_app/ui/widget/text/custom_font.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -459,32 +460,20 @@ class LoginView extends StatelessWidget {
       child: Column(
         children: [
           buildGoogleLoginButton(context),
+          buildAppleLoginButton(context),
           const SizedBox(height: 26),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               GestureDetector(
                 onTap: () => context.read<LoginCubit>().login(LoginType.kakao),
-                child: Image.asset('assets/images/kakao_icon.png'),
+                child: Assets.images.kakaoIcon.image(),
               ),
               const SizedBox(width: 16),
               GestureDetector(
                 onTap: () => context.read<LoginCubit>().login(LoginType.naver),
-                child: Image.asset('assets/images/naver_icon.png'),
+                child: Assets.images.naverIcon.image(),
               ),
-              if (Platform.isIOS)
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const SizedBox(width: 16),
-                    GestureDetector(
-                      onTap: () => context.read<LoginCubit>().login(LoginType.apple),
-                      child: Image.asset('assets/images/apple_icon.png'),
-                    ),
-                  ],
-                )
-              else
-                const SizedBox.shrink(),
             ],
           ),
           const SizedBox(height: 53),
@@ -525,30 +514,30 @@ class LoginView extends StatelessWidget {
     );
   }
 
-  GestureDetector buildGoogleLoginButton(BuildContext context) {
+  Widget buildGoogleLoginButton(BuildContext context) {
     return GestureDetector(
       onTap: () => context.read<LoginCubit>().login(LoginType.google),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 24),
         child: DecoratedBox(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: const BorderRadius.all(Radius.circular(12)),
+            borderRadius: const BorderRadius.all(Radius.circular(8)),
             border: Border.all(color: const Color(0xffd9dee0)),
           ),
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 21),
+            padding: const EdgeInsets.symmetric(vertical: 10),
             child: Center(
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Image.asset(R.ASSETS_IMAGES_LOGIN_GOOGLEICON_PNG),
+                  Assets.images.login.googleIcon.image(),
                   Padding(
                     padding: const EdgeInsets.only(left: 8),
                     child: const Text(
                       'Google',
                       style: TextStyle(
-                        fontSize: 15,
+                        fontSize: 19,
                         color: greyLoginText,
                         letterSpacing: -0.1,
                       ),
@@ -557,7 +546,7 @@ class LoginView extends StatelessWidget {
                   const Text(
                     '로 로그인',
                     style: TextStyle(
-                      fontSize: 15,
+                      fontSize: 19,
                       color: greyLoginText,
                       letterSpacing: -0.1,
                     ),
@@ -577,50 +566,11 @@ class LoginView extends StatelessWidget {
     }
     return Column(
       children: [
-        GestureDetector(
-          onTap: () => context.read<LoginCubit>().login(LoginType.apple),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                color: Colors.black,
-                borderRadius: const BorderRadius.all(Radius.circular(12)),
-                border: Border.all(color: const Color(0xffd9dee0)),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.only(top: 19, bottom: 23),
-                child: Center(
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Image.asset(R.ASSETS_IMAGES_LOGIN_APPLEICON_PNG),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 8),
-                        child: const Text(
-                          'Apple',
-                          style: TextStyle(
-                            fontSize: 15,
-                            color: Colors.white,
-                            letterSpacing: -0.1,
-                          ),
-                        ).bold().roboto(),
-                      ),
-                      const Text(
-                        '로 로그인',
-                        style: TextStyle(
-                          fontSize: 15,
-                          color: Colors.white,
-                          letterSpacing: -0.1,
-                        ),
-                      ).bold(),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
         const SizedBox(height: 12),
+        Container(
+          margin: const EdgeInsets.symmetric(horizontal: 24),
+          child: SignInWithAppleButton(onPressed: () => context.read<LoginCubit>().login(LoginType.apple)),
+        ),
       ],
     );
   }
