@@ -12,7 +12,7 @@ class SignInWithAppleButton extends StatelessWidget {
   const SignInWithAppleButton({
     super.key,
     required this.onPressed,
-    this.text = 'Sign in with Apple',
+    this.text = 'Apple로 로그인',
     this.height = 44,
     this.style = SignInWithAppleButtonStyle.black,
     this.borderRadius = const BorderRadius.all(Radius.circular(8)),
@@ -105,6 +105,7 @@ class SignInWithAppleButton extends StatelessWidget {
         // defaults styles aligned with https://github.com/flutter/flutter/blob/master/packages/flutter/lib/src/cupertino/text_theme.dart#L16
         fontFamily: '.SF Pro Text',
         letterSpacing: -0.41,
+        fontWeight: FontWeight.w600,
       ),
     );
 
