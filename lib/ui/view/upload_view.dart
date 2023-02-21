@@ -205,7 +205,7 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
                 text: '등록완료',
                 keyboardVisible: visible,
                 onPressed: buttonState == ButtonState.enabled
-                    ? () => completeRegister(context, isCopied ? UploadType.bring : UploadType.create)
+                    ? () => completeRegister(context, isCopied)
                     : null,
                 buttonShadow: false,
               ),
@@ -421,11 +421,9 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
     );
   }
 
-  void completeRegister(BuildContext context, UploadType uploadType) {
-    setState(() {
-      buttonState = ButtonState.disabled; // 중복 터치 방지
-      isLoading = true;
-    });
+  void completeRegister(BuildContext context, bool isCopied) {
+    final uploadType = isCopied ? UploadType.bring : UploadType.create;
+    setLoading();
     context
         .read<UploadLinkCubit>()
         .completeRegister(
@@ -449,6 +447,22 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
       } else if (result == UploadResultState.apiError) {
         showError(context);
       }
+      setLoadingEnd();
+    }).catchError((e) {
+      setLoadingEnd();
+    });
+  }
+
+  void setLoading() {
+    setState(() {
+      buttonState = ButtonState.disabled; // 중복 터치 방지
+      isLoading = true;
+    });
+  }
+
+  void setLoadingEnd() {
+    setState(() {
+      isLoading = false;
     });
   }
 }
