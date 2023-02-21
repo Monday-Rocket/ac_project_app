@@ -39,7 +39,13 @@ String makeLinkTimeString(String timeString) {
     final duration = now.difference(time);
 
     if (duration.compareTo(const Duration(hours: 1)) < 0) {
-      return '${duration.inMinutes}분 전';
+      if (duration.inMinutes < 0) {
+        return '';
+      } else if (duration.inMinutes == 0) {
+        return '방금 전';
+      } else {
+        return '${duration.inMinutes}분 전';
+      }
     }
     if (duration.compareTo(const Duration(days: 1)) < 0) {
       return '${duration.inHours}시간 전';

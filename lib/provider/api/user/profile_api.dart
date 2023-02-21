@@ -9,7 +9,7 @@ class ProfileApi {
     required String? profileImg,
   }) async {
     final result = await client.patchUri(
-      '/users',
+      '/users/me',
       body: {
         'profile_img': profileImg
       },
