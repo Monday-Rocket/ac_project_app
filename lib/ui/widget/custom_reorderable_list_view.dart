@@ -30,7 +30,7 @@ class CustomReorderableListView extends ReorderableListView {
   }) : super.builder(
     itemCount: max(0, itemCount * 2 - 1),
     itemBuilder: (BuildContext context, int index) {
-      if (index % 2 == 1) {
+      if (index.isOdd) {
         final separator = separatorBuilder.call(context, index);
 
         if (separator.key == null) {

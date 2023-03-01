@@ -15,7 +15,7 @@ class LinkSlidAbleWidget extends StatelessWidget {
   final int index;
   final Link link;
   final Widget child;
-  final Function()? callback;
+  final void Function()? callback;
 
   @override
   Widget build(BuildContext context) {

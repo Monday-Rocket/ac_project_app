@@ -5,6 +5,7 @@ import 'package:ac_project_app/cubits/links/detail_edit_cubit.dart';
 import 'package:ac_project_app/cubits/links/edit_state.dart';
 import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_state.dart';
+import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/provider/comment_temp_data_provider.dart';
 import 'package:ac_project_app/ui/widget/bottom_dialog.dart';
@@ -108,7 +109,7 @@ class LinkDetailView extends StatelessWidget {
           onPressed: () {
             goBackPage(editState, context, link.id);
           },
-          icon: SvgPicture.asset('assets/images/ic_back.svg'),
+          icon: SvgPicture.asset(Assets.images.icBack),
           padding: const EdgeInsets.only(left: 20, right: 8),
         ),
         actions: [
@@ -123,7 +124,7 @@ class LinkDetailView extends StatelessWidget {
             child: Container(
               margin: const EdgeInsets.only(right: 24),
               child: SvgPicture.asset(
-                'assets/images/more.svg',
+                Assets.images.more,
                 width: 25,
                 height: 25,
               ),
@@ -330,7 +331,7 @@ class LinkDetailView extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.all(12),
                       child: SvgPicture.asset(
-                        'assets/images/ic_write_comment.svg',
+                        Assets.images.icWriteComment,
                       ),
                     ),
                   ),

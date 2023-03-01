@@ -81,17 +81,17 @@ Future<bool?> showRenameFolderDialog(
                                             context.read<GetFoldersCubit>();
                                         cubit
                                             .changeName(
-                                                currFolder,
-                                                context
-                                                    .read<FolderNameCubit>()
-                                                    .state)
+                                          currFolder,
+                                          context.read<FolderNameCubit>().state,
+                                        )
                                             .then((result) {
                                           Navigator.pop(context, true);
                                           cubit.getFolders();
                                           if (result) {
                                             showBottomToast(
-                                                context: context,
-                                                '폴더명이 변경되었어요!');
+                                              context: context,
+                                              '폴더명이 변경되었어요!',
+                                            );
                                           }
                                         });
                                       },
@@ -124,7 +124,9 @@ Future<bool?> showRenameFolderDialog(
                                     decoration: InputDecoration(
                                       focusedBorder: const UnderlineInputBorder(
                                         borderSide: BorderSide(
-                                            color: primary800, width: 2),
+                                          color: primary800,
+                                          width: 2,
+                                        ),
                                       ),
                                       errorStyle: const TextStyle(
                                         color: redError,
@@ -132,11 +134,15 @@ Future<bool?> showRenameFolderDialog(
                                       focusedErrorBorder:
                                           const UnderlineInputBorder(
                                         borderSide: BorderSide(
-                                            color: redError, width: 2),
+                                          color: redError,
+                                          width: 2,
+                                        ),
                                       ),
                                       enabledBorder: const UnderlineInputBorder(
                                         borderSide: BorderSide(
-                                            color: greyTab, width: 2),
+                                          color: greyTab,
+                                          width: 2,
+                                        ),
                                       ),
                                       suffix: context
                                               .read<FolderNameCubit>()
@@ -227,16 +233,17 @@ Future<bool?> showRenameFolderDialog(
                                         context.read<GetFoldersCubit>();
                                     cubit
                                         .changeName(
-                                            currFolder,
-                                            context
-                                                .read<FolderNameCubit>()
-                                                .state)
+                                      currFolder,
+                                      context.read<FolderNameCubit>().state,
+                                    )
                                         .then((result) {
                                       Navigator.pop(context, true);
                                       cubit.getFolders();
                                       if (result) {
                                         showBottomToast(
-                                            context: context, '폴더명이 변경되었어요!');
+                                          context: context,
+                                          '폴더명이 변경되었어요!',
+                                        );
                                       }
                                     });
                                   },

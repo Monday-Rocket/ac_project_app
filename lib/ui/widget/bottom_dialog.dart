@@ -149,7 +149,10 @@ Future<bool?> showChangeFolderDialog(Link link, BuildContext parentContext) {
                           Container(
                             margin: const EdgeInsets.only(left: 24),
                             child: buildFolderSelectTitle(
-                                foldersContext, '폴더 목록', state.folders),
+                              foldersContext,
+                              '폴더 목록',
+                              state.folders,
+                            ),
                           ),
                         Container(
                           margin: const EdgeInsets.only(left: 24),

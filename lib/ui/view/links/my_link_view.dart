@@ -4,6 +4,7 @@ import 'package:ac_project_app/cubits/folders/get_my_folders_cubit.dart';
 import 'package:ac_project_app/cubits/folders/get_selected_folder_cubit.dart';
 import 'package:ac_project_app/cubits/links/link_list_state.dart';
 import 'package:ac_project_app/cubits/links/links_from_selected_folder_cubit.dart';
+import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/provider/api/folders/link_api.dart';
@@ -128,9 +129,7 @@ class MyLinkView extends StatelessWidget {
           if (!(folder.visible ?? false))
             Container(
               margin: const EdgeInsets.only(left: 8),
-              child: Image.asset(
-                'assets/images/ic_lock.png',
-              ),
+              child: Assets.images.icLockPng.image(),
             )
           else
             const SizedBox.shrink(),
@@ -180,7 +179,7 @@ class MyLinkView extends StatelessWidget {
                   alignment: Alignment.centerLeft,
                   child: Padding(
                     padding: const EdgeInsets.only(left: 10),
-                    child: Image.asset('assets/images/folder_search_icon.png'),
+                    child: Assets.images.folderSearchIcon.image(),
                   ),
                 ),
               ),
@@ -194,7 +193,7 @@ class MyLinkView extends StatelessWidget {
             }),
             child: Padding(
               padding: const EdgeInsets.all(6),
-              child: SvgPicture.asset('assets/images/btn_add.svg'),
+              child: SvgPicture.asset(Assets.images.btnAdd),
             ),
           ),
         ],

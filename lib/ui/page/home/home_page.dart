@@ -7,6 +7,7 @@ import 'package:ac_project_app/cubits/home/topic_list_state.dart';
 import 'package:ac_project_app/cubits/links/links_from_selected_job_group_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_state.dart';
+import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/models/profile/profile.dart';
 import 'package:ac_project_app/models/user/detail_user.dart';
@@ -56,11 +57,10 @@ class HomePage extends StatelessWidget {
                         alignment: Alignment.centerLeft,
                         child: Padding(
                           padding: const EdgeInsets.only(left: 10),
-                          child: Image.asset(
-                            'assets/images/folder_search_icon.png',
+                          child: Assets.images.folderSearchIcon.image(
                             width: 24,
                             height: 24,
-                          ),
+                          ), // Image.asset(
                         ),
                       ),
                     ),
@@ -121,8 +121,13 @@ class HomePage extends StatelessWidget {
                     .read<LinksFromSelectedJobGroupCubit>()
                     .scrollController,
                 itemBuilder: (_, i) {
-                  if (i == totalLinks.length && context.read<LinksFromSelectedJobGroupCubit>().hasLoadMore) {
-                    Future.microtask(() => context.read<LinksFromSelectedJobGroupCubit>().scrollEnd());
+                  if (i == totalLinks.length &&
+                      context
+                          .read<LinksFromSelectedJobGroupCubit>()
+                          .hasLoadMore) {
+                    Future.microtask(() => context
+                        .read<LinksFromSelectedJobGroupCubit>()
+                        .scrollEnd());
                     return BottomLoadingWidget();
                   }
                   final link = totalLinks[i];
@@ -276,8 +281,10 @@ class HomePage extends StatelessWidget {
                                       color: grey100,
                                       child: CachedNetworkImage(
                                         imageUrl: link.image ?? '',
-                                        fadeInDuration: const Duration(milliseconds: 300),
-                                        fadeOutDuration: const Duration(milliseconds: 300),
+                                        fadeInDuration:
+                                            const Duration(milliseconds: 300),
+                                        fadeOutDuration:
+                                            const Duration(milliseconds: 300),
                                         imageBuilder:
                                             (context, imageProvider) =>
                                                 Container(
@@ -342,7 +349,7 @@ class HomePage extends StatelessWidget {
                                       }
                                     },
                                     child: SvgPicture.asset(
-                                      'assets/images/more_vert.svg',
+                                      Assets.images.moreVert,
                                     ),
                                   ),
                                 ],
@@ -463,7 +470,8 @@ class HomePage extends StatelessWidget {
                       tabs: tabs,
                       onTap: (index) {
                         jobContext
-                            .read<LinksFromSelectedJobGroupCubit>().hasLoadMore = false;
+                            .read<LinksFromSelectedJobGroupCubit>()
+                            .hasLoadMore = false;
                         final selectedJobGroupId = jobs[index].id!;
                         jobContext
                             .read<LinksFromSelectedJobGroupCubit>()

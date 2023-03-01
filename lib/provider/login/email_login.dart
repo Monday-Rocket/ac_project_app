@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/dialog.dart';
 import 'package:ac_project_app/util/logger.dart';
@@ -53,7 +54,7 @@ class Email {
           parentContext: context,
           callback: () => Navigator.pop(context),
           icon: true,
-          iconImage: SvgPicture.asset('assets/images/check_icon.svg'),
+          iconImage: SvgPicture.asset(Assets.images.checkIcon),
         );
       });
     } catch (e) {

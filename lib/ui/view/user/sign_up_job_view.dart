@@ -10,7 +10,6 @@ import 'package:ac_project_app/ui/widget/only_back_app_bar.dart';
 import 'package:ac_project_app/util/get_json_argument.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SignUpJobView extends StatelessWidget {

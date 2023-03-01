@@ -9,6 +9,7 @@ import 'package:ac_project_app/cubits/home_view_cubit.dart';
 import 'package:ac_project_app/cubits/links/upload_link_cubit.dart';
 import 'package:ac_project_app/cubits/links/upload_result_state.dart';
 import 'package:ac_project_app/cubits/sign_up/button_state_cubit.dart';
+import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/link/upload_type.dart';
 import 'package:ac_project_app/ui/widget/add_folder/folder_add_title.dart';
 import 'package:ac_project_app/ui/widget/add_folder/horizontal_folder_list.dart';
@@ -116,7 +117,7 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
               appBar: AppBar(
                 leading: IconButton(
                   onPressed: () => Navigator.pop(context),
-                  icon: SvgPicture.asset('assets/images/ic_back.svg'),
+                  icon: SvgPicture.asset(Assets.images.icBack),
                   color: grey900,
                   padding: const EdgeInsets.only(left: 20, right: 8),
                 ),
@@ -231,7 +232,7 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SvgPicture.asset('assets/images/warning_mark.svg'),
+            SvgPicture.asset(Assets.images.warningMark),
             const SizedBox(width: 4),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,

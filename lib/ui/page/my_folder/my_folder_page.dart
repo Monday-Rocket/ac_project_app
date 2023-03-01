@@ -9,6 +9,7 @@ import 'package:ac_project_app/cubits/folders/folders_state.dart';
 import 'package:ac_project_app/cubits/folders/get_my_folders_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_state.dart';
+import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/add_folder/show_add_folder_dialog.dart';
@@ -65,8 +66,7 @@ class _MyFolderPageState extends State<MyFolderPage>
           onTap: () => FocusScope.of(context).unfocus(),
           child: Stack(
             children: [
-              Image.asset(
-                'assets/images/my_folder_back.png',
+              Assets.images.myFolderBack.image(
                 width: width,
                 fit: BoxFit.fill,
               ),
@@ -138,9 +138,7 @@ class _MyFolderPageState extends State<MyFolderPage>
                                     contentPadding: const EdgeInsets.symmetric(
                                       horizontal: 10,
                                     ),
-                                    prefixIcon: Image.asset(
-                                      'assets/images/folder_search_icon.png',
-                                    ),
+                                    prefixIcon: Assets.images.folderSearchIcon.image(),
                                   ),
                                   onChanged: (value) {
                                     context
@@ -160,7 +158,7 @@ class _MyFolderPageState extends State<MyFolderPage>
                                 child: Padding(
                                   padding: const EdgeInsets.all(6),
                                   child: SvgPicture.asset(
-                                    'assets/images/btn_add.svg',
+                                    Assets.images.btnAdd,
                                   ),
                                 ),
                               ),
@@ -301,9 +299,7 @@ class _MyFolderPageState extends State<MyFolderPage>
                                       child: Padding(
                                         padding:
                                             const EdgeInsets.only(bottom: 3),
-                                        child: Image.asset(
-                                          'assets/images/ic_lock.png',
-                                        ),
+                                        child: Assets.images.icLockPng.image(),
                                       ),
                                     )
                                   else
@@ -353,7 +349,7 @@ class _MyFolderPageState extends State<MyFolderPage>
                             ),
                             child: Padding(
                               padding: const EdgeInsets.all(8),
-                              child: SvgPicture.asset('assets/images/more.svg'),
+                              child: SvgPicture.asset(Assets.images.more),
                             ),
                           ),
                       ],
@@ -380,7 +376,7 @@ class _MyFolderPageState extends State<MyFolderPage>
       color: primary100,
       child: Center(
         child: SvgPicture.asset(
-          'assets/images/folder.svg',
+          Assets.images.folder,
           width: 24,
           height: 24,
         ),

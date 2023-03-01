@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:ac_project_app/const/colors.dart';
+import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/provider/api/user/user_api.dart';
 import 'package:ac_project_app/provider/share_data_provider.dart';
 import 'package:ac_project_app/routes.dart';
@@ -141,7 +142,7 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
           child: FadeTransition(
             opacity: secondAnimationController,
             child: SvgPicture.asset(
-              'assets/images/app_name.svg',
+              Assets.images.appName,
               width: 135,
               height: 20,
             ),
@@ -156,8 +157,7 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
       alignment: Alignment.bottomCenter,
       child: FadeTransition(
         opacity: secondAnimationController,
-        child: Image.asset(
-          'assets/images/wave_back.png',
+        child: Assets.images.waveBack.image(
           fit: BoxFit.fill,
           width: width,
           height: height * 463 / 812,
@@ -177,9 +177,7 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
           ).animate(firstAnimationController),
           child: FadeTransition(
             opacity: firstAnimationController,
-            child: Image.asset(
-              'assets/images/app_white_icon.png',
-            ),
+            child: Assets.images.appWhiteIcon.image(),
           ),
         ),
       ),
