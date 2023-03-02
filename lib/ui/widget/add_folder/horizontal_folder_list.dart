@@ -1,5 +1,6 @@
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/folders/folders_state.dart';
+import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -97,9 +98,7 @@ Widget buildFolderList({
                             alignment: Alignment.bottomRight,
                             child: Padding(
                               padding: const EdgeInsets.only(bottom: 3),
-                              child: Image.asset(
-                                'assets/images/ic_lock.png',
-                              ),
+                              child: Assets.images.icLockPng.image(),
                             ),
                           ),
                         )
@@ -137,7 +136,7 @@ Container emptyFolderView() {
     color: primary100,
     child: Center(
       child: SvgPicture.asset(
-        'assets/images/folder.svg',
+        Assets.images.folder,
         width: 36,
         height: 36,
       ),

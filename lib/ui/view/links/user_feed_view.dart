@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/feed/feed_view_cubit.dart';
 import 'package:ac_project_app/cubits/folders/get_user_folders_cubit.dart';
+import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/models/user/detail_user.dart';
@@ -42,8 +43,7 @@ class UserFeedView extends StatelessWidget {
         backgroundColor: Colors.white,
         body: Stack(
           children: [
-            Image.asset(
-              'assets/images/my_folder_back.png',
+            Assets.images.myFolderBack.image(
               width: MediaQuery.of(context).size.width,
               fit: BoxFit.fill,
             ),
@@ -112,7 +112,7 @@ class UserFeedView extends StatelessWidget {
         onPressed: () {
           Navigator.pop(context);
         },
-        icon: SvgPicture.asset('assets/images/ic_back.svg'),
+        icon: SvgPicture.asset(Assets.images.icBack),
         color: grey900,
         padding: const EdgeInsets.only(left: 20, right: 8),
       ),
@@ -129,7 +129,7 @@ class UserFeedView extends StatelessWidget {
             child: Container(
               margin: const EdgeInsets.only(right: 24),
               child: SvgPicture.asset(
-                'assets/images/more.svg',
+                Assets.images.more,
                 width: 25,
                 height: 25,
               ),
@@ -223,7 +223,9 @@ class UserFeedView extends StatelessWidget {
                       onTap: (index) {
                         final cubit = context.read<FeedViewCubit>();
                         cubit.totalLinks.clear();
-                        cubit.selectFolder(index).then((value) => cubit.scrollController.jumpTo(0));
+                        cubit
+                            .selectFolder(index)
+                            .then((value) => cubit.scrollController.jumpTo(0));
                       },
                     );
                   },
@@ -463,7 +465,7 @@ class UserFeedView extends StatelessWidget {
                                                 Navigator.pop(context),
                                           ),
                                     child: SvgPicture.asset(
-                                      'assets/images/more_vert.svg',
+                                      Assets.images.moreVert,
                                     ),
                                   ),
                                 ],

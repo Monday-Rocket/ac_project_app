@@ -1,5 +1,6 @@
 // ignore_for_file: non_constant_identifier_names
 
+import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
@@ -8,7 +9,7 @@ Widget LoadingWidget({double width = 60, double height = 60}) {
     width: width,
     height: height,
     child: Lottie.asset(
-      'assets/animations/loading.json',
+      Assets.animations.loading,
       frameRate: FrameRate(60),
     ),
   );

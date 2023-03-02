@@ -1,4 +1,5 @@
 // 개인정보 수집 및 이용 동의
+import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/tutorial/tutorial.dart';
 
 const approveFirstLink =
@@ -28,22 +29,22 @@ const warningMsgContent =
 
 final tutorials = [
   Tutorial(
-    'assets/tutorials/tutorial1.png',
+    Assets.tutorials.tutorial1.path,
     '즉시 저장 가능한 링크',
     '검색하다 발견한 인사이트를\n간편하게 저장해보세요',
   ),
   Tutorial(
-    'assets/tutorials/tutorial2.png',
+    Assets.tutorials.tutorial2.path,
     '폴더링으로 링크분류',
     '링크를 카테고리별로 분류하고\n쉽게 찾아보세요',
   ),
   Tutorial(
-    'assets/tutorials/tutorial3.png',
+    Assets.tutorials.tutorial3.path,
     '보기 쉬운 링크 관리',
     '차곡차곡 정리해둔 내 링크\n언제든지 한 눈에 볼 수 있어요',
   ),
   Tutorial(
-    'assets/tutorials/tutorial4.png',
+    Assets.tutorials.tutorial4.path,
     '노트로 상세한 기억 저장',
     '방금 떠오른 아이디어,\n잊지 않도록 링크 노트에 메모해 보세요',
   ),

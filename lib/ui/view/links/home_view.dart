@@ -8,6 +8,7 @@ import 'package:ac_project_app/cubits/home_view_cubit.dart';
 import 'package:ac_project_app/cubits/links/links_from_selected_job_group_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_state.dart';
+import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/provider/api/folders/folder_api.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/page/home/home_page.dart';
@@ -194,17 +195,17 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
 
   List<SvgPicture> getBottomIcons(int index) {
     final enabledIcons = [
-      SvgPicture.asset('assets/images/ic_home.svg'),
-      SvgPicture.asset('assets/images/ic_upload.svg'),
-      SvgPicture.asset('assets/images/ic_myfolder.svg'),
-      SvgPicture.asset('assets/images/ic_mypage.svg'),
+      SvgPicture.asset(Assets.images.icHome),
+      SvgPicture.asset(Assets.images.icUpload),
+      SvgPicture.asset(Assets.images.icMyfolder),
+      SvgPicture.asset(Assets.images.icMypage),
     ];
 
     final disabledIcons = [
-      SvgPicture.asset('assets/images/ic_home_disabled.svg'),
-      SvgPicture.asset('assets/images/ic_upload_disabled.svg'),
-      SvgPicture.asset('assets/images/ic_myfolder_disabled.svg'),
-      SvgPicture.asset('assets/images/ic_mypage_disabled.svg'),
+      SvgPicture.asset(Assets.images.icHomeDisabled),
+      SvgPicture.asset(Assets.images.icUploadDisabled),
+      SvgPicture.asset(Assets.images.icMyfolderDisabled),
+      SvgPicture.asset(Assets.images.icMypageDisabled),
     ];
 
     final icons = <SvgPicture>[];

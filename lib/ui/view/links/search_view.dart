@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/home/search_links_cubit.dart';
 import 'package:ac_project_app/cubits/links/link_list_state.dart';
+import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/util/get_widget_arguments.dart';
@@ -60,7 +61,7 @@ class _SearchViewState extends State<SearchView> {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  icon: SvgPicture.asset('assets/images/ic_back.svg'),
+                  icon: SvgPicture.asset(Assets.images.icBack),
                   color: grey900,
                   padding: const EdgeInsets.only(left: 20, right: 8),
                 ),
@@ -151,7 +152,8 @@ class _SearchViewState extends State<SearchView> {
                                     height: 115,
                                     child: Container(
                                       margin: const EdgeInsets.symmetric(
-                                          vertical: 5),
+                                        vertical: 5,
+                                      ),
                                       width: (width - 24 * 2) - 159 - 20,
                                       child: Column(
                                         mainAxisAlignment:
@@ -343,9 +345,7 @@ class _SearchViewState extends State<SearchView> {
                 children: [
                   Container(
                     margin: const EdgeInsets.only(left: 10, right: 10),
-                    child: Image.asset(
-                      'assets/images/folder_search_icon.png',
-                    ),
+                    child: Assets.images.folderSearchIcon.image(),
                   ),
                   const Text(
                     '검색어를 입력해주세요',

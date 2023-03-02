@@ -1,29 +1,30 @@
+import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/profile/profile_image.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class GetProfileImagesCubit extends Cubit<List<ProfileImage>> {
   GetProfileImagesCubit()
       : super([
-          ProfileImage('assets/images/profile/img_01_on.png'),
-          ProfileImage('assets/images/profile/img_02_on.png'),
-          ProfileImage('assets/images/profile/img_03_on.png'),
-          ProfileImage('assets/images/profile/img_04_on.png'),
-          ProfileImage('assets/images/profile/img_05_on.png'),
-          ProfileImage('assets/images/profile/img_06_on.png'),
-          ProfileImage('assets/images/profile/img_07_on.png'),
-          ProfileImage('assets/images/profile/img_08_on.png'),
-          ProfileImage('assets/images/profile/img_09_on.png'),
+          ProfileImage(Assets.images.profile.img01On.path),
+          ProfileImage(Assets.images.profile.img02On.path),
+          ProfileImage(Assets.images.profile.img03On.path),
+          ProfileImage(Assets.images.profile.img04On.path),
+          ProfileImage(Assets.images.profile.img05On.path),
+          ProfileImage(Assets.images.profile.img06On.path),
+          ProfileImage(Assets.images.profile.img07On.path),
+          ProfileImage(Assets.images.profile.img08On.path),
+          ProfileImage(Assets.images.profile.img09On.path),
         ]);
   final initList = [
-    ProfileImage('assets/images/profile/img_01_on.png'),
-    ProfileImage('assets/images/profile/img_02_on.png'),
-    ProfileImage('assets/images/profile/img_03_on.png'),
-    ProfileImage('assets/images/profile/img_04_on.png'),
-    ProfileImage('assets/images/profile/img_05_on.png'),
-    ProfileImage('assets/images/profile/img_06_on.png'),
-    ProfileImage('assets/images/profile/img_07_on.png'),
-    ProfileImage('assets/images/profile/img_08_on.png'),
-    ProfileImage('assets/images/profile/img_09_on.png'),
+    ProfileImage(Assets.images.profile.img01On.path),
+    ProfileImage(Assets.images.profile.img02On.path),
+    ProfileImage(Assets.images.profile.img03On.path),
+    ProfileImage(Assets.images.profile.img04On.path),
+    ProfileImage(Assets.images.profile.img05On.path),
+    ProfileImage(Assets.images.profile.img06On.path),
+    ProfileImage(Assets.images.profile.img07On.path),
+    ProfileImage(Assets.images.profile.img08On.path),
+    ProfileImage(Assets.images.profile.img09On.path),
   ];
 
   bool selected = false;

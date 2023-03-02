@@ -4,6 +4,7 @@ import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/const/strings.dart';
 import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_state.dart';
+import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/provider/api/user/user_api.dart';
 import 'package:ac_project_app/provider/logout.dart';
 import 'package:ac_project_app/routes.dart';
@@ -52,9 +53,7 @@ class MyPage extends StatelessWidget {
                           Image.asset(
                             profile.profileImage,
                             errorBuilder: (_, __, ___) {
-                              return Image.asset(
-                                'assets/images/profile/img_01_on.png',
-                              );
+                              return Assets.images.profile.img01On.image();
                             },
                           ),
                           Container(
@@ -66,7 +65,7 @@ class MyPage extends StatelessWidget {
                               color: Colors.white,
                             ),
                             child: SvgPicture.asset(
-                              'assets/images/ic_change.svg',
+                              Assets.images.icChange,
                             ),
                           ),
                         ],

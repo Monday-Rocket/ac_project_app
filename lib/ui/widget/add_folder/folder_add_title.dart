@@ -1,9 +1,9 @@
+import 'package:ac_project_app/gen/assets.gen.dart';
+import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/ui/widget/add_folder/show_add_folder_dialog.dart';
 import 'package:ac_project_app/ui/widget/add_folder/subtitle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
-import 'package:ac_project_app/models/folder/folder.dart';
 
 Container buildFolderSelectTitle(
   BuildContext context,
@@ -30,7 +30,7 @@ Container buildFolderSelectTitle(
           child: Padding(
             padding: const EdgeInsets.all(8),
             child: SvgPicture.asset(
-              'assets/images/btn_add.svg',
+              Assets.images.btnAdd,
             ),
           ),
         ),

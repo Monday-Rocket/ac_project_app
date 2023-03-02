@@ -1,4 +1,5 @@
 import 'package:ac_project_app/const/colors.dart';
+import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -13,7 +14,7 @@ AppBar buildBackAppBar(BuildContext context, {void Function()? callback}) {
           Navigator.pop(context);
         }
       },
-      icon: SvgPicture.asset('assets/images/ic_back.svg'),
+      icon: SvgPicture.asset(Assets.images.icBack),
       color: grey900,
       padding: const EdgeInsets.only(left: 20, right: 8),
     ),

@@ -501,13 +501,11 @@ class LoginView extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Image.asset(
-              'assets/images/login_logo.png',
-            ),
+            Assets.images.loginLogo.image(),
             const SizedBox(
               height: 14,
             ),
-            SvgPicture.asset('assets/images/login_logo_text.svg'),
+            SvgPicture.asset(Assets.images.loginLogoText),
           ],
         ),
       ),

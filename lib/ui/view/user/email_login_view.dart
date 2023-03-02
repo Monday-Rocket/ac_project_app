@@ -3,6 +3,7 @@
 import 'dart:async';
 
 import 'package:ac_project_app/const/colors.dart';
+import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/provider/api/user/user_api.dart';
 import 'package:ac_project_app/provider/login/email_login.dart';
 import 'package:ac_project_app/provider/share_data_provider.dart';
@@ -127,7 +128,7 @@ class _EmailLoginViewState extends State<EmailLoginView>
                       ),
                     ),
                     const SizedBox(height: 20),
-                    Container(
+                    DecoratedBox(
                       decoration: const BoxDecoration(
                         color: grey100,
                         borderRadius: BorderRadius.all(
@@ -141,7 +142,7 @@ class _EmailLoginViewState extends State<EmailLoginView>
                               padding:
                                   const EdgeInsets.only(top: 14, bottom: 12),
                               child: SvgPicture.asset(
-                                'assets/images/email_notice.svg',
+                                Assets.images.emailNotice,
                               ),
                             ),
                             const Text(

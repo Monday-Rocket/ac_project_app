@@ -1,4 +1,5 @@
 import 'package:ac_project_app/const/colors.dart';
+import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/report/report.dart';
 import 'package:ac_project_app/models/report/report_result_type.dart';
 import 'package:ac_project_app/models/report/report_type.dart';
@@ -55,7 +56,7 @@ class _ReportViewState extends State<ReportView> {
             onPressed: () {
               Navigator.pop(context);
             },
-            icon: SvgPicture.asset('assets/images/ic_back.svg'),
+            icon: SvgPicture.asset(Assets.images.icBack),
             color: grey900,
             padding: const EdgeInsets.only(left: 20, right: 8),
           ),

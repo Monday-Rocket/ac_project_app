@@ -2,6 +2,7 @@ import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/profile/profile_images_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_state.dart';
+import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/profile/profile_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -32,7 +33,7 @@ class ChangeProfileView extends StatelessWidget {
               shadowColor: grey100,
               systemOverlayStyle: SystemUiOverlayStyle.dark,
               leading: IconButton(
-                icon: SvgPicture.asset('assets/images/ic_back.svg'),
+                icon: SvgPicture.asset(Assets.images.icBack),
                 onPressed: () => Navigator.pop(context),
                 padding: const EdgeInsets.only(left: 20, right: 8),
               ),
