@@ -3,7 +3,7 @@ description: 링크풀 - 체계적인 링크 관리의 시작
 
 publish_to: 'none'
 
-version: 1.0.33+33
+version: 1.0.34+34
 
 environment:
   sdk: ">=2.17.6 <3.0.0"
@@ -21,30 +21,30 @@ dependencies:
   cached_network_image: ^3.2.3
 
   ## Architecture
-  flutter_bloc: ^8.1.1
+  flutter_bloc: ^8.1.2
   equatable: ^2.0.5
 
   ## login
   sign_in_with_apple: ^4.2.0
-  google_sign_in: ^5.4.2
-  firebase_core: ^2.4.0
-  firebase_auth: ^4.2.0
-  firebase_dynamic_links: ^5.0.8
-  uni_links: ^0.5.1
-  kakao_flutter_sdk_user: ^1.4.0
+  google_sign_in: ^6.0.2
+  firebase_core: ^2.7.0
+  firebase_auth: ^4.2.9
+  firebase_dynamic_links: ^5.0.15
+
+  kakao_flutter_sdk_user: ^1.4.1
   flutter_dotenv: ^5.0.2
   flutter_naver_login: ^1.7.0
 
   ## Utils
   metadata_fetch: ^0.4.1
   permission_handler: ^10.2.0
-  logger: ^1.1.0
-  path_provider: ^2.0.11
+  logger: ^1.2.2
+  path_provider: ^2.0.13
   intl: ^0.17.0
   path: ^1.8.2
   oktoast:
   shimmer: ^2.0.0
-  share_plus: ^6.3.0
+  share_plus: ^6.3.1
   flutter_keyboard_visibility: ^5.4.0
   extended_text: ^10.0.0
   carousel_slider: ^4.2.1
@@ -58,15 +58,15 @@ dependencies:
   flutter_svg: ^1.1.6
 
   ## for Storage
-  sqflite: ^2.1.0+1
-  shared_preferences: ^2.0.15
+  sqflite: ^2.2.5
+  shared_preferences: ^2.0.18
 
   ## for Test Functions
   flutter_signin_button: ^2.0.0
   freezed_annotation: ^2.1.0
 
   ## Web
-  url_launcher: ^6.1.6
+  url_launcher: ^6.1.10
 
 dev_dependencies:
   flutter_test:
@@ -75,9 +75,9 @@ dev_dependencies:
   flutter_lints: ^2.0.0
 
   # for model class
-  build_runner: ^2.2.0
+  build_runner: ^2.3.3
   json_serializable: ^6.3.1
-  analyzer: ^5.1.0
+  analyzer: ^5.7.1
   freezed: ^2.1.1
 
 flutter:
