@@ -109,6 +109,7 @@
                 android:fontFamily="@font/pretendard_medium"
                 android:lineHeight="15.84dp"
                 android:scrollbars="vertical"
+                android:scrollbarStyle="outsideInset"
                 android:text="@string/notice_description"
                 android:textColor="@color/grey400"
                 android:textSize="11sp"
