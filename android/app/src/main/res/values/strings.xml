@@ -20,5 +20,5 @@
     <string name="empty_folder_text">폴더추가</string>
     <string name="errorText">이미 사용하고 있는 폴더명이예요. 새로운 폴더명을 입력해주세요</string>
     <string name="notice_title">링크풀은 건전한 링크 관리 및 공유 문화를 지향해요</string>
-    <string name="notice_description">부적절하거나 불쾌감을 주는 공개 컨텐츠는 제재를 받을 수 있어요. 링크풀과 함께 유익하고 건전한 공유 문화를 만들어가 주세요.</string>
+    <string name="notice_description">부적절하거나 불쾌감을 주는 공개 컨텐츠는 제재를 받을 수 있어요. 함께 건전한 공유 문화를 만들어 주세요.</string>
 </resources>
