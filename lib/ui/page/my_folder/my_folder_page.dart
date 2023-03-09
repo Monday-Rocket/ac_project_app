@@ -21,6 +21,7 @@ import 'package:ac_project_app/util/logger.dart';
 import 'package:ac_project_app/util/number_commas.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class MyFolderPage extends StatefulWidget {
@@ -83,20 +84,20 @@ class _MyFolderPageState extends State<MyFolderPage>
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Container(
-                                  width: 105,
-                                  height: 105,
-                                  margin: const EdgeInsetsDirectional.only(
-                                    top: 90,
-                                    bottom: 6,
+                                  width: 105.w,
+                                  height: 105.h,
+                                  margin: EdgeInsetsDirectional.only(
+                                    top: 90.h,
+                                    bottom: 6.h,
                                   ),
                                   child: Image.asset(profile.profileImage),
                                 ),
                                 Text(
                                   profile.nickname,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 28,
-                                    color: Color(0xff0e0e0e),
+                                    fontSize: 28.sp,
+                                    color: const Color(0xff0e0e0e),
                                   ),
                                 ),
                               ],
@@ -107,36 +108,36 @@ class _MyFolderPageState extends State<MyFolderPage>
                         },
                       ),
                       Container(
-                        margin: const EdgeInsetsDirectional.only(
-                          top: 50,
+                        margin: EdgeInsetsDirectional.only(
+                          top: 50.h,
                           start: 20,
                           end: 20,
-                          bottom: 6,
+                          bottom: 6.h,
                         ),
                         child: Row(
                           children: [
                             Flexible(
                               child: Container(
-                                decoration: const BoxDecoration(
+                                decoration: BoxDecoration(
                                   color: grey100,
                                   borderRadius:
-                                      BorderRadius.all(Radius.circular(7)),
+                                      BorderRadius.all(Radius.circular(7.r)),
                                 ),
-                                margin: const EdgeInsets.only(right: 6),
+                                margin: EdgeInsets.only(right: 6.w),
                                 child: TextField(
                                   textAlignVertical: TextAlignVertical.center,
                                   cursorColor: grey800,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     color: grey800,
-                                    fontSize: 14,
+                                    fontSize: 14.sp,
                                     fontWeight: FontWeight.w400,
                                   ),
                                   decoration: InputDecoration(
                                     border: InputBorder.none,
                                     focusedBorder: InputBorder.none,
                                     isDense: true,
-                                    contentPadding: const EdgeInsets.symmetric(
-                                      horizontal: 10,
+                                    contentPadding: EdgeInsets.symmetric(
+                                      horizontal: 10.w,
                                     ),
                                     prefixIcon: Assets.images.folderSearchIcon.image(),
                                   ),
@@ -156,7 +157,7 @@ class _MyFolderPageState extends State<MyFolderPage>
                                   folders: folderState.folders,
                                 ),
                                 child: Padding(
-                                  padding: const EdgeInsets.all(6),
+                                  padding: EdgeInsets.all(6.r),
                                   child: SvgPicture.asset(
                                     Assets.images.btnAdd,
                                   ),
@@ -178,13 +179,13 @@ class _MyFolderPageState extends State<MyFolderPage>
                             );
                           } else if (folderState is FolderLoadedState) {
                             if (folderState.folders.isEmpty) {
-                              return const Expanded(
+                              return Expanded(
                                 child: Center(
                                   child: Text(
                                     '등록된 폴더가 없습니다',
                                     style: TextStyle(
                                       color: grey300,
-                                      fontSize: 16,
+                                      fontSize: 16.sp,
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
@@ -234,7 +235,7 @@ class _MyFolderPageState extends State<MyFolderPage>
   Widget buildListView(List<Folder> folders, BuildContext context) {
     return Expanded(
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 24),
+        margin: EdgeInsets.symmetric(horizontal: 24.w),
         child: RefreshIndicator(
           onRefresh: () async => context.read<GetFoldersCubit>().getFolders(),
           color: primary600,
@@ -242,9 +243,9 @@ class _MyFolderPageState extends State<MyFolderPage>
             shrinkWrap: true,
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             itemCount: folders.length,
-            separatorBuilder: (ctx, index) => const Divider(
-              thickness: 1,
-              height: 1,
+            separatorBuilder: (ctx, index) => Divider(
+              thickness: 1.h,
+              height: 1.h,
               color: greyTab,
             ),
             itemBuilder: (ctx, index) {
@@ -261,21 +262,21 @@ class _MyFolderPageState extends State<MyFolderPage>
                   },
                   child: Container(
                     margin:
-                        const EdgeInsets.symmetric(vertical: 20, horizontal: 4),
+                        EdgeInsets.symmetric(vertical: 20.h, horizontal: 4.w),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Row(
                           children: [
                             Container(
-                              width: 63 + 6,
-                              height: 63,
-                              margin: const EdgeInsets.only(right: 30),
+                              width: 69.w,
+                              height: 63.h,
+                              margin: EdgeInsets.only(right: 30.w),
                               child: Stack(
                                 children: [
                                   ClipRRect(
-                                    borderRadius: const BorderRadius.all(
-                                      Radius.circular(20),
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(20.r),
                                     ),
                                     child: ColoredBox(
                                       color: grey100,
@@ -284,8 +285,8 @@ class _MyFolderPageState extends State<MyFolderPage>
                                                   false)
                                           ? Image.network(
                                               folder.thumbnail!,
-                                              width: 63,
-                                              height: 63,
+                                              width: 63.w,
+                                              height: 63.h,
                                               fit: BoxFit.cover,
                                               errorBuilder: (_, __, ___) =>
                                                   emptyFolderView(),
@@ -298,7 +299,7 @@ class _MyFolderPageState extends State<MyFolderPage>
                                       alignment: Alignment.bottomRight,
                                       child: Padding(
                                         padding:
-                                            const EdgeInsets.only(bottom: 3),
+                                            EdgeInsets.only(bottom: 3.h),
                                         child: Assets.images.icLockPng.image(),
                                       ),
                                     )
@@ -312,24 +313,24 @@ class _MyFolderPageState extends State<MyFolderPage>
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 SizedBox(
-                                  width: 120,
+                                  width: 120.w,
                                   child: Text(
                                     folder.name!,
                                     overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 16,
+                                      fontSize: 16.sp,
                                       color: blackBold,
                                     ),
                                   ),
                                 ),
-                                const SizedBox(
-                                  height: 6,
+                                SizedBox(
+                                  height: 6.h,
                                 ),
                                 Text(
                                   '링크 ${addCommasFrom(folder.links)}개',
-                                  style: const TextStyle(
-                                    fontSize: 12,
+                                  style: TextStyle(
+                                    fontSize: 12.sp,
                                     fontWeight: FontWeight.w500,
                                     color: greyText,
                                   ),
@@ -348,7 +349,7 @@ class _MyFolderPageState extends State<MyFolderPage>
                               context,
                             ),
                             child: Padding(
-                              padding: const EdgeInsets.all(8),
+                              padding: EdgeInsets.all(8.r),
                               child: SvgPicture.asset(Assets.images.more),
                             ),
                           ),
@@ -371,14 +372,14 @@ class _MyFolderPageState extends State<MyFolderPage>
 
   Container emptyFolderView() {
     return Container(
-      width: 63,
-      height: 63,
+      width: 63.w,
+      height: 63.h,
       color: primary100,
       child: Center(
         child: SvgPicture.asset(
           Assets.images.folder,
-          width: 24,
-          height: 24,
+          width: 24.w,
+          height: 24.h,
         ),
       ),
     );
@@ -398,16 +399,16 @@ class _MyFolderPageState extends State<MyFolderPage>
         return Wrap(
           children: [
             DecoratedBox(
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),
+                  topLeft: Radius.circular(20.r),
+                  topRight: Radius.circular(20.r),
                 ),
               ),
               child: Padding(
                 padding: EdgeInsets.only(
-                  top: 29,
+                  top: 29.h,
                   bottom: Platform.isAndroid
                       ? MediaQuery.of(context).padding.bottom
                       : 0,
@@ -415,34 +416,34 @@ class _MyFolderPageState extends State<MyFolderPage>
                 child: Column(
                   children: [
                     Container(
-                      margin: const EdgeInsets.only(left: 30, right: 20),
+                      margin: EdgeInsets.only(left: 30.w, right: 20.w),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(
+                          Text(
                             '폴더 옵션',
                             style: TextStyle(
                               color: grey800,
-                              fontSize: 20,
+                              fontSize: 20.sp,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           InkWell(
                             onTap: () => Navigator.pop(context),
-                            child: const Icon(
+                            child: Icon(
                               Icons.close_rounded,
-                              size: 24,
+                              size: 24.r,
                             ),
                           ),
                         ],
                       ),
                     ),
                     Container(
-                      margin: const EdgeInsets.only(
-                        top: 17,
-                        left: 6,
-                        right: 6,
-                        bottom: 20,
+                      margin: EdgeInsets.only(
+                        top: 17.h,
+                        left: 6.w,
+                        right: 6.w,
+                        bottom: 20.h,
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -454,24 +455,24 @@ class _MyFolderPageState extends State<MyFolderPage>
                             ),
                             highlightColor: grey100,
                             child: Container(
-                              decoration: const BoxDecoration(
+                              decoration: BoxDecoration(
                                 borderRadius: BorderRadius.all(
-                                  Radius.circular(10),
+                                  Radius.circular(10.r),
                                 ),
                               ),
-                              padding: const EdgeInsets.only(
-                                top: 14,
-                                bottom: 14,
-                                left: 24,
+                              padding: EdgeInsets.only(
+                                top: 14.h,
+                                bottom: 14.h,
+                                left: 24.w,
                               ),
                               child: Align(
                                 alignment: Alignment.centerLeft,
                                 child: Text(
                                   visible ? '비공개로 전환' : '공개로 전환',
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     color: blackBold,
                                     fontWeight: FontWeight.w500,
-                                    fontSize: 16,
+                                    fontSize: 16.sp,
                                   ),
                                 ),
                               ),
@@ -484,25 +485,25 @@ class _MyFolderPageState extends State<MyFolderPage>
                               currFolder,
                             ),
                             child: Container(
-                              decoration: const BoxDecoration(
+                              decoration: BoxDecoration(
                                 borderRadius: BorderRadius.all(
-                                  Radius.circular(10),
+                                  Radius.circular(10.r),
                                 ),
                                 color: Colors.transparent,
                               ),
-                              padding: const EdgeInsets.only(
-                                top: 14,
-                                bottom: 14,
-                                left: 24,
+                              padding: EdgeInsets.only(
+                                top: 14.h,
+                                bottom: 14.h,
+                                left: 24.w,
                               ),
-                              child: const Align(
+                              child: Align(
                                 alignment: Alignment.centerLeft,
                                 child: Text(
                                   '폴더명 변경',
                                   style: TextStyle(
                                     color: blackBold,
                                     fontWeight: FontWeight.w500,
-                                    fontSize: 16,
+                                    fontSize: 16.sp,
                                   ),
                                 ),
                               ),
@@ -512,25 +513,25 @@ class _MyFolderPageState extends State<MyFolderPage>
                             onTap: () =>
                                 deleteFolder(parentContext, currFolder),
                             child: Container(
-                              decoration: const BoxDecoration(
+                              decoration: BoxDecoration(
                                 borderRadius: BorderRadius.all(
-                                  Radius.circular(10),
+                                  Radius.circular(10.r),
                                 ),
                                 color: Colors.transparent,
                               ),
-                              padding: const EdgeInsets.only(
-                                top: 14,
-                                bottom: 14,
-                                left: 24,
+                              padding: EdgeInsets.only(
+                                top: 14.h,
+                                bottom: 14.h,
+                                left: 24.w,
                               ),
-                              child: const Align(
+                              child: Align(
                                 alignment: Alignment.centerLeft,
                                 child: Text(
                                   '폴더 삭제',
                                   style: TextStyle(
                                     color: blackBold,
                                     fontWeight: FontWeight.w500,
-                                    fontSize: 16,
+                                    fontSize: 16.sp,
                                   ),
                                 ),
                               ),
@@ -582,14 +583,14 @@ class _MyFolderPageState extends State<MyFolderPage>
           backgroundColor: Colors.transparent,
           content: Container(
             width: width - 45 * 2,
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.all(
-                Radius.circular(16),
+                Radius.circular(16.r),
               ),
             ),
             child: Padding(
-              padding: const EdgeInsets.all(14),
+              padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -597,43 +598,43 @@ class _MyFolderPageState extends State<MyFolderPage>
                     alignment: Alignment.topRight,
                     child: GestureDetector(
                       onTap: () => Navigator.pop(context),
-                      child: const Icon(
+                      child: Icon(
                         Icons.close_rounded,
-                        size: 24,
+                        size: 24.r,
                       ),
                     ),
                   ),
                   Container(
-                    margin: const EdgeInsets.only(top: 2, bottom: 10),
-                    child: const Text(
+                    margin: EdgeInsets.only(top: 2.h, bottom: 10.h),
+                    child: Text(
                       '폴더를 삭제하시겠어요?',
                       style: TextStyle(
                         fontWeight: FontWeight.w700,
-                        fontSize: 20,
+                        fontSize: 20.sp,
                         color: grey900,
                       ),
                       textAlign: TextAlign.center,
                     ),
                   ),
-                  const Text(
+                  Text(
                     '폴더를 삭제하면, 폴더 안에 있는\n콘텐츠도 사라져요',
                     style: TextStyle(
                       color: grey500,
-                      fontSize: 14,
+                      fontSize: 14.sp,
                       fontWeight: FontWeight.w500,
                     ),
                     textAlign: TextAlign.center,
                   ),
                   Container(
-                    margin: const EdgeInsets.only(
-                      top: 33,
-                      left: 6,
-                      right: 6,
-                      bottom: 6,
+                    margin: EdgeInsets.only(
+                      top: 33.h,
+                      left: 6.w,
+                      right: 6.w,
+                      bottom: 6.h,
                     ),
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        minimumSize: const Size.fromHeight(48),
+                        minimumSize: Size.fromHeight(48.h),
                         backgroundColor: primary600,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
@@ -649,9 +650,9 @@ class _MyFolderPageState extends State<MyFolderPage>
                           }
                         });
                       },
-                      child: const Text(
+                      child: Text(
                         '삭제하기',
-                        style: TextStyle(color: Colors.white, fontSize: 16),
+                        style: TextStyle(color: Colors.white, fontSize: 16.sp),
                       ).bold(),
                     ),
                   ),

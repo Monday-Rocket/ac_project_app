@@ -132,7 +132,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
                             create: (_) => FolderViewTypeCubit(),
                           ),
                         ],
-                        child: const MyFolderPage(),
+                        child: MyFolderPage(),
                       ),
                       const MyPage(),
                     ],

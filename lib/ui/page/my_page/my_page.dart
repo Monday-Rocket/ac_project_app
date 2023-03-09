@@ -12,6 +12,7 @@ import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -44,9 +45,9 @@ class MyPage extends StatelessWidget {
                     },
                     child: Container(
                       alignment: Alignment.center,
-                      margin: const EdgeInsets.only(top: 90, bottom: 6),
-                      width: 105,
-                      height: 105,
+                      margin: EdgeInsets.only(top: 90.h, bottom: 6.h),
+                      width: 105.w,
+                      height: 105.h,
                       child: Stack(
                         alignment: Alignment.bottomRight,
                         children: [
@@ -57,9 +58,9 @@ class MyPage extends StatelessWidget {
                             },
                           ),
                           Container(
-                            padding: const EdgeInsets.all(4),
-                            width: 24,
-                            height: 24,
+                            padding: EdgeInsets.all(4.r),
+                            width: 24.w,
+                            height: 24.h,
                             decoration: const BoxDecoration(
                               shape: BoxShape.circle,
                               color: Colors.white,
@@ -74,24 +75,24 @@ class MyPage extends StatelessWidget {
                   ),
                   Text(
                     profile.nickname,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 28,
-                      color: Color(0xff0e0e0e),
+                      fontSize: 28.sp,
+                      color: const Color(0xff0e0e0e),
                     ),
                     textAlign: TextAlign.center,
                   ),
                 ],
               );
             } else {
-              return const SizedBox(
-                height: 144,
+              return SizedBox(
+                height: 144.h,
               );
             }
           },
         ),
-        const SizedBox(
-          height: 47,
+        SizedBox(
+          height: 47.h,
         ),
         MenuList(context),
       ],
@@ -179,9 +180,9 @@ class MyPage extends StatelessWidget {
           }
         },
         child: Container(
-          padding: const EdgeInsets.symmetric(
-            vertical: 20,
-            horizontal: 24,
+          padding: EdgeInsets.symmetric(
+            vertical: 20.h,
+            horizontal: 24.w,
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -190,12 +191,12 @@ class MyPage extends StatelessWidget {
                 menuName,
                 style: TextStyle(
                   color: color,
-                  fontSize: 16,
+                  fontSize: 16.sp,
                   fontWeight: FontWeight.w500,
                   letterSpacing: -0.2,
                 ),
               ),
-              if (arrow) const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+              if (arrow) Icon(Icons.arrow_forward_ios_rounded, size: 16.r),
             ],
           ),
         ),
@@ -206,15 +207,15 @@ class MyPage extends StatelessWidget {
       children: [
         DivisionLine(),
         MenuItem('이용 약관'),
-        DivisionLine(size: 1),
+        DivisionLine(size: 1.r),
         MenuItem('개인정보 처리방침'),
-        DivisionLine(size: 1),
+        DivisionLine(size: 1.r),
         MenuItem('도움말'),
         DivisionLine(),
         MenuItem('로그아웃', arrow: false),
-        DivisionLine(size: 1),
+        DivisionLine(size: 1.r),
         MenuItem('회원탈퇴', arrow: false, color: redError),
-        DivisionLine(size: 1),
+        DivisionLine(size: 1.r),
       ],
     );
   }
