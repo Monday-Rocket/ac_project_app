@@ -1,6 +1,7 @@
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/resource.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 void showPopUp({
   required String title,
@@ -25,49 +26,49 @@ void showPopUp({
         child: Stack(
           children: [
             Container(
-              width: width - (45 * 2),
-              padding: const EdgeInsets.all(16),
+              width: (width - (45 * 2)).w,
+              padding: EdgeInsets.all(16.r),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   SizedBox(
-                    height: icon ? 26 : 16,
+                    height: icon ? 26.h : 16.h,
                   ),
                   if (icon) iconImage,
                   Container(
-                    margin: EdgeInsets.only(top: icon ? 14 : 0, bottom: 10),
+                    margin: EdgeInsets.only(top: icon ? 14.h : 0, bottom: 10.h.h),
                     child: Text(
                       title,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontFamily: R_Font.PRETENDARD,
-                        fontSize: 20,
+                        fontSize: 20.sp,
                         fontWeight: FontWeight.w700,
-                        letterSpacing: -0.2,
-                        height: 23.8 / 20,
+                        letterSpacing: -0.2.w,
+                        height: (23.8 / 20).h,
                       ),
                     ),
                   ),
                   Text(
                     content,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: grey500,
-                      fontSize: 14,
-                      letterSpacing: -0.1,
+                      fontSize: 14.sp,
+                      letterSpacing: -0.1.w,
                       fontWeight: FontWeight.w500,
-                      height: 18.9 / 14,
+                      height: (18.9 / 14).h,
                     ),
                   ),
                   Container(
-                    margin: const EdgeInsets.only(
-                      left: 4,
-                      right: 4,
-                      bottom: 4,
-                      top: 32,
+                    margin: EdgeInsets.only(
+                      left: 4.w,
+                      right: 4.w,
+                      bottom: 4.h,
+                      top: 32.h,
                     ),
                     child: SizedBox(
                       width: double.infinity,
-                      height: 48,
+                      height: 48.h,
                       child: ElevatedButton(
                         onPressed: callback,
                         style: ElevatedButton.styleFrom(
@@ -79,9 +80,9 @@ void showPopUp({
                         ),
                         child: Text(
                           buttonText,
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: Colors.white,
-                            fontSize: 16,
+                            fontSize: 16.sp,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -93,8 +94,8 @@ void showPopUp({
             ),
             if (hasClose)
               Positioned(
-                right: 5,
-                top: 5,
+                right: 5.w,
+                top: 5.h,
                 child: IconButton(
                   onPressed: () {
                     Navigator.pop(context);
@@ -132,8 +133,8 @@ void showMyPageDialog({
         child: Stack(
           children: [
             Container(
-              width: width - (45 * 2),
-              padding: const EdgeInsets.all(16),
+              width: (width - (45 * 2)).w,
+              padding: EdgeInsets.all(16.r),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -147,12 +148,12 @@ void showMyPageDialog({
                       size: 27,
                     ),
                   Container(
-                    margin: EdgeInsets.only(top: icon ? 7 : 0, bottom: 10),
+                    margin: EdgeInsets.only(top: icon ? 7 : 0, bottom: 10.h),
                     child: Text(
                       title,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontFamily: R_Font.PRETENDARD,
-                        fontSize: 20,
+                        fontSize: 20.sp,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -160,27 +161,27 @@ void showMyPageDialog({
                   Text(
                     content,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: grey500,
-                      fontSize: 14,
-                      letterSpacing: -0.1,
+                      fontSize: 14.sp,
+                      letterSpacing: -0.1.w,
                       fontWeight: FontWeight.w500,
-                      height: 16.7 / 14,
+                      height: (16.7 / 14).h,
                     ),
                   ),
                   Container(
-                    margin: const EdgeInsets.only(
-                      left: 4,
-                      right: 4,
-                      bottom: 4,
-                      top: 32,
+                    margin: EdgeInsets.only(
+                      left: 4.w,
+                      right: 4.w,
+                      bottom: 4.h,
+                      top: 32.h,
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Expanded(
                           child: SizedBox(
-                            height: 48,
+                            height: 48.h,
                             child: ElevatedButton(
                               onPressed: leftCallback,
                               style: ElevatedButton.styleFrom(
@@ -192,19 +193,19 @@ void showMyPageDialog({
                               ),
                               child: Text(
                                 leftText,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   color: grey800,
-                                  fontSize: 16,
+                                  fontSize: 16.sp,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ),
                           ),
                         ),
-                        const SizedBox(width: 7),
+                        SizedBox(width: 7.w),
                         Expanded(
                           child: SizedBox(
-                            height: 48,
+                            height: 48.h,
                             child: ElevatedButton(
                               onPressed: rightCallback,
                               style: ElevatedButton.styleFrom(
@@ -216,9 +217,9 @@ void showMyPageDialog({
                               ),
                               child: Text(
                                 rightText,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: 16,
+                                  fontSize: 16.sp,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -232,8 +233,8 @@ void showMyPageDialog({
               ),
             ),
             Positioned(
-              right: 5,
-              top: 5,
+              right: 5.w,
+              top: 5.h,
               child: IconButton(
                 onPressed: () {
                   Navigator.pop(context);

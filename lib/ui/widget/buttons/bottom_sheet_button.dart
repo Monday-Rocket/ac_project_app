@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:ac_project_app/const/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 Widget buildBottomSheetButton({
   required BuildContext context,
@@ -17,15 +18,15 @@ Widget buildBottomSheetButton({
     child: Padding(
       padding: EdgeInsets.only(
         bottom: getBottomPadding(context, keyboardVisible),
-        left: 24,
-        right: 24,
+        left: 24.w,
+        right: 24.w,
       ),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          minimumSize: const Size.fromHeight(55),
+          minimumSize: Size.fromHeight(55.h),
           backgroundColor: backgroundColor ?? primary800,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(12.r),
           ),
           disabledBackgroundColor: secondary,
           disabledForegroundColor: Colors.white,
@@ -46,8 +47,8 @@ Widget buildBottomSheetButton({
 }
 
 double getBottomPadding(BuildContext context, bool? keyboardVisible) {
-  final defaultValue = Platform.isAndroid ? 16 : 8;
-  final keyboardPadding = (keyboardVisible ?? false) ? 16 : defaultValue;
+  final defaultValue = Platform.isAndroid ? 16.h : 8.h;
+  final keyboardPadding = (keyboardVisible ?? false) ? 16.h : defaultValue;
 
   return MediaQuery.of(context).viewInsets.bottom + keyboardPadding;
 }

@@ -2,6 +2,7 @@ import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/folders/folders_state.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 Widget buildFolderList({
@@ -27,9 +28,9 @@ Widget buildFolderList({
 
     if (isLast ?? false) Future.microtask(gotoLastIndex);
     return Container(
-      constraints: const BoxConstraints(
-        minHeight: 115,
-        maxHeight: 130,
+      constraints: BoxConstraints(
+        minHeight: 115.h,
+        maxHeight: 130.h,
       ),
       child: ListView.builder(
         controller: scrollController,
@@ -45,7 +46,7 @@ Widget buildFolderList({
             },
             child: Container(
               margin: EdgeInsets.only(
-                right: rightPadding.toDouble(),
+                right: rightPadding.toDouble().w,
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -53,15 +54,15 @@ Widget buildFolderList({
                   Stack(
                     children: [
                       Container(
-                        width: 95,
-                        height: 95,
-                        decoration: const BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(32)),
+                        width: 95.w,
+                        height: 95.h,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(32.r)),
                           color: grey100,
                         ),
                         child: ClipRRect(
-                          borderRadius: const BorderRadius.all(
-                            Radius.circular(32),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(32.r),
                           ),
                           child: ColoredBox(
                             color: grey100,
@@ -69,8 +70,8 @@ Widget buildFolderList({
                                     (folder.thumbnail?.isNotEmpty ?? false)
                                 ? Image.network(
                                     folder.thumbnail!,
-                                    width: 95,
-                                    height: 95,
+                                    width: 95.w,
+                                    height: 95.h,
                                     fit: BoxFit.cover,
                                     errorBuilder: (_, __, ___) =>
                                         emptyFolderView(),
@@ -82,22 +83,22 @@ Widget buildFolderList({
                       Visibility(
                         visible: selectedIndex == index,
                         child: Container(
-                          width: 95,
-                          height: 95,
-                          decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(32)),
+                          width: 95.w,
+                          height: 95.h,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(32.r)),
                             color: secondary400,
                           ),
                         ),
                       ),
                       if (!visible)
                         SizedBox(
-                          width: 95,
-                          height: 95,
+                          width: 95.w,
+                          height: 95.h,
                           child: Align(
                             alignment: Alignment.bottomRight,
                             child: Padding(
-                              padding: const EdgeInsets.only(bottom: 3),
+                              padding: EdgeInsets.only(bottom: 3.h),
                               child: Assets.images.icLockPng.image(),
                             ),
                           ),
@@ -106,15 +107,15 @@ Widget buildFolderList({
                         const SizedBox.shrink(),
                     ],
                   ),
-                  const SizedBox(height: 6),
+                  SizedBox(height: 6.h),
                   Text(
                     folder.name ?? '',
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: grey700,
                       fontWeight: FontWeight.w500,
-                      fontSize: 12,
-                      letterSpacing: -0.3,
-                      height: 14.3 / 12,
+                      fontSize: 12.sp,
+                      letterSpacing: -0.3.w,
+                      height: (14.3 / 12).h,
                     ),
                   ),
                 ],
@@ -125,20 +126,20 @@ Widget buildFolderList({
       ),
     );
   } else {
-    return const SizedBox(height: 115);
+    return SizedBox(height: 115.h);
   }
 }
 
 Container emptyFolderView() {
   return Container(
-    width: 95,
-    height: 95,
+    width: 95.w,
+    height: 95.h,
     color: primary100,
     child: Center(
       child: SvgPicture.asset(
         Assets.images.folder,
-        width: 36,
-        height: 36,
+        width: 36.w,
+        height: 36.h,
       ),
     ),
   );

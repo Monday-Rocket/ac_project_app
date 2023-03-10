@@ -50,7 +50,7 @@ class CustomReorderableListView extends ReorderableListView {
         newIndex -= 1;
       }
 
-      if (oldIndex % 2 == 1) {
+      if (oldIndex.isOdd) {
         //separator - should never happen
         return;
       }
@@ -60,7 +60,7 @@ class CustomReorderableListView extends ReorderableListView {
         return;
       }
 
-      newIndex = oldIndex > newIndex && newIndex % 2 == 1
+      newIndex = oldIndex > newIndex && newIndex.isOdd
           ? (newIndex + 1) ~/ 2
           : newIndex ~/ 2;
       oldIndex = oldIndex ~/ 2;

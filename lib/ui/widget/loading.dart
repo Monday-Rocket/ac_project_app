@@ -2,12 +2,13 @@
 
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lottie/lottie.dart';
 
 Widget LoadingWidget({double width = 60, double height = 60}) {
   return SizedBox(
-    width: width,
-    height: height,
+    width: width.w,
+    height: height.h,
     child: Lottie.asset(
       Assets.animations.loading,
       frameRate: FrameRate(60),
@@ -17,12 +18,12 @@ Widget LoadingWidget({double width = 60, double height = 60}) {
 
 Widget BottomLoadingWidget({double width = 30, double height = 30}) {
   return SizedBox(
-    height: 30 + 30 + 50,
+    height: 110.h,
     child: Padding(
-      padding: const EdgeInsets.only(top: 30),
+      padding: EdgeInsets.only(top: 30.h),
       child: LoadingWidget(
-        width: 30,
-        height: 30,
+        width: width.w,
+        height: height.h,
       ),
     ),
   );
