@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -110,7 +111,7 @@ class LinkDetailView extends StatelessWidget {
             goBackPage(editState, context, link.id);
           },
           icon: SvgPicture.asset(Assets.images.icBack),
-          padding: const EdgeInsets.only(left: 20, right: 8),
+          padding: EdgeInsets.only(left: 20.w, right: 8.w),
         ),
         actions: [
           InkWell(
@@ -122,11 +123,11 @@ class LinkDetailView extends StatelessWidget {
                     callback: () => Navigator.pop(context),
                   ),
             child: Container(
-              margin: const EdgeInsets.only(right: 24),
+              margin: EdgeInsets.only(right: 24.w),
               child: SvgPicture.asset(
                 Assets.images.more,
-                width: 25,
-                height: 25,
+                width: 25.w,
+                height: 25.h,
               ),
             ),
           ),
@@ -202,7 +203,7 @@ class LinkDetailView extends StatelessWidget {
       controller: scrollController,
       reverse: state == EditState.edit,
       child: Container(
-        margin: const EdgeInsets.only(left: 24, right: 24, top: 14),
+        margin: EdgeInsets.only(left: 24.w, right: 24.w, top: 14),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -215,13 +216,13 @@ class LinkDetailView extends StatelessWidget {
               },
               child: DecoratedBox(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  boxShadow: const [
+                  borderRadius: BorderRadius.circular(10.r),
+                  boxShadow: [
                     BoxShadow(
-                      color: Color(0x0F444C94),
-                      spreadRadius: 10,
-                      blurRadius: 10,
-                      offset: Offset(12, 15),
+                      color: const Color(0x0F444C94),
+                      spreadRadius: 10.r,
+                      blurRadius: 10.r,
+                      offset: Offset(12.w, 15.h),
                     ),
                   ],
                 ),
@@ -229,40 +230,41 @@ class LinkDetailView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     ClipRRect(
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(10),
-                        topRight: Radius.circular(10),
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(10.r),
+                        topRight: Radius.circular(10.r),
                       ),
                       child: Image.network(
                         link.image ?? '',
                         fit: BoxFit.cover,
-                        width: MediaQuery.of(cubitContext).size.width - 48,
-                        height: 193,
+                        width: MediaQuery.of(cubitContext).size.width - 48.w,
+                        height: 193.h,
                         errorBuilder: (_, __, ___) {
                           return Container(
-                            decoration: const BoxDecoration(
+                            decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(10),
-                                topRight: Radius.circular(10),
+                                topLeft: Radius.circular(10.r),
+                                topRight: Radius.circular(10.r),
                               ),
                             ),
-                            width: MediaQuery.of(cubitContext).size.width - 48,
-                            height: 10,
+                            width:
+                                MediaQuery.of(cubitContext).size.width - 48.w,
+                            height: 10.h,
                           );
                         },
                       ),
                     ),
                     DecoratedBox(
-                      decoration: const BoxDecoration(
+                      decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(10),
-                          bottomRight: Radius.circular(10),
+                          bottomLeft: Radius.circular(10.r),
+                          bottomRight: Radius.circular(10.r),
                         ),
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.fromLTRB(19, 23, 47, 33),
+                        padding: EdgeInsets.fromLTRB(19.w, 23.h, 47.w, 33.h),
                         child: SizedBox(
                           width: double.infinity,
                           child: Column(
@@ -272,23 +274,23 @@ class LinkDetailView extends StatelessWidget {
                                 getSafeTitleText(link.title),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  fontSize: 17,
+                                style: TextStyle(
+                                  fontSize: 17.sp,
                                   color: blackBold,
-                                  letterSpacing: -0.2,
+                                  letterSpacing: -0.2.w,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                               Container(
-                                margin: const EdgeInsets.only(top: 7),
+                                margin: EdgeInsets.only(top: 7.h),
                                 child: Text(
                                   link.url ?? '',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    color: Color(0xFFC0C2C4),
-                                    letterSpacing: -0.1,
+                                  style: TextStyle(
+                                    fontSize: 12.sp,
+                                    color: const Color(0xFFC0C2C4),
+                                    letterSpacing: -0.1.w,
                                   ),
                                 ),
                               ),
@@ -301,19 +303,19 @@ class LinkDetailView extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(
-              height: 44,
+            SizedBox(
+              height: 44.h,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
+                  padding: EdgeInsets.only(bottom: 12.h),
                   child: Text(
                     getMonthDayYear(link.time ?? ''),
-                    style: const TextStyle(
-                      fontSize: 12,
+                    style: TextStyle(
+                      fontSize: 12.sp,
                       color: grey400,
                       fontWeight: FontWeight.w400,
                     ),
@@ -329,7 +331,7 @@ class LinkDetailView extends StatelessWidget {
                       toggleEditorWithDialog(state, cubitContext, link.id);
                     },
                     child: Padding(
-                      padding: const EdgeInsets.all(12),
+                      padding: EdgeInsets.all(12.r),
                       child: SvgPicture.asset(
                         Assets.images.icWriteComment,
                       ),
@@ -339,9 +341,9 @@ class LinkDetailView extends StatelessWidget {
               ],
             ),
             Container(
-              margin: const EdgeInsets.only(bottom: 22),
+              margin: EdgeInsets.only(bottom: 22.h),
               color: const Color(0xffecedee),
-              height: 1,
+              height: 1.h,
               width: double.infinity,
             ),
             Builder(
@@ -352,59 +354,59 @@ class LinkDetailView extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
-                        constraints: const BoxConstraints(
-                          minHeight: 240,
+                        constraints: BoxConstraints(
+                          minHeight: 240.h,
                         ),
                         child: Text(
                           link.describe ?? '',
-                          style: const TextStyle(
-                            fontSize: 16,
+                          style: TextStyle(
+                            fontSize: 16.sp,
                             color: e6Grey700,
-                            letterSpacing: -0.1,
-                            height: 26 / 16,
+                            letterSpacing: -0.1.w,
+                            height: (26 / 16).h,
                           ),
                         ),
                       ),
                       Container(
-                        margin: const EdgeInsets.only(top: 22, bottom: 47),
+                        margin: EdgeInsets.only(top: 22.h, bottom: 47.h),
                         color: const Color(0xffecedee),
-                        height: 1,
+                        height: 1.h,
                         width: double.infinity,
                       ),
                     ],
                   );
                 } else {
                   return Container(
-                    margin: const EdgeInsets.only(bottom: 80),
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(12)),
+                    margin: EdgeInsets.only(bottom: 80.h),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(12.r)),
                       color: grey100,
                     ),
                     child: SingleChildScrollView(
                       padding: EdgeInsets.zero,
                       child: Container(
-                        constraints: const BoxConstraints(
-                          minHeight: 120,
+                        constraints: BoxConstraints(
+                          minHeight: 120.h,
                         ),
                         child: TextField(
                           controller: cubitContext
                               .read<DetailEditCubit>()
                               .textController,
-                          style: const TextStyle(
-                            fontSize: 14,
+                          style: TextStyle(
+                            fontSize: 14.sp,
                             color: grey700,
-                            height: 19.6 / 14,
-                            letterSpacing: -0.1,
+                            height: (19.6 / 14).h,
+                            letterSpacing: -0.1.w,
                           ),
                           cursorColor: primary600,
                           keyboardType: TextInputType.multiline,
                           maxLines: null,
                           autofocus: true,
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                             border: InputBorder.none,
                             focusedBorder: InputBorder.none,
                             isDense: true,
-                            contentPadding: EdgeInsets.all(17),
+                            contentPadding: EdgeInsets.all(17.r),
                           ),
                         ),
                       ),

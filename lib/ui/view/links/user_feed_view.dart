@@ -18,6 +18,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class UserFeedView extends StatelessWidget {
@@ -55,17 +56,17 @@ class UserFeedView extends StatelessWidget {
                     children: [
                       Image.asset(
                         makeImagePath(user.profileImg),
-                        width: 105,
-                        height: 105,
+                        width: 105.w,
+                        height: 105.h,
                       ),
-                      const SizedBox(height: 6),
+                      SizedBox(height: 6.h),
                       Text(
                         user.nickname,
-                        style: const TextStyle(
-                          color: Color(0xff0e0e0e),
+                        style: TextStyle(
+                          color: const Color(0xff0e0e0e),
                           fontWeight: FontWeight.bold,
-                          fontSize: 28,
-                          letterSpacing: -0.6,
+                          fontSize: 28.sp,
+                          letterSpacing: -0.6.w,
                         ),
                       )
                     ],
@@ -114,7 +115,7 @@ class UserFeedView extends StatelessWidget {
         },
         icon: SvgPicture.asset(Assets.images.icBack),
         color: grey900,
-        padding: const EdgeInsets.only(left: 20, right: 8),
+        padding: EdgeInsets.only(left: 20.w, right: 8.w),
       ),
       actions: [
         if (!isMine)
@@ -127,11 +128,11 @@ class UserFeedView extends StatelessWidget {
               },
             ),
             child: Container(
-              margin: const EdgeInsets.only(right: 24),
+              margin: EdgeInsets.only(right: 24.w),
               child: SvgPicture.asset(
                 Assets.images.more,
-                width: 25,
-                height: 25,
+                width: 25.w,
+                height: 25.h,
               ),
             ),
           )
@@ -149,27 +150,27 @@ class UserFeedView extends StatelessWidget {
     List<Folder> folders,
   ) {
     return Container(
-      margin: const EdgeInsets.only(top: 30 - 7, left: 12, right: 20),
+      margin: EdgeInsets.only(top: 23.h, left: 12.w, right: 20.w),
       child: DefaultTabController(
         length: folders.length,
         child: SizedBox(
-          height: 36,
+          height: 36.h,
           child: Stack(
             children: [
               Align(
                 alignment: Alignment.bottomCenter,
                 child: Padding(
-                  padding: const EdgeInsets.only(
-                    left: 15,
-                    right: 11,
-                    bottom: 1,
+                  padding: EdgeInsets.only(
+                    left: 15.w,
+                    right: 11.w,
+                    bottom: 1.h,
                   ),
                   child: Row(
                     children: [
                       Expanded(
                         child: Container(
                           color: greyTab,
-                          height: 1,
+                          height: 1.h,
                         ),
                       ),
                     ],
@@ -177,15 +178,15 @@ class UserFeedView extends StatelessWidget {
                 ),
               ),
               Container(
-                margin: const EdgeInsets.only(right: 7),
+                margin: EdgeInsets.only(right: 7.w),
                 child: Builder(
                   builder: (context) {
                     final tabs = <Widget>[];
                     for (final folder in folders) {
                       tabs.add(
                         Padding(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 7,
+                          padding: EdgeInsets.symmetric(
+                            vertical: 7.h,
                           ),
                           child: Text(
                             folder.name ?? '',
@@ -197,26 +198,26 @@ class UserFeedView extends StatelessWidget {
                       isScrollable: true,
                       unselectedLabelColor: lightGrey700,
                       labelColor: primaryTab,
-                      labelStyle: const TextStyle(
+                      labelStyle: TextStyle(
                         fontFamily: R_Font.PRETENDARD,
-                        fontSize: 16,
-                        height: 19 / 16,
+                        fontSize: 16.sp,
+                        height: (19 / 16).h,
                         fontWeight: FontWeight.w800,
                       ),
-                      unselectedLabelStyle: const TextStyle(
+                      unselectedLabelStyle: TextStyle(
                         fontFamily: R_Font.PRETENDARD,
-                        fontSize: 16,
-                        height: 19 / 16,
+                        fontSize: 16.sp,
+                        height: (19 / 16).h,
                         fontWeight: FontWeight.bold,
                       ),
-                      indicator: const UnderlineTabIndicator(
+                      indicator: UnderlineTabIndicator(
                         borderSide: BorderSide(
                           color: primaryTab,
-                          width: 2.5,
+                          width: 2.5.w,
                         ),
                         insets: EdgeInsets.only(
-                          left: 15,
-                          right: 15,
+                          left: 15.w,
+                          right: 15.w,
                         ),
                       ),
                       tabs: tabs,
@@ -277,9 +278,9 @@ class UserFeedView extends StatelessWidget {
                       );
                     },
                     child: Container(
-                      margin: const EdgeInsets.symmetric(
-                        vertical: 20,
-                        horizontal: 24,
+                      margin: EdgeInsets.symmetric(
+                        vertical: 20.h,
+                        horizontal: 24.w,
                       ),
                       color: Colors.white,
                       child: Column(
@@ -300,12 +301,12 @@ class UserFeedView extends StatelessWidget {
                               children: [
                                 Image.asset(
                                   makeImagePath(user.profileImg),
-                                  width: 32,
-                                  height: 32,
+                                  width: 32.w,
+                                  height: 32.h,
                                   errorBuilder: (_, __, ___) {
                                     return Container(
-                                      width: 32,
-                                      height: 32,
+                                      width: 32.w,
+                                      height: 32.h,
                                       decoration: const BoxDecoration(
                                         color: grey300,
                                         shape: BoxShape.circle,
@@ -313,8 +314,8 @@ class UserFeedView extends StatelessWidget {
                                     );
                                   },
                                 ),
-                                const SizedBox(
-                                  width: 8,
+                                SizedBox(
+                                  width: 8.w,
                                 ),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -329,28 +330,27 @@ class UserFeedView extends StatelessWidget {
                                           ),
                                         ),
                                         Container(
-                                          margin: const EdgeInsets.only(
-                                            left: 4,
+                                          margin: EdgeInsets.only(
+                                            left: 4.w,
                                           ),
-                                          decoration: const BoxDecoration(
+                                          decoration: BoxDecoration(
                                             color: primary200,
                                             borderRadius: BorderRadius.all(
-                                              Radius.circular(4),
+                                              Radius.circular(4.r),
                                             ),
                                           ),
                                           child: Center(
                                             child: Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                vertical: 3,
-                                                horizontal: 4,
+                                              padding: EdgeInsets.symmetric(
+                                                vertical: 3.h,
+                                                horizontal: 4.w,
                                               ),
                                               child: Text(
                                                 user.jobGroup?.name ?? '',
-                                                style: const TextStyle(
+                                                style: TextStyle(
                                                   color: primary600,
-                                                  fontSize: 10,
-                                                  letterSpacing: -0.2,
+                                                  fontSize: 10.sp,
+                                                  letterSpacing: -0.2.w,
                                                 ),
                                               ),
                                             ),
@@ -359,13 +359,13 @@ class UserFeedView extends StatelessWidget {
                                       ],
                                     ),
                                     Container(
-                                      margin: const EdgeInsets.only(top: 4),
+                                      margin: EdgeInsets.only(top: 4.h),
                                       child: Text(
                                         makeLinkTimeString(link.time ?? ''),
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           color: grey400,
-                                          fontSize: 12,
-                                          letterSpacing: -0.2,
+                                          fontSize: 12.sp,
+                                          letterSpacing: -0.2.w,
                                         ),
                                       ),
                                     ),
@@ -378,15 +378,15 @@ class UserFeedView extends StatelessWidget {
                               (link.describe?.isNotEmpty ?? false))
                             Column(
                               children: [
-                                const SizedBox(
-                                  height: 17,
+                                SizedBox(
+                                  height: 17.h,
                                 ),
                                 Text(
                                   link.describe ?? '',
-                                  style: const TextStyle(
-                                    fontSize: 16,
+                                  style: TextStyle(
+                                    fontSize: 16.sp,
                                     color: grey800,
-                                    height: 26 / 16,
+                                    height: (26 / 16).h,
                                   ),
                                 ),
                               ],
@@ -394,13 +394,13 @@ class UserFeedView extends StatelessWidget {
                           else
                             const SizedBox.shrink(),
                           Container(
-                            margin: const EdgeInsets.only(
-                              top: 16,
-                              bottom: 18,
+                            margin: EdgeInsets.only(
+                              top: 16.h,
+                              bottom: 18.h,
                             ),
                             child: ClipRRect(
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(7),
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(7.r),
                               ),
                               child: isLinkVerified(link)
                                   ? Container(
@@ -413,7 +413,7 @@ class UserFeedView extends StatelessWidget {
                                         imageBuilder:
                                             (context, imageProvider) =>
                                                 Container(
-                                          height: 160,
+                                          height: 160.h,
                                           decoration: BoxDecoration(
                                             image: DecorationImage(
                                               image: imageProvider,
@@ -437,14 +437,14 @@ class UserFeedView extends StatelessWidget {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   SizedBox(
-                                    width: width - (24 * 2 + 25),
+                                    width: (width - (24 * 2 + 25)).w,
                                     child: Text(
                                       link.title ?? '',
                                       overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         color: blackBold,
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 16,
+                                        fontSize: 16.sp,
                                       ),
                                     ),
                                   ),
@@ -474,9 +474,9 @@ class UserFeedView extends StatelessWidget {
                                 link.url ?? '',
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   color: grey500,
-                                  fontSize: 12,
+                                  fontSize: 12.sp,
                                 ),
                               ),
                             ],
@@ -486,9 +486,9 @@ class UserFeedView extends StatelessWidget {
                     ),
                   );
                 },
-                separatorBuilder: (_, __) => const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24),
-                  child: Divider(height: 1, color: grey900),
+                separatorBuilder: (_, __) => Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24.w),
+                  child: Divider(height: 1.h, color: grey900),
                 ),
               ),
             ),

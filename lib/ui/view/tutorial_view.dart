@@ -5,6 +5,7 @@ import 'package:ac_project_app/ui/widget/buttons/bottom_sheet_button.dart';
 import 'package:ac_project_app/ui/widget/text/custom_font.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class TutorialView extends StatefulWidget {
   const TutorialView({super.key});
@@ -33,7 +34,7 @@ class _TutorialViewState extends State<TutorialView> {
                 children: [
                   Image.asset(
                     tutorial.image,
-                    height: height * 0.6,
+                    height: (height * 0.6).h,
                     fit: BoxFit.cover,
                   ),
                   Row(
@@ -42,10 +43,10 @@ class _TutorialViewState extends State<TutorialView> {
                       return GestureDetector(
                         onTap: () => _controller.animateToPage(entry.key),
                         child: Container(
-                          width: 7,
-                          height: 7,
-                          margin: const EdgeInsets.symmetric(
-                            horizontal: 3,
+                          width: 7.w,
+                          height: 7.h,
+                          margin: EdgeInsets.symmetric(
+                            horizontal: 3.w,
                           ),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
@@ -57,24 +58,24 @@ class _TutorialViewState extends State<TutorialView> {
                       );
                     }).toList(),
                   ),
-                  const SizedBox(height: 22),
+                  SizedBox(height: 22.h),
                   Text(
                     tutorial.title,
-                    style: const TextStyle(
-                      fontSize: 26,
-                      letterSpacing: -0.2,
+                    style: TextStyle(
+                      fontSize: 26.sp,
+                      letterSpacing: -0.2.w,
                       color: blackTutorial,
                     ),
                   ).bold(),
-                  const SizedBox(height: 10),
+                  SizedBox(height: 10.h),
                   Text(
                     tutorial.subTitle,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 14,
+                    style: TextStyle(
+                      fontSize: 14.sp,
                       color: greyTutorial,
-                      letterSpacing: -0.3,
-                      height: 24 / 14,
+                      letterSpacing: -0.3.w,
+                      height: 24.h / 14,
                     ),
                   ),
                 ],
@@ -83,7 +84,7 @@ class _TutorialViewState extends State<TutorialView> {
                 .toList(),
             carouselController: _controller,
             options: CarouselOptions(
-              height: height * 646 / 812 - 10,
+              height: (height * 646 / 812 - 10).h,
               viewportFraction: 1,
               enableInfiniteScroll: false,
               onPageChanged: (index, reason) {

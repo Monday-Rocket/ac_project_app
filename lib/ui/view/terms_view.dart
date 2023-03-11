@@ -7,6 +7,7 @@ import 'package:ac_project_app/ui/widget/only_back_app_bar.dart';
 import 'package:ac_project_app/ui/widget/text/custom_font.dart';
 import 'package:ac_project_app/util/get_widget_arguments.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class TermsView extends StatefulWidget {
@@ -39,23 +40,23 @@ class _TermsViewState extends State<TermsView> {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 24),
+          margin: EdgeInsets.symmetric(horizontal: 24.w),
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 16),
-                const Text(
+                SizedBox(height: 16.h),
+                Text(
                   '링풀 서비스\n이용약관에 동의해주세요.',
                   style: TextStyle(
-                    fontSize: 24,
+                    fontSize: 24.sp,
                     color: grey900,
                     fontWeight: FontWeight.bold,
-                    height: 34 / 24,
-                    letterSpacing: -0.3,
+                    height: (34 / 24).h,
+                    letterSpacing: -0.3.w,
                   ),
                 ),
-                const SizedBox(height: 40),
+                SizedBox(height: 40.h),
                 GestureDetector(
                   onTap: () {
                     setState(() {
@@ -76,8 +77,8 @@ class _TermsViewState extends State<TermsView> {
                           duration: const Duration(milliseconds: 200),
                           decoration: BoxDecoration(
                             color: firstCheck ? primary800 : grey100,
-                            borderRadius: const BorderRadius.all(
-                              Radius.circular(8),
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(8.r),
                             ),
                             border: Border.all(
                               width: 0,
@@ -85,32 +86,32 @@ class _TermsViewState extends State<TermsView> {
                             ),
                           ),
                           child: Padding(
-                            padding: const EdgeInsets.all(2),
+                            padding: EdgeInsets.all(2.r),
                             child: firstCheck
-                                ? const Icon(
+                                ? Icon(
                                     Icons.check,
-                                    size: 18,
+                                    size: 18.r,
                                     color: Colors.white,
                                   )
-                                : const Icon(
+                                : Icon(
                                     Icons.check,
-                                    size: 18,
+                                    size: 18.r,
                                     color: grey300,
                                   ),
                           ),
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(left: 11),
-                        child: const Text('전체 동의').bold().fontSize(17),
+                        padding: EdgeInsets.only(left: 11.w),
+                        child: const Text('전체 동의').bold().fontSize(17.sp),
                       ),
                     ],
                   ),
                 ),
                 Container(
-                  margin: const EdgeInsets.only(top: 21),
-                  child: const Divider(
-                    height: 1,
+                  margin: EdgeInsets.only(top: 21.h),
+                  child: Divider(
+                    height: 1.h,
                     color: greyTab,
                   ),
                 ),
@@ -124,7 +125,7 @@ class _TermsViewState extends State<TermsView> {
                   child: ColoredBox(
                     color: Colors.white,
                     child: Padding(
-                      padding: const EdgeInsets.only(top: 19, bottom: 9),
+                      padding: EdgeInsets.only(top: 19.h, bottom: 9.h),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -136,27 +137,27 @@ class _TermsViewState extends State<TermsView> {
                                   milliseconds: 200,
                                 ),
                                 child: Padding(
-                                  padding: const EdgeInsets.all(2),
+                                  padding: EdgeInsets.all(2.r),
                                   child: secondCheck
-                                      ? const Icon(
+                                      ? Icon(
                                           Icons.check,
-                                          size: 18,
+                                          size: 18.r,
                                           color: primary800,
                                         )
-                                      : const Icon(
+                                      : Icon(
                                           Icons.check,
-                                          size: 18,
+                                          size: 18.r,
                                           color: grey300,
                                         ),
                                 ),
                               ),
                               Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 11,
+                                padding: EdgeInsets.only(
+                                  left: 11.w,
                                 ),
                                 child: const Text('개인정보 수집 및 이용 동의')
                                     .weight(FontWeight.w500)
-                                    .fontSize(15),
+                                    .fontSize(15.sp),
                               ),
                               GestureDetector(
                                 onTap: () => launchUrl(
@@ -168,7 +169,7 @@ class _TermsViewState extends State<TermsView> {
                                 ),
                                 child: const Text('[보기]')
                                     .weight(FontWeight.w500)
-                                    .fontSize(15),
+                                    .fontSize(15.sp),
                               ),
                             ],
                           ),
@@ -187,7 +188,7 @@ class _TermsViewState extends State<TermsView> {
                   child: ColoredBox(
                     color: Colors.white,
                     child: Padding(
-                      padding: const EdgeInsets.only(top: 9),
+                      padding: EdgeInsets.only(top: 9.h),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -199,27 +200,27 @@ class _TermsViewState extends State<TermsView> {
                                   milliseconds: 200,
                                 ),
                                 child: Padding(
-                                  padding: const EdgeInsets.all(2),
+                                  padding: EdgeInsets.all(2.r),
                                   child: thirdCheck
-                                      ? const Icon(
+                                      ? Icon(
                                           Icons.check,
-                                          size: 18,
+                                          size: 18.r,
                                           color: primary800,
                                         )
-                                      : const Icon(
+                                      : Icon(
                                           Icons.check,
-                                          size: 18,
+                                          size: 18.r,
                                           color: grey300,
                                         ),
                                 ),
                               ),
                               Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 11,
+                                padding: EdgeInsets.only(
+                                  left: 11.w,
                                 ),
                                 child: const Text('서비스 이용약관')
                                     .weight(FontWeight.w500)
-                                    .fontSize(15),
+                                    .fontSize(15.sp),
                               ),
                               GestureDetector(
                                 onTap: () => launchUrl(
@@ -231,7 +232,7 @@ class _TermsViewState extends State<TermsView> {
                                 ),
                                 child: const Text('[보기]')
                                     .weight(FontWeight.w500)
-                                    .fontSize(15),
+                                    .fontSize(15.sp),
                               ),
                             ],
                           ),

@@ -20,6 +20,7 @@ import 'package:ac_project_app/util/string_utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class HomePage extends StatelessWidget {
@@ -36,7 +37,7 @@ class HomePage extends StatelessWidget {
             child: Column(
               children: [
                 Container(
-                  margin: const EdgeInsets.only(left: 24, right: 24, top: 20),
+                  margin: EdgeInsets.only(left: 24.w, right: 24.w, top: 20.h),
                   child: GestureDetector(
                     onTap: () => Navigator.pushNamed(
                       context,
@@ -46,20 +47,20 @@ class HomePage extends StatelessWidget {
                       },
                     ),
                     child: Container(
-                      decoration: const BoxDecoration(
+                      decoration: BoxDecoration(
                         color: ccGrey100,
-                        borderRadius: BorderRadius.all(Radius.circular(7)),
+                        borderRadius: BorderRadius.all(Radius.circular(7.r)),
                       ),
                       width: double.infinity,
-                      height: 36,
-                      margin: const EdgeInsets.only(right: 6),
+                      height: 36.h,
+                      margin: EdgeInsets.only(right: 6.w),
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: Padding(
-                          padding: const EdgeInsets.only(left: 10),
+                          padding: EdgeInsets.only(left: 10.w),
                           child: Assets.images.folderSearchIcon.image(
-                            width: 24,
-                            height: 24,
+                            width: 24.w,
+                            height: 24.h,
                           ), // Image.asset(
                         ),
                       ),
@@ -125,9 +126,11 @@ class HomePage extends StatelessWidget {
                       context
                           .read<LinksFromSelectedJobGroupCubit>()
                           .hasLoadMore) {
-                    Future.microtask(() => context
-                        .read<LinksFromSelectedJobGroupCubit>()
-                        .scrollEnd());
+                    Future.microtask(
+                      () => context
+                          .read<LinksFromSelectedJobGroupCubit>()
+                          .scrollEnd(),
+                    );
                     return BottomLoadingWidget();
                   }
                   final link = totalLinks[i];
@@ -142,9 +145,9 @@ class HomePage extends StatelessWidget {
                       );
                     },
                     child: Container(
-                      margin: const EdgeInsets.symmetric(
-                        vertical: 20,
-                        horizontal: 24,
+                      margin: EdgeInsets.symmetric(
+                        vertical: 20.h,
+                        horizontal: 24.w,
                       ),
                       color: Colors.white,
                       child: Column(
@@ -171,12 +174,12 @@ class HomePage extends StatelessWidget {
                               children: [
                                 Image.asset(
                                   makeImagePath(link.user?.profileImg ?? '01'),
-                                  width: 32,
-                                  height: 32,
+                                  width: 32.w,
+                                  height: 32.h,
                                   errorBuilder: (_, __, ___) {
                                     return Container(
-                                      width: 32,
-                                      height: 32,
+                                      width: 32.w,
+                                      height: 32.h,
                                       decoration: const BoxDecoration(
                                         color: grey300,
                                         shape: BoxShape.circle,
@@ -184,8 +187,8 @@ class HomePage extends StatelessWidget {
                                     );
                                   },
                                 ),
-                                const SizedBox(
-                                  width: 8,
+                                SizedBox(
+                                  width: 8.w,
                                 ),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -200,28 +203,27 @@ class HomePage extends StatelessWidget {
                                           ),
                                         ),
                                         Container(
-                                          margin: const EdgeInsets.only(
-                                            left: 4,
+                                          margin: EdgeInsets.only(
+                                            left: 4.w,
                                           ),
-                                          decoration: const BoxDecoration(
+                                          decoration: BoxDecoration(
                                             color: primary66_200,
                                             borderRadius: BorderRadius.all(
-                                              Radius.circular(4),
+                                              Radius.circular(4.r),
                                             ),
                                           ),
                                           child: Center(
                                             child: Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                vertical: 3,
-                                                horizontal: 4,
+                                              padding: EdgeInsets.symmetric(
+                                                vertical: 3.h,
+                                                horizontal: 4.w,
                                               ),
                                               child: Text(
                                                 link.user?.jobGroup?.name ?? '',
-                                                style: const TextStyle(
+                                                style: TextStyle(
                                                   color: primary600,
-                                                  fontSize: 10,
-                                                  letterSpacing: -0.2,
+                                                  fontSize: 10.sp,
+                                                  letterSpacing: -0.2.w,
                                                 ),
                                               ),
                                             ),
@@ -230,13 +232,13 @@ class HomePage extends StatelessWidget {
                                       ],
                                     ),
                                     Container(
-                                      margin: const EdgeInsets.only(top: 4),
+                                      margin: EdgeInsets.only(top: 4.h),
                                       child: Text(
                                         makeLinkTimeString(link.time ?? ''),
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           color: grey400,
-                                          fontSize: 12,
-                                          letterSpacing: -0.2,
+                                          fontSize: 12.sp,
+                                          letterSpacing: -0.2.w,
                                         ),
                                       ),
                                     ),
@@ -249,15 +251,15 @@ class HomePage extends StatelessWidget {
                               (link.describe?.isNotEmpty ?? false))
                             Column(
                               children: [
-                                const SizedBox(
-                                  height: 17,
+                                SizedBox(
+                                  height: 17.h,
                                 ),
                                 Text(
                                   link.describe ?? '',
-                                  style: const TextStyle(
-                                    fontSize: 16,
+                                  style: TextStyle(
+                                    fontSize: 16.sp,
                                     color: grey800,
-                                    height: 26 / 16,
+                                    height: (26 / 16).h,
                                   ),
                                 ),
                               ],
@@ -265,13 +267,13 @@ class HomePage extends StatelessWidget {
                           else
                             const SizedBox.shrink(),
                           Container(
-                            margin: const EdgeInsets.only(
-                              top: 16,
-                              bottom: 18,
+                            margin: EdgeInsets.only(
+                              top: 16.h,
+                              bottom: 18.h,
                             ),
                             child: ClipRRect(
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(7),
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(7.r),
                               ),
                               child: isLinkVerified(link)
                                   ? Container(
@@ -288,7 +290,7 @@ class HomePage extends StatelessWidget {
                                         imageBuilder:
                                             (context, imageProvider) =>
                                                 Container(
-                                          height: 160,
+                                          height: 160.h,
                                           decoration: BoxDecoration(
                                             image: DecorationImage(
                                               image: imageProvider,
@@ -313,14 +315,14 @@ class HomePage extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
                                   SizedBox(
-                                    width: width - (24 * 2 + 25),
+                                    width: (width - (24 * 2 + 25)).w,
                                     child: Text(
                                       link.title ?? '',
                                       overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         color: blackBold,
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 16,
+                                        fontSize: 16.sp,
                                       ),
                                     ),
                                   ),
@@ -354,14 +356,14 @@ class HomePage extends StatelessWidget {
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 6),
+                              SizedBox(height: 6.h),
                               Text(
                                 link.url ?? '',
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   color: grey500,
-                                  fontSize: 12,
+                                  fontSize: 12.sp,
                                 ),
                               ),
                             ],
@@ -371,9 +373,9 @@ class HomePage extends StatelessWidget {
                     ),
                   );
                 },
-                separatorBuilder: (_, __) => const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24),
-                  child: Divider(height: 1, thickness: 1, color: ccGrey200),
+                separatorBuilder: (_, __) => Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24.w),
+                  child: Divider(height: 1.h, thickness: 1.w, color: ccGrey200),
                 ),
               ),
             ),
@@ -396,27 +398,27 @@ class HomePage extends StatelessWidget {
     List<JobGroup> jobs,
   ) {
     return Container(
-      margin: const EdgeInsets.only(top: 30 - 7, left: 12, right: 20),
+      margin: EdgeInsets.only(top: 23.h, left: 12.w, right: 20.w),
       child: DefaultTabController(
         length: jobs.length,
         child: SizedBox(
-          height: 36,
+          height: 36.h,
           child: Stack(
             children: [
               Align(
                 alignment: Alignment.bottomCenter,
                 child: Padding(
-                  padding: const EdgeInsets.only(
-                    left: 15,
-                    right: 11,
-                    bottom: 1,
+                  padding: EdgeInsets.only(
+                    left: 15.w,
+                    right: 11.w,
+                    bottom: 1.h,
                   ),
                   child: Row(
                     children: [
                       Expanded(
                         child: Container(
                           color: greyTab,
-                          height: 1,
+                          height: 1.h,
                         ),
                       ),
                     ],
@@ -424,15 +426,15 @@ class HomePage extends StatelessWidget {
                 ),
               ),
               Container(
-                margin: const EdgeInsets.only(right: 7),
+                margin: EdgeInsets.only(right: 7.w),
                 child: Builder(
                   builder: (context) {
                     final tabs = <Widget>[];
                     for (final job in jobs) {
                       tabs.add(
                         Padding(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 7,
+                          padding: EdgeInsets.symmetric(
+                            vertical: 7.h,
                           ),
                           child: Text(
                             job.name ?? '',
@@ -444,28 +446,25 @@ class HomePage extends StatelessWidget {
                       isScrollable: true,
                       unselectedLabelColor: grey700,
                       labelColor: primaryTab,
-                      labelPadding: const EdgeInsets.symmetric(horizontal: 13),
-                      labelStyle: const TextStyle(
+                      labelPadding: EdgeInsets.symmetric(horizontal: 13.w),
+                      labelStyle: TextStyle(
                         fontFamily: R_Font.PRETENDARD,
-                        fontSize: 16,
-                        height: 19 / 16,
+                        fontSize: 16.sp,
+                        height: (19 / 16).h,
                         fontWeight: FontWeight.w800,
                       ),
-                      unselectedLabelStyle: const TextStyle(
+                      unselectedLabelStyle: TextStyle(
                         fontFamily: R_Font.PRETENDARD,
-                        fontSize: 16,
-                        height: 19 / 16,
+                        fontSize: 16.sp,
+                        height: (19 / 16).h,
                         fontWeight: FontWeight.bold,
                       ),
-                      indicator: const UnderlineTabIndicator(
+                      indicator: UnderlineTabIndicator(
                         borderSide: BorderSide(
                           color: primaryTab,
-                          width: 2.5,
+                          width: 2.5.w,
                         ),
-                        insets: EdgeInsets.only(
-                          left: 15,
-                          right: 15,
-                        ),
+                        insets: EdgeInsets.symmetric(horizontal: 15.w),
                       ),
                       tabs: tabs,
                       onTap: (index) {

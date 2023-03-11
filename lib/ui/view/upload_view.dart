@@ -24,6 +24,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class UploadView extends StatefulWidget {
@@ -92,7 +93,6 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
       buttonState = isCopied ? ButtonState.enabled : ButtonState.disabled;
     }
     Log.i('buttonState: ${buttonState.name}');
-    final height = MediaQuery.of(context).size.height;
 
     return MultiBlocProvider(
       providers: [
@@ -119,19 +119,19 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
                   onPressed: () => Navigator.pop(context),
                   icon: SvgPicture.asset(Assets.images.icBack),
                   color: grey900,
-                  padding: const EdgeInsets.only(left: 20, right: 8),
+                  padding: EdgeInsets.only(left: 20.w, right: 8.w),
                 ),
                 backgroundColor: Colors.transparent,
                 elevation: 0,
                 systemOverlayStyle: SystemUiOverlayStyle.dark,
-                title: const Text(
+                title: Text(
                   '업로드',
                   style: TextStyle(
                     color: grey900,
                     fontWeight: FontWeight.bold,
-                    fontSize: 19,
-                    height: 22 / 19,
-                    letterSpacing: -0.3,
+                    fontSize: 19.sp,
+                    height: (22 / 19).h,
+                    letterSpacing: -0.3.w,
                   ),
                 ),
               ),
@@ -143,7 +143,7 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
                     physics: const ClampingScrollPhysics(),
                     child: SafeArea(
                       child: Container(
-                        margin: const EdgeInsets.only(left: 24, top: 20),
+                        margin: EdgeInsets.only(left: 24.w, top: 20.h),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -180,13 +180,13 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
                                 );
                               },
                             ),
-                            const SizedBox(height: 35),
+                            SizedBox(height: 35.h),
                             buildSubTitle('링크 코멘트'),
-                            buildCommentTextField(visible, height),
-                            const SizedBox(height: 13),
+                            buildCommentTextField(visible),
+                            SizedBox(height: 13.h),
                             buildUploadWarning(true),
                             SizedBox(
-                              height: keyboardHeight,
+                              height: keyboardHeight.h,
                             ),
                           ],
                         ),
@@ -219,41 +219,41 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
 
   Widget buildUploadWarning(bool visible) {
     return Container(
-      margin: const EdgeInsets.only(
-        right: 24,
+      margin: EdgeInsets.only(
+        right: 24.w,
       ),
-      height: 78,
-      decoration: const BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(8)),
+      height: 78.h,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(8.r)),
         color: grey50,
       ),
       child: Padding(
-        padding: const EdgeInsets.all(12),
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SvgPicture.asset(Assets.images.warningMark),
-            const SizedBox(width: 4),
+            SizedBox(width: 4.w),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
+              children: [
                 Text(
                   warningMsgTitle,
                   style: TextStyle(
                     fontWeight: FontWeight.w500,
                     color: grey600,
-                    fontSize: 11,
+                    fontSize: 11.sp,
                   ),
                 ),
                 SizedBox(
-                  height: 6,
+                  height: 6.h,
                 ),
                 Text(
                   warningMsgContent,
                   style: TextStyle(
                     fontWeight: FontWeight.w500,
                     color: grey400,
-                    fontSize: 11,
+                    fontSize: 11.sp,
                   ),
                 ),
               ],
@@ -264,15 +264,15 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
     );
   }
 
-  Container buildCommentTextField(bool visible, double height) {
+  Container buildCommentTextField(bool visible) {
     return Container(
-      margin: const EdgeInsets.only(
-        top: 14,
-        right: 24,
+      margin: EdgeInsets.only(
+        top: 14.h,
+        right: 24.w,
       ),
-      height: 110,
-      decoration: const BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(12)),
+      height: 110.h,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(12.r)),
         color: grey100,
       ),
       child: Column(
@@ -281,31 +281,31 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
             controller: secondScrollController,
             padding: EdgeInsets.zero,
             child: SizedBox(
-              height: 80,
+              height: 80.h,
               child: TextField(
                 controller: commentTextController,
-                style: const TextStyle(
-                  fontSize: 14,
-                  height: 19.6 / 14,
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  height: (19.6 / 14).h,
                   color: grey600,
-                  letterSpacing: -0.3,
+                  letterSpacing: -0.3.w,
                 ),
                 cursorColor: primary600,
                 keyboardType: TextInputType.multiline,
                 maxLines: null,
                 maxLength: 500,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   border: InputBorder.none,
                   focusedBorder: InputBorder.none,
                   isDense: true,
                   contentPadding: EdgeInsets.symmetric(
-                    vertical: 15,
-                    horizontal: 16,
+                    vertical: 15.h,
+                    horizontal: 16.w,
                   ),
                   hintText: '저장한 링크에 대해 간단하게 메모해보세요',
                   hintStyle: TextStyle(
                     color: grey400,
-                    fontSize: 14,
+                    fontSize: 14.sp,
                     letterSpacing: -0.3,
                   ),
                   counterText: '',
@@ -326,14 +326,14 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
           Align(
             alignment: Alignment.bottomRight,
             child: Padding(
-              padding: const EdgeInsets.only(right: 14),
+              padding: EdgeInsets.only(right: 14.w),
               child: Text(
                 '${commentTextController.text.length}/500',
-                style: const TextStyle(
+                style: TextStyle(
                   color: grey400,
-                  fontSize: 14,
+                  fontSize: 14.sp,
                   letterSpacing: -0.3,
-                  height: 16.7 / 14,
+                  height: (16.7 / 14).h,
                   fontWeight: FontWeight.w400,
                 ),
               ),
@@ -349,10 +349,10 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
       builder: (context, state) {
         final linkError = state == UploadResultState.error;
         return Container(
-          margin: const EdgeInsets.only(
-            top: 14,
-            right: 24,
-            bottom: 15,
+          margin: EdgeInsets.only(
+            top: 14.h,
+            right: 24.w,
+            bottom: 15.h,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -360,38 +360,38 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
               DecoratedBox(
                 decoration: BoxDecoration(
                   border: Border.all(color: linkError ? redError2 : grey100),
-                  borderRadius: const BorderRadius.all(Radius.circular(12)),
+                  borderRadius: BorderRadius.all(Radius.circular(12.r)),
                   color: grey100,
                 ),
                 child: SingleChildScrollView(
                   padding: EdgeInsets.zero,
                   controller: firstScrollController,
                   child: SizedBox(
-                    height: 80,
+                    height: 80.h,
                     child: TextField(
                       controller: linkTextController,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        height: 16.7 / 14,
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        height: (16.7 / 14).h,
                         color: grey600,
-                        letterSpacing: -0.3,
+                        letterSpacing: -0.3.w,
                       ),
                       cursorColor: primary600,
                       keyboardType: TextInputType.multiline,
                       maxLines: null,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         border: InputBorder.none,
                         focusedBorder: InputBorder.none,
                         isDense: true,
                         contentPadding: EdgeInsets.symmetric(
-                          vertical: 15,
-                          horizontal: 16,
+                          vertical: 15.h,
+                          horizontal: 16.w,
                         ),
                         hintText: '링크를 여기에 불러주세요',
                         hintStyle: TextStyle(
                           color: grey400,
-                          fontSize: 14,
-                          letterSpacing: -0.3,
+                          fontSize: 14.sp,
+                          letterSpacing: -0.3.w,
                         ),
                       ),
                       onChanged: (value) => setState(() {
@@ -404,14 +404,14 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 6),
+                padding: EdgeInsets.only(top: 6.h),
                 child: Text(
                   '링크 형식으로 입력해 주세요',
                   style: TextStyle(
                     color: linkError ? redError2 : Colors.white,
                     fontWeight: FontWeight.w500,
-                    fontSize: 12,
-                    height: 14.3 / 12,
+                    fontSize: 12.sp,
+                    height: (14.3 / 12).h,
                   ),
                 ),
               ),

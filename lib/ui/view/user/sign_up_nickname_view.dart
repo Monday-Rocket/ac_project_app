@@ -11,6 +11,7 @@ import 'package:ac_project_app/ui/widget/only_back_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SignUpNicknameView extends StatelessWidget {
   const SignUpNicknameView({super.key});
@@ -90,7 +91,7 @@ class SignUpNicknameView extends StatelessWidget {
   ) {
     return SafeArea(
       child: Container(
-        margin: const EdgeInsets.fromLTRB(24, 16, 24, 16),
+        margin: EdgeInsets.fromLTRB(24.w, 16.h, 24.w, 16.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -100,15 +101,15 @@ class SignUpNicknameView extends StatelessWidget {
               children: [
                 buildNicknameField(context, state, formKey),
                 if (state == ButtonState.enabled)
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.only(
-                      top: 40,
-                      right: 8,
+                      top: 40.h,
+                      right: 8.w,
                     ),
                     child: Icon(
                       Icons.check_rounded,
                       color: primaryTab,
-                      size: 20,
+                      size: 20.r,
                     ),
                   )
                 else
@@ -123,51 +124,54 @@ class SignUpNicknameView extends StatelessWidget {
   }
 
   Widget buildTitleText() {
-    return const Text(
+    return Text(
       '안녕하세요\n프로필을 만들어볼까요?',
       style: TextStyle(
-        fontSize: 24,
+        fontSize: 24.sp,
         fontWeight: FontWeight.bold,
       ),
     );
   }
 
   Widget buildNicknameField(
-      BuildContext context, ButtonState state, GlobalKey<FormState> formKey) {
+    BuildContext context,
+    ButtonState state,
+    GlobalKey<FormState> formKey,
+  ) {
     return Container(
-      margin: const EdgeInsets.only(top: 30),
+      margin: EdgeInsets.only(top: 30.h),
       child: Form(
         key: formKey,
         child: TextFormField(
           autofocus: true,
-          style: const TextStyle(
-            fontSize: 17,
+          style: TextStyle(
+            fontSize: 17.sp,
             fontWeight: FontWeight.w500,
             color: blackBold,
           ),
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
             labelText: '닉네임',
-            labelStyle: TextStyle(
+            labelStyle: const TextStyle(
               fontWeight: FontWeight.w500,
               color: Color(0xFF9097A3),
             ),
             focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: primary800, width: 2),
+              borderSide: BorderSide(color: primary800, width: 2.w),
             ),
             hintText: '사용하실 닉네임을 입력해주세요',
             hintStyle: TextStyle(
-              color: Color(0xFFD0D1D2),
-              fontSize: 17,
+              color: const Color(0xFFD0D1D2),
+              fontSize: 17.sp,
               fontWeight: FontWeight.w500,
             ),
-            errorStyle: TextStyle(
+            errorStyle: const TextStyle(
               color: redError,
             ),
             focusedErrorBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: redError, width: 2),
+              borderSide: BorderSide(color: redError, width: 2.w),
             ),
             enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: greyTab, width: 2),
+              borderSide: BorderSide(color: greyTab, width: 2.w),
             ),
             contentPadding: EdgeInsets.zero,
           ),

@@ -1,6 +1,7 @@
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 class LinkSlidAbleWidget extends StatelessWidget {
@@ -32,15 +33,15 @@ class LinkSlidAbleWidget extends StatelessWidget {
           InkWell(
             onTap: callback,
             child: Container(
-              width: 80,
+              width: 80.w,
               color: redError,
-              child: const Center(
+              child: Center(
                 child: Text(
                   '삭제',
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.w600,
-                    fontSize: 16,
+                    fontSize: 16.sp,
                   ),
                 ),
               ),

@@ -35,6 +35,9 @@ dependencies:
   flutter_dotenv: ^5.0.2
   flutter_naver_login: ^1.7.0
 
+  ## UI Sizer
+  flutter_screenutil: ^5.6.1
+
   ## Utils
   metadata_fetch: ^0.4.1
   permission_handler: ^10.2.0

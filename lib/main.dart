@@ -9,6 +9,7 @@ import 'package:ac_project_app/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:oktoast/oktoast.dart';
 
 Future<void> main() async {
@@ -38,31 +39,37 @@ class MyApp extends StatelessWidget {
 
 class MultiPlatformApp {
   static Widget create() {
-    return BlocProvider<GetProfileInfoCubit>(
-      create: (_) => GetProfileInfoCubit(),
-      child: OKToast(
-        child: MaterialApp(
-          debugShowCheckedModeBanner: false,
-          initialRoute: Routes.splash,
-          onGenerateRoute: Pages.getPages,
-          themeMode: ThemeMode.light,
-          theme: ThemeData(
-            fontFamily: R_Font.PRETENDARD,
-            brightness: Brightness.light,
-            progressIndicatorTheme: const ProgressIndicatorThemeData(
-              color: primary600,
-            ),
-            bottomSheetTheme: const BottomSheetThemeData(
-              backgroundColor: Colors.white,
-            ),
-            elevatedButtonTheme: ElevatedButtonThemeData(
-              style: ButtonStyle(
-                shadowColor: MaterialStateProperty.all(primary700),
+    return ScreenUtilInit(
+      designSize: const Size(393, 852),
+      minTextAdapt: true,
+      builder: (context, child) {
+        return BlocProvider<GetProfileInfoCubit>(
+          create: (_) => GetProfileInfoCubit(),
+          child: OKToast(
+            child: MaterialApp(
+              debugShowCheckedModeBanner: false,
+              initialRoute: Routes.splash,
+              onGenerateRoute: Pages.getPages,
+              themeMode: ThemeMode.light,
+              theme: ThemeData(
+                fontFamily: R_Font.PRETENDARD,
+                brightness: Brightness.light,
+                progressIndicatorTheme: const ProgressIndicatorThemeData(
+                  color: primary600,
+                ),
+                bottomSheetTheme: const BottomSheetThemeData(
+                  backgroundColor: Colors.white,
+                ),
+                elevatedButtonTheme: ElevatedButtonThemeData(
+                  style: ButtonStyle(
+                    shadowColor: MaterialStateProperty.all(primary700),
+                  ),
+                ),
               ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

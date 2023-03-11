@@ -18,6 +18,7 @@ import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/util/get_widget_arguments.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class HomeView extends StatefulWidget {
@@ -132,7 +133,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
                             create: (_) => FolderViewTypeCubit(),
                           ),
                         ],
-                        child: const MyFolderPage(),
+                        child: MyFolderPage(),
                       ),
                       const MyPage(),
                     ],
@@ -145,12 +146,12 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
             bottomNavigationBar: BottomNavigationBar(
               type: BottomNavigationBarType.fixed,
               selectedItemColor: primary600,
-              selectedFontSize: 10,
+              selectedFontSize: 10.sp,
               selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500),
               unselectedLabelStyle:
                   const TextStyle(fontWeight: FontWeight.w400),
               unselectedItemColor: grey400,
-              unselectedFontSize: 10,
+              unselectedFontSize: 10.sp,
               showUnselectedLabels: true,
               items: bottomItems,
               currentIndex: index,
