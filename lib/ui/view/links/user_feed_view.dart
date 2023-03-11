@@ -488,7 +488,7 @@ class UserFeedView extends StatelessWidget {
                 },
                 separatorBuilder: (_, __) => Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24.w),
-                  child: Divider(height: 1.h, color: grey900),
+                  child: Divider(height: 1.h, thickness: 1.h, color: greyTab),
                 ),
               ),
             ),

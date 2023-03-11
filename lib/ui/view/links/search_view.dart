@@ -53,215 +53,220 @@ class _SearchViewState extends State<SearchView> {
           builder: (context, visible) {
             return Scaffold(
               backgroundColor: Colors.white,
-              appBar: AppBar(
-                backgroundColor: Colors.white,
-                elevation: 0.5,
-                shadowColor: grey100,
-                systemOverlayStyle: SystemUiOverlayStyle.dark,
-                leading: IconButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  icon: SvgPicture.asset(Assets.images.icBack),
-                  color: grey900,
-                  padding: EdgeInsets.only(left: 20.w, right: 8.w),
-                ),
-                title: searchState ? buildSearchBar() : buildEmptySearchBar(),
-                titleSpacing: 0,
-                actions: [
-                  Center(
-                    child: InkWell(
-                      onTap: buttonState
-                          ? () {
-                              totalLinks.clear();
-                              final text = textController.text;
-                              if (isMine) {
-                                context
-                                    .read<SearchLinksCubit>()
-                                    .searchMyLinks(text, 0);
-                              } else {
-                                context
-                                    .read<SearchLinksCubit>()
-                                    .searchLinks(text, 0);
-                              }
-                            }
-                          : null,
-                      child: Padding(
-                        padding: EdgeInsets.only(
-                          left: 16.w,
-                          right: 22.w,
-                          top: 8.h,
-                          bottom: 8.h,
-                        ),
-                        child: Text(
-                          '검색',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 16.sp,
-                            color: buttonState ? grey800 : grey300,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              body: BlocBuilder<SearchLinksCubit, LinkListState>(
-                builder: (context, state) {
-                  if (state is LinkListLoadedState) {
-                    final links = state.links;
-                    totalLinks.addAll(links);
-                  }
-                  return NotificationListener<ScrollEndNotification>(
-                    onNotification: (scrollEnd) {
-                      final metrics = scrollEnd.metrics;
-                      if (metrics.atEdge && metrics.pixels != 0) {
-                        context.read<SearchLinksCubit>().loadMore();
-                      }
-                      return true;
-                    },
-                    child: RefreshIndicator(
-                      onRefresh: () => refresh(context, totalLinks),
-                      color: primary600,
-                      child: ListView.separated(
-                        itemCount: totalLinks.length,
-                        itemBuilder: (_, index) {
-                          final link = totalLinks[index];
-                          return InkWell(
-                            onTap: () {
-                              Navigator.pushNamed(
-                                context,
-                                Routes.linkDetail,
-                                arguments: {
-                                  'link': link,
-                                  'isMine': isMine,
-                                },
-                              );
-                            },
-                            child: Container(
-                              margin: EdgeInsets.symmetric(
-                                vertical: 18.h,
-                                horizontal: 24.w,
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  SizedBox(
-                                    height: 115.h,
-                                    child: Container(
-                                      margin: EdgeInsets.symmetric(
-                                        vertical: 5.h,
-                                      ),
-                                      width: ((width - 24 * 2) - 179).w,
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  link.title ?? '',
-                                                  maxLines: 1,
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 16.sp,
-                                                    color: blackBold,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    height: (19 / 16).h,
-                                                  ),
-                                                ),
-                                                SizedBox(height: 7.h),
-                                                Text(
-                                                  link.describe ?? '\n\n',
-                                                  maxLines: 2,
-                                                  style: TextStyle(
-                                                    fontSize: 12.sp,
-                                                    color: greyText,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          Align(
-                                            alignment: Alignment.bottomLeft,
-                                            child: Text(
-                                              link.url ?? '',
-                                              maxLines: 1,
-                                              style: TextStyle(
-                                                fontSize: 12.sp,
-                                                color: const Color(0xFFC0C2C4),
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(right: 4.w),
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(7.r),
-                                      ),
-                                      child: ColoredBox(
-                                        color: grey100,
-                                        child: link.image != null &&
-                                                link.image!.isNotEmpty
-                                            ? CachedNetworkImage(
-                                                imageUrl: link.image ?? '',
-                                                imageBuilder:
-                                                    (context, imageProvider) =>
-                                                        Container(
-                                                  width: 159.w,
-                                                  height: 116.h,
-                                                  decoration: BoxDecoration(
-                                                    image: DecorationImage(
-                                                      image: imageProvider,
-                                                      fit: BoxFit.cover,
-                                                    ),
-                                                  ),
-                                                ),
-                                                errorWidget: (_, __, ___) {
-                                                  return const SizedBox();
-                                                },
-                                              )
-                                            : SizedBox(
-                                                width: 159.w,
-                                                height: 116.h,
-                                              ),
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                        separatorBuilder: (_, __) => Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 24.w),
-                          child: Divider(height: 1.h, color: grey900),
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
+              appBar: _buildAppBar(context, totalLinks, isMine),
+              body: _buildBody(totalLinks, isMine, width),
             );
           },
         ),
       ),
+    );
+  }
+
+  AppBar _buildAppBar(
+    BuildContext context,
+    List<Link> totalLinks,
+    bool isMine,
+  ) {
+    return AppBar(
+      backgroundColor: Colors.white,
+      elevation: 0.5,
+      shadowColor: grey100,
+      systemOverlayStyle: SystemUiOverlayStyle.dark,
+      leading: IconButton(
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        icon: SvgPicture.asset(Assets.images.icBack),
+        color: grey900,
+        padding: EdgeInsets.only(left: 20.w, right: 8.w),
+      ),
+      title: searchState ? buildSearchBar() : buildEmptySearchBar(),
+      titleSpacing: 0,
+      actions: [
+        Center(
+          child: InkWell(
+            onTap: buttonState
+                ? () {
+                    totalLinks.clear();
+                    final text = textController.text;
+                    if (isMine) {
+                      context.read<SearchLinksCubit>().searchMyLinks(text, 0);
+                    } else {
+                      context.read<SearchLinksCubit>().searchLinks(text, 0);
+                    }
+                  }
+                : null,
+            child: Padding(
+              padding: EdgeInsets.only(
+                left: 16.w,
+                right: 22.w,
+                top: 8.h,
+                bottom: 8.h,
+              ),
+              child: Text(
+                '검색',
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 16.sp,
+                  color: buttonState ? grey800 : grey300,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  BlocBuilder<SearchLinksCubit, LinkListState> _buildBody(
+    List<Link> totalLinks,
+    bool isMine,
+    double width,
+  ) {
+    return BlocBuilder<SearchLinksCubit, LinkListState>(
+      builder: (context, state) {
+        if (state is LinkListLoadedState) {
+          final links = state.links;
+          totalLinks.addAll(links);
+        }
+        return NotificationListener<ScrollEndNotification>(
+          onNotification: (scrollEnd) {
+            final metrics = scrollEnd.metrics;
+            if (metrics.atEdge && metrics.pixels != 0) {
+              context.read<SearchLinksCubit>().loadMore();
+            }
+            return true;
+          },
+          child: RefreshIndicator(
+            onRefresh: () => refresh(context, totalLinks),
+            color: primary600,
+            child: ListView.separated(
+              itemCount: totalLinks.length,
+              itemBuilder: (_, index) {
+                final link = totalLinks[index];
+                return InkWell(
+                  onTap: () {
+                    Navigator.pushNamed(
+                      context,
+                      Routes.linkDetail,
+                      arguments: {
+                        'link': link,
+                        'isMine': isMine,
+                      },
+                    );
+                  },
+                  child: Container(
+                    margin: EdgeInsets.symmetric(
+                      vertical: 18.h,
+                      horizontal: 24.w,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: 115.h,
+                          child: Container(
+                            margin: EdgeInsets.symmetric(
+                              vertical: 5.h,
+                            ),
+                            width: width * (130 / 375),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        link.title ?? '',
+                                        maxLines: 1,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16.sp,
+                                          color: blackBold,
+                                          overflow: TextOverflow.ellipsis,
+                                          height: (19 / 16).h,
+                                        ),
+                                      ),
+                                      SizedBox(height: 7.h),
+                                      Text(
+                                        link.describe ?? '\n\n',
+                                        maxLines: 2,
+                                        style: TextStyle(
+                                          fontSize: 12.sp,
+                                          color: greyText,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Align(
+                                  alignment: Alignment.bottomLeft,
+                                  child: Text(
+                                    link.url ?? '',
+                                    maxLines: 1,
+                                    style: TextStyle(
+                                      fontSize: 12.sp,
+                                      color: const Color(0xFFC0C2C4),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(right: 4.w),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(7.r),
+                            ),
+                            child: ColoredBox(
+                              color: grey100,
+                              child: link.image != null &&
+                                      link.image!.isNotEmpty
+                                  ? CachedNetworkImage(
+                                      imageUrl: link.image ?? '',
+                                      imageBuilder: (context, imageProvider) =>
+                                          Container(
+                                        width: 159.w,
+                                        height: 116.h,
+                                        decoration: BoxDecoration(
+                                          image: DecorationImage(
+                                            image: imageProvider,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                      ),
+                                      errorWidget: (_, __, ___) {
+                                        return const SizedBox();
+                                      },
+                                    )
+                                  : SizedBox(
+                                      width: 159.w,
+                                      height: 116.h,
+                                    ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                );
+              },
+              separatorBuilder: (_, __) => Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24.w),
+                child: Divider(height: 1.h, thickness: 1.h, color: greyTab),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 
