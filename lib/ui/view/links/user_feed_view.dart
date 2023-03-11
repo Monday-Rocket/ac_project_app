@@ -249,6 +249,21 @@ class UserFeedView extends StatelessWidget {
     final width = MediaQuery.of(parentContext).size.width;
     return Builder(
       builder: (context) {
+        if (totalLinks.isEmpty) {
+          return Expanded(
+            child: Center(
+              child: Text(
+                '등록된 링크가 없습니다',
+                style: TextStyle(
+                  color: grey300,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 16.sp,
+                  height: (19/16).h,
+                ),
+              ),
+            ),
+          );
+        }
         return Expanded(
           child: NotificationListener<ScrollEndNotification>(
             onNotification: (scrollEnd) {

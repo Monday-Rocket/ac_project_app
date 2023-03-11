@@ -47,9 +47,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      FolderApi().bulkSave().then((value) {
-        setState(() {});
-      });
+      FolderApi().bulkSave();
     }
   }
 

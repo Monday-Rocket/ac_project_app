@@ -26,12 +26,9 @@ class LinksFromSelectedJobGroupCubit extends Cubit<List<Link>> {
     getSelectedJobLinks(0, 0);
   }
 
-  Future<void> getSelectedJobLinks(int jobGroupId, int pageNum, {bool hasLoadMore = false}) async {
+  Future<void> getSelectedJobLinks(int jobGroupId, int pageNum) async {
     hasRefresh = false;
     selectedJobId = jobGroupId;
-    if (hasLoadMore) {
-      await Future<dynamic>.delayed(const Duration(milliseconds: 200));
-    }
     final result = await linkApi.getJobGroupLinks(jobGroupId, pageNum);
     result.when(
       success: (data) {
@@ -57,7 +54,7 @@ class LinksFromSelectedJobGroupCubit extends Cubit<List<Link>> {
     emit([]);
     hasLoadMore = hasMore.state == ScrollableType.can;
     if (hasLoadMore) {
-      getSelectedJobLinks(selectedJobId, page + 1, hasLoadMore: hasLoadMore);
+      getSelectedJobLinks(selectedJobId, page + 1);
     }
     return hasLoadMore;
   }
