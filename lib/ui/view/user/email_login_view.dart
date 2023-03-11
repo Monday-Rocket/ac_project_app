@@ -17,6 +17,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class EmailLoginView extends StatefulWidget {
@@ -46,29 +47,29 @@ class _EmailLoginViewState extends State<EmailLoginView>
             backgroundColor: Colors.white,
             body: SafeArea(
               child: Container(
-                margin: const EdgeInsets.symmetric(horizontal: 24),
+                margin: EdgeInsets.symmetric(horizontal: 24.w),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 16),
-                    const Text(
-                      '로그인에 필요한\n정보를 입력해주세요.',
+                    SizedBox(height: 16.h),
+                    Text(
+                      '.w로그인에 필요한\n정보를 입력해주세요.',
                       style: TextStyle(
-                        fontSize: 24,
+                        fontSize: 24.sp,
                         color: grey900,
                         fontWeight: FontWeight.bold,
-                        height: 34 / 24,
-                        letterSpacing: -0.3,
+                        height: (34 / 24).h,
+                        letterSpacing: -0.3.w,
                       ),
                     ),
                     Container(
-                      margin: const EdgeInsets.only(top: 30, bottom: 23),
+                      margin: EdgeInsets.only(top: 30.h, bottom: 23.h),
                       child: Form(
                         key: formKey,
                         child: TextFormField(
-                          // autofocus: true,
-                          style: const TextStyle(
-                            fontSize: 17,
+                          // autofocus: true.w,
+                          style: TextStyle(
+                            fontSize: 17.sp,
                             fontWeight: FontWeight.w500,
                             color: blackBold,
                           ),
@@ -78,25 +79,25 @@ class _EmailLoginViewState extends State<EmailLoginView>
                               color: Color(0xFF9097A3),
                               fontWeight: FontWeight.w500,
                             ),
-                            focusedBorder: const UnderlineInputBorder(
+                            focusedBorder: UnderlineInputBorder(
                               borderSide:
-                                  BorderSide(color: primary800, width: 2),
+                                  BorderSide(color: primary800, width: 2.w),
                             ),
                             errorStyle: const TextStyle(
                               color: redError,
                             ),
-                            focusedErrorBorder: const UnderlineInputBorder(
-                              borderSide: BorderSide(color: redError, width: 2),
+                            focusedErrorBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: redError, width: 2.w),
                             ),
-                            enabledBorder: const UnderlineInputBorder(
-                              borderSide: BorderSide(color: greyTab, width: 2),
+                            enabledBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: greyTab, width: 2.w),
                             ),
                             contentPadding: EdgeInsets.zero,
                             suffix: buttonState
-                                ? const Icon(
+                                ? Icon(
                                     Icons.check,
                                     color: primary700,
-                                    size: 16,
+                                    size: 16.r,
                                   )
                                 : null,
                           ),
@@ -127,12 +128,12 @@ class _EmailLoginViewState extends State<EmailLoginView>
                         ),
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    SizedBox(height: 20.h),
                     DecoratedBox(
-                      decoration: const BoxDecoration(
+                      decoration: BoxDecoration(
                         color: grey100,
                         borderRadius: BorderRadius.all(
-                          Radius.circular(8),
+                          Radius.circular(8.r),
                         ),
                       ),
                       child: Center(
@@ -140,43 +141,43 @@ class _EmailLoginViewState extends State<EmailLoginView>
                           children: [
                             Padding(
                               padding:
-                                  const EdgeInsets.only(top: 14, bottom: 12),
+                                  EdgeInsets.only(top: 14.h, bottom: 12.h),
                               child: SvgPicture.asset(
                                 Assets.images.emailNotice,
                               ),
                             ),
-                            const Text(
+                            Text(
                               '인증메일을 받지 못하셨다면, 스팸 메일함을 확인하시거나\n소셜 로그인 방식으로 회원가입을 진행해 주세요',
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                fontSize: 13,
-                                letterSpacing: -0.1,
+                                fontSize: 13.sp,
+                                letterSpacing: -0.1.w,
                                 fontWeight: FontWeight.w400,
                                 color: grey500,
-                                height: 17.5 / 13,
+                                height: (17.5 / 13).h,
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 20),
+                              padding: EdgeInsets.symmetric(vertical: 20.h),
                               child: GestureDetector(
                                 onTap: () => Navigator.pop(context),
                                 child: Container(
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(6),
+                                    borderRadius: BorderRadius.circular(6.r),
                                     color: grey400,
                                   ),
-                                  constraints: const BoxConstraints(
-                                    minHeight: 34,
-                                    maxWidth: 156,
+                                  constraints: BoxConstraints(
+                                    minHeight: 34.h,
+                                    maxWidth: 156.w,
                                   ),
-                                  child: const Center(
+                                  child: Center(
                                     child: Text(
                                       '첫 화면으로 돌아가기',
                                       style: TextStyle(
                                         color: Colors.white,
-                                        letterSpacing: -0.1,
+                                        letterSpacing: -0.1.w,
                                         fontWeight: FontWeight.w500,
-                                        fontSize: 14,
+                                        fontSize: 14.sp,
                                       ),
                                     ),
                                   ),

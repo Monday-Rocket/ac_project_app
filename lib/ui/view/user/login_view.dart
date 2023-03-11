@@ -20,6 +20,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -177,39 +178,39 @@ class LoginView extends StatelessWidget {
             StatefulBuilder(
               builder: (context, setState) {
                 return DecoratedBox(
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      topRight: Radius.circular(20),
+                      topLeft: Radius.circular(20.r),
+                      topRight: Radius.circular(20.r),
                     ),
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.only(
-                      top: 33,
-                      left: 24,
-                      right: 24,
-                      bottom: 20,
+                    padding: EdgeInsets.only(
+                      top: 33.h,
+                      left: 24.w,
+                      right: 24.w,
+                      bottom: 20.h,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.only(bottom: 37),
+                          padding: EdgeInsets.only(bottom: 37.h),
                           child: Stack(
                             children: [
                               Center(
                                 child: const Text('서비스 이용을 위한 동의')
                                     .bold()
-                                    .fontSize(21),
+                                    .fontSize(21.sp),
                               ),
                               Container(
                                 alignment: Alignment.centerRight,
                                 child: GestureDetector(
                                   onTap: () => Navigator.pop(context),
-                                  child: const Icon(
+                                  child: Icon(
                                     Icons.close_rounded,
-                                    size: 24,
+                                    size: 24.r,
                                   ),
                                 ),
                               ),
@@ -232,7 +233,7 @@ class LoginView extends StatelessWidget {
                           child: ColoredBox(
                             color: Colors.white,
                             child: Padding(
-                              padding: const EdgeInsets.only(bottom: 28),
+                              padding: EdgeInsets.only(bottom: 28.h),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
@@ -243,34 +244,35 @@ class LoginView extends StatelessWidget {
                                       decoration: BoxDecoration(
                                         color:
                                             firstCheck ? primary800 : grey100,
-                                        borderRadius: const BorderRadius.all(
-                                          Radius.circular(8),
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(8.r),
                                         ),
                                         border: Border.all(
-                                          width: 0,
+                                          width: 0.w,
                                           color: Colors.transparent,
                                         ),
                                       ),
                                       child: Padding(
-                                        padding: const EdgeInsets.all(2),
+                                        padding: EdgeInsets.all(2.r),
                                         child: firstCheck
-                                            ? const Icon(
+                                            ? Icon(
                                                 Icons.check,
-                                                size: 18,
+                                                size: 18.r,
                                                 color: Colors.white,
                                               )
-                                            : const Icon(
+                                            : Icon(
                                                 Icons.check,
-                                                size: 18,
+                                                size: 18.r,
                                                 color: grey300,
                                               ),
                                       ),
                                     ),
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.only(left: 11),
-                                    child:
-                                        const Text('전체 동의').bold().fontSize(17),
+                                    padding: EdgeInsets.only(left: 11.w),
+                                    child: const Text('전체 동의')
+                                        .bold()
+                                        .fontSize(17.sp),
                                   ),
                                 ],
                               ),
@@ -290,7 +292,7 @@ class LoginView extends StatelessWidget {
                               child: ColoredBox(
                                 color: Colors.white,
                                 child: Padding(
-                                  padding: const EdgeInsets.only(bottom: 15),
+                                  padding: EdgeInsets.only(bottom: 15.h),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
@@ -298,16 +300,16 @@ class LoginView extends StatelessWidget {
                                         duration:
                                             const Duration(milliseconds: 200),
                                         child: Padding(
-                                          padding: const EdgeInsets.all(2),
+                                          padding: EdgeInsets.all(2.r),
                                           child: secondCheck
-                                              ? const Icon(
+                                              ? Icon(
                                                   Icons.check,
-                                                  size: 18,
+                                                  size: 18.r,
                                                   color: primary800,
                                                 )
-                                              : const Icon(
+                                              : Icon(
                                                   Icons.check,
-                                                  size: 18,
+                                                  size: 18.r,
                                                   color: grey300,
                                                 ),
                                         ),
@@ -316,10 +318,10 @@ class LoginView extends StatelessWidget {
                                         children: [
                                           Padding(
                                             padding:
-                                                const EdgeInsets.only(left: 11),
+                                                EdgeInsets.only(left: 11.w),
                                             child: const Text('개인정보 수집 및 이용 동의')
                                                 .weight(FontWeight.w500)
-                                                .fontSize(15),
+                                                .fontSize(15.sp),
                                           ),
                                           GestureDetector(
                                             onTap: () => launchUrl(
@@ -331,7 +333,7 @@ class LoginView extends StatelessWidget {
                                             ),
                                             child: const Text('[보기]')
                                                 .weight(FontWeight.w500)
-                                                .fontSize(15),
+                                                .fontSize(15.sp),
                                           ),
                                         ],
                                       ),
@@ -354,7 +356,7 @@ class LoginView extends StatelessWidget {
                               child: ColoredBox(
                                 color: Colors.white,
                                 child: Padding(
-                                  padding: const EdgeInsets.only(bottom: 28),
+                                  padding: EdgeInsets.only(bottom: 28.h),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
@@ -362,16 +364,16 @@ class LoginView extends StatelessWidget {
                                         duration:
                                             const Duration(milliseconds: 200),
                                         child: Padding(
-                                          padding: const EdgeInsets.all(2),
+                                          padding: EdgeInsets.all(2.r),
                                           child: thirdCheck
-                                              ? const Icon(
+                                              ? Icon(
                                                   Icons.check,
-                                                  size: 18,
+                                                  size: 18.r,
                                                   color: primary800,
                                                 )
-                                              : const Icon(
+                                              : Icon(
                                                   Icons.check,
-                                                  size: 18,
+                                                  size: 18.r,
                                                   color: grey300,
                                                 ),
                                         ),
@@ -380,10 +382,10 @@ class LoginView extends StatelessWidget {
                                         children: [
                                           Padding(
                                             padding:
-                                                const EdgeInsets.only(left: 11),
+                                                EdgeInsets.only(left: 11.w),
                                             child: const Text('서비스 이용약관')
                                                 .weight(FontWeight.w500)
-                                                .fontSize(15),
+                                                .fontSize(15.sp),
                                           ),
                                           GestureDetector(
                                             onTap: () => launchUrl(
@@ -395,7 +397,7 @@ class LoginView extends StatelessWidget {
                                             ),
                                             child: const Text('[보기]')
                                                 .weight(FontWeight.w500)
-                                                .fontSize(15),
+                                                .fontSize(15.sp),
                                           ),
                                         ],
                                       ),
@@ -407,18 +409,18 @@ class LoginView extends StatelessWidget {
                           ],
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(bottom: 54),
+                          padding: EdgeInsets.only(bottom: 54.h),
                           child: Builder(
                             builder: (context) {
                               final allChecked =
                                   firstCheck && secondCheck && thirdCheck;
                               return ElevatedButton(
                                 style: ElevatedButton.styleFrom(
-                                  minimumSize: const Size.fromHeight(55),
+                                  minimumSize: Size.fromHeight(55.h),
                                   backgroundColor:
                                       allChecked ? primary800 : secondary,
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
+                                    borderRadius: BorderRadius.circular(12.r),
                                   ),
                                   disabledBackgroundColor: secondary,
                                   disabledForegroundColor: Colors.white,
@@ -430,10 +432,10 @@ class LoginView extends StatelessWidget {
                                           arguments: user,
                                         )
                                     : null,
-                                child: const Text(
+                                child: Text(
                                   '약관동의',
                                   style: TextStyle(
-                                    fontSize: 17,
+                                    fontSize: 17.sp,
                                     fontWeight: FontWeight.bold,
                                   ),
                                   textWidthBasis: TextWidthBasis.parent,
@@ -461,7 +463,7 @@ class LoginView extends StatelessWidget {
         children: [
           buildGoogleLoginButton(context),
           buildAppleLoginButton(context),
-          const SizedBox(height: 26),
+          SizedBox(height: 26.h),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -469,27 +471,27 @@ class LoginView extends StatelessWidget {
                 onTap: () => context.read<LoginCubit>().login(LoginType.kakao),
                 child: Assets.images.kakaoIcon.image(),
               ),
-              const SizedBox(width: 16),
+              SizedBox(width: 16.w),
               GestureDetector(
                 onTap: () => context.read<LoginCubit>().login(LoginType.naver),
                 child: Assets.images.naverIcon.image(),
               ),
             ],
           ),
-          const SizedBox(height: 53),
+          SizedBox(height: 53.h),
           InkWell(
             onTap: () => Navigator.pushNamed(context, Routes.emailLogin),
-            child: const Text(
+            child: Text(
               '이메일로 로그인',
               style: TextStyle(
                 color: grey400,
                 fontWeight: FontWeight.w500,
-                fontSize: 15,
-                letterSpacing: -0.1,
+                fontSize: 15.sp,
+                letterSpacing: -0.1.w,
               ),
             ),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12.h),
         ],
       ),
     );
@@ -502,8 +504,8 @@ class LoginView extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Assets.images.loginLogo.image(),
-            const SizedBox(
-              height: 14,
+            SizedBox(
+              height: 14.h,
             ),
             SvgPicture.asset(Assets.images.loginLogoText),
           ],
@@ -516,37 +518,37 @@ class LoginView extends StatelessWidget {
     return GestureDetector(
       onTap: () => context.read<LoginCubit>().login(LoginType.google),
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 24),
+        margin: EdgeInsets.symmetric(horizontal: 24.w),
         child: DecoratedBox(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: const BorderRadius.all(Radius.circular(8)),
+            borderRadius: BorderRadius.all(Radius.circular(8.r)),
             border: Border.all(color: const Color(0xffd9dee0)),
           ),
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10),
+            padding: EdgeInsets.symmetric(vertical: 10.h),
             child: Center(
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Assets.images.login.googleIcon.image(),
                   Padding(
-                    padding: const EdgeInsets.only(left: 8),
-                    child: const Text(
+                    padding: EdgeInsets.only(left: 8.w),
+                    child: Text(
                       'Google',
                       style: TextStyle(
-                        fontSize: 19,
+                        fontSize: 19.sp,
                         color: greyLoginText,
-                        letterSpacing: -0.1,
+                        letterSpacing: -0.1.w,
                       ),
                     ).bold().roboto(),
                   ),
-                  const Text(
+                  Text(
                     '로 로그인',
                     style: TextStyle(
-                      fontSize: 19,
+                      fontSize: 19.sp,
                       color: greyLoginText,
-                      letterSpacing: -0.1,
+                      letterSpacing: -0.1.w,
                     ),
                   ).bold(),
                 ],
@@ -564,10 +566,12 @@ class LoginView extends StatelessWidget {
     }
     return Column(
       children: [
-        const SizedBox(height: 12),
+        SizedBox(height: 12.h),
         Container(
-          margin: const EdgeInsets.symmetric(horizontal: 24),
-          child: SignInWithAppleButton(onPressed: () => context.read<LoginCubit>().login(LoginType.apple)),
+          margin: EdgeInsets.symmetric(horizontal: 24.w),
+          child: SignInWithAppleButton(
+            onPressed: () => context.read<LoginCubit>().login(LoginType.apple),
+          ),
         ),
       ],
     );

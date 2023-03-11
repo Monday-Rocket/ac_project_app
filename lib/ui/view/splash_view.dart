@@ -8,6 +8,7 @@ import 'package:ac_project_app/routes.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -133,18 +134,18 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
   Center buildWhiteAppName(double distance) {
     return Center(
       child: Container(
-        margin: const EdgeInsets.only(top: 80),
+        margin: EdgeInsets.only(top: 80.h),
         child: SlideTransition(
           position: Tween<Offset>(
-            begin: const Offset(0, 0.3),
+            begin: Offset(0.w, 0.3.h),
             end: Offset.zero,
           ).animate(secondAnimationController),
           child: FadeTransition(
             opacity: secondAnimationController,
             child: SvgPicture.asset(
               Assets.images.appName,
-              width: 135,
-              height: 20,
+              width: 135.w,
+              height: 20.h,
             ),
           ),
         ),
@@ -159,8 +160,8 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
         opacity: secondAnimationController,
         child: Assets.images.waveBack.image(
           fit: BoxFit.fill,
-          width: width,
-          height: height * 463 / 812,
+          width: width.w,
+          height: (height * 463 / 812).h,
         ),
       ),
     );
@@ -169,10 +170,10 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
   Center buildWhiteIcon(double distance) {
     return Center(
       child: Container(
-        margin: const EdgeInsets.only(bottom: 80),
+        margin: EdgeInsets.only(bottom: 80.h),
         child: SlideTransition(
           position: Tween<Offset>(
-            begin: const Offset(0, -0.3),
+            begin: Offset(0.w, -0.3.h),
             end: Offset.zero,
           ).animate(firstAnimationController),
           child: FadeTransition(

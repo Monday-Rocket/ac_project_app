@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class SearchView extends StatefulWidget {
@@ -63,7 +64,7 @@ class _SearchViewState extends State<SearchView> {
                   },
                   icon: SvgPicture.asset(Assets.images.icBack),
                   color: grey900,
-                  padding: const EdgeInsets.only(left: 20, right: 8),
+                  padding: EdgeInsets.only(left: 20.w, right: 8.w),
                 ),
                 title: searchState ? buildSearchBar() : buildEmptySearchBar(),
                 titleSpacing: 0,
@@ -86,17 +87,17 @@ class _SearchViewState extends State<SearchView> {
                             }
                           : null,
                       child: Padding(
-                        padding: const EdgeInsets.only(
-                          left: 16,
-                          right: 22,
-                          top: 8,
-                          bottom: 8,
+                        padding: EdgeInsets.only(
+                          left: 16.w,
+                          right: 22.w,
+                          top: 8.h,
+                          bottom: 8.h,
                         ),
                         child: Text(
                           '검색',
                           style: TextStyle(
                             fontWeight: FontWeight.w500,
-                            fontSize: 16,
+                            fontSize: 16.sp,
                             color: buttonState ? grey800 : grey300,
                           ),
                         ),
@@ -138,9 +139,9 @@ class _SearchViewState extends State<SearchView> {
                               );
                             },
                             child: Container(
-                              margin: const EdgeInsets.symmetric(
-                                vertical: 18,
-                                horizontal: 24,
+                              margin: EdgeInsets.symmetric(
+                                vertical: 18.h,
+                                horizontal: 24.w,
                               ),
                               child: Row(
                                 mainAxisAlignment:
@@ -149,12 +150,12 @@ class _SearchViewState extends State<SearchView> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   SizedBox(
-                                    height: 115,
+                                    height: 115.h,
                                     child: Container(
-                                      margin: const EdgeInsets.symmetric(
-                                        vertical: 5,
+                                      margin: EdgeInsets.symmetric(
+                                        vertical: 5.h,
                                       ),
-                                      width: (width - 24 * 2) - 159 - 20,
+                                      width: ((width - 24 * 2) - 179).w,
                                       child: Column(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
@@ -169,21 +170,21 @@ class _SearchViewState extends State<SearchView> {
                                                 Text(
                                                   link.title ?? '',
                                                   maxLines: 1,
-                                                  style: const TextStyle(
+                                                  style: TextStyle(
                                                     fontWeight: FontWeight.bold,
-                                                    fontSize: 16,
+                                                    fontSize: 16.sp,
                                                     color: blackBold,
                                                     overflow:
                                                         TextOverflow.ellipsis,
-                                                    height: 19 / 16,
+                                                    height: (19 / 16).h,
                                                   ),
                                                 ),
-                                                const SizedBox(height: 7),
+                                                SizedBox(height: 7.h),
                                                 Text(
                                                   link.describe ?? '\n\n',
                                                   maxLines: 2,
-                                                  style: const TextStyle(
-                                                    fontSize: 12,
+                                                  style: TextStyle(
+                                                    fontSize: 12.sp,
                                                     color: greyText,
                                                     overflow:
                                                         TextOverflow.ellipsis,
@@ -197,9 +198,9 @@ class _SearchViewState extends State<SearchView> {
                                             child: Text(
                                               link.url ?? '',
                                               maxLines: 1,
-                                              style: const TextStyle(
-                                                fontSize: 12,
-                                                color: Color(0xFFC0C2C4),
+                                              style: TextStyle(
+                                                fontSize: 12.sp,
+                                                color: const Color(0xFFC0C2C4),
                                                 overflow: TextOverflow.ellipsis,
                                               ),
                                             ),
@@ -209,10 +210,10 @@ class _SearchViewState extends State<SearchView> {
                                     ),
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.only(right: 4),
+                                    padding: EdgeInsets.only(right: 4.w),
                                     child: ClipRRect(
-                                      borderRadius: const BorderRadius.all(
-                                        Radius.circular(7),
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(7.r),
                                       ),
                                       child: ColoredBox(
                                         color: grey100,
@@ -223,8 +224,8 @@ class _SearchViewState extends State<SearchView> {
                                                 imageBuilder:
                                                     (context, imageProvider) =>
                                                         Container(
-                                                  width: 159,
-                                                  height: 116,
+                                                  width: 159.w,
+                                                  height: 116.h,
                                                   decoration: BoxDecoration(
                                                     image: DecorationImage(
                                                       image: imageProvider,
@@ -236,9 +237,9 @@ class _SearchViewState extends State<SearchView> {
                                                   return const SizedBox();
                                                 },
                                               )
-                                            : const SizedBox(
-                                                width: 159,
-                                                height: 116,
+                                            : SizedBox(
+                                                width: 159.w,
+                                                height: 116.h,
                                               ),
                                       ),
                                     ),
@@ -248,9 +249,9 @@ class _SearchViewState extends State<SearchView> {
                             ),
                           );
                         },
-                        separatorBuilder: (_, __) => const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 24),
-                          child: Divider(height: 1, color: grey900),
+                        separatorBuilder: (_, __) => Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 24.w),
+                          child: Divider(height: 1.h, color: grey900),
                         ),
                       ),
                     ),
@@ -267,22 +268,22 @@ class _SearchViewState extends State<SearchView> {
   Widget buildSearchBar() {
     return Center(
       child: Container(
-        margin: const EdgeInsets.only(left: 10),
+        margin: EdgeInsets.only(left: 10.w),
         child: Container(
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             color: grey100,
-            borderRadius: BorderRadius.all(Radius.circular(7)),
+            borderRadius: BorderRadius.all(Radius.circular(7.r)),
           ),
-          height: 36,
+          height: 36.h,
           child: Center(
             child: TextField(
               textAlignVertical: TextAlignVertical.center,
               controller: textController,
               cursorColor: grey800,
               autofocus: true,
-              style: const TextStyle(
+              style: TextStyle(
                 color: grey800,
-                fontSize: 14,
+                fontSize: 14.sp,
                 fontWeight: FontWeight.w400,
               ),
               decoration: InputDecoration(
@@ -290,24 +291,24 @@ class _SearchViewState extends State<SearchView> {
                 focusedBorder: InputBorder.none,
                 isDense: true,
                 hintText: '검색어를 입력해주세요',
-                hintStyle: const TextStyle(
-                  fontSize: 14,
-                  letterSpacing: -0.1,
-                  height: 18 / 14,
+                hintStyle: TextStyle(
+                  fontSize: 14.sp,
+                  letterSpacing: -0.1.w,
+                  height: (18 / 14).h,
                   color: lightGrey700,
                 ),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 9,
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: 10.w,
+                  vertical: 9.h,
                 ),
                 suffixIcon: InkWell(
                   onTap: () {
                     textController.text = '';
                   },
-                  child: const Icon(
+                  child: Icon(
                     CupertinoIcons.clear_circled_solid,
                     color: grey400,
-                    size: 20,
+                    size: 20.r,
                   ),
                 ),
               ),
@@ -332,28 +333,28 @@ class _SearchViewState extends State<SearchView> {
       },
       child: Center(
         child: Container(
-          margin: const EdgeInsets.only(left: 10),
+          margin: EdgeInsets.only(left: 10.w),
           child: Container(
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               color: grey100,
-              borderRadius: BorderRadius.all(Radius.circular(7)),
+              borderRadius: BorderRadius.all(Radius.circular(7.r)),
             ),
-            height: 36,
-            margin: const EdgeInsets.only(right: 6),
+            height: 36.h,
+            margin: EdgeInsets.only(right: 6.w),
             child: Center(
               child: Row(
                 children: [
                   Container(
-                    margin: const EdgeInsets.only(left: 10, right: 10),
+                    margin: EdgeInsets.only(left: 10.w, right: 10.w),
                     child: Assets.images.folderSearchIcon.image(),
                   ),
-                  const Text(
+                  Text(
                     '검색어를 입력해주세요',
                     style: TextStyle(
                       fontWeight: FontWeight.w400,
-                      fontSize: 14,
-                      letterSpacing: -0.1,
-                      height: 18 / 14,
+                      fontSize: 14.sp,
+                      letterSpacing: -0.1.w,
+                      height: (18 / 14).h,
                       color: lightGrey700,
                     ),
                   )
