@@ -406,14 +406,13 @@ class MyLinkView extends StatelessWidget {
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
             height: 115.h,
             child: Container(
               margin: EdgeInsets.symmetric(vertical: 5.h),
-              width: ((width - 24 * 2) - 179).w,
+              width: width * (130 / 375),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,

@@ -14,7 +14,6 @@ import 'package:ac_project_app/models/user/detail_user.dart';
 import 'package:ac_project_app/resource.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/bottom_dialog.dart';
-import 'package:ac_project_app/ui/widget/loading.dart';
 import 'package:ac_project_app/util/list_utils.dart';
 import 'package:ac_project_app/util/string_utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -89,207 +88,199 @@ class HomePage extends StatelessWidget {
 
     return BlocBuilder<LinksFromSelectedJobGroupCubit, List<Link>>(
       builder: (context, links) {
-        final totalLinks =
-            context.watch<LinksFromSelectedJobGroupCubit>().totalLinks;
-        if (context.read<LinksFromSelectedJobGroupCubit>().hasRefresh) {
-          totalLinks.clear();
-          context.read<LinksFromSelectedJobGroupCubit>().hasRefresh = false;
-        }
-        if (totalLinks.isNotEmpty && totalLinks.last.id == null) {
-          totalLinks.removeLast();
-        }
-        totalLinks.addAll(links);
-        return Expanded(
-          child: NotificationListener<ScrollEndNotification>(
-            onNotification: (scrollNotification) {
-              final metrics = scrollNotification.metrics;
-              if (metrics.axisDirection != AxisDirection.down) return false;
-              if (metrics.extentAfter <= 0) {
-                context.read<LinksFromSelectedJobGroupCubit>().loadMore();
-              }
-              return true;
-            },
-            child: RefreshIndicator(
-              onRefresh: () => refresh(context, totalLinks),
-              color: primary600,
-              child: ListView.separated(
-                itemCount: totalLinks.length +
-                    (context.read<LinksFromSelectedJobGroupCubit>().hasLoadMore
-                        ? 1
-                        : 0),
-                physics: const AlwaysScrollableScrollPhysics(),
-                controller: context
-                    .read<LinksFromSelectedJobGroupCubit>()
-                    .scrollController,
-                itemBuilder: (_, i) {
-                  if (i == totalLinks.length &&
-                      context
-                          .read<LinksFromSelectedJobGroupCubit>()
-                          .hasLoadMore) {
-                    Future.microtask(
-                      () => context
-                          .read<LinksFromSelectedJobGroupCubit>()
-                          .scrollEnd(),
-                    );
-                    return BottomLoadingWidget();
-                  }
-                  final link = totalLinks[i];
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.pushNamed(
-                        context,
-                        Routes.linkDetail,
-                        arguments: {
-                          'link': link,
-                        },
-                      );
-                    },
-                    child: Container(
-                      margin: EdgeInsets.symmetric(
-                        vertical: 20.h,
-                        horizontal: 24.w,
-                      ),
-                      color: Colors.white,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          GestureDetector(
-                            onTap: () async {
-                              final profileState = context
-                                  .read<GetProfileInfoCubit>()
-                                  .state as ProfileLoadedState;
-                              await Navigator.of(context).pushNamed(
-                                Routes.userFeed,
-                                arguments: {
-                                  'user': link.user,
-                                  'folders': await context
-                                      .read<GetUserFoldersCubit>()
-                                      .getFolders(link.user!.id!),
-                                  'isMine':
-                                      profileState.profile.id == link.user!.id,
-                                },
-                              );
-                            },
-                            child: Row(
-                              children: [
-                                Image.asset(
-                                  makeImagePath(link.user?.profileImg ?? '01'),
-                                  width: 32.w,
-                                  height: 32.h,
-                                  errorBuilder: (_, __, ___) {
-                                    return Container(
-                                      width: 32.w,
-                                      height: 32.h,
-                                      decoration: const BoxDecoration(
-                                        color: grey300,
-                                        shape: BoxShape.circle,
-                                      ),
-                                    );
+        final totalLinks = _setTotalLinks(context, links);
+        if (totalLinks.isEmpty) {
+          return Expanded(
+            child: Center(
+              child: Text(
+                '등록된 링크가 없습니다',
+                style: TextStyle(
+                  color: grey300,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 16.sp,
+                  height: (19/16).h,
+                ),
+              ),
+            ),
+          );
+        } else {
+          return Expanded(
+            child: NotificationListener<ScrollEndNotification>(
+              onNotification: (scrollNotification) {
+                final metrics = scrollNotification.metrics;
+                if (metrics.axisDirection != AxisDirection.down) return false;
+                if (metrics.extentAfter <= 800) {
+                  context.read<LinksFromSelectedJobGroupCubit>().loadMore();
+                }
+                return true;
+              },
+              child: RefreshIndicator(
+                onRefresh: () => refresh(context, totalLinks),
+                color: primary600,
+                child: ListView.separated(
+                  itemCount: totalLinks.length,
+                  physics: const ClampingScrollPhysics(),
+                  controller: context
+                      .read<LinksFromSelectedJobGroupCubit>()
+                      .scrollController,
+                  itemBuilder: (_, i) {
+                    final link = totalLinks[i];
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(
+                          context,
+                          Routes.linkDetail,
+                          arguments: {
+                            'link': link,
+                          },
+                        );
+                      },
+                      child: Container(
+                        margin: EdgeInsets.symmetric(
+                          vertical: 20.h,
+                          horizontal: 24.w,
+                        ),
+                        color: Colors.white,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            GestureDetector(
+                              onTap: () async {
+                                final profileState = context
+                                    .read<GetProfileInfoCubit>()
+                                    .state as ProfileLoadedState;
+                                await Navigator.of(context).pushNamed(
+                                  Routes.userFeed,
+                                  arguments: {
+                                    'user': link.user,
+                                    'folders': await context
+                                        .read<GetUserFoldersCubit>()
+                                        .getFolders(link.user!.id!),
+                                    'isMine':
+                                    profileState.profile.id == link.user!.id,
                                   },
-                                ),
-                                SizedBox(
-                                  width: 8.w,
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Text(
-                                          link.user?.nickname ?? '',
-                                          style: const TextStyle(
-                                            color: grey900,
-                                            fontWeight: FontWeight.w500,
-                                          ),
+                                );
+                              },
+                              child: Row(
+                                children: [
+                                  Image.asset(
+                                    makeImagePath(link.user?.profileImg ?? '01'),
+                                    width: 32.w,
+                                    height: 32.h,
+                                    errorBuilder: (_, __, ___) {
+                                      return Container(
+                                        width: 32.w,
+                                        height: 32.h,
+                                        decoration: const BoxDecoration(
+                                          color: grey300,
+                                          shape: BoxShape.circle,
                                         ),
-                                        Container(
-                                          margin: EdgeInsets.only(
-                                            left: 4.w,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: primary66_200,
-                                            borderRadius: BorderRadius.all(
-                                              Radius.circular(4.r),
+                                      );
+                                    },
+                                  ),
+                                  SizedBox(
+                                    width: 8.w,
+                                  ),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Text(
+                                            link.user?.nickname ?? '',
+                                            style: const TextStyle(
+                                              color: grey900,
+                                              fontWeight: FontWeight.w500,
                                             ),
                                           ),
-                                          child: Center(
-                                            child: Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                vertical: 3.h,
-                                                horizontal: 4.w,
+                                          Container(
+                                            margin: EdgeInsets.only(
+                                              left: 4.w,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: primary66_200,
+                                              borderRadius: BorderRadius.all(
+                                                Radius.circular(4.r),
                                               ),
-                                              child: Text(
-                                                link.user?.jobGroup?.name ?? '',
-                                                style: TextStyle(
-                                                  color: primary600,
-                                                  fontSize: 10.sp,
-                                                  letterSpacing: -0.2.w,
+                                            ),
+                                            child: Center(
+                                              child: Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                  vertical: 3.h,
+                                                  horizontal: 4.w,
+                                                ),
+                                                child: Text(
+                                                  link.user?.jobGroup?.name ?? '',
+                                                  style: TextStyle(
+                                                    color: primary600,
+                                                    fontSize: 10.sp,
+                                                    letterSpacing: -0.2.w,
+                                                  ),
                                                 ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                    Container(
-                                      margin: EdgeInsets.only(top: 4.h),
-                                      child: Text(
-                                        makeLinkTimeString(link.time ?? ''),
-                                        style: TextStyle(
-                                          color: grey400,
-                                          fontSize: 12.sp,
-                                          letterSpacing: -0.2.w,
+                                        ],
+                                      ),
+                                      Container(
+                                        margin: EdgeInsets.only(top: 4.h),
+                                        child: Text(
+                                          makeLinkTimeString(link.time ?? ''),
+                                          style: TextStyle(
+                                            color: grey400,
+                                            fontSize: 12.sp,
+                                            letterSpacing: -0.2.w,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                )
-                              ],
-                            ),
-                          ),
-                          if (link.describe != null ||
-                              (link.describe?.isNotEmpty ?? false))
-                            Column(
-                              children: [
-                                SizedBox(
-                                  height: 17.h,
-                                ),
-                                Text(
-                                  link.describe ?? '',
-                                  style: TextStyle(
-                                    fontSize: 16.sp,
-                                    color: grey800,
-                                    height: (26 / 16).h,
-                                  ),
-                                ),
-                              ],
-                            )
-                          else
-                            const SizedBox.shrink(),
-                          Container(
-                            margin: EdgeInsets.only(
-                              top: 16.h,
-                              bottom: 18.h,
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(7.r),
+                                    ],
+                                  )
+                                ],
                               ),
-                              child: isLinkVerified(link)
-                                  ? Container(
-                                      constraints: const BoxConstraints(
-                                        minWidth: double.infinity,
-                                      ),
-                                      color: grey100,
-                                      child: CachedNetworkImage(
-                                        imageUrl: link.image ?? '',
-                                        fadeInDuration:
-                                            const Duration(milliseconds: 300),
-                                        fadeOutDuration:
-                                            const Duration(milliseconds: 300),
-                                        imageBuilder:
-                                            (context, imageProvider) =>
-                                                Container(
+                            ),
+                            if (link.describe != null &&
+                                (link.describe?.isNotEmpty ?? false))
+                              Column(
+                                children: [
+                                  SizedBox(
+                                    height: 17.h,
+                                  ),
+                                  Text(
+                                    link.describe ?? '',
+                                    style: TextStyle(
+                                      fontSize: 16.sp,
+                                      color: grey800,
+                                      height: (26 / 16).h,
+                                    ),
+                                  ),
+                                ],
+                              )
+                            else
+                              const SizedBox.shrink(),
+                            Container(
+                              margin: EdgeInsets.only(
+                                top: 16.h,
+                                bottom: 18.h,
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(7.r),
+                                ),
+                                child: isLinkVerified(link)
+                                    ? Container(
+                                  constraints: const BoxConstraints(
+                                    minWidth: double.infinity,
+                                  ),
+                                  color: grey100,
+                                  child: CachedNetworkImage(
+                                    imageUrl: link.image ?? '',
+                                    fadeInDuration:
+                                    const Duration(milliseconds: 300),
+                                    fadeOutDuration:
+                                    const Duration(milliseconds: 300),
+                                    imageBuilder:
+                                        (context, imageProvider) =>
+                                        Container(
                                           height: 160.h,
                                           decoration: BoxDecoration(
                                             image: DecorationImage(
@@ -298,91 +289,103 @@ class HomePage extends StatelessWidget {
                                             ),
                                           ),
                                         ),
-                                        errorWidget: (_, __, ___) {
-                                          return const SizedBox();
-                                        },
-                                      ),
-                                    )
-                                  : const SizedBox(),
-                            ),
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  SizedBox(
-                                    width: (width - (24 * 2 + 25)).w,
-                                    child: Text(
-                                      link.title ?? '',
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        color: blackBold,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16.sp,
-                                      ),
-                                    ),
-                                  ),
-                                  InkWell(
-                                    onTap: () {
-                                      final profileState = context
-                                          .read<GetProfileInfoCubit>()
-                                          .state as ProfileLoadedState;
-                                      if (profileState.profile.id ==
-                                          link.user!.id) {
-                                        showMyLinkOptionsDialog(
-                                          link,
-                                          context,
-                                          popCallback: () => refresh(
-                                            context,
-                                            totalLinks,
-                                          ),
-                                        );
-                                      } else {
-                                        showLinkOptionsDialog(
-                                          link,
-                                          context,
-                                          callback: () =>
-                                              refresh(context, totalLinks),
-                                        );
-                                      }
+                                    errorWidget: (_, __, ___) {
+                                      return const SizedBox();
                                     },
-                                    child: SvgPicture.asset(
-                                      Assets.images.moreVert,
-                                    ),
                                   ),
-                                ],
+                                )
+                                    : const SizedBox(),
                               ),
-                              SizedBox(height: 6.h),
-                              Text(
-                                link.url ?? '',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  color: grey500,
-                                  fontSize: 12.sp,
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    SizedBox(
+                                      width: (width - (24 * 2 + 25)).w,
+                                      child: Text(
+                                        link.title ?? '',
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          color: blackBold,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16.sp,
+                                        ),
+                                      ),
+                                    ),
+                                    InkWell(
+                                      onTap: () {
+                                        final profileState = context
+                                            .read<GetProfileInfoCubit>()
+                                            .state as ProfileLoadedState;
+                                        if (profileState.profile.id ==
+                                            link.user!.id) {
+                                          showMyLinkOptionsDialog(
+                                            link,
+                                            context,
+                                            popCallback: () => refresh(
+                                              context,
+                                              totalLinks,
+                                            ),
+                                          );
+                                        } else {
+                                          showLinkOptionsDialog(
+                                            link,
+                                            context,
+                                            callback: () =>
+                                                refresh(context, totalLinks),
+                                          );
+                                        }
+                                      },
+                                      child: SvgPicture.asset(
+                                        Assets.images.moreVert,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                            ],
-                          ),
-                        ],
+                                SizedBox(height: 6.h),
+                                Text(
+                                  link.url ?? '',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    color: grey500,
+                                    fontSize: 12.sp,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                },
-                separatorBuilder: (_, __) => Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24.w),
-                  child: Divider(height: 1.h, thickness: 1.w, color: ccGrey200),
+                    );
+                  },
+                  separatorBuilder: (_, __) => Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 24.w),
+                    child: Divider(height: 1.h, thickness: 1.w, color: ccGrey200),
+                  ),
                 ),
               ),
             ),
-          ),
-        );
+          );
+        }
       },
     );
+  }
+
+  List<Link> _setTotalLinks(BuildContext context, List<Link> links) {
+    final totalLinks =
+        context.watch<LinksFromSelectedJobGroupCubit>().totalLinks;
+    if (context.read<LinksFromSelectedJobGroupCubit>().hasRefresh) {
+      totalLinks.clear();
+      context.read<LinksFromSelectedJobGroupCubit>().hasRefresh = false;
+    }
+    totalLinks.addAll(links);
+    return totalLinks;
   }
 
   void addLinks(BuildContext context, List<Link> totalLinks, List<Link> links) {

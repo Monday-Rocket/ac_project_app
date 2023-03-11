@@ -47,9 +47,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      FolderApi().bulkSave().then((value) {
-        setState(() {});
-      });
+      FolderApi().bulkSave();
     }
   }
 
@@ -133,7 +131,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
                             create: (_) => FolderViewTypeCubit(),
                           ),
                         ],
-                        child: MyFolderPage(),
+                        child: const MyFolderPage(),
                       ),
                       const MyPage(),
                     ],
