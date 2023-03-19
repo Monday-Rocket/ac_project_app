@@ -306,7 +306,7 @@ class HomePage extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
                                     SizedBox(
-                                      width: (width - (24 * 2 + 25)).w,
+                                      width: width - (24 * 2 + 25),
                                       child: Text(
                                         link.title ?? '',
                                         overflow: TextOverflow.ellipsis,

@@ -228,7 +228,7 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
         color: grey50,
       ),
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
+        padding: EdgeInsets.only(left: 12.w, top: 12.h, bottom: 12.h),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
