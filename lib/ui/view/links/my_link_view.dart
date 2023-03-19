@@ -17,6 +17,7 @@ import 'package:ac_project_app/util/get_widget_arguments.dart';
 import 'package:ac_project_app/util/number_commas.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -53,7 +54,6 @@ class MyLinkView extends StatelessWidget {
             child: BlocBuilder<GetSelectedFolderCubit, Folder>(
               builder: (context, folder) {
                 return Scaffold(
-                  appBar: buildBackAppBar(context),
                   backgroundColor: Colors.white,
                   body: SafeArea(
                     child: BlocBuilder<LinksFromSelectedFolderCubit,
@@ -61,31 +61,43 @@ class MyLinkView extends StatelessWidget {
                       builder: (cubitContext, state) {
                         return Stack(
                           children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                buildTitleBar(folder),
-                                buildContentsCountText(cubitContext),
-                                buildSearchBar(context, links),
-                                buildTabBar(
-                                  folders,
-                                  tabIndex,
-                                  folder,
-                                  links,
-                                  onChangeIndex: (int index) {
-                                    // tabIndex = index;
-                                  },
-                                ),
-                                buildBodyList(
-                                  folder: folder,
-                                  width: width,
-                                  context: cubitContext,
-                                  totalLinks: links,
-                                  state: state,
-                                  folderState: folderState,
-                                  foldersContext: foldersContext,
-                                ),
-                              ],
+                            NotificationListener<ScrollEndNotification>(
+                              onNotification: (scrollEnd) {
+                                final metrics = scrollEnd.metrics;
+                                if (metrics.atEdge && metrics.pixels != 0) {
+                                  context
+                                      .read<LinksFromSelectedFolderCubit>()
+                                      .loadMore();
+                                }
+                                return true;
+                              },
+                              child: CustomScrollView(
+                                //crossAxisAlignment: CrossAxisAlignment.start,
+                                slivers: [
+                                  buildTopAppBar(context),
+                                  buildTitleBar(folder),
+                                  buildContentsCountText(cubitContext),
+                                  buildSearchBar(context, links),
+                                  buildTabBar(
+                                    folders,
+                                    tabIndex,
+                                    folder,
+                                    links,
+                                    onChangeIndex: (int index) {
+                                      // tabIndex = index;
+                                    },
+                                  ),
+                                  buildBodyList(
+                                    folder: folder,
+                                    width: width,
+                                    context: cubitContext,
+                                    totalLinks: links,
+                                    state: state,
+                                    folderState: folderState,
+                                    foldersContext: foldersContext,
+                                  ),
+                                ],
+                              ),
                             ),
                             if (state is LinkListLoadingState ||
                                 state is LinkListInitialState)
@@ -113,91 +125,117 @@ class MyLinkView extends StatelessWidget {
     );
   }
 
-  Container buildTitleBar(Folder folder) {
+  Widget buildTopAppBar(
+    BuildContext context,
+  ) {
+    return SliverAppBar(
+      pinned: true,
+      leading: IconButton(
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        icon: SvgPicture.asset(Assets.images.icBack),
+        color: grey900,
+        padding: EdgeInsets.only(left: 20.w, right: 8.w),
+      ),
+      backgroundColor: Colors.white,
+      elevation: 0,
+      systemOverlayStyle: SystemUiOverlayStyle.dark,
+    );
+  }
+
+  Widget buildTitleBar(Folder folder) {
     final classified = folder.isClassified ?? true;
-    return Container(
-      margin: EdgeInsets.only(left: 24.w, right: 12.w, top: 10.h),
-      child: Row(
-        children: [
-          Text(
-            classified ? folder.name! : '미분류',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 30.sp,
-              height: (36 / 30).h,
+    return SliverToBoxAdapter(
+      child: Container(
+        margin: EdgeInsets.only(left: 24.w, right: 12.w, top: 10.h),
+        child: Row(
+          children: [
+            Text(
+              classified ? folder.name! : '미분류',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 30.sp,
+                height: (36 / 30).h,
+              ),
             ),
-          ),
-          if (!(folder.visible ?? false))
-            Container(
-              margin: EdgeInsets.only(left: 8.w),
-              child: Assets.images.icLockPng.image(),
-            )
-          else
-            const SizedBox.shrink(),
-        ],
+            if (!(folder.visible ?? false))
+              Container(
+                margin: EdgeInsets.only(left: 8.w),
+                child: Assets.images.icLockPng.image(),
+              )
+            else
+              const SizedBox.shrink(),
+          ],
+        ),
       ),
     );
   }
 
-  Container buildContentsCountText(BuildContext context) {
+  Widget buildContentsCountText(BuildContext context) {
     final count = context.read<LinksFromSelectedFolderCubit>().totalCount;
-    return Container(
-      margin: EdgeInsets.only(left: 24.w, top: 3.h),
-      child: Text(
-        '콘텐츠 ${addCommasFrom(count)}개',
-        style: TextStyle(
-          color: greyText,
-          fontWeight: FontWeight.w500,
-          fontSize: 14.sp,
+    return SliverToBoxAdapter(
+      child: Container(
+        margin: EdgeInsets.only(left: 24.w, top: 3.h),
+        child: Text(
+          '콘텐츠 ${addCommasFrom(count)}개',
+          style: TextStyle(
+            color: greyText,
+            fontWeight: FontWeight.w500,
+            fontSize: 14.sp,
+          ),
         ),
       ),
     );
   }
 
   Widget buildSearchBar(BuildContext context, List<Link> totalLinks) {
-    return Container(
-      margin: EdgeInsets.only(top: 23.h, left: 23.w, right: 23.w),
-      child: Row(
-        children: [
-          Flexible(
-            child: GestureDetector(
-              onTap: () => Navigator.pushNamed(
-                context,
-                Routes.search,
-                arguments: {
-                  'isMine': true,
-                },
-              ),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: ccGrey100,
-                  borderRadius: BorderRadius.all(Radius.circular(7.r)),
+    return SliverToBoxAdapter(
+      child: Container(
+        margin: EdgeInsets.only(top: 23.h, left: 23.w, right: 23.w),
+        child: Row(
+          children: [
+            Flexible(
+              child: GestureDetector(
+                onTap: () => Navigator.pushNamed(
+                  context,
+                  Routes.search,
+                  arguments: {
+                    'isMine': true,
+                  },
                 ),
-                width: double.infinity,
-                height: 36.h,
-                margin: EdgeInsets.only(right: 6.w),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 10.w),
-                    child: Assets.images.folderSearchIcon.image(),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: ccGrey100,
+                    borderRadius: BorderRadius.all(Radius.circular(7.r)),
+                  ),
+                  width: double.infinity,
+                  height: 36.h,
+                  margin: EdgeInsets.only(right: 6.w),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 10.w),
+                      child: Assets.images.folderSearchIcon.image(),
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-          InkWell(
-            onTap: () => Navigator.pushNamed(context, Routes.upload).then((_) {
-              // update
-              totalLinks.clear();
-              context.read<GetFoldersCubit>().getFolders();
-            }),
-            child: Padding(
-              padding: EdgeInsets.all(6.r),
-              child: SvgPicture.asset(Assets.images.btnAdd),
+            InkWell(
+              onTap: () =>
+                  Navigator.pushNamed(context, Routes.upload).then((_) {
+                // update
+                totalLinks.clear();
+                context.read<GetFoldersCubit>().getFolders();
+              }),
+              child: Padding(
+                padding: EdgeInsets.all(6.r),
+                child: SvgPicture.asset(Assets.images.btnAdd),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -209,97 +247,99 @@ class MyLinkView extends StatelessWidget {
     List<Link> totalLinks, {
     required void Function(int index) onChangeIndex,
   }) {
-    return Container(
-      margin: EdgeInsets.only(top: 30.h, left: 12.w, right: 20.w),
-      padding: EdgeInsets.only(bottom: 18.h),
-      child: DefaultTabController(
-        length: folders.length,
-        initialIndex: tabIndex,
-        child: SizedBox(
-          height: 36.h,
-          child: Stack(
-            children: [
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Padding(
-                  padding: EdgeInsets.only(
-                    left: 15.w,
-                    right: 11.w,
-                    bottom: 1.h,
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          color: greyTab,
-                          height: 1.h,
+    return SliverToBoxAdapter(
+      child: Container(
+        margin: EdgeInsets.only(top: 30.h, left: 12.w, right: 20.w),
+        padding: EdgeInsets.only(bottom: 18.h),
+        child: DefaultTabController(
+          length: folders.length,
+          initialIndex: tabIndex,
+          child: SizedBox(
+            height: 36.h,
+            child: Stack(
+              children: [
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      left: 15.w,
+                      right: 11.w,
+                      bottom: 1.h,
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            color: greyTab,
+                            height: 1.h,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              Container(
-                margin: EdgeInsets.only(right: 7.w),
-                child: Builder(
-                  builder: (context) {
-                    final tabs = <Widget>[];
-                    for (final folder in folders) {
-                      tabs.add(
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                            vertical: 7.h,
+                Container(
+                  margin: EdgeInsets.only(right: 7.w),
+                  child: Builder(
+                    builder: (context) {
+                      final tabs = <Widget>[];
+                      for (final folder in folders) {
+                        tabs.add(
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                              vertical: 7.h,
+                            ),
+                            child: Text(
+                              folder.name ?? '',
+                            ),
                           ),
-                          child: Text(
-                            folder.name ?? '',
+                        );
+                      }
+                      return TabBar(
+                        isScrollable: true,
+                        physics: const ClampingScrollPhysics(),
+                        unselectedLabelColor: grey700,
+                        labelColor: primaryTab,
+                        labelStyle: TextStyle(
+                          fontFamily: R_Font.PRETENDARD,
+                          fontSize: 16.sp,
+                          height: (19 / 16).h,
+                          fontWeight: FontWeight.w800,
+                        ),
+                        unselectedLabelStyle: TextStyle(
+                          fontFamily: R_Font.PRETENDARD,
+                          fontSize: 16.sp,
+                          height: (19 / 16).h,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        indicator: UnderlineTabIndicator(
+                          borderSide: BorderSide(
+                            color: primaryTab,
+                            width: 2.5.w,
+                          ),
+                          insets: EdgeInsets.only(
+                            left: 15.w,
+                            right: 15.w,
                           ),
                         ),
+                        labelPadding: EdgeInsets.symmetric(horizontal: 13.w),
+                        tabs: tabs,
+                        onTap: (index) {
+                          onChangeIndex.call(index);
+                          totalLinks.clear();
+                          context
+                              .read<GetSelectedFolderCubit>()
+                              .update(folders[index]);
+                          context
+                              .read<LinksFromSelectedFolderCubit>()
+                              .getSelectedLinks(folders[index], 0);
+                        },
                       );
-                    }
-                    return TabBar(
-                      isScrollable: true,
-                      physics: const ClampingScrollPhysics(),
-                      unselectedLabelColor: grey700,
-                      labelColor: primaryTab,
-                      labelStyle: TextStyle(
-                        fontFamily: R_Font.PRETENDARD,
-                        fontSize: 16.sp,
-                        height: (19 / 16).h,
-                        fontWeight: FontWeight.w800,
-                      ),
-                      unselectedLabelStyle: TextStyle(
-                        fontFamily: R_Font.PRETENDARD,
-                        fontSize: 16.sp,
-                        height: (19 / 16).h,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      indicator: UnderlineTabIndicator(
-                        borderSide: BorderSide(
-                          color: primaryTab,
-                          width: 2.5.w,
-                        ),
-                        insets: EdgeInsets.only(
-                          left: 15.w,
-                          right: 15.w,
-                        ),
-                      ),
-                      labelPadding: EdgeInsets.symmetric(horizontal: 13.w),
-                      tabs: tabs,
-                      onTap: (index) {
-                        onChangeIndex.call(index);
-                        totalLinks.clear();
-                        context
-                            .read<GetSelectedFolderCubit>()
-                            .update(folders[index]);
-                        context
-                            .read<LinksFromSelectedFolderCubit>()
-                            .getSelectedLinks(folders[index], 0);
-                      },
-                    );
-                  },
+                    },
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -316,86 +356,89 @@ class MyLinkView extends StatelessWidget {
     required BuildContext foldersContext,
   }) {
     if (folder.links == 0) {
-      return buildEmptyList();
+      return buildEmptyList(context);
     } else {
       if (state is LinkListLoadedState && folderState is FolderLoadedState) {
         final links = state.links;
         totalLinks.addAll(links);
       }
-      return Expanded(
-        child: NotificationListener<ScrollEndNotification>(
-          onNotification: (scrollEnd) {
-            final metrics = scrollEnd.metrics;
-            if (metrics.atEdge && metrics.pixels != 0) {
-              context.read<LinksFromSelectedFolderCubit>().loadMore();
-            }
-            return true;
-          },
-          child: ListView.separated(
-            itemCount: totalLinks.length,
-            itemBuilder: (_, index) {
+      return SliverList(
+        delegate: SliverChildBuilderDelegate(
+          (BuildContext context, int index) {
+            if (index.isEven) {
               final link = totalLinks[index];
-              return InkWell(
-                onTap: () {
-                  context.read<LinksFromSelectedFolderCubit>().loading();
-                  Navigator.pushNamed(
-                    context,
-                    Routes.linkDetail,
-                    arguments: {
-                      'link': link,
-                      'isMine': true,
-                    },
-                  ).then((result) {
-                    if (result == 'deleted') {
-                      Navigator.pop(context);
-                    } else {
-                      // update
-                      totalLinks.clear();
-
-                      foldersContext.read<GetFoldersCubit>().getFolders();
-                      context
-                          .read<LinksFromSelectedFolderCubit>()
-                          .getSelectedLinks(folder, 0);
-                    }
-                  });
-                },
-                child: LinkSlidAbleWidget(
-                  index: index,
-                  link: link,
-                  child: buildBodyListItem(width, link),
-                  callback: () {
-                    LinkApi().deleteLink(link).then(
-                      (result) {
-                        if (result) {
-                          showBottomToast(
-                            context: context,
-                            '링크가 삭제되었어요!',
-                          );
-                        }
-                        totalLinks.clear();
-                        foldersContext.read<GetFoldersCubit>().getFolders();
-                        context
-                            .read<LinksFromSelectedFolderCubit>()
-                            .getSelectedLinks(folder, 0);
-                      },
-                    );
-                  },
+              return buildLinkItem(context, link, totalLinks, foldersContext,
+                  folder, index, width);
+            }
+            return Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24.w),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24.w),
+                child: Divider(
+                  height: 1.h,
+                  thickness: 1.h,
+                  color: greyTab,
+                  indent: 24.w,
+                  endIndent: 24.w,
                 ),
-              );
-            },
-            separatorBuilder: (BuildContext context, int index) {
-              return Divider(
-                height: 1.h,
-                thickness: 1.h,
-                color: greyTab,
-                indent: 24.w,
-                endIndent: 24.w,
-              );
-            },
-          ),
+              ),
+            );
+          },
+          childCount: totalLinks.length,
         ),
       );
     }
+  }
+
+  InkWell buildLinkItem(BuildContext context, Link link, List<Link> totalLinks,
+      BuildContext foldersContext, Folder folder, int index, double width) {
+    return InkWell(
+      onTap: () {
+        context.read<LinksFromSelectedFolderCubit>().loading();
+        Navigator.pushNamed(
+          context,
+          Routes.linkDetail,
+          arguments: {
+            'link': link,
+            'isMine': true,
+          },
+        ).then((result) {
+          if (result == 'deleted') {
+            Navigator.pop(context);
+          } else {
+            // update
+            totalLinks.clear();
+
+            foldersContext.read<GetFoldersCubit>().getFolders();
+            context
+                .read<LinksFromSelectedFolderCubit>()
+                .getSelectedLinks(folder, 0);
+          }
+        });
+      },
+      child: LinkSlidAbleWidget(
+        index: index,
+        link: link,
+        child: buildBodyListItem(width, link),
+        callback: () {
+          LinkApi().deleteLink(link).then(
+            (result) {
+              if (result) {
+                showBottomToast(
+                  context: context,
+                  '링크가 삭제되었어요!',
+                );
+              }
+              totalLinks.clear();
+              foldersContext.read<GetFoldersCubit>().getFolders();
+              context
+                  .read<LinksFromSelectedFolderCubit>()
+                  .getSelectedLinks(folder, 0);
+            },
+          );
+        },
+      ),
+    );
   }
 
   Container buildBodyListItem(double width, Link link) {
@@ -501,15 +544,18 @@ class MyLinkView extends StatelessWidget {
     );
   }
 
-  Expanded buildEmptyList() {
-    return Expanded(
-      child: Center(
-        child: Text(
-          '등록된 링크가 없습니다',
-          style: TextStyle(
-            color: grey300,
-            fontSize: 16.sp,
-            fontWeight: FontWeight.w500,
+  Widget buildEmptyList(BuildContext context) {
+    return SliverToBoxAdapter(
+      child: Container(
+        margin: EdgeInsets.only(top: MediaQuery.of(context).size.width / 3),
+        child: Center(
+          child: Text(
+            '등록된 링크가 없습니다',
+            style: TextStyle(
+              color: grey300,
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ),
       ),

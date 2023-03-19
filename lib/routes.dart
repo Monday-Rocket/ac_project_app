@@ -60,7 +60,7 @@ class Pages {
       case Routes.linkDetail:
         return router.create(child: const LinkDetailView());
       case Routes.userFeed:
-        return router.create(child: const UserFeedView());
+        return router.create(child: UserFeedView());
       case Routes.signUpNickname:
         return router.create(child: const SignUpNicknameView());
       case Routes.singUpJob:
