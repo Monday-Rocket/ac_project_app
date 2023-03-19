@@ -53,7 +53,7 @@ class _EmailLoginViewState extends State<EmailLoginView>
                   children: [
                     SizedBox(height: 16.h),
                     Text(
-                      '.w로그인에 필요한\n정보를 입력해주세요.',
+                      '로그인에 필요한\n정보를 입력해주세요.',
                       style: TextStyle(
                         fontSize: 24.sp,
                         color: grey900,
