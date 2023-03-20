@@ -4,14 +4,13 @@ import 'package:ac_project_app/util/offset_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class ToolTipCubit extends Cubit<WidgetOffset?> {
-  ToolTipCubit(GlobalKey<State<StatefulWidget>> uploadToolTipKey)
-      : super(null) {
+class UploadToolTipCubit extends Cubit<WidgetOffset?> {
+  UploadToolTipCubit(GlobalKey<State<StatefulWidget>> toolTipKey) : super(null) {
     ToolTipCheck.hasNotBottomUploaded().then((result) {
       if (result) {
-        final buttonWidgetOffset = getOffsetFromGlobalKey(uploadToolTipKey);
-        if (buttonWidgetOffset != null) {
-          emit(buttonWidgetOffset);
+        final offset = getOffsetFromGlobalKey(toolTipKey);
+        if (offset != null) {
+          emit(offset);
         }
       }
     });

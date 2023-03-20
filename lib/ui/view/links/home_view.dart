@@ -6,11 +6,11 @@ import 'package:ac_project_app/cubits/folders/folder_view_type_cubit.dart';
 import 'package:ac_project_app/cubits/folders/get_my_folders_cubit.dart';
 import 'package:ac_project_app/cubits/folders/get_user_folders_cubit.dart';
 import 'package:ac_project_app/cubits/home/get_job_list_cubit.dart';
-import 'package:ac_project_app/cubits/home/tool_tip_cubit.dart';
 import 'package:ac_project_app/cubits/home_view_cubit.dart';
 import 'package:ac_project_app/cubits/links/links_from_selected_job_group_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_state.dart';
+import 'package:ac_project_app/cubits/tool_tip/upload_tool_tip_cubit.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/provider/api/folders/folder_api.dart';
 import 'package:ac_project_app/provider/tool_tip_check.dart';
@@ -19,6 +19,7 @@ import 'package:ac_project_app/ui/page/home/home_page.dart';
 import 'package:ac_project_app/ui/page/my_folder/my_folder_page.dart';
 import 'package:ac_project_app/ui/page/my_page/my_page.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
+import 'package:ac_project_app/ui/widget/scaffold_with_tool_tip.dart';
 import 'package:ac_project_app/ui/widget/shape/triangle_painter.dart';
 import 'package:ac_project_app/ui/widget/widget_offset.dart';
 import 'package:ac_project_app/util/get_widget_arguments.dart';
@@ -77,8 +78,8 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
         BlocProvider<GetProfileInfoCubit>(
           create: (_) => GetProfileInfoCubit(),
         ),
-        BlocProvider<ToolTipCubit>(
-          create: (_) => ToolTipCubit(uploadToolTipButtonKey),
+        BlocProvider<UploadToolTipCubit>(
+          create: (_) => UploadToolTipCubit(uploadToolTipButtonKey),
         ),
       ],
       child: BlocBuilder<HomeViewCubit, int>(
@@ -127,28 +128,26 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
             ),
           ];
 
-          return Stack(
-            children: [
-              buildBody(index, bottomItems, context),
-              _buildUploadToolTip(context),
-            ],
+          return ScaffoldWithToolTip(
+            scaffold: buildBody(index, bottomItems, context),
+            tooltip: _buildUploadToolTip(context),
           );
         },
       ),
     );
   }
 
-  BlocBuilder<ToolTipCubit, WidgetOffset?> _buildUploadToolTip(
+  BlocBuilder<UploadToolTipCubit, WidgetOffset?> _buildUploadToolTip(
     BuildContext context,
   ) {
-    return BlocBuilder<ToolTipCubit, WidgetOffset?>(
+    return BlocBuilder<UploadToolTipCubit, WidgetOffset?>(
       builder: (ctx, widgetOffset) {
         if (widgetOffset == null) {
           return const SizedBox.shrink();
         } else {
           if (widgetOffset.visible) {
             Future.delayed(const Duration(seconds: 3), () {
-              ctx.read<ToolTipCubit>().invisible();
+              ctx.read<UploadToolTipCubit>().invisible();
               ToolTipCheck.setBottomUploaded();
             });
           }

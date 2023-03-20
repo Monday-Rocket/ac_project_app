@@ -4,15 +4,20 @@ import 'package:ac_project_app/cubits/folders/get_my_folders_cubit.dart';
 import 'package:ac_project_app/cubits/folders/get_selected_folder_cubit.dart';
 import 'package:ac_project_app/cubits/links/link_list_state.dart';
 import 'package:ac_project_app/cubits/links/links_from_selected_folder_cubit.dart';
+import 'package:ac_project_app/cubits/tool_tip/my_link_upload_tool_tip_cubit.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/provider/api/folders/link_api.dart';
+import 'package:ac_project_app/provider/tool_tip_check.dart';
 import 'package:ac_project_app/resource.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/only_back_app_bar.dart';
+import 'package:ac_project_app/ui/widget/scaffold_with_tool_tip.dart';
+import 'package:ac_project_app/ui/widget/shape/reverse_triangle_painter.dart';
 import 'package:ac_project_app/ui/widget/slidable/link_slidable_widget.dart';
+import 'package:ac_project_app/ui/widget/widget_offset.dart';
 import 'package:ac_project_app/util/get_widget_arguments.dart';
 import 'package:ac_project_app/util/number_commas.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -22,7 +27,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class MyLinkView extends StatelessWidget {
-  const MyLinkView({super.key});
+  MyLinkView({super.key});
+
+  final toolTipKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -49,60 +56,130 @@ class MyLinkView extends StatelessWidget {
                 create: (_) =>
                     LinksFromSelectedFolderCubit(folders[tabIndex], 0),
               ),
+              BlocProvider(
+                create: (_) => MyLinkUploadToolTipCubit(toolTipKey),
+              ),
             ],
             child: BlocBuilder<GetSelectedFolderCubit, Folder>(
               builder: (context, folder) {
-                return Scaffold(
-                  appBar: buildBackAppBar(context),
-                  backgroundColor: Colors.white,
-                  body: SafeArea(
-                    child: BlocBuilder<LinksFromSelectedFolderCubit,
-                        LinkListState>(
-                      builder: (cubitContext, state) {
-                        return Stack(
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                buildTitleBar(folder),
-                                buildContentsCountText(cubitContext),
-                                buildSearchBar(context, links),
-                                buildTabBar(
-                                  folders,
-                                  tabIndex,
-                                  folder,
-                                  links,
-                                  onChangeIndex: (int index) {
-                                    // tabIndex = index;
-                                  },
-                                ),
-                                buildBodyList(
-                                  folder: folder,
-                                  width: width,
-                                  context: cubitContext,
-                                  totalLinks: links,
-                                  state: state,
-                                  folderState: folderState,
-                                  foldersContext: foldersContext,
-                                ),
-                              ],
-                            ),
-                            if (state is LinkListLoadingState ||
-                                state is LinkListInitialState)
-                              Center(
-                                child: Container(
-                                  margin: EdgeInsets.only(bottom: 30.h),
-                                  child: const CircularProgressIndicator(
-                                    color: primary600,
+                return ScaffoldWithToolTip(
+                  scaffold: Scaffold(
+                    appBar: buildBackAppBar(context),
+                    backgroundColor: Colors.white,
+                    body: SafeArea(
+                      child: BlocBuilder<LinksFromSelectedFolderCubit,
+                          LinkListState>(
+                        builder: (cubitContext, state) {
+                          return Stack(
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  buildTitleBar(folder),
+                                  buildContentsCountText(cubitContext),
+                                  buildSearchBar(context, links),
+                                  buildTabBar(
+                                    folders,
+                                    tabIndex,
+                                    folder,
+                                    links,
+                                    onChangeIndex: (int index) {
+                                      // tabIndex = index;
+                                    },
+                                  ),
+                                  buildBodyList(
+                                    folder: folder,
+                                    width: width,
+                                    context: cubitContext,
+                                    totalLinks: links,
+                                    state: state,
+                                    folderState: folderState,
+                                    foldersContext: foldersContext,
+                                  ),
+                                ],
+                              ),
+                              if (state is LinkListLoadingState ||
+                                  state is LinkListInitialState)
+                                Center(
+                                  child: Container(
+                                    margin: EdgeInsets.only(bottom: 30.h),
+                                    child: const CircularProgressIndicator(
+                                      color: primary600,
+                                    ),
+                                  ),
+                                )
+                              else
+                                const SizedBox.shrink(),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                  tooltip: BlocBuilder<MyLinkUploadToolTipCubit, WidgetOffset?>(
+                    builder: (ctx, widgetOffset) {
+                      if (widgetOffset == null) {
+                        return const SizedBox.shrink();
+                      } else {
+                        if (widgetOffset.visible) {
+                          Future.delayed(const Duration(seconds: 3), () {
+                            ctx.read<MyLinkUploadToolTipCubit>().invisible();
+                            ToolTipCheck.setMyLinkUploaded();
+                          });
+                        }
+                        return AnimatedOpacity(
+                          opacity: widgetOffset.visible ? 1.0 : 0.0,
+                          duration: const Duration(milliseconds: 300),
+                          child: Stack(
+                            children: [
+                              Positioned(
+                                left: widgetOffset.getTopMid().dx - 6.w,
+                                top: widgetOffset.rightBottom.dy + 4.h,
+                                child: CustomPaint(
+                                  painter: ReverseTrianglePainter(
+                                    strokeColor: grey900,
+                                    strokeWidth: 1,
+                                    paintingStyle: PaintingStyle.fill,
+                                  ),
+                                  child: SizedBox(
+                                    width: 12.w,
+                                    height: 8.h,
                                   ),
                                 ),
-                              )
-                            else
-                              const SizedBox.shrink(),
-                          ],
+                              ),
+                              Positioned(
+                                right: 14.w,
+                                top: widgetOffset.rightBottom.dy + 12.h,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(4.r)),
+                                    color: grey900,
+                                  ),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 12.w,
+                                    vertical: 10.h,
+                                  ),
+                                  child: Center(
+                                    child: DefaultTextStyle(
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12.sp,
+                                        fontWeight: FontWeight.w500,
+                                        letterSpacing: 0,
+                                      ),
+                                      child: const Text(
+                                        '폴더에 링크를 바로 업로드 해보세요!',
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         );
-                      },
-                    ),
+                      }
+                    },
                   ),
                 );
               },
@@ -190,11 +267,19 @@ class MyLinkView extends StatelessWidget {
             onTap: () => Navigator.pushNamed(context, Routes.upload).then((_) {
               // update
               totalLinks.clear();
+              ToolTipCheck.setMyLinkUploaded();
               context.read<GetFoldersCubit>().getFolders();
             }),
             child: Padding(
               padding: EdgeInsets.all(6.r),
-              child: SvgPicture.asset(Assets.images.btnAdd),
+              child: SizedBox(
+                key: toolTipKey,
+                width: 24,
+                height: 24,
+                child: SvgPicture.asset(
+                  Assets.images.btnAdd,
+                ),
+              ),
             ),
           ),
         ],

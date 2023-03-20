@@ -56,7 +56,7 @@ class Pages {
       case Routes.home:
         return router.create(child: const HomeView());
       case Routes.myLinks:
-        return router.create(child: const MyLinkView());
+        return router.create(child: MyLinkView());
       case Routes.linkDetail:
         return router.create(child: const LinkDetailView());
       case Routes.userFeed:
