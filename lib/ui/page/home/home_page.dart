@@ -14,6 +14,7 @@ import 'package:ac_project_app/models/user/detail_user.dart';
 import 'package:ac_project_app/resource.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/bottom_dialog.dart';
+import 'package:ac_project_app/ui/widget/sliver/custom_header_delegate.dart';
 import 'package:ac_project_app/util/list_utils.dart';
 import 'package:ac_project_app/util/string_utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -33,45 +34,66 @@ class HomePage extends StatelessWidget {
       builder: (jobContext, state) {
         if (state is LoadedState) {
           return SafeArea(
-            child: Column(
-              children: [
-                Container(
-                  margin: EdgeInsets.only(left: 24.w, right: 24.w, top: 20.h),
-                  child: GestureDetector(
-                    onTap: () => Navigator.pushNamed(
-                      context,
-                      Routes.search,
-                      arguments: {
-                        'isMine': false,
-                      },
-                    ),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: ccGrey100,
-                        borderRadius: BorderRadius.all(Radius.circular(7.r)),
-                      ),
-                      width: double.infinity,
-                      height: 36.h,
-                      margin: EdgeInsets.only(right: 6.w),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 10.w),
-                          child: Assets.images.folderSearchIcon.image(
-                            width: 24.w,
-                            height: 24.h,
-                          ), // Image.asset(
+            child: NotificationListener<ScrollEndNotification>(
+              onNotification: (scrollNotification) {
+                final metrics = scrollNotification.metrics;
+                if (metrics.axisDirection != AxisDirection.down) return false;
+                if (metrics.extentAfter <= 800) {
+                  context.read<LinksFromSelectedJobGroupCubit>().loadMore();
+                }
+                return true;
+              },
+              child: RefreshIndicator(
+                onRefresh: () => refresh(context),
+                color: primary600,
+                child: CustomScrollView(
+                  controller: context
+                      .read<LinksFromSelectedJobGroupCubit>()
+                      .scrollController,
+                  slivers: <Widget>[
+                    SliverToBoxAdapter(
+                      child: Container(
+                        margin:
+                            EdgeInsets.only(left: 24.w, right: 24.w, top: 20.h),
+                        child: GestureDetector(
+                          onTap: () => Navigator.pushNamed(
+                            context,
+                            Routes.search,
+                            arguments: {
+                              'isMine': false,
+                            },
+                          ),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: ccGrey100,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(7.r)),
+                            ),
+                            width: double.infinity,
+                            height: 36.h,
+                            margin: EdgeInsets.only(right: 6.w),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Padding(
+                                padding: EdgeInsets.only(left: 10.w),
+                                child: Assets.images.folderSearchIcon.image(
+                                  width: 24.w,
+                                  height: 24.h,
+                                ), // Image.asset(
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                  ),
+                    buildJobListView(
+                      jobContext,
+                      state.jobs.sortMyJobs(profile.jobGroup!.id!),
+                    ),
+                    buildListBody(jobContext),
+                  ],
                 ),
-                buildJobListView(
-                  jobContext,
-                  state.jobs.sortMyJobs(profile.jobGroup!.id!),
-                ),
-                buildListBody(jobContext),
-              ],
+              ),
             ),
           );
         } else {
@@ -90,7 +112,7 @@ class HomePage extends StatelessWidget {
       builder: (context, links) {
         final totalLinks = _setTotalLinks(context, links);
         if (totalLinks.isEmpty) {
-          return Expanded(
+          return SliverToBoxAdapter(
             child: Center(
               child: Text(
                 '등록된 링크가 없습니다',
@@ -98,282 +120,264 @@ class HomePage extends StatelessWidget {
                   color: grey300,
                   fontWeight: FontWeight.w500,
                   fontSize: 16.sp,
-                  height: (19/16).h,
+                  height: (19 / 16).h,
                 ),
               ),
             ),
           );
         } else {
-          return Expanded(
-            child: NotificationListener<ScrollEndNotification>(
-              onNotification: (scrollNotification) {
-                final metrics = scrollNotification.metrics;
-                if (metrics.axisDirection != AxisDirection.down) return false;
-                if (metrics.extentAfter <= 800) {
-                  context.read<LinksFromSelectedJobGroupCubit>().loadMore();
-                }
-                return true;
+          return SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (BuildContext context, int index) {
+                final link = totalLinks[index];
+                return Column(
+                  children: [
+                    buildBodyListItem(context, link, width, totalLinks),
+                    if (index != totalLinks.length - 1)
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 24.w),
+                        child: Divider(
+                            height: 1.h, thickness: 1.w, color: ccGrey200),
+                      )
+                  ],
+                );
               },
-              child: RefreshIndicator(
-                onRefresh: () => refresh(context, totalLinks),
-                color: primary600,
-                child: ListView.separated(
-                  itemCount: totalLinks.length,
-                  physics: const ClampingScrollPhysics(),
-                  controller: context
-                      .read<LinksFromSelectedJobGroupCubit>()
-                      .scrollController,
-                  itemBuilder: (_, i) {
-                    final link = totalLinks[i];
-                    return GestureDetector(
-                      onTap: () {
-                        Navigator.pushNamed(
-                          context,
-                          Routes.linkDetail,
-                          arguments: {
-                            'link': link,
-                          },
-                        );
-                      },
-                      child: Container(
-                        margin: EdgeInsets.symmetric(
-                          vertical: 20.h,
-                          horizontal: 24.w,
-                        ),
-                        color: Colors.white,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            GestureDetector(
-                              onTap: () async {
-                                final profileState = context
-                                    .read<GetProfileInfoCubit>()
-                                    .state as ProfileLoadedState;
-                                await Navigator.of(context).pushNamed(
-                                  Routes.userFeed,
-                                  arguments: {
-                                    'user': link.user,
-                                    'folders': await context
-                                        .read<GetUserFoldersCubit>()
-                                        .getFolders(link.user!.id!),
-                                    'isMine':
-                                    profileState.profile.id == link.user!.id,
-                                  },
-                                );
-                              },
-                              child: Row(
-                                children: [
-                                  Image.asset(
-                                    makeImagePath(link.user?.profileImg ?? '01'),
-                                    width: 32.w,
-                                    height: 32.h,
-                                    errorBuilder: (_, __, ___) {
-                                      return Container(
-                                        width: 32.w,
-                                        height: 32.h,
-                                        decoration: const BoxDecoration(
-                                          color: grey300,
-                                          shape: BoxShape.circle,
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                  SizedBox(
-                                    width: 8.w,
-                                  ),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Text(
-                                            link.user?.nickname ?? '',
-                                            style: const TextStyle(
-                                              color: grey900,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                          Container(
-                                            margin: EdgeInsets.only(
-                                              left: 4.w,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color: primary66_200,
-                                              borderRadius: BorderRadius.all(
-                                                Radius.circular(4.r),
-                                              ),
-                                            ),
-                                            child: Center(
-                                              child: Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                  vertical: 3.h,
-                                                  horizontal: 4.w,
-                                                ),
-                                                child: Text(
-                                                  link.user?.jobGroup?.name ?? '',
-                                                  style: TextStyle(
-                                                    color: primary600,
-                                                    fontSize: 10.sp,
-                                                    letterSpacing: -0.2.w,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Container(
-                                        margin: EdgeInsets.only(top: 4.h),
-                                        child: Text(
-                                          makeLinkTimeString(link.time ?? ''),
-                                          style: TextStyle(
-                                            color: grey400,
-                                            fontSize: 12.sp,
-                                            letterSpacing: -0.2.w,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  )
-                                ],
-                              ),
-                            ),
-                            if (link.describe != null &&
-                                (link.describe?.isNotEmpty ?? false))
-                              Column(
-                                children: [
-                                  SizedBox(
-                                    height: 17.h,
-                                  ),
-                                  Text(
-                                    link.describe ?? '',
-                                    style: TextStyle(
-                                      fontSize: 16.sp,
-                                      color: grey800,
-                                      height: (26 / 16).h,
-                                    ),
-                                  ),
-                                ],
-                              )
-                            else
-                              const SizedBox.shrink(),
-                            Container(
-                              margin: EdgeInsets.only(
-                                top: 16.h,
-                                bottom: 18.h,
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(7.r),
-                                ),
-                                child: isLinkVerified(link)
-                                    ? Container(
-                                  constraints: const BoxConstraints(
-                                    minWidth: double.infinity,
-                                  ),
-                                  color: grey100,
-                                  child: CachedNetworkImage(
-                                    imageUrl: link.image ?? '',
-                                    fadeInDuration:
-                                    const Duration(milliseconds: 300),
-                                    fadeOutDuration:
-                                    const Duration(milliseconds: 300),
-                                    imageBuilder:
-                                        (context, imageProvider) =>
-                                        Container(
-                                          height: 160.h,
-                                          decoration: BoxDecoration(
-                                            image: DecorationImage(
-                                              image: imageProvider,
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                        ),
-                                    errorWidget: (_, __, ___) {
-                                      return const SizedBox();
-                                    },
-                                  ),
-                                )
-                                    : const SizedBox(),
-                              ),
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    SizedBox(
-                                      width: width - (24 * 2 + 25),
-                                      child: Text(
-                                        link.title ?? '',
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          color: blackBold,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16.sp,
-                                        ),
-                                      ),
-                                    ),
-                                    InkWell(
-                                      onTap: () {
-                                        final profileState = context
-                                            .read<GetProfileInfoCubit>()
-                                            .state as ProfileLoadedState;
-                                        if (profileState.profile.id ==
-                                            link.user!.id) {
-                                          showMyLinkOptionsDialog(
-                                            link,
-                                            context,
-                                            popCallback: () => refresh(
-                                              context,
-                                              totalLinks,
-                                            ),
-                                          );
-                                        } else {
-                                          showLinkOptionsDialog(
-                                            link,
-                                            context,
-                                            callback: () =>
-                                                refresh(context, totalLinks),
-                                          );
-                                        }
-                                      },
-                                      child: SvgPicture.asset(
-                                        Assets.images.moreVert,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 6.h),
-                                Text(
-                                  link.url ?? '',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    color: grey500,
-                                    fontSize: 12.sp,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                  separatorBuilder: (_, __) => Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24.w),
-                    child: Divider(height: 1.h, thickness: 1.w, color: ccGrey200),
-                  ),
-                ),
-              ),
+              childCount: totalLinks.length,
             ),
           );
         }
       },
+    );
+  }
+
+  GestureDetector buildBodyListItem(
+      BuildContext context, Link link, double width, List<Link> totalLinks) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(
+          context,
+          Routes.linkDetail,
+          arguments: {
+            'link': link,
+          },
+        );
+      },
+      child: Container(
+        margin: EdgeInsets.symmetric(
+          vertical: 20.h,
+          horizontal: 24.w,
+        ),
+        color: Colors.white,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            GestureDetector(
+              onTap: () async {
+                final profileState = context.read<GetProfileInfoCubit>().state
+                    as ProfileLoadedState;
+                await Navigator.of(context).pushNamed(
+                  Routes.userFeed,
+                  arguments: {
+                    'user': link.user,
+                    'folders': await context
+                        .read<GetUserFoldersCubit>()
+                        .getFolders(link.user!.id!),
+                    'isMine': profileState.profile.id == link.user!.id,
+                  },
+                );
+              },
+              child: Row(
+                children: [
+                  Image.asset(
+                    makeImagePath(link.user?.profileImg ?? '01'),
+                    width: 32.w,
+                    height: 32.h,
+                    errorBuilder: (_, __, ___) {
+                      return Container(
+                        width: 32.w,
+                        height: 32.h,
+                        decoration: const BoxDecoration(
+                          color: grey300,
+                          shape: BoxShape.circle,
+                        ),
+                      );
+                    },
+                  ),
+                  SizedBox(
+                    width: 8.w,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            link.user?.nickname ?? '',
+                            style: const TextStyle(
+                              color: grey900,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(
+                              left: 4.w,
+                            ),
+                            decoration: BoxDecoration(
+                              color: primary66_200,
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(4.r),
+                              ),
+                            ),
+                            child: Center(
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                  vertical: 3.h,
+                                  horizontal: 4.w,
+                                ),
+                                child: Text(
+                                  link.user?.jobGroup?.name ?? '',
+                                  style: TextStyle(
+                                    color: primary600,
+                                    fontSize: 10.sp,
+                                    letterSpacing: -0.2.w,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(top: 4.h),
+                        child: Text(
+                          makeLinkTimeString(link.time ?? ''),
+                          style: TextStyle(
+                            color: grey400,
+                            fontSize: 12.sp,
+                            letterSpacing: -0.2.w,
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ),
+            if (link.describe != null && (link.describe?.isNotEmpty ?? false))
+              Column(
+                children: [
+                  SizedBox(
+                    height: 17.h,
+                  ),
+                  Text(
+                    link.describe ?? '',
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      color: grey800,
+                      height: (26 / 16).h,
+                    ),
+                  ),
+                ],
+              )
+            else
+              const SizedBox.shrink(),
+            Container(
+              margin: EdgeInsets.only(
+                top: 16.h,
+                bottom: 18.h,
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(7.r),
+                ),
+                child: isLinkVerified(link)
+                    ? Container(
+                        constraints: const BoxConstraints(
+                          minWidth: double.infinity,
+                        ),
+                        color: grey100,
+                        child: CachedNetworkImage(
+                          imageUrl: link.image ?? '',
+                          fadeInDuration: const Duration(milliseconds: 300),
+                          fadeOutDuration: const Duration(milliseconds: 300),
+                          imageBuilder: (context, imageProvider) => Container(
+                            height: 160.h,
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: imageProvider,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          errorWidget: (_, __, ___) {
+                            return const SizedBox();
+                          },
+                        ),
+                      )
+                    : const SizedBox(),
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    SizedBox(
+                      width: width - (24 * 2 + 25),
+                      child: Text(
+                        link.title ?? '',
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: blackBold,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16.sp,
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        final profileState = context
+                            .read<GetProfileInfoCubit>()
+                            .state as ProfileLoadedState;
+                        if (profileState.profile.id == link.user!.id) {
+                          showMyLinkOptionsDialog(
+                            link,
+                            context,
+                            popCallback: () => refresh(
+                              context,
+                            ),
+                          );
+                        } else {
+                          showLinkOptionsDialog(
+                            link,
+                            context,
+                            callback: () => refresh(context),
+                          );
+                        }
+                      },
+                      child: SvgPicture.asset(
+                        Assets.images.moreVert,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 6.h),
+                Text(
+                  link.url ?? '',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: grey500,
+                    fontSize: 12.sp,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -400,11 +404,21 @@ class HomePage extends StatelessWidget {
     BuildContext jobContext,
     List<JobGroup> jobs,
   ) {
+    return SliverPersistentHeader(
+      pinned: true,
+      delegate: CustomHeaderDelegate(
+        buildJobListWidget(jobContext, jobs),
+      ),
+    );
+  }
+
+  Container buildJobListWidget(BuildContext jobContext, List<JobGroup> jobs) {
     return Container(
-      margin: EdgeInsets.only(top: 23.h, left: 12.w, right: 20.w),
+      color: Colors.white,
+      padding: EdgeInsets.only(top: 23.h, left: 12.w, right: 20.w),
       child: DefaultTabController(
         length: jobs.length,
-        child: SizedBox(
+        child: Container(
           height: 36.h,
           child: Stack(
             children: [
@@ -499,7 +513,7 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Future<void> refresh(BuildContext context, List<Link> totalLinks) async {
+  Future<void> refresh(BuildContext context) async {
     context.read<LinksFromSelectedJobGroupCubit>().refresh();
   }
 }
