@@ -151,10 +151,11 @@ class _SearchViewState extends State<SearchView> {
           );
         } else {
           return NotificationListener<ScrollEndNotification>(
-            onNotification: (scrollNotification) {
-              final metrics = scrollNotification.metrics;
-              if (metrics.axisDirection != AxisDirection.down) return false;
-
+            onNotification: (scrollEnd) {
+              final metrics = scrollEnd.metrics;
+              if (metrics.extentAfter <= 800) {
+                context.read<SearchLinksCubit>().loadMore();
+              }
               return true;
             },
             child: RefreshIndicator(
