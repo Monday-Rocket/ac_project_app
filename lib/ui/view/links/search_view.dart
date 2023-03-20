@@ -3,12 +3,17 @@
 import 'dart:async';
 
 import 'package:ac_project_app/const/colors.dart';
+import 'package:ac_project_app/cubits/folders/get_user_folders_cubit.dart';
 import 'package:ac_project_app/cubits/home/search_links_cubit.dart';
 import 'package:ac_project_app/cubits/links/link_list_state.dart';
+import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
+import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/routes.dart';
+import 'package:ac_project_app/ui/widget/bottom_dialog.dart';
 import 'package:ac_project_app/util/get_widget_arguments.dart';
+import 'package:ac_project_app/util/string_utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -54,7 +59,7 @@ class _SearchViewState extends State<SearchView> {
             return Scaffold(
               backgroundColor: Colors.white,
               appBar: _buildAppBar(context, totalLinks, isMine),
-              body: _buildBody(totalLinks, isMine, width),
+              body: buildListBody(context, totalLinks, isMine),
             );
           },
         ),
@@ -118,154 +123,300 @@ class _SearchViewState extends State<SearchView> {
     );
   }
 
-  BlocBuilder<SearchLinksCubit, LinkListState> _buildBody(
+  Widget buildListBody(
+    BuildContext parentContext,
     List<Link> totalLinks,
     bool isMine,
-    double width,
   ) {
+    final width = MediaQuery.of(parentContext).size.width;
+
     return BlocBuilder<SearchLinksCubit, LinkListState>(
       builder: (context, state) {
         if (state is LinkListLoadedState) {
           final links = state.links;
           totalLinks.addAll(links);
         }
-        return NotificationListener<ScrollEndNotification>(
-          onNotification: (scrollEnd) {
-            final metrics = scrollEnd.metrics;
-            if (metrics.atEdge && metrics.pixels != 0) {
-              context.read<SearchLinksCubit>().loadMore();
-            }
-            return true;
-          },
-          child: RefreshIndicator(
-            onRefresh: () => refresh(context, totalLinks),
-            color: primary600,
-            child: ListView.separated(
-              itemCount: totalLinks.length,
-              itemBuilder: (_, index) {
-                final link = totalLinks[index];
-                return InkWell(
-                  onTap: () {
-                    Navigator.pushNamed(
-                      context,
-                      Routes.linkDetail,
-                      arguments: {
-                        'link': link,
-                        'isMine': isMine,
-                      },
-                    );
-                  },
-                  child: Container(
-                    margin: EdgeInsets.symmetric(
-                      vertical: 18.h,
-                      horizontal: 24.w,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          height: 115.h,
-                          child: Container(
-                            margin: EdgeInsets.symmetric(
-                              vertical: 5.h,
-                            ),
-                            width: width * (130 / 375),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.start,
+
+        if (totalLinks.isEmpty) {
+          return Center(
+            child: Text(
+              '',
+              style: TextStyle(
+                color: grey300,
+                fontWeight: FontWeight.w500,
+                fontSize: 16.sp,
+                height: (19 / 16).h,
+              ),
+            ),
+          );
+        } else {
+          return NotificationListener<ScrollEndNotification>(
+            onNotification: (scrollEnd) {
+              final metrics = scrollEnd.metrics;
+              if (metrics.extentAfter <= 800) {
+                context.read<SearchLinksCubit>().loadMore();
+              }
+              return true;
+            },
+            child: RefreshIndicator(
+              onRefresh: () => refresh(context, totalLinks),
+              color: primary600,
+              child: ListView.separated(
+                itemCount: totalLinks.length,
+                physics: const ClampingScrollPhysics(),
+                itemBuilder: (_, i) {
+                  final link = totalLinks[i];
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        Routes.linkDetail,
+                        arguments: {
+                          'link': link,
+                        },
+                      );
+                    },
+                    child: Container(
+                      margin: EdgeInsets.symmetric(
+                        vertical: 20.h,
+                        horizontal: 24.w,
+                      ),
+                      color: Colors.white,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          GestureDetector(
+                            onTap: () async {
+                              final profileState = context
+                                  .read<GetProfileInfoCubit>()
+                                  .state as ProfileLoadedState;
+                              await Navigator.of(context).pushNamed(
+                                Routes.userFeed,
+                                arguments: {
+                                  'user': link.user,
+                                  'folders': await context
+                                      .read<GetUserFoldersCubit>()
+                                      .getFolders(link.user!.id!),
+                                  'isMine': profileState.profile.id ==
+                                      link.user!.id,
+                                },
+                              );
+                            },
+                            child: Row(
                               children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        link.title ?? '',
-                                        maxLines: 1,
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16.sp,
-                                          color: blackBold,
-                                          overflow: TextOverflow.ellipsis,
-                                          height: (19 / 16).h,
-                                        ),
+                                Image.asset(
+                                  makeImagePath(
+                                      link.user?.profileImg ?? '01'),
+                                  width: 32.w,
+                                  height: 32.h,
+                                  errorBuilder: (_, __, ___) {
+                                    return Container(
+                                      width: 32.w,
+                                      height: 32.h,
+                                      decoration: const BoxDecoration(
+                                        color: grey300,
+                                        shape: BoxShape.circle,
                                       ),
-                                      SizedBox(height: 7.h),
-                                      Text(
-                                        link.describe ?? '\n\n',
-                                        maxLines: 2,
-                                        style: TextStyle(
-                                          fontSize: 12.sp,
-                                          color: greyText,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                    );
+                                  },
                                 ),
-                                Align(
-                                  alignment: Alignment.bottomLeft,
-                                  child: Text(
-                                    link.url ?? '',
-                                    maxLines: 1,
-                                    style: TextStyle(
-                                      fontSize: 12.sp,
-                                      color: const Color(0xFFC0C2C4),
-                                      overflow: TextOverflow.ellipsis,
+                                SizedBox(
+                                  width: 8.w,
+                                ),
+                                Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Text(
+                                          link.user?.nickname ?? '',
+                                          style: const TextStyle(
+                                            color: grey900,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                        Container(
+                                          margin: EdgeInsets.only(
+                                            left: 4.w,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: primary66_200,
+                                            borderRadius: BorderRadius.all(
+                                              Radius.circular(4.r),
+                                            ),
+                                          ),
+                                          child: Center(
+                                            child: Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                vertical: 3.h,
+                                                horizontal: 4.w,
+                                              ),
+                                              child: Text(
+                                                link.user?.jobGroup?.name ??
+                                                    '',
+                                                style: TextStyle(
+                                                  color: primary600,
+                                                  fontSize: 10.sp,
+                                                  letterSpacing: -0.2.w,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ),
-                                ),
+                                    Container(
+                                      margin: EdgeInsets.only(top: 4.h),
+                                      child: Text(
+                                        makeLinkTimeString(link.time ?? ''),
+                                        style: TextStyle(
+                                          color: grey400,
+                                          fontSize: 12.sp,
+                                          letterSpacing: -0.2.w,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )
                               ],
                             ),
                           ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(right: 4.w),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(7.r),
+                          if (link.describe != null &&
+                              (link.describe?.isNotEmpty ?? false))
+                            Column(
+                              children: [
+                                SizedBox(
+                                  height: 17.h,
+                                ),
+                                Text(
+                                  link.describe ?? '',
+                                  style: TextStyle(
+                                    fontSize: 16.sp,
+                                    color: grey800,
+                                    height: (26 / 16).h,
+                                  ),
+                                ),
+                              ],
+                            )
+                          else
+                            const SizedBox.shrink(),
+                          Container(
+                            margin: EdgeInsets.only(
+                              top: 16.h,
+                              bottom: 18.h,
                             ),
-                            child: ColoredBox(
-                              color: grey100,
-                              child: link.image != null &&
-                                      link.image!.isNotEmpty
-                                  ? CachedNetworkImage(
-                                      imageUrl: link.image ?? '',
-                                      imageBuilder: (context, imageProvider) =>
-                                          Container(
-                                        width: 159.w,
-                                        height: 116.h,
-                                        decoration: BoxDecoration(
-                                          image: DecorationImage(
-                                            image: imageProvider,
-                                            fit: BoxFit.cover,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(7.r),
+                              ),
+                              child: isLinkVerified(link)
+                                  ? Container(
+                                      constraints: const BoxConstraints(
+                                        minWidth: double.infinity,
+                                      ),
+                                      color: grey100,
+                                      child: CachedNetworkImage(
+                                        imageUrl: link.image ?? '',
+                                        fadeInDuration:
+                                            const Duration(milliseconds: 300),
+                                        fadeOutDuration:
+                                            const Duration(milliseconds: 300),
+                                        imageBuilder:
+                                            (context, imageProvider) =>
+                                                Container(
+                                          height: 160.h,
+                                          decoration: BoxDecoration(
+                                            image: DecorationImage(
+                                              image: imageProvider,
+                                              fit: BoxFit.cover,
+                                            ),
                                           ),
                                         ),
+                                        errorWidget: (_, __, ___) {
+                                          return const SizedBox();
+                                        },
                                       ),
-                                      errorWidget: (_, __, ___) {
-                                        return const SizedBox();
-                                      },
                                     )
-                                  : SizedBox(
-                                      width: 159.w,
-                                      height: 116.h,
-                                    ),
+                                  : const SizedBox(),
                             ),
                           ),
-                        )
-                      ],
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  SizedBox(
+                                    width: (width - (24 * 2 + 25)).w,
+                                    child: Text(
+                                      link.title ?? '',
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        color: blackBold,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16.sp,
+                                      ),
+                                    ),
+                                  ),
+                                  InkWell(
+                                    onTap: () {
+                                      final profileState = context
+                                          .read<GetProfileInfoCubit>()
+                                          .state as ProfileLoadedState;
+                                      if (profileState.profile.id ==
+                                          link.user!.id) {
+                                        showMyLinkOptionsDialog(
+                                          link,
+                                          context,
+                                          popCallback: () => refresh(
+                                            context,
+                                            totalLinks,
+                                          ),
+                                        );
+                                      } else {
+                                        showLinkOptionsDialog(
+                                          link,
+                                          context,
+                                          callback: () =>
+                                              refresh(context, totalLinks),
+                                        );
+                                      }
+                                    },
+                                    child: SvgPicture.asset(
+                                      Assets.images.moreVert,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 6.h),
+                              Text(
+                                link.url ?? '',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: grey500,
+                                  fontSize: 12.sp,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              },
-              separatorBuilder: (_, __) => Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24.w),
-                child: Divider(height: 1.h, thickness: 1.h, color: greyTab),
+                  );
+                },
+                separatorBuilder: (_, __) => Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24.w),
+                  child:
+                      Divider(height: 1.h, thickness: 1.w, color: ccGrey200),
+                ),
               ),
             ),
-          ),
-        );
+          );
+        }
       },
     );
   }
