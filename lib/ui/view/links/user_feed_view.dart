@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/feed/feed_view_cubit.dart';
 import 'package:ac_project_app/cubits/folders/get_user_folders_cubit.dart';
+import 'package:ac_project_app/cubits/scroll/scroll_cubit.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/link/link.dart';
@@ -13,6 +14,7 @@ import 'package:ac_project_app/resource.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/bottom_dialog.dart';
 import 'package:ac_project_app/util/get_widget_arguments.dart';
+import 'package:ac_project_app/util/logger.dart';
 import 'package:ac_project_app/util/string_utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -29,8 +31,6 @@ class UserFeedView extends StatefulWidget {
 }
 
 class _UserFeedViewState extends State<UserFeedView> {
-  bool showBackground = false;
-
   @override
   Widget build(BuildContext context) {
     final args = getArguments(context);
@@ -49,97 +49,97 @@ class _UserFeedViewState extends State<UserFeedView> {
       ],
       child: Scaffold(
         backgroundColor: Colors.white,
-        body: Stack(
+        body: BlocBuilder<FeedViewCubit, List<Link>>(
+          builder: (feedContext, links) {
+            final totalLinks = feedContext.watch<FeedViewCubit>().totalLinks;
+            if (feedContext.read<FeedViewCubit>().hasRefresh) {
+              totalLinks.clear();
+              feedContext.read<FeedViewCubit>().hasRefresh = false;
+            }
+
+            Log.i('links ${links.length}');
+
+            totalLinks.addAll(links);
+            return BlocProvider(
+              create: (_) => ScrollCubit(
+                  feedContext.read<FeedViewCubit>().scrollController),
+              child: BlocBuilder<ScrollCubit, bool>(
+                builder: (scrollContext, isMove) {
+                  return buildNotificationListener(feedContext, totalLinks,
+                      context, user, isMine, folders, isMove);
+                },
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  NotificationListener<ScrollEndNotification> buildNotificationListener(
+      BuildContext feedContext,
+      List<Link> totalLinks,
+      BuildContext context,
+      DetailUser user,
+      bool isMine,
+      List<Folder> folders,
+      bool isMove) {
+    return NotificationListener<ScrollEndNotification>(
+      onNotification: (scrollEnd) {
+        final metrics = scrollEnd.metrics;
+        if (metrics.atEdge && metrics.pixels != 0) {
+          feedContext.read<FeedViewCubit>().loadMore();
+        }
+
+        return true;
+      },
+      child: RefreshIndicator(
+        onRefresh: () => refresh(feedContext, totalLinks),
+        color: primary600,
+        child: Stack(
           children: [
             Visibility(
-              visible: !showBackground,
+              visible: !isMove,
               child: Assets.images.myFolderBack.image(
                 width: MediaQuery.of(context).size.width,
                 fit: BoxFit.fill,
               ),
             ),
             SafeArea(
-              child: BlocBuilder<FeedViewCubit, List<Link>>(
-                builder: (feedContext, links) {
-                  final totalLinks =
-                      feedContext.watch<FeedViewCubit>().totalLinks;
-                  if (feedContext.read<FeedViewCubit>().hasRefresh) {
-                    totalLinks.clear();
-                    feedContext.read<FeedViewCubit>().hasRefresh = false;
-                  }
-                  void scrollListener() {
-                    if (feedContext
-                            .read<FeedViewCubit>()
-                            .scrollController
-                            .offset >
-                        5.h) {
-                      setState(() {
-                        showBackground = true;
-                      });
-                    } else {
-                      setState(() {
-                        showBackground = false;
-                      });
-                    }
-                  }
-
-                  feedContext
-                      .read<FeedViewCubit>()
-                      .scrollController
-                      .addListener(scrollListener);
-
-                  totalLinks.addAll(links);
-                  return NotificationListener<ScrollEndNotification>(
-                    onNotification: (scrollEnd) {
-                      final metrics = scrollEnd.metrics;
-                      if (metrics.atEdge && metrics.pixels != 0) {
-                        feedContext.read<FeedViewCubit>().loadMore();
-                      }
-
-                      return true;
-                    },
-                    child: RefreshIndicator(
-                      onRefresh: () => refresh(feedContext, totalLinks),
-                      color: primary600,
-                      child: CustomScrollView(
-                        controller:
-                            feedContext.read<FeedViewCubit>().scrollController,
-                        slivers: [
-                          buildTopAppBar(context, user, isMine),
-                          SliverToBoxAdapter(
-                            child: Column(
-                              children: [
-                                Image.asset(
-                                  makeImagePath(user.profileImg),
-                                  width: 105.w,
-                                  height: 105.h,
-                                ),
-                                SizedBox(height: 6.h),
-                                Text(
-                                  user.nickname,
-                                  style: TextStyle(
-                                    color: const Color(0xff0e0e0e),
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 28.sp,
-                                    letterSpacing: -0.6.w,
-                                  ),
-                                )
-                              ],
-                            ),
+              child: CustomScrollView(
+                controller: feedContext.read<FeedViewCubit>().scrollController,
+                slivers: [
+                  buildTopAppBar(context, user, isMine, isMove),
+                  SliverToBoxAdapter(
+                    child: Column(
+                      children: [
+                        Image.asset(
+                          makeImagePath(user.profileImg),
+                          width: 105.w,
+                          height: 105.h,
+                        ),
+                        SizedBox(height: 6.h),
+                        Text(
+                          user.nickname,
+                          style: TextStyle(
+                            color: const Color(0xff0e0e0e),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 28.sp,
+                            letterSpacing: -0.6.w,
                           ),
-                          buildJobListView(context, folders),
-                          buildListBody(
-                            context,
-                            totalLinks,
-                            user,
-                            isMine,
-                            feedContext,
-                          ),
-                        ],
-                      ),
+                        )
+                      ],
                     ),
-                  );
-                },
+                  ),
+                  buildJobListView(context, folders),
+                  buildListBody(
+                    context,
+                    totalLinks,
+                    user,
+                    isMine,
+                    feedContext,
+                  ),
+                ],
               ),
             ),
           ],
@@ -148,7 +148,8 @@ class _UserFeedViewState extends State<UserFeedView> {
     );
   }
 
-  Widget buildTopAppBar(BuildContext context, DetailUser user, bool isMine) {
+  Widget buildTopAppBar(
+      BuildContext context, DetailUser user, bool isMine, bool isMove) {
     return SliverAppBar(
       pinned: true,
       leading: IconButton(
@@ -181,7 +182,7 @@ class _UserFeedViewState extends State<UserFeedView> {
         else
           const SizedBox.shrink(),
       ],
-      backgroundColor: !showBackground ? Colors.transparent : Colors.white,
+      backgroundColor: !isMove ? Colors.transparent : Colors.white,
       systemOverlayStyle: SystemUiOverlayStyle.dark,
       elevation: 0,
     );
@@ -308,24 +309,28 @@ class _UserFeedViewState extends State<UserFeedView> {
         : SliverList(
             delegate: SliverChildBuilderDelegate(
               (BuildContext context, int index) {
-                if (index.isEven) {
-                  final link = totalLinks[index];
-                  return buildBodyListItem(
-                    context,
-                    link,
-                    user,
-                    isMine,
-                    width,
-                    totalLinks,
-                    parentContext,
-                  );
-                }
-                return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24.w),
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24.w),
-                    child: Divider(height: 1.h, thickness: 1.h, color: greyTab),
-                  ),
+                final link = totalLinks[index];
+                return Column(
+                  children: [
+                    buildBodyListItem(
+                      context,
+                      link,
+                      user,
+                      isMine,
+                      width,
+                      totalLinks,
+                      parentContext,
+                    ),
+                    if (index != totalLinks.length - 1)
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 24.w),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 24.w),
+                          child: Divider(
+                              height: 1.h, thickness: 1.h, color: greyTab),
+                        ),
+                      )
+                  ],
                 );
               },
               childCount: totalLinks.length,

@@ -365,23 +365,33 @@ class MyLinkView extends StatelessWidget {
       return SliverList(
         delegate: SliverChildBuilderDelegate(
           (BuildContext context, int index) {
-            if (index.isEven) {
-              final link = totalLinks[index];
-              return buildLinkItem(context, link, totalLinks, foldersContext,
-                  folder, index, width);
-            }
-            return Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.w),
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24.w),
-                child: Divider(
-                  height: 1.h,
-                  thickness: 1.h,
-                  color: greyTab,
-                  indent: 24.w,
-                  endIndent: 24.w,
+            final link = totalLinks[index];
+            return Column(
+              children: [
+                buildLinkItem(
+                  context,
+                  link,
+                  totalLinks,
+                  foldersContext,
+                  folder,
+                  index,
+                  width,
                 ),
-              ),
+                if (index != totalLinks.length - 1)
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 24.w),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 24.w),
+                      child: Divider(
+                        height: 1.h,
+                        thickness: 1.h,
+                        color: greyTab,
+                        indent: 24.w,
+                        endIndent: 24.w,
+                      ),
+                    ),
+                  )
+              ],
             );
           },
           childCount: totalLinks.length,

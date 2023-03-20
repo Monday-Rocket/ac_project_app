@@ -129,13 +129,17 @@ class HomePage extends StatelessWidget {
           return SliverList(
             delegate: SliverChildBuilderDelegate(
               (BuildContext context, int index) {
-                if (index.isEven) {
-                  final link = totalLinks[index];
-                  return buildBodyListItem(context, link, width, totalLinks);
-                }
-                return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24.w),
-                  child: Divider(height: 1.h, thickness: 1.w, color: ccGrey200),
+                final link = totalLinks[index];
+                return Column(
+                  children: [
+                    buildBodyListItem(context, link, width, totalLinks),
+                    if (index != totalLinks.length - 1)
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 24.w),
+                        child: Divider(
+                            height: 1.h, thickness: 1.w, color: ccGrey200),
+                      )
+                  ],
                 );
               },
               childCount: totalLinks.length,
