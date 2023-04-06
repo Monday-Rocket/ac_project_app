@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:ac_project_app/const/colors.dart';
+import 'package:ac_project_app/const/strings.dart';
 import 'package:ac_project_app/cubits/home/get_job_list_cubit.dart';
 import 'package:ac_project_app/cubits/home/topic_list_state.dart';
 import 'package:ac_project_app/cubits/links/links_from_selected_job_group_cubit.dart';
@@ -107,6 +108,7 @@ class HomePage extends StatelessWidget {
 
   Widget buildListBody(BuildContext parentContext) {
     final width = MediaQuery.of(parentContext).size.width;
+    final height = MediaQuery.of(parentContext).size.height;
 
     return BlocBuilder<LinksFromSelectedJobGroupCubit, List<Link>>(
       builder: (context, links) {
@@ -114,13 +116,18 @@ class HomePage extends StatelessWidget {
         if (totalLinks.isEmpty) {
           return SliverToBoxAdapter(
             child: Center(
-              child: Text(
-                '등록된 링크가 없습니다',
-                style: TextStyle(
-                  color: grey300,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 16.sp,
-                  height: (19 / 16).h,
+              child: SizedBox(
+                height: height * (3 / 4),
+                child: Center(
+                  child: Text(
+                    emptyLinksString,
+                    style: TextStyle(
+                      color: grey300,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 16.sp,
+                      height: (19 / 16).h,
+                    ),
+                  ),
                 ),
               ),
             ),

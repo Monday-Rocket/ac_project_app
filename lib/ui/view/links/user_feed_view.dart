@@ -3,6 +3,7 @@
 import 'dart:async';
 
 import 'package:ac_project_app/const/colors.dart';
+import 'package:ac_project_app/const/strings.dart';
 import 'package:ac_project_app/cubits/feed/feed_view_cubit.dart';
 import 'package:ac_project_app/cubits/folders/get_user_folders_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
@@ -26,7 +27,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class UserFeedView extends StatefulWidget {
-  UserFeedView({super.key});
+  const UserFeedView({super.key});
 
   @override
   State<UserFeedView> createState() => _UserFeedViewState();
@@ -67,11 +68,19 @@ class _UserFeedViewState extends State<UserFeedView> {
             totalLinks.addAll(links);
             return BlocProvider(
               create: (_) => ScrollCubit(
-                  feedContext.read<FeedViewCubit>().scrollController),
+                feedContext.read<FeedViewCubit>().scrollController,
+              ),
               child: BlocBuilder<ScrollCubit, bool>(
                 builder: (scrollContext, isMove) {
-                  return buildNotificationListener(feedContext, totalLinks,
-                      context, user, isMine, folders, isMove);
+                  return buildNotificationListener(
+                    feedContext,
+                    totalLinks,
+                    context,
+                    user,
+                    isMine,
+                    folders,
+                    isMove,
+                  );
                 },
               ),
             );
@@ -82,13 +91,14 @@ class _UserFeedViewState extends State<UserFeedView> {
   }
 
   NotificationListener<ScrollEndNotification> buildNotificationListener(
-      BuildContext feedContext,
-      List<Link> totalLinks,
-      BuildContext context,
-      DetailUser user,
-      bool isMine,
-      List<Folder> folders,
-      bool isMove) {
+    BuildContext feedContext,
+    List<Link> totalLinks,
+    BuildContext context,
+    DetailUser user,
+    bool isMine,
+    List<Folder> folders,
+    bool isMove,
+  ) {
     return NotificationListener<ScrollEndNotification>(
       onNotification: (scrollEnd) {
         final metrics = scrollEnd.metrics;
@@ -154,7 +164,11 @@ class _UserFeedViewState extends State<UserFeedView> {
   }
 
   Widget buildTopAppBar(
-      BuildContext context, DetailUser user, bool isMine, bool isMove) {
+    BuildContext context,
+    DetailUser user,
+    bool isMine,
+    bool isMove,
+  ) {
     return SliverAppBar(
       pinned: true,
       leading: IconButton(
@@ -275,7 +289,8 @@ class _UserFeedViewState extends State<UserFeedView> {
                           final cubit = context.read<FeedViewCubit>();
                           cubit.totalLinks.clear();
                           cubit.selectFolder(index).then(
-                              (value) => cubit.scrollController.jumpTo(0));
+                                (value) => cubit.scrollController.jumpTo(0),
+                              );
                         },
                       );
                     },
@@ -297,16 +312,23 @@ class _UserFeedViewState extends State<UserFeedView> {
     BuildContext feedContext,
   ) {
     final width = MediaQuery.of(parentContext).size.width;
+    final height = MediaQuery.of(parentContext).size.height;
+
     return (totalLinks.isEmpty)
         ? SliverToBoxAdapter(
             child: Center(
-              child: Text(
-                '등록된 링크가 없습니다',
-                style: TextStyle(
-                  color: grey300,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 16.sp,
-                  height: (19 / 16).h,
+              child: SizedBox(
+                height: height / 2,
+                child: Center(
+                  child: Text(
+                    emptyLinksString,
+                    style: TextStyle(
+                      color: grey300,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 16.sp,
+                      height: (19 / 16).h,
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -332,7 +354,10 @@ class _UserFeedViewState extends State<UserFeedView> {
                         child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 24.w),
                           child: Divider(
-                              height: 1.h, thickness: 1.h, color: greyTab),
+                            height: 1.h,
+                            thickness: 1.h,
+                            color: greyTab,
+                          ),
                         ),
                       )
                   ],

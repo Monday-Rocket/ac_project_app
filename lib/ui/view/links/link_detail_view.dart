@@ -208,7 +208,7 @@ class LinkDetailView extends StatelessWidget {
       controller: scrollController,
       reverse: state == EditState.edit,
       child: Container(
-        margin: EdgeInsets.only(left: 24.w, right: 24.w, top: 14),
+        margin: EdgeInsets.only(left: 24.w, right: 24.w, top: 14.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -217,7 +217,7 @@ class LinkDetailView extends StatelessWidget {
                 return buildUserInfo(cubitContext, link);
               },
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 20.h),
             InkWell(
               onTap: () async {
                 await launchUrl(

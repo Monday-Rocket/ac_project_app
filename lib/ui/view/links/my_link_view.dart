@@ -1,4 +1,5 @@
 import 'package:ac_project_app/const/colors.dart';
+import 'package:ac_project_app/const/strings.dart';
 import 'package:ac_project_app/cubits/folders/folders_state.dart';
 import 'package:ac_project_app/cubits/folders/get_my_folders_cubit.dart';
 import 'package:ac_project_app/cubits/folders/get_selected_folder_cubit.dart';
@@ -164,7 +165,7 @@ class MyLinkView extends StatelessWidget {
                                 child: Container(
                                   decoration: BoxDecoration(
                                     borderRadius:
-                                    BorderRadius.all(Radius.circular(4.r)),
+                                        BorderRadius.all(Radius.circular(4.r)),
                                     color: grey900,
                                   ),
                                   padding: EdgeInsets.symmetric(
@@ -299,7 +300,8 @@ class MyLinkView extends StatelessWidget {
               ),
             ),
             InkWell(
-              onTap: () => Navigator.pushNamed(context, Routes.upload).then((_) {
+              onTap: () =>
+                  Navigator.pushNamed(context, Routes.upload).then((_) {
                 // update
                 totalLinks.clear();
                 ToolTipCheck.setMyLinkUploaded();
@@ -650,7 +652,7 @@ class MyLinkView extends StatelessWidget {
         margin: EdgeInsets.only(top: MediaQuery.of(context).size.width / 3),
         child: Center(
           child: Text(
-            '등록된 링크가 없습니다',
+            emptyLinksString,
             style: TextStyle(
               color: grey300,
               fontSize: 16.sp,
