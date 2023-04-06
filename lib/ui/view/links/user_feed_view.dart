@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/feed/feed_view_cubit.dart';
 import 'package:ac_project_app/cubits/folders/get_user_folders_cubit.dart';
+import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/cubits/scroll/scroll_cubit.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
@@ -13,6 +14,7 @@ import 'package:ac_project_app/models/user/detail_user.dart';
 import 'package:ac_project_app/resource.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/bottom_dialog.dart';
+import 'package:ac_project_app/ui/widget/user/user_info.dart';
 import 'package:ac_project_app/util/get_widget_arguments.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:ac_project_app/util/string_utils.dart';
@@ -45,6 +47,9 @@ class _UserFeedViewState extends State<UserFeedView> {
         ),
         BlocProvider<GetUserFoldersCubit>(
           create: (_) => GetUserFoldersCubit(),
+        ),
+        BlocProvider<GetProfileInfoCubit>(
+          create: (_) => GetProfileInfoCubit(),
         ),
       ],
       child: Scaffold(
@@ -339,13 +344,15 @@ class _UserFeedViewState extends State<UserFeedView> {
   }
 
   GestureDetector buildBodyListItem(
-      BuildContext context,
-      Link link,
-      DetailUser user,
-      bool isMine,
-      double width,
-      List<Link> totalLinks,
-      BuildContext parentContext) {
+    BuildContext context,
+    Link link,
+    DetailUser user,
+    bool isMine,
+    double width,
+    List<Link> totalLinks,
+    BuildContext parentContext,
+  ) {
+    link.user = user;
     return GestureDetector(
       onTap: () {
         Navigator.pushNamed(
@@ -365,95 +372,8 @@ class _UserFeedViewState extends State<UserFeedView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            GestureDetector(
-              onTap: () async => Navigator.of(context).pushNamed(
-                Routes.userFeed,
-                arguments: {
-                  'user': user,
-                  'folders': await context
-                      .read<GetUserFoldersCubit>()
-                      .getFolders(user.id!),
-                  'isMine': isMine,
-                },
-              ),
-              child: Row(
-                children: [
-                  Image.asset(
-                    makeImagePath(user.profileImg),
-                    width: 32.w,
-                    height: 32.h,
-                    errorBuilder: (_, __, ___) {
-                      return Container(
-                        width: 32.w,
-                        height: 32.h,
-                        decoration: const BoxDecoration(
-                          color: grey300,
-                          shape: BoxShape.circle,
-                        ),
-                      );
-                    },
-                  ),
-                  SizedBox(
-                    width: 8.w,
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            user.nickname,
-                            style: const TextStyle(
-                              color: grey900,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(
-                              left: 4.w,
-                            ),
-                            decoration: BoxDecoration(
-                              color: primary200,
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(4.r),
-                              ),
-                            ),
-                            child: Center(
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                  vertical: 3.h,
-                                  horizontal: 4.w,
-                                ),
-                                child: Text(
-                                  user.jobGroup?.name ?? '',
-                                  style: TextStyle(
-                                    color: primary600,
-                                    fontSize: 10.sp,
-                                    letterSpacing: -0.2.w,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(top: 4.h),
-                        child: Text(
-                          makeLinkTimeString(link.time ?? ''),
-                          style: TextStyle(
-                            color: grey400,
-                            fontSize: 12.sp,
-                            letterSpacing: -0.2.w,
-                          ),
-                        ),
-                      ),
-                    ],
-                  )
-                ],
-              ),
-            ),
-            if (link.describe != null || (link.describe?.isNotEmpty ?? false))
+            buildUserInfo(context, link),
+            if (link.describe != null && (link.describe?.isNotEmpty ?? false))
               Column(
                 children: [
                   SizedBox(
