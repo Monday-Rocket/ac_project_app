@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:ac_project_app/const/colors.dart';
-import 'package:ac_project_app/cubits/folders/get_user_folders_cubit.dart';
 import 'package:ac_project_app/cubits/home/get_job_list_cubit.dart';
 import 'package:ac_project_app/cubits/home/topic_list_state.dart';
 import 'package:ac_project_app/cubits/links/links_from_selected_job_group_cubit.dart';
@@ -15,6 +14,7 @@ import 'package:ac_project_app/resource.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/bottom_dialog.dart';
 import 'package:ac_project_app/ui/widget/sliver/custom_header_delegate.dart';
+import 'package:ac_project_app/ui/widget/user/user_info.dart';
 import 'package:ac_project_app/util/list_utils.dart';
 import 'package:ac_project_app/util/string_utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -171,98 +171,7 @@ class HomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            GestureDetector(
-              onTap: () async {
-                final profileState = context.read<GetProfileInfoCubit>().state
-                    as ProfileLoadedState;
-                await Navigator.of(context).pushNamed(
-                  Routes.userFeed,
-                  arguments: {
-                    'user': link.user,
-                    'folders': await context
-                        .read<GetUserFoldersCubit>()
-                        .getFolders(link.user!.id!),
-                    'isMine': profileState.profile.id == link.user!.id,
-                  },
-                );
-              },
-              child: Row(
-                children: [
-                  Image.asset(
-                    makeImagePath(link.user?.profileImg ?? '01'),
-                    width: 32.w,
-                    height: 32.h,
-                    errorBuilder: (_, __, ___) {
-                      return Container(
-                        width: 32.w,
-                        height: 32.h,
-                        decoration: const BoxDecoration(
-                          color: grey300,
-                          shape: BoxShape.circle,
-                        ),
-                      );
-                    },
-                  ),
-                  SizedBox(
-                    width: 8.w,
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            link.user?.nickname ?? '',
-                            style: const TextStyle(
-                              color: grey900,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(
-                              left: 4.w,
-                            ),
-                            decoration: BoxDecoration(
-                              color: primary66_200,
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(4.r),
-                              ),
-                            ),
-                            child: Center(
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                  vertical: 3.h,
-                                  horizontal: 4.w,
-                                ),
-                                child: Text(
-                                  link.user?.jobGroup?.name ?? '',
-                                  style: TextStyle(
-                                    color: primary600,
-                                    fontSize: 10.sp,
-                                    letterSpacing: -0.2.w,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(top: 4.h),
-                        child: Text(
-                          makeLinkTimeString(link.time ?? ''),
-                          style: TextStyle(
-                            color: grey400,
-                            fontSize: 12.sp,
-                            letterSpacing: -0.2.w,
-                          ),
-                        ),
-                      ),
-                    ],
-                  )
-                ],
-              ),
-            ),
+            buildUserInfo(context, link),
             if (link.describe != null && (link.describe?.isNotEmpty ?? false))
               Column(
                 children: [
@@ -418,7 +327,7 @@ class HomePage extends StatelessWidget {
       padding: EdgeInsets.only(top: 23.h, left: 12.w, right: 20.w),
       child: DefaultTabController(
         length: jobs.length,
-        child: Container(
+        child: SizedBox(
           height: 36.h,
           child: Stack(
             children: [
