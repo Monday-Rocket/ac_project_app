@@ -25,7 +25,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({super.key, required this.profile});
+  const HomePage({required this.profile, super.key});
 
   final Profile profile;
 
@@ -144,7 +144,10 @@ class HomePage extends StatelessWidget {
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 24.w),
                         child: Divider(
-                            height: 1.h, thickness: 1.w, color: ccGrey200),
+                          height: 1.h,
+                          thickness: 1.w,
+                          color: ccGrey200,
+                        ),
                       )
                   ],
                 );
@@ -158,7 +161,11 @@ class HomePage extends StatelessWidget {
   }
 
   GestureDetector buildBodyListItem(
-      BuildContext context, Link link, double width, List<Link> totalLinks) {
+    BuildContext context,
+    Link link,
+    double width,
+    List<Link> totalLinks,
+  ) {
     return GestureDetector(
       onTap: () {
         Navigator.pushNamed(
@@ -178,7 +185,7 @@ class HomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            buildUserInfo(context, link),
+            buildUserInfo(context: context, link: link),
             if (link.describe != null && (link.describe?.isNotEmpty ?? false))
               Column(
                 children: [
@@ -280,13 +287,16 @@ class HomePage extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: 6.h),
-                Text(
-                  link.url ?? '',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: grey500,
-                    fontSize: 12.sp,
+                Padding(
+                  padding: EdgeInsets.only(right: 25.w),
+                  child: Text(
+                    link.url ?? '',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: grey500,
+                      fontSize: 12.sp,
+                    ),
                   ),
                 ),
               ],
@@ -331,7 +341,7 @@ class HomePage extends StatelessWidget {
   Container buildJobListWidget(BuildContext jobContext, List<JobGroup> jobs) {
     return Container(
       color: Colors.white,
-      padding: EdgeInsets.only(top: 23.h, left: 12.w, right: 20.w),
+      padding: EdgeInsets.only(top: 26.h, left: 12.w, right: 20.w),
       child: DefaultTabController(
         length: jobs.length,
         child: SizedBox(

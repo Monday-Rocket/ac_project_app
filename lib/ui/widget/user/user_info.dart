@@ -9,7 +9,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-Widget buildUserInfo(BuildContext context, Link link) {
+Widget buildUserInfo({
+  required BuildContext context,
+  required Link link,
+  bool? jobVisible = true,
+}) {
   return GestureDetector(
     onTap: () async {
       final profileState =
@@ -57,33 +61,7 @@ Widget buildUserInfo(BuildContext context, Link link) {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                Container(
-                  margin: EdgeInsets.only(
-                    left: 4.w,
-                  ),
-                  decoration: BoxDecoration(
-                    color: primary66_200,
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(4.r),
-                    ),
-                  ),
-                  child: Center(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        vertical: 3.h,
-                        horizontal: 4.w,
-                      ),
-                      child: Text(
-                        link.user?.jobGroup?.name ?? '',
-                        style: TextStyle(
-                          color: primary600,
-                          fontSize: 10.sp,
-                          letterSpacing: -0.2.w,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+                if (jobVisible ?? true) _buildUserJobView(link),
               ],
             ),
             Container(
@@ -100,6 +78,36 @@ Widget buildUserInfo(BuildContext context, Link link) {
           ],
         )
       ],
+    ),
+  );
+}
+
+Container _buildUserJobView(Link link) {
+  return Container(
+    margin: EdgeInsets.only(
+      left: 4.w,
+    ),
+    decoration: BoxDecoration(
+      color: primary66_200,
+      borderRadius: BorderRadius.all(
+        Radius.circular(4.r),
+      ),
+    ),
+    child: Center(
+      child: Padding(
+        padding: EdgeInsets.symmetric(
+          vertical: 3.h,
+          horizontal: 4.w,
+        ),
+        child: Text(
+          link.user?.jobGroup?.name ?? '',
+          style: TextStyle(
+            color: primary600,
+            fontSize: 10.sp,
+            letterSpacing: -0.2.w,
+          ),
+        ),
+      ),
     ),
   );
 }

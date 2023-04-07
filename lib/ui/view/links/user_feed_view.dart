@@ -351,15 +351,12 @@ class _UserFeedViewState extends State<UserFeedView> {
                     if (index != totalLinks.length - 1)
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 24.w),
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 24.w),
-                          child: Divider(
-                            height: 1.h,
-                            thickness: 1.h,
-                            color: greyTab,
-                          ),
+                        child: Divider(
+                          height: 1.h,
+                          thickness: 1.h,
+                          color: greyTab,
                         ),
-                      )
+                      ),
                   ],
                 );
               },
@@ -397,7 +394,7 @@ class _UserFeedViewState extends State<UserFeedView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            buildUserInfo(context, link),
+            buildUserInfo(context: context, link: link),
             if (link.describe != null && (link.describe?.isNotEmpty ?? false))
               Column(
                 children: [
@@ -489,13 +486,16 @@ class _UserFeedViewState extends State<UserFeedView> {
                     ),
                   ],
                 ),
-                Text(
-                  link.url ?? '',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: grey500,
-                    fontSize: 12.sp,
+                Padding(
+                  padding: EdgeInsets.only(right: 25.w),
+                  child: Text(
+                    link.url ?? '',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: grey500,
+                      fontSize: 12.sp,
+                    ),
                   ),
                 ),
               ],

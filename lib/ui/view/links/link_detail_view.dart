@@ -214,7 +214,11 @@ class LinkDetailView extends StatelessWidget {
           children: [
             BlocBuilder<GetProfileInfoCubit, ProfileState>(
               builder: (context, state) {
-                return buildUserInfo(cubitContext, link);
+                return buildUserInfo(
+                  context: cubitContext,
+                  link: link,
+                  jobVisible: false,
+                );
               },
             ),
             SizedBox(height: 20.h),
