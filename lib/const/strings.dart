@@ -49,3 +49,5 @@ final tutorials = [
     '방금 떠오른 아이디어,\n잊지 않도록 링크 노트에 메모해 보세요',
   ),
 ];
+
+const emptyLinksString = '등록된 링크가 없습니다';

@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:ac_project_app/const/colors.dart';
-import 'package:ac_project_app/cubits/folders/get_user_folders_cubit.dart';
+import 'package:ac_project_app/const/strings.dart';
 import 'package:ac_project_app/cubits/home/get_job_list_cubit.dart';
 import 'package:ac_project_app/cubits/home/topic_list_state.dart';
 import 'package:ac_project_app/cubits/links/links_from_selected_job_group_cubit.dart';
@@ -15,6 +15,7 @@ import 'package:ac_project_app/resource.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/bottom_dialog.dart';
 import 'package:ac_project_app/ui/widget/sliver/custom_header_delegate.dart';
+import 'package:ac_project_app/ui/widget/user/user_info.dart';
 import 'package:ac_project_app/util/list_utils.dart';
 import 'package:ac_project_app/util/string_utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -24,7 +25,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({super.key, required this.profile});
+  const HomePage({required this.profile, super.key});
 
   final Profile profile;
 
@@ -107,6 +108,7 @@ class HomePage extends StatelessWidget {
 
   Widget buildListBody(BuildContext parentContext) {
     final width = MediaQuery.of(parentContext).size.width;
+    final height = MediaQuery.of(parentContext).size.height;
 
     return BlocBuilder<LinksFromSelectedJobGroupCubit, List<Link>>(
       builder: (context, links) {
@@ -114,13 +116,18 @@ class HomePage extends StatelessWidget {
         if (totalLinks.isEmpty) {
           return SliverToBoxAdapter(
             child: Center(
-              child: Text(
-                '등록된 링크가 없습니다',
-                style: TextStyle(
-                  color: grey300,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 16.sp,
-                  height: (19 / 16).h,
+              child: SizedBox(
+                height: height * (3 / 4),
+                child: Center(
+                  child: Text(
+                    emptyLinksString,
+                    style: TextStyle(
+                      color: grey300,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 16.sp,
+                      height: (19 / 16).h,
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -137,7 +144,10 @@ class HomePage extends StatelessWidget {
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 24.w),
                         child: Divider(
-                            height: 1.h, thickness: 1.w, color: ccGrey200),
+                          height: 1.h,
+                          thickness: 1.w,
+                          color: ccGrey200,
+                        ),
                       )
                   ],
                 );
@@ -151,7 +161,11 @@ class HomePage extends StatelessWidget {
   }
 
   GestureDetector buildBodyListItem(
-      BuildContext context, Link link, double width, List<Link> totalLinks) {
+    BuildContext context,
+    Link link,
+    double width,
+    List<Link> totalLinks,
+  ) {
     return GestureDetector(
       onTap: () {
         Navigator.pushNamed(
@@ -171,98 +185,7 @@ class HomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            GestureDetector(
-              onTap: () async {
-                final profileState = context.read<GetProfileInfoCubit>().state
-                    as ProfileLoadedState;
-                await Navigator.of(context).pushNamed(
-                  Routes.userFeed,
-                  arguments: {
-                    'user': link.user,
-                    'folders': await context
-                        .read<GetUserFoldersCubit>()
-                        .getFolders(link.user!.id!),
-                    'isMine': profileState.profile.id == link.user!.id,
-                  },
-                );
-              },
-              child: Row(
-                children: [
-                  Image.asset(
-                    makeImagePath(link.user?.profileImg ?? '01'),
-                    width: 32.w,
-                    height: 32.h,
-                    errorBuilder: (_, __, ___) {
-                      return Container(
-                        width: 32.w,
-                        height: 32.h,
-                        decoration: const BoxDecoration(
-                          color: grey300,
-                          shape: BoxShape.circle,
-                        ),
-                      );
-                    },
-                  ),
-                  SizedBox(
-                    width: 8.w,
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            link.user?.nickname ?? '',
-                            style: const TextStyle(
-                              color: grey900,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(
-                              left: 4.w,
-                            ),
-                            decoration: BoxDecoration(
-                              color: primary66_200,
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(4.r),
-                              ),
-                            ),
-                            child: Center(
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                  vertical: 3.h,
-                                  horizontal: 4.w,
-                                ),
-                                child: Text(
-                                  link.user?.jobGroup?.name ?? '',
-                                  style: TextStyle(
-                                    color: primary600,
-                                    fontSize: 10.sp,
-                                    letterSpacing: -0.2.w,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(top: 4.h),
-                        child: Text(
-                          makeLinkTimeString(link.time ?? ''),
-                          style: TextStyle(
-                            color: grey400,
-                            fontSize: 12.sp,
-                            letterSpacing: -0.2.w,
-                          ),
-                        ),
-                      ),
-                    ],
-                  )
-                ],
-              ),
-            ),
+            buildUserInfo(context: context, link: link),
             if (link.describe != null && (link.describe?.isNotEmpty ?? false))
               Column(
                 children: [
@@ -364,13 +287,16 @@ class HomePage extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: 6.h),
-                Text(
-                  link.url ?? '',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: grey500,
-                    fontSize: 12.sp,
+                Padding(
+                  padding: EdgeInsets.only(right: 25.w),
+                  child: Text(
+                    link.url ?? '',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: grey500,
+                      fontSize: 12.sp,
+                    ),
                   ),
                 ),
               ],
@@ -415,10 +341,10 @@ class HomePage extends StatelessWidget {
   Container buildJobListWidget(BuildContext jobContext, List<JobGroup> jobs) {
     return Container(
       color: Colors.white,
-      padding: EdgeInsets.only(top: 23.h, left: 12.w, right: 20.w),
+      padding: EdgeInsets.only(top: 26.h, left: 12.w, right: 20.w),
       child: DefaultTabController(
         length: jobs.length,
-        child: Container(
+        child: SizedBox(
           height: 36.h,
           child: Stack(
             children: [

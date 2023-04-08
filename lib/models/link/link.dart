@@ -31,7 +31,7 @@ class Link {
   @JsonKey(name: 'created_date_time')
   String? time;
 
-  final DetailUser? user;
+  DetailUser? user;
 
   @JsonKey(name: 'inflow_type')
   String? inflowType;

@@ -3,8 +3,10 @@
 import 'dart:async';
 
 import 'package:ac_project_app/const/colors.dart';
+import 'package:ac_project_app/const/strings.dart';
 import 'package:ac_project_app/cubits/feed/feed_view_cubit.dart';
 import 'package:ac_project_app/cubits/folders/get_user_folders_cubit.dart';
+import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/cubits/scroll/scroll_cubit.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
@@ -13,6 +15,7 @@ import 'package:ac_project_app/models/user/detail_user.dart';
 import 'package:ac_project_app/resource.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/bottom_dialog.dart';
+import 'package:ac_project_app/ui/widget/user/user_info.dart';
 import 'package:ac_project_app/util/get_widget_arguments.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:ac_project_app/util/string_utils.dart';
@@ -24,7 +27,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class UserFeedView extends StatefulWidget {
-  UserFeedView({super.key});
+  const UserFeedView({super.key});
 
   @override
   State<UserFeedView> createState() => _UserFeedViewState();
@@ -46,6 +49,9 @@ class _UserFeedViewState extends State<UserFeedView> {
         BlocProvider<GetUserFoldersCubit>(
           create: (_) => GetUserFoldersCubit(),
         ),
+        BlocProvider<GetProfileInfoCubit>(
+          create: (_) => GetProfileInfoCubit(),
+        ),
       ],
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -62,11 +68,19 @@ class _UserFeedViewState extends State<UserFeedView> {
             totalLinks.addAll(links);
             return BlocProvider(
               create: (_) => ScrollCubit(
-                  feedContext.read<FeedViewCubit>().scrollController),
+                feedContext.read<FeedViewCubit>().scrollController,
+              ),
               child: BlocBuilder<ScrollCubit, bool>(
                 builder: (scrollContext, isMove) {
-                  return buildNotificationListener(feedContext, totalLinks,
-                      context, user, isMine, folders, isMove);
+                  return buildNotificationListener(
+                    feedContext,
+                    totalLinks,
+                    context,
+                    user,
+                    isMine,
+                    folders,
+                    isMove,
+                  );
                 },
               ),
             );
@@ -77,13 +91,14 @@ class _UserFeedViewState extends State<UserFeedView> {
   }
 
   NotificationListener<ScrollEndNotification> buildNotificationListener(
-      BuildContext feedContext,
-      List<Link> totalLinks,
-      BuildContext context,
-      DetailUser user,
-      bool isMine,
-      List<Folder> folders,
-      bool isMove) {
+    BuildContext feedContext,
+    List<Link> totalLinks,
+    BuildContext context,
+    DetailUser user,
+    bool isMine,
+    List<Folder> folders,
+    bool isMove,
+  ) {
     return NotificationListener<ScrollEndNotification>(
       onNotification: (scrollEnd) {
         final metrics = scrollEnd.metrics;
@@ -149,7 +164,11 @@ class _UserFeedViewState extends State<UserFeedView> {
   }
 
   Widget buildTopAppBar(
-      BuildContext context, DetailUser user, bool isMine, bool isMove) {
+    BuildContext context,
+    DetailUser user,
+    bool isMine,
+    bool isMove,
+  ) {
     return SliverAppBar(
       pinned: true,
       leading: IconButton(
@@ -270,7 +289,8 @@ class _UserFeedViewState extends State<UserFeedView> {
                           final cubit = context.read<FeedViewCubit>();
                           cubit.totalLinks.clear();
                           cubit.selectFolder(index).then(
-                              (value) => cubit.scrollController.jumpTo(0));
+                                (value) => cubit.scrollController.jumpTo(0),
+                              );
                         },
                       );
                     },
@@ -292,16 +312,23 @@ class _UserFeedViewState extends State<UserFeedView> {
     BuildContext feedContext,
   ) {
     final width = MediaQuery.of(parentContext).size.width;
+    final height = MediaQuery.of(parentContext).size.height;
+
     return (totalLinks.isEmpty)
         ? SliverToBoxAdapter(
             child: Center(
-              child: Text(
-                '등록된 링크가 없습니다',
-                style: TextStyle(
-                  color: grey300,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 16.sp,
-                  height: (19 / 16).h,
+              child: SizedBox(
+                height: height / 2,
+                child: Center(
+                  child: Text(
+                    emptyLinksString,
+                    style: TextStyle(
+                      color: grey300,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 16.sp,
+                      height: (19 / 16).h,
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -324,12 +351,12 @@ class _UserFeedViewState extends State<UserFeedView> {
                     if (index != totalLinks.length - 1)
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 24.w),
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 24.w),
-                          child: Divider(
-                              height: 1.h, thickness: 1.h, color: greyTab),
+                        child: Divider(
+                          height: 1.h,
+                          thickness: 1.h,
+                          color: greyTab,
                         ),
-                      )
+                      ),
                   ],
                 );
               },
@@ -339,13 +366,15 @@ class _UserFeedViewState extends State<UserFeedView> {
   }
 
   GestureDetector buildBodyListItem(
-      BuildContext context,
-      Link link,
-      DetailUser user,
-      bool isMine,
-      double width,
-      List<Link> totalLinks,
-      BuildContext parentContext) {
+    BuildContext context,
+    Link link,
+    DetailUser user,
+    bool isMine,
+    double width,
+    List<Link> totalLinks,
+    BuildContext parentContext,
+  ) {
+    link.user = user;
     return GestureDetector(
       onTap: () {
         Navigator.pushNamed(
@@ -365,95 +394,8 @@ class _UserFeedViewState extends State<UserFeedView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            GestureDetector(
-              onTap: () async => Navigator.of(context).pushNamed(
-                Routes.userFeed,
-                arguments: {
-                  'user': user,
-                  'folders': await context
-                      .read<GetUserFoldersCubit>()
-                      .getFolders(user.id!),
-                  'isMine': isMine,
-                },
-              ),
-              child: Row(
-                children: [
-                  Image.asset(
-                    makeImagePath(user.profileImg),
-                    width: 32.w,
-                    height: 32.h,
-                    errorBuilder: (_, __, ___) {
-                      return Container(
-                        width: 32.w,
-                        height: 32.h,
-                        decoration: const BoxDecoration(
-                          color: grey300,
-                          shape: BoxShape.circle,
-                        ),
-                      );
-                    },
-                  ),
-                  SizedBox(
-                    width: 8.w,
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            user.nickname,
-                            style: const TextStyle(
-                              color: grey900,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(
-                              left: 4.w,
-                            ),
-                            decoration: BoxDecoration(
-                              color: primary200,
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(4.r),
-                              ),
-                            ),
-                            child: Center(
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                  vertical: 3.h,
-                                  horizontal: 4.w,
-                                ),
-                                child: Text(
-                                  user.jobGroup?.name ?? '',
-                                  style: TextStyle(
-                                    color: primary600,
-                                    fontSize: 10.sp,
-                                    letterSpacing: -0.2.w,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(top: 4.h),
-                        child: Text(
-                          makeLinkTimeString(link.time ?? ''),
-                          style: TextStyle(
-                            color: grey400,
-                            fontSize: 12.sp,
-                            letterSpacing: -0.2.w,
-                          ),
-                        ),
-                      ),
-                    ],
-                  )
-                ],
-              ),
-            ),
-            if (link.describe != null || (link.describe?.isNotEmpty ?? false))
+            buildUserInfo(context: context, link: link),
+            if (link.describe != null && (link.describe?.isNotEmpty ?? false))
               Column(
                 children: [
                   SizedBox(
@@ -544,13 +486,16 @@ class _UserFeedViewState extends State<UserFeedView> {
                     ),
                   ],
                 ),
-                Text(
-                  link.url ?? '',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: grey500,
-                    fontSize: 12.sp,
+                Padding(
+                  padding: EdgeInsets.only(right: 25.w),
+                  child: Text(
+                    link.url ?? '',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: grey500,
+                      fontSize: 12.sp,
+                    ),
                   ),
                 ),
               ],

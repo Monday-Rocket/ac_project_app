@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_positional_boolean_parameters
 
 import 'package:ac_project_app/const/colors.dart';
+import 'package:ac_project_app/cubits/folders/get_user_folders_cubit.dart';
 import 'package:ac_project_app/cubits/links/detail_edit_cubit.dart';
 import 'package:ac_project_app/cubits/links/edit_state.dart';
 import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
@@ -11,6 +12,7 @@ import 'package:ac_project_app/provider/comment_temp_data_provider.dart';
 import 'package:ac_project_app/ui/widget/bottom_dialog.dart';
 import 'package:ac_project_app/ui/widget/buttons/bottom_sheet_button.dart';
 import 'package:ac_project_app/ui/widget/dialog.dart';
+import 'package:ac_project_app/ui/widget/user/user_info.dart';
 import 'package:ac_project_app/util/date_utils.dart';
 import 'package:ac_project_app/util/get_widget_arguments.dart';
 import 'package:ac_project_app/util/logger.dart';
@@ -47,6 +49,9 @@ class LinkDetailView extends StatelessWidget {
         BlocProvider(
           create: (_) => DetailEditCubit(link),
         ),
+        BlocProvider(
+          create: (_) => GetUserFoldersCubit(),
+        )
       ],
       child: KeyboardDismissOnTap(
         child: KeyboardVisibilityBuilder(
@@ -203,10 +208,20 @@ class LinkDetailView extends StatelessWidget {
       controller: scrollController,
       reverse: state == EditState.edit,
       child: Container(
-        margin: EdgeInsets.only(left: 24.w, right: 24.w, top: 14),
+        margin: EdgeInsets.only(left: 24.w, right: 24.w, top: 14.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            BlocBuilder<GetProfileInfoCubit, ProfileState>(
+              builder: (context, state) {
+                return buildUserInfo(
+                  context: cubitContext,
+                  link: link,
+                  jobVisible: false,
+                );
+              },
+            ),
+            SizedBox(height: 20.h),
             InkWell(
               onTap: () async {
                 await launchUrl(

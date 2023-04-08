@@ -40,7 +40,6 @@ class _SearchViewState extends State<SearchView> {
     final args = getArguments(context);
     final isMine = args['isMine'] as bool;
     final totalLinks = <Link>[];
-    final width = MediaQuery.of(context).size.width;
 
     return BlocProvider(
       create: (_) => SearchLinksCubit(),
@@ -150,268 +149,278 @@ class _SearchViewState extends State<SearchView> {
             ),
           );
         } else {
-          return NotificationListener<ScrollEndNotification>(
-            onNotification: (scrollEnd) {
-              final metrics = scrollEnd.metrics;
-              if (metrics.extentAfter <= 800) {
-                context.read<SearchLinksCubit>().loadMore();
-              }
+          return NotificationListener<ScrollStartNotification>(
+            onNotification: (scrollStart) {
+              FocusManager.instance.primaryFocus?.unfocus();
               return true;
             },
-            child: RefreshIndicator(
-              onRefresh: () => refresh(context, totalLinks),
-              color: primary600,
-              child: ListView.separated(
-                itemCount: totalLinks.length,
-                physics: const ClampingScrollPhysics(),
-                itemBuilder: (_, i) {
-                  final link = totalLinks[i];
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.pushNamed(
-                        context,
-                        Routes.linkDetail,
-                        arguments: {
-                          'link': link,
-                        },
-                      );
-                    },
-                    child: Container(
-                      margin: EdgeInsets.symmetric(
-                        vertical: 20.h,
-                        horizontal: 24.w,
-                      ),
-                      color: Colors.white,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          GestureDetector(
-                            onTap: () async {
-                              final profileState = context
-                                  .read<GetProfileInfoCubit>()
-                                  .state as ProfileLoadedState;
-                              await Navigator.of(context).pushNamed(
-                                Routes.userFeed,
-                                arguments: {
-                                  'user': link.user,
-                                  'folders': await context
-                                      .read<GetUserFoldersCubit>()
-                                      .getFolders(link.user!.id!),
-                                  'isMine': profileState.profile.id ==
-                                      link.user!.id,
-                                },
-                              );
-                            },
-                            child: Row(
-                              children: [
-                                Image.asset(
-                                  makeImagePath(
-                                      link.user?.profileImg ?? '01'),
-                                  width: 32.w,
-                                  height: 32.h,
-                                  errorBuilder: (_, __, ___) {
-                                    return Container(
-                                      width: 32.w,
-                                      height: 32.h,
-                                      decoration: const BoxDecoration(
-                                        color: grey300,
-                                        shape: BoxShape.circle,
-                                      ),
-                                    );
+            child: NotificationListener<ScrollEndNotification>(
+              onNotification: (scrollEnd) {
+                final metrics = scrollEnd.metrics;
+                if (metrics.extentAfter <= 800) {
+                  context.read<SearchLinksCubit>().loadMore();
+                }
+                return true;
+              },
+              child: RefreshIndicator(
+                onRefresh: () => refresh(context, totalLinks),
+                color: primary600,
+                child: ListView.separated(
+                  itemCount: totalLinks.length,
+                  physics: const ClampingScrollPhysics(),
+                  itemBuilder: (_, i) {
+                    final link = totalLinks[i];
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(
+                          context,
+                          Routes.linkDetail,
+                          arguments: {
+                            'link': link,
+                          },
+                        );
+                      },
+                      child: Container(
+                        margin: EdgeInsets.symmetric(
+                          vertical: 20.h,
+                          horizontal: 24.w,
+                        ),
+                        color: Colors.white,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            GestureDetector(
+                              onTap: () async {
+                                final profileState = context
+                                    .read<GetProfileInfoCubit>()
+                                    .state as ProfileLoadedState;
+                                await Navigator.of(context).pushNamed(
+                                  Routes.userFeed,
+                                  arguments: {
+                                    'user': link.user,
+                                    'folders': await context
+                                        .read<GetUserFoldersCubit>()
+                                        .getFolders(link.user!.id!),
+                                    'isMine': profileState.profile.id ==
+                                        link.user!.id,
                                   },
-                                ),
-                                SizedBox(
-                                  width: 8.w,
-                                ),
-                                Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Text(
-                                          link.user?.nickname ?? '',
-                                          style: const TextStyle(
-                                            color: grey900,
-                                            fontWeight: FontWeight.w500,
-                                          ),
+                                );
+                              },
+                              child: Row(
+                                children: [
+                                  Image.asset(
+                                    makeImagePath(
+                                      link.user?.profileImg ?? '01',
+                                    ),
+                                    width: 32.w,
+                                    height: 32.h,
+                                    errorBuilder: (_, __, ___) {
+                                      return Container(
+                                        width: 32.w,
+                                        height: 32.h,
+                                        decoration: const BoxDecoration(
+                                          color: grey300,
+                                          shape: BoxShape.circle,
                                         ),
-                                        Container(
-                                          margin: EdgeInsets.only(
-                                            left: 4.w,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: primary66_200,
-                                            borderRadius: BorderRadius.all(
-                                              Radius.circular(4.r),
+                                      );
+                                    },
+                                  ),
+                                  SizedBox(
+                                    width: 8.w,
+                                  ),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Text(
+                                            link.user?.nickname ?? '',
+                                            style: const TextStyle(
+                                              color: grey900,
+                                              fontWeight: FontWeight.w500,
                                             ),
                                           ),
-                                          child: Center(
-                                            child: Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                vertical: 3.h,
-                                                horizontal: 4.w,
+                                          Container(
+                                            margin: EdgeInsets.only(
+                                              left: 4.w,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: primary66_200,
+                                              borderRadius: BorderRadius.all(
+                                                Radius.circular(4.r),
                                               ),
-                                              child: Text(
-                                                link.user?.jobGroup?.name ??
-                                                    '',
-                                                style: TextStyle(
-                                                  color: primary600,
-                                                  fontSize: 10.sp,
-                                                  letterSpacing: -0.2.w,
+                                            ),
+                                            child: Center(
+                                              child: Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                  vertical: 3.h,
+                                                  horizontal: 4.w,
+                                                ),
+                                                child: Text(
+                                                  link.user?.jobGroup?.name ??
+                                                      '',
+                                                  style: TextStyle(
+                                                    color: primary600,
+                                                    fontSize: 10.sp,
+                                                    letterSpacing: -0.2.w,
+                                                  ),
                                                 ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                    Container(
-                                      margin: EdgeInsets.only(top: 4.h),
-                                      child: Text(
-                                        makeLinkTimeString(link.time ?? ''),
-                                        style: TextStyle(
-                                          color: grey400,
-                                          fontSize: 12.sp,
-                                          letterSpacing: -0.2.w,
-                                        ),
+                                        ],
                                       ),
-                                    ),
-                                  ],
-                                )
-                              ],
-                            ),
-                          ),
-                          if (link.describe != null &&
-                              (link.describe?.isNotEmpty ?? false))
-                            Column(
-                              children: [
-                                SizedBox(
-                                  height: 17.h,
-                                ),
-                                Text(
-                                  link.describe ?? '',
-                                  style: TextStyle(
-                                    fontSize: 16.sp,
-                                    color: grey800,
-                                    height: (26 / 16).h,
-                                  ),
-                                ),
-                              ],
-                            )
-                          else
-                            const SizedBox.shrink(),
-                          Container(
-                            margin: EdgeInsets.only(
-                              top: 16.h,
-                              bottom: 18.h,
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(7.r),
-                              ),
-                              child: isLinkVerified(link)
-                                  ? Container(
-                                      constraints: const BoxConstraints(
-                                        minWidth: double.infinity,
-                                      ),
-                                      color: grey100,
-                                      child: CachedNetworkImage(
-                                        imageUrl: link.image ?? '',
-                                        fadeInDuration:
-                                            const Duration(milliseconds: 300),
-                                        fadeOutDuration:
-                                            const Duration(milliseconds: 300),
-                                        imageBuilder:
-                                            (context, imageProvider) =>
-                                                Container(
-                                          height: 160.h,
-                                          decoration: BoxDecoration(
-                                            image: DecorationImage(
-                                              image: imageProvider,
-                                              fit: BoxFit.cover,
-                                            ),
+                                      Container(
+                                        margin: EdgeInsets.only(top: 4.h),
+                                        child: Text(
+                                          makeLinkTimeString(link.time ?? ''),
+                                          style: TextStyle(
+                                            color: grey400,
+                                            fontSize: 12.sp,
+                                            letterSpacing: -0.2.w,
                                           ),
                                         ),
-                                        errorWidget: (_, __, ___) {
-                                          return const SizedBox();
-                                        },
                                       ),
-                                    )
-                                  : const SizedBox(),
+                                    ],
+                                  )
+                                ],
+                              ),
                             ),
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.end,
+                            if (link.describe != null &&
+                                (link.describe?.isNotEmpty ?? false))
+                              Column(
                                 children: [
                                   SizedBox(
-                                    width: (width - (24 * 2 + 25)).w,
-                                    child: Text(
-                                      link.title ?? '',
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        color: blackBold,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16.sp,
-                                      ),
-                                    ),
+                                    height: 17.h,
                                   ),
-                                  InkWell(
-                                    onTap: () {
-                                      final profileState = context
-                                          .read<GetProfileInfoCubit>()
-                                          .state as ProfileLoadedState;
-                                      if (profileState.profile.id ==
-                                          link.user!.id) {
-                                        showMyLinkOptionsDialog(
-                                          link,
-                                          context,
-                                          popCallback: () => refresh(
-                                            context,
-                                            totalLinks,
-                                          ),
-                                        );
-                                      } else {
-                                        showLinkOptionsDialog(
-                                          link,
-                                          context,
-                                          callback: () =>
-                                              refresh(context, totalLinks),
-                                        );
-                                      }
-                                    },
-                                    child: SvgPicture.asset(
-                                      Assets.images.moreVert,
+                                  Text(
+                                    link.describe ?? '',
+                                    style: TextStyle(
+                                      fontSize: 16.sp,
+                                      color: grey800,
+                                      height: (26 / 16).h,
                                     ),
                                   ),
                                 ],
+                              )
+                            else
+                              const SizedBox.shrink(),
+                            Container(
+                              margin: EdgeInsets.only(
+                                top: 16.h,
+                                bottom: 18.h,
                               ),
-                              SizedBox(height: 6.h),
-                              Text(
-                                link.url ?? '',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  color: grey500,
-                                  fontSize: 12.sp,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(7.r),
                                 ),
+                                child: isLinkVerified(link)
+                                    ? Container(
+                                        constraints: const BoxConstraints(
+                                          minWidth: double.infinity,
+                                        ),
+                                        color: grey100,
+                                        child: CachedNetworkImage(
+                                          imageUrl: link.image ?? '',
+                                          fadeInDuration:
+                                              const Duration(milliseconds: 300),
+                                          fadeOutDuration:
+                                              const Duration(milliseconds: 300),
+                                          imageBuilder:
+                                              (context, imageProvider) =>
+                                                  Container(
+                                            height: 160.h,
+                                            decoration: BoxDecoration(
+                                              image: DecorationImage(
+                                                image: imageProvider,
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                          ),
+                                          errorWidget: (_, __, ___) {
+                                            return const SizedBox();
+                                          },
+                                        ),
+                                      )
+                                    : const SizedBox(),
                               ),
-                            ],
-                          ),
-                        ],
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    SizedBox(
+                                      width: (width - (24 * 2 + 25)).w,
+                                      child: Text(
+                                        link.title ?? '',
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          color: blackBold,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16.sp,
+                                        ),
+                                      ),
+                                    ),
+                                    InkWell(
+                                      onTap: () {
+                                        final profileState = context
+                                            .read<GetProfileInfoCubit>()
+                                            .state as ProfileLoadedState;
+                                        if (profileState.profile.id ==
+                                            link.user!.id) {
+                                          showMyLinkOptionsDialog(
+                                            link,
+                                            context,
+                                            popCallback: () => refresh(
+                                              context,
+                                              totalLinks,
+                                            ),
+                                          );
+                                        } else {
+                                          showLinkOptionsDialog(
+                                            link,
+                                            context,
+                                            callback: () =>
+                                                refresh(context, totalLinks),
+                                          );
+                                        }
+                                      },
+                                      child: SvgPicture.asset(
+                                        Assets.images.moreVert,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 6.h),
+                                Padding(
+                                  padding: EdgeInsets.only(right: 25.w),
+                                  child: Text(
+                                    link.url ?? '',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: grey500,
+                                      fontSize: 12.sp,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                },
-                separatorBuilder: (_, __) => Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24.w),
-                  child:
-                      Divider(height: 1.h, thickness: 1.w, color: ccGrey200),
+                    );
+                  },
+                  separatorBuilder: (_, __) => Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 24.w),
+                    child:
+                        Divider(height: 1.h, thickness: 1.w, color: ccGrey200),
+                  ),
                 ),
               ),
             ),
