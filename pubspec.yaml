@@ -3,7 +3,7 @@ description: 링크풀 - 체계적인 링크 관리의 시작
 
 publish_to: 'none'
 
-version: 1.0.35+35
+version: 1.0.36+36
 
 environment:
   sdk: ">=2.17.6 <3.0.0"
