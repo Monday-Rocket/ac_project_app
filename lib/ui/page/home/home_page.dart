@@ -248,7 +248,7 @@ class HomePage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     SizedBox(
-                      width: width - (24 * 2 + 25),
+                      width: width - (24 * 2 + 30),
                       child: Text(
                         link.title ?? '',
                         overflow: TextOverflow.ellipsis,
@@ -338,104 +338,109 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Container buildJobListWidget(BuildContext jobContext, List<JobGroup> jobs) {
-    return Container(
-      color: Colors.white,
-      padding: EdgeInsets.only(top: 26.h, left: 12.w, right: 20.w),
-      child: DefaultTabController(
-        length: jobs.length,
-        child: SizedBox(
-          height: 36.h,
-          child: Stack(
-            children: [
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Padding(
-                  padding: EdgeInsets.only(
-                    left: 15.w,
-                    right: 11.w,
-                    bottom: 1.h,
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          color: greyTab,
-                          height: 1.h,
-                        ),
+  Widget buildJobListWidget(BuildContext jobContext, List<JobGroup> jobs) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          color: Colors.white,
+          padding: EdgeInsets.only(top: 19.h, left: 12.w, right: 20.w),
+          child: DefaultTabController(
+            length: jobs.length,
+            child: SizedBox(
+              height: 36.h,
+              child: Stack(
+                children: [
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                        left: 15.w,
+                        right: 11.w,
+                        bottom: 1.h,
                       ),
-                    ],
-                  ),
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.only(right: 7.w),
-                child: Builder(
-                  builder: (context) {
-                    final tabs = <Widget>[];
-                    for (final job in jobs) {
-                      tabs.add(
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                            vertical: 7.h,
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Container(
+                              color: greyTab,
+                              height: 1.h,
+                            ),
                           ),
-                          child: Text(
-                            job.name ?? '',
+                        ],
+                      ),
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(right: 7.w),
+                    child: Builder(
+                      builder: (context) {
+                        final tabs = <Widget>[];
+                        for (final job in jobs) {
+                          tabs.add(
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                vertical: 7.h,
+                              ),
+                              child: Text(
+                                job.name ?? '',
+                              ),
+                            ),
+                          );
+                        }
+                        return TabBar(
+                          isScrollable: true,
+                          unselectedLabelColor: grey700,
+                          labelColor: primaryTab,
+                          labelPadding: EdgeInsets.symmetric(horizontal: 13.w),
+                          labelStyle: TextStyle(
+                            fontFamily: R_Font.PRETENDARD,
+                            fontSize: 16.sp,
+                            height: (19 / 16).h,
+                            fontWeight: FontWeight.w800,
                           ),
-                        ),
-                      );
-                    }
-                    return TabBar(
-                      isScrollable: true,
-                      unselectedLabelColor: grey700,
-                      labelColor: primaryTab,
-                      labelPadding: EdgeInsets.symmetric(horizontal: 13.w),
-                      labelStyle: TextStyle(
-                        fontFamily: R_Font.PRETENDARD,
-                        fontSize: 16.sp,
-                        height: (19 / 16).h,
-                        fontWeight: FontWeight.w800,
-                      ),
-                      unselectedLabelStyle: TextStyle(
-                        fontFamily: R_Font.PRETENDARD,
-                        fontSize: 16.sp,
-                        height: (19 / 16).h,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      indicator: UnderlineTabIndicator(
-                        borderSide: BorderSide(
-                          color: primaryTab,
-                          width: 2.5.w,
-                        ),
-                        insets: EdgeInsets.symmetric(horizontal: 15.w),
-                      ),
-                      tabs: tabs,
-                      onTap: (index) {
-                        jobContext
-                            .read<LinksFromSelectedJobGroupCubit>()
-                            .hasLoadMore = false;
-                        final selectedJobGroupId = jobs[index].id!;
-                        jobContext
-                            .read<LinksFromSelectedJobGroupCubit>()
-                            .clear();
-                        jobContext
-                            .read<LinksFromSelectedJobGroupCubit>()
-                            .getSelectedJobLinks(selectedJobGroupId, 0)
-                            .then(
-                              (value) => jobContext
-                                  .read<LinksFromSelectedJobGroupCubit>()
-                                  .scrollController
-                                  .jumpTo(0),
-                            );
+                          unselectedLabelStyle: TextStyle(
+                            fontFamily: R_Font.PRETENDARD,
+                            fontSize: 16.sp,
+                            height: (19 / 16).h,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          indicator: UnderlineTabIndicator(
+                            borderSide: BorderSide(
+                              color: primaryTab,
+                              width: 2.5.w,
+                            ),
+                            insets: EdgeInsets.symmetric(horizontal: 15.w),
+                          ),
+                          tabs: tabs,
+                          onTap: (index) {
+                            jobContext
+                                .read<LinksFromSelectedJobGroupCubit>()
+                                .hasLoadMore = false;
+                            final selectedJobGroupId = jobs[index].id!;
+                            jobContext
+                                .read<LinksFromSelectedJobGroupCubit>()
+                                .clear();
+                            jobContext
+                                .read<LinksFromSelectedJobGroupCubit>()
+                                .getSelectedJobLinks(selectedJobGroupId, 0)
+                                .then(
+                                  (value) => jobContext
+                                      .read<LinksFromSelectedJobGroupCubit>()
+                                      .scrollController
+                                      .jumpTo(0),
+                                );
+                          },
+                        );
                       },
-                    );
-                  },
-                ),
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
-      ),
+      ],
     );
   }
 
