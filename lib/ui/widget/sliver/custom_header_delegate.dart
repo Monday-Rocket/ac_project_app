@@ -1,8 +1,9 @@
 
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CustomHeaderDelegate extends SliverPersistentHeaderDelegate {
-  CustomHeaderDelegate(this.child, {this.max = 55 , this.min = 55});
+  CustomHeaderDelegate(this.child, {this.max = 55, this.min = 55});
 
   final Widget child;
   final double max;
@@ -15,10 +16,10 @@ class CustomHeaderDelegate extends SliverPersistentHeaderDelegate {
   }
 
   @override
-  double get maxExtent => max;
+  double get maxExtent => max.h;
 
   @override
-  double get minExtent => min;
+  double get minExtent => min.h;
 
   @override
   bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) {
