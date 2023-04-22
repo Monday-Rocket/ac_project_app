@@ -10,6 +10,7 @@ import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/link/link.dart';
+import 'package:ac_project_app/models/profile/profile_image.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/bottom_dialog.dart';
 import 'package:ac_project_app/util/get_widget_arguments.dart';
@@ -209,7 +210,7 @@ class _SearchViewState extends State<SearchView> {
                               child: Row(
                                 children: [
                                   Image.asset(
-                                    makeImagePath(
+                                    ProfileImage.makeImagePath(
                                       link.user?.profileImg ?? '01',
                                     ),
                                     width: 32.w,

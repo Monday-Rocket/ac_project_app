@@ -6,11 +6,11 @@ import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/const/strings.dart';
 import 'package:ac_project_app/cubits/feed/feed_view_cubit.dart';
 import 'package:ac_project_app/cubits/folders/get_user_folders_cubit.dart';
-import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/cubits/scroll/scroll_cubit.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/link/link.dart';
+import 'package:ac_project_app/models/profile/profile_image.dart';
 import 'package:ac_project_app/models/user/detail_user.dart';
 import 'package:ac_project_app/resource.dart';
 import 'package:ac_project_app/routes.dart';
@@ -48,9 +48,6 @@ class _UserFeedViewState extends State<UserFeedView> {
         ),
         BlocProvider<GetUserFoldersCubit>(
           create: (_) => GetUserFoldersCubit(),
-        ),
-        BlocProvider<GetProfileInfoCubit>(
-          create: (_) => GetProfileInfoCubit(),
         ),
       ],
       child: Scaffold(
@@ -129,7 +126,7 @@ class _UserFeedViewState extends State<UserFeedView> {
                     child: Column(
                       children: [
                         Image.asset(
-                          makeImagePath(user.profileImg),
+                          ProfileImage.makeImagePath(user.profileImg),
                           width: 105.w,
                           height: 105.h,
                         ),

@@ -75,9 +75,6 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
         BlocProvider<GetFoldersCubit>(
           create: (_) => GetFoldersCubit(),
         ),
-        BlocProvider<GetProfileInfoCubit>(
-          create: (_) => GetProfileInfoCubit(),
-        ),
         BlocProvider<UploadToolTipCubit>(
           create: (_) => UploadToolTipCubit(uploadToolTipButtonKey),
         ),

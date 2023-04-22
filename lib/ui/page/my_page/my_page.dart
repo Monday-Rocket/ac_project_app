@@ -5,6 +5,7 @@ import 'package:ac_project_app/const/strings.dart';
 import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
+import 'package:ac_project_app/models/profile/profile_image.dart';
 import 'package:ac_project_app/provider/api/user/user_api.dart';
 import 'package:ac_project_app/provider/logout.dart';
 import 'package:ac_project_app/routes.dart';
@@ -34,11 +35,7 @@ class MyPage extends StatelessWidget {
                       Navigator.pushNamed(context, Routes.profile)
                           .then((result) {
                         if (result == true) {
-                          Navigator.pushReplacementNamed(
-                            context,
-                            Routes.home,
-                            arguments: {'index': 3},
-                          );
+                          context.read<GetProfileInfoCubit>().loadProfileData();
                           showBottomToast(context: context, '프로필 이미지를 변경했어요!');
                         }
                       });
@@ -52,7 +49,7 @@ class MyPage extends StatelessWidget {
                         alignment: Alignment.bottomRight,
                         children: [
                           Image.asset(
-                            profile.profileImage,
+                            ProfileImage.makeImagePath(profile.profileImage),
                             errorBuilder: (_, __, ___) {
                               return Assets.images.profile.img01On.image();
                             },

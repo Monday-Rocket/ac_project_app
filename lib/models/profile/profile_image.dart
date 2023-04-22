@@ -3,4 +3,7 @@ class ProfileImage {
 
   String filePath;
   bool? visible;
+
+  static String makeImagePath(String image) =>
+      'assets/images/profile/img_${image}_on.png';
 }

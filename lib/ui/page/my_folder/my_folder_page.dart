@@ -11,6 +11,7 @@ import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
+import 'package:ac_project_app/models/profile/profile_image.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/add_folder/show_add_folder_dialog.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
@@ -90,7 +91,7 @@ class _MyFolderPageState extends State<MyFolderPage>
                                     top: 90.h,
                                     bottom: 6.h,
                                   ),
-                                  child: Image.asset(profile.profileImage),
+                                  child: Image.asset(ProfileImage.makeImagePath(profile.profileImage)),
                                 ),
                                 Text(
                                   profile.nickname,
