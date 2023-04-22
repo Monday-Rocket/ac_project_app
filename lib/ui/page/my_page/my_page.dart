@@ -30,16 +30,8 @@ class MyPage extends StatelessWidget {
               final profile = state.profile;
               return Column(
                 children: [
-                  InkWell(
-                    onTap: () {
-                      Navigator.pushNamed(context, Routes.profile)
-                          .then((result) {
-                        if (result == true) {
-                          context.read<GetProfileInfoCubit>().loadProfileData();
-                          showBottomToast(context: context, '프로필 이미지를 변경했어요!');
-                        }
-                      });
-                    },
+                  GestureDetector(
+                    onTap: () => moveToProfileImageView(context),
                     child: Container(
                       alignment: Alignment.center,
                       margin: EdgeInsets.only(top: 90.h, bottom: 6.h),
@@ -82,8 +74,13 @@ class MyPage extends StatelessWidget {
                 ],
               );
             } else {
-              return SizedBox(
-                height: 144.h,
+              return Column(
+                children: [
+                  SizedBox(
+                    height: 195.h,
+                  ),
+                  Text('', style: TextStyle(fontSize: 28.sp)),
+                ],
               );
             }
           },
@@ -94,6 +91,20 @@ class MyPage extends StatelessWidget {
         MenuList(context),
       ],
     );
+  }
+
+  void moveToProfileImageView(BuildContext context) {
+    Navigator.pushNamed(context, Routes.profile).then((result) {
+      if (result == true) {
+        Future.delayed(const Duration(milliseconds: 300), () {
+          context.read<GetProfileInfoCubit>().loadProfileData();
+          showBottomToast(
+            context: context,
+            '프로필 이미지를 변경했어요!',
+          );
+        });
+      }
+    });
   }
 
   Widget MenuList(BuildContext context) {
