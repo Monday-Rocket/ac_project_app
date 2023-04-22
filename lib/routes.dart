@@ -9,7 +9,7 @@ import 'package:ac_project_app/ui/view/splash_view.dart';
 import 'package:ac_project_app/ui/view/terms_view.dart';
 import 'package:ac_project_app/ui/view/tutorial_view.dart';
 import 'package:ac_project_app/ui/view/upload_view.dart';
-import 'package:ac_project_app/ui/view/user/change_profile_view.dart';
+import 'package:ac_project_app/ui/view/profile/change_profile_view.dart';
 import 'package:ac_project_app/ui/view/user/email_login_view.dart';
 import 'package:ac_project_app/ui/view/user/login_view.dart';
 import 'package:ac_project_app/ui/view/user/sign_up_job_view.dart';

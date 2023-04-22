@@ -3,6 +3,7 @@ import 'package:ac_project_app/cubits/folders/get_user_folders_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/models/link/link.dart';
+import 'package:ac_project_app/models/profile/profile_image.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/util/string_utils.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +33,7 @@ Widget buildUserInfo({
     child: Row(
       children: [
         Image.asset(
-          makeImagePath(link.user?.profileImg ?? '01'),
+          ProfileImage.makeImagePath(link.user?.profileImg ?? '01'),
           width: 32.w,
           height: 32.h,
           errorBuilder: (_, __, ___) {

@@ -9,7 +9,6 @@ import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/link/link.dart';
-import 'package:ac_project_app/models/profile/profile.dart';
 import 'package:ac_project_app/models/user/detail_user.dart';
 import 'package:ac_project_app/resource.dart';
 import 'package:ac_project_app/routes.dart';
@@ -25,83 +24,85 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({required this.profile, super.key});
-
-  final Profile profile;
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<GetJobListCubit, JobListState>(
-      builder: (jobContext, state) {
-        if (state is LoadedState) {
-          return SafeArea(
-            child: NotificationListener<ScrollEndNotification>(
-              onNotification: (scrollNotification) {
-                final metrics = scrollNotification.metrics;
-                if (metrics.axisDirection != AxisDirection.down) return false;
-                if (metrics.extentAfter <= 800) {
-                  context.read<LinksFromSelectedJobGroupCubit>().loadMore();
-                }
-                return true;
-              },
-              child: RefreshIndicator(
-                onRefresh: () => refresh(context),
-                color: primary600,
-                child: CustomScrollView(
-                  controller: context
-                      .read<LinksFromSelectedJobGroupCubit>()
-                      .scrollController,
-                  slivers: <Widget>[
-                    SliverToBoxAdapter(
-                      child: Container(
-                        margin:
-                            EdgeInsets.only(left: 24.w, right: 24.w, top: 20.h),
-                        child: GestureDetector(
-                          onTap: () => Navigator.pushNamed(
-                            context,
-                            Routes.search,
-                            arguments: {
-                              'isMine': false,
-                            },
-                          ),
+    return BlocBuilder<GetProfileInfoCubit, ProfileState>(
+      builder: (context, profileState) {
+        return BlocBuilder<GetJobListCubit, JobListState>(
+          builder: (jobContext, state) {
+            if (state is LoadedState && profileState is ProfileLoadedState) {
+              return SafeArea(
+                child: NotificationListener<ScrollEndNotification>(
+                  onNotification: (scrollNotification) {
+                    final metrics = scrollNotification.metrics;
+                    if (metrics.axisDirection != AxisDirection.down) return false;
+                    if (metrics.extentAfter <= 800) {
+                      context.read<LinksFromSelectedJobGroupCubit>().loadMore();
+                    }
+                    return true;
+                  },
+                  child: RefreshIndicator(
+                    onRefresh: () => refresh(context),
+                    color: primary600,
+                    child: CustomScrollView(
+                      controller: context
+                          .read<LinksFromSelectedJobGroupCubit>()
+                          .scrollController,
+                      slivers: <Widget>[
+                        SliverToBoxAdapter(
                           child: Container(
-                            decoration: BoxDecoration(
-                              color: ccGrey100,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(7.r)),
-                            ),
-                            width: double.infinity,
-                            height: 36.h,
-                            margin: EdgeInsets.only(right: 6.w),
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Padding(
-                                padding: EdgeInsets.only(left: 10.w),
-                                child: Assets.images.folderSearchIcon.image(
-                                  width: 24.w,
-                                  height: 24.h,
-                                ), // Image.asset(
+                            margin:
+                                EdgeInsets.only(left: 24.w, right: 24.w, top: 20.h),
+                            child: GestureDetector(
+                              onTap: () => Navigator.pushNamed(
+                                context,
+                                Routes.search,
+                                arguments: {
+                                  'isMine': false,
+                                },
+                              ),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: ccGrey100,
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(7.r)),
+                                ),
+                                width: double.infinity,
+                                height: 36.h,
+                                margin: EdgeInsets.only(right: 6.w),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Padding(
+                                    padding: EdgeInsets.only(left: 10.w),
+                                    child: Assets.images.folderSearchIcon.image(
+                                      width: 24.w,
+                                      height: 24.h,
+                                    ), // Image.asset(
+                                  ),
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
+                        buildJobListView(
+                          jobContext,
+                          state.jobs.sortMyJobs(profileState.profile),
+                        ),
+                        buildListBody(jobContext),
+                      ],
                     ),
-                    buildJobListView(
-                      jobContext,
-                      state.jobs.sortMyJobs(profile.jobGroup!.id!),
-                    ),
-                    buildListBody(jobContext),
-                  ],
+                  ),
                 ),
-              ),
-            ),
-          );
-        } else {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
+              );
+            } else {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          },
+        );
       },
     );
   }

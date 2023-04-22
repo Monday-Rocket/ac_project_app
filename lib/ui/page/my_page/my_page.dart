@@ -5,6 +5,7 @@ import 'package:ac_project_app/const/strings.dart';
 import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
+import 'package:ac_project_app/models/profile/profile_image.dart';
 import 'package:ac_project_app/provider/api/user/user_api.dart';
 import 'package:ac_project_app/provider/logout.dart';
 import 'package:ac_project_app/routes.dart';
@@ -29,20 +30,8 @@ class MyPage extends StatelessWidget {
               final profile = state.profile;
               return Column(
                 children: [
-                  InkWell(
-                    onTap: () {
-                      Navigator.pushNamed(context, Routes.profile)
-                          .then((result) {
-                        if (result == true) {
-                          Navigator.pushReplacementNamed(
-                            context,
-                            Routes.home,
-                            arguments: {'index': 3},
-                          );
-                          showBottomToast(context: context, '프로필 이미지를 변경했어요!');
-                        }
-                      });
-                    },
+                  GestureDetector(
+                    onTap: () => moveToProfileImageView(context),
                     child: Container(
                       alignment: Alignment.center,
                       margin: EdgeInsets.only(top: 90.h, bottom: 6.h),
@@ -52,7 +41,7 @@ class MyPage extends StatelessWidget {
                         alignment: Alignment.bottomRight,
                         children: [
                           Image.asset(
-                            profile.profileImage,
+                            ProfileImage.makeImagePath(profile.profileImage),
                             errorBuilder: (_, __, ___) {
                               return Assets.images.profile.img01On.image();
                             },
@@ -85,8 +74,13 @@ class MyPage extends StatelessWidget {
                 ],
               );
             } else {
-              return SizedBox(
-                height: 144.h,
+              return Column(
+                children: [
+                  SizedBox(
+                    height: 195.h,
+                  ),
+                  Text('', style: TextStyle(fontSize: 28.sp)),
+                ],
               );
             }
           },
@@ -97,6 +91,20 @@ class MyPage extends StatelessWidget {
         MenuList(context),
       ],
     );
+  }
+
+  void moveToProfileImageView(BuildContext context) {
+    Navigator.pushNamed(context, Routes.profile).then((result) {
+      if (result == true) {
+        Future.delayed(const Duration(milliseconds: 300), () {
+          context.read<GetProfileInfoCubit>().loadProfileData();
+          showBottomToast(
+            context: context,
+            '프로필 이미지를 변경했어요!',
+          );
+        });
+      }
+    });
   }
 
   Widget MenuList(BuildContext context) {
