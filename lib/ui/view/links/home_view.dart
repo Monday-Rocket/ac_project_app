@@ -8,8 +8,6 @@ import 'package:ac_project_app/cubits/folders/get_user_folders_cubit.dart';
 import 'package:ac_project_app/cubits/home/get_job_list_cubit.dart';
 import 'package:ac_project_app/cubits/home_view_cubit.dart';
 import 'package:ac_project_app/cubits/links/links_from_selected_job_group_cubit.dart';
-import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
-import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/cubits/tool_tip/upload_tool_tip_cubit.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/provider/api/folders/folder_api.dart';
@@ -209,39 +207,31 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
   ) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: BlocBuilder<GetProfileInfoCubit, ProfileState>(
-        builder: (context, state) {
-          if (state is ProfileLoadedState) {
-            return IndexedStack(
-              index: index,
-              children: <Widget>[
-                MultiBlocProvider(
-                  providers: [
-                    BlocProvider(
-                      create: (_) => GetJobListCubit(),
-                    ),
-                    BlocProvider(
-                      create: (_) => GetUserFoldersCubit(),
-                    ),
-                  ],
-                  child: HomePage(profile: state.profile),
-                ),
-                const Scaffold(),
-                MultiBlocProvider(
-                  providers: [
-                    BlocProvider<FolderViewTypeCubit>(
-                      create: (_) => FolderViewTypeCubit(),
-                    ),
-                  ],
-                  child: const MyFolderPage(),
-                ),
-                const MyPage(),
-              ],
-            );
-          } else {
-            return const SizedBox.shrink();
-          }
-        },
+      body: IndexedStack(
+        index: index,
+        children: <Widget>[
+          MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: (_) => GetJobListCubit(),
+              ),
+              BlocProvider(
+                create: (_) => GetUserFoldersCubit(),
+              ),
+            ],
+            child: const HomePage(),
+          ),
+          const Scaffold(),
+          MultiBlocProvider(
+            providers: [
+              BlocProvider<FolderViewTypeCubit>(
+                create: (_) => FolderViewTypeCubit(),
+              ),
+            ],
+            child: const MyFolderPage(),
+          ),
+          const MyPage(),
+        ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
