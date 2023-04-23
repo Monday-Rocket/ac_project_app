@@ -211,7 +211,7 @@ class _SearchViewState extends State<SearchView> {
                                 children: [
                                   Image.asset(
                                     ProfileImage.makeImagePath(
-                                      link.user?.profileImg ?? '01',
+                                      link.user?.profile_img ?? '01',
                                     ),
                                     width: 32.w,
                                     height: 32.h,

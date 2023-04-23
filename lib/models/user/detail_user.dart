@@ -9,12 +9,12 @@ class DetailUser {
     int? id,
     String? nickname,
     JobGroup? jobGroup,
-    String? profileImg,
+    String? profile_img,
   }) {
     _id = id;
     _nickname = nickname;
     _jobGroup = jobGroup;
-    _profileImg = profileImg;
+    _profile_img = profile_img;
   }
 
   DetailUser.fromJson(dynamic json) {
@@ -22,28 +22,28 @@ class DetailUser {
     _nickname = json['nickname'] as String?;
     _jobGroup =
         json['job_group'] != null ? JobGroup.fromJson(json['job_group']) : null;
-    _profileImg = json['profileImg'] as String?;
+    _profile_img = json['profile_img'] as String?;
   }
   int? _id;
   String? _nickname;
   JobGroup? _jobGroup;
-  String? _profileImg;
+  String? _profile_img;
   DetailUser copyWith({
     int? id,
     String? nickname,
     JobGroup? jobGroup,
-    String? profileImg,
+    String? profile_img,
   }) =>
       DetailUser(
         id: id ?? _id,
         nickname: nickname ?? _nickname,
         jobGroup: jobGroup ?? _jobGroup,
-        profileImg: profileImg ?? _profileImg,
+        profile_img: profile_img ?? _profile_img,
       );
   int? get id => _id;
   String get nickname => _nickname ?? '';
   JobGroup? get jobGroup => _jobGroup;
-  String get profileImg => _profileImg ?? '';
+  String get profile_img => _profile_img ?? '';
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -52,7 +52,7 @@ class DetailUser {
     if (_jobGroup != null) {
       map['job_group'] = _jobGroup?.toJson();
     }
-    map['profileImg'] = _profileImg;
+    map['profile_img'] = _profile_img;
     return map;
   }
 
@@ -62,11 +62,13 @@ class DetailUser {
     return input.id == id &&
         input.nickname == nickname &&
         input.jobGroup == jobGroup &&
-        input.profileImg == profileImg;
+        input.profile_img == profile_img;
   }
 
   @override
   int get hashCode => super.hashCode;
+
+  bool isNotEmpty() => _id != null;
 }
 
 /// id : 1

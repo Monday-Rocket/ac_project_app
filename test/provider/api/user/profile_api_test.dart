@@ -21,7 +21,7 @@ void main() {
     final expectedResult = ApiResult(
       status: 0,
       data: DetailUser(
-        profileImg: targetProfileImageNumber,
+        profile_img: targetProfileImageNumber,
       ),
     );
 

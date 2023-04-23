@@ -1,5 +1,6 @@
 import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/models/profile/profile.dart';
+import 'package:ac_project_app/models/user/detail_user.dart';
 import 'package:ac_project_app/provider/api/user/profile_api.dart';
 import 'package:ac_project_app/provider/api/user/user_api.dart';
 import 'package:ac_project_app/util/logger.dart';
@@ -26,7 +27,7 @@ class GetProfileInfoCubit extends Cubit<ProfileState> {
               id: user.id,
               nickname: user.nickname,
               jobGroup: user.jobGroup,
-              profileImage: user.profileImg,
+              profileImage: user.profile_img,
             ),
           ),
         );
@@ -37,16 +38,29 @@ class GetProfileInfoCubit extends Cubit<ProfileState> {
     );
   }
 
-  Future<bool> updateProfileImage(String profileImage) async {
+  Future<DetailUser> updateProfileImage(String profileImage) async {
     final result = await profileApi.changeImage(profileImg: profileImage);
     return result.when(
       success: (data) {
         Log.i(data.toJson());
-        return true;
+        return data;
       },
       error: (msg) {
-        return false;
+        return DetailUser();
       },
+    );
+  }
+
+  void updateFromProfile(DetailUser user) {
+    emit(
+      ProfileLoadedState(
+        Profile(
+          id: user.id,
+          nickname: user.nickname,
+          jobGroup: user.jobGroup,
+          profileImage: user.profile_img,
+        ),
+      ),
     );
   }
 }

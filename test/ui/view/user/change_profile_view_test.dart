@@ -57,7 +57,7 @@ void main() {
 
     // 설정하려고 했던 이미지 가져오기
     const targetImagePath =
-        'assets/images/profile/img_0{$selectIndex+1}_on.png';
+        'assets/images/profile/img_0${selectIndex+1}_on.png';
     final matcherImage = Image.asset(targetImagePath).image;
 
     // 같은 이미지인지 확인하기

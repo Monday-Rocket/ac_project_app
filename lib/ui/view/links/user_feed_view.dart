@@ -96,6 +96,7 @@ class _UserFeedViewState extends State<UserFeedView> {
     List<Folder> folders,
     bool isMove,
   ) {
+    Log.i('detailUser: ${user.toJson()}');
     return NotificationListener<ScrollEndNotification>(
       onNotification: (scrollEnd) {
         final metrics = scrollEnd.metrics;
@@ -126,7 +127,7 @@ class _UserFeedViewState extends State<UserFeedView> {
                     child: Column(
                       children: [
                         Image.asset(
-                          ProfileImage.makeImagePath(user.profileImg),
+                          ProfileImage.makeImagePath(user.profile_img),
                           width: 105.w,
                           height: 105.h,
                         ),
