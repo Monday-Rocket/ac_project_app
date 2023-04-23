@@ -1,5 +1,5 @@
 import 'package:ac_project_app/const/colors.dart';
-import 'package:ac_project_app/resource.dart';
+import 'package:ac_project_app/gen/fonts.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -40,7 +40,7 @@ void showPopUp({
                     child: Text(
                       title,
                       style: TextStyle(
-                        fontFamily: R_Font.PRETENDARD,
+                        fontFamily: FontFamily.pretendard,
                         fontSize: 20.sp,
                         fontWeight: FontWeight.w700,
                         letterSpacing: -0.2.w,
@@ -152,7 +152,7 @@ void showMyPageDialog({
                     child: Text(
                       title,
                       style: TextStyle(
-                        fontFamily: R_Font.PRETENDARD,
+                        fontFamily: FontFamily.pretendard,
                         fontSize: 20.sp,
                         fontWeight: FontWeight.w700,
                       ),

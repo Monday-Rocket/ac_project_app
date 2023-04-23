@@ -8,9 +8,9 @@ import 'package:ac_project_app/cubits/links/links_from_selected_job_group_cubit.
 import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
+import 'package:ac_project_app/gen/fonts.gen.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/models/user/detail_user.dart';
-import 'package:ac_project_app/resource.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/bottom_dialog.dart';
 import 'package:ac_project_app/ui/widget/sliver/custom_header_delegate.dart';
@@ -395,13 +395,13 @@ class HomePage extends StatelessWidget {
                           labelColor: primaryTab,
                           labelPadding: EdgeInsets.symmetric(horizontal: 13.w),
                           labelStyle: TextStyle(
-                            fontFamily: R_Font.PRETENDARD,
+                            fontFamily: FontFamily.pretendard,
                             fontSize: 16.sp,
                             height: (19 / 16).h,
                             fontWeight: FontWeight.w800,
                           ),
                           unselectedLabelStyle: TextStyle(
-                            fontFamily: R_Font.PRETENDARD,
+                            fontFamily: FontFamily.pretendard,
                             fontSize: 16.sp,
                             height: (19 / 16).h,
                             fontWeight: FontWeight.bold,

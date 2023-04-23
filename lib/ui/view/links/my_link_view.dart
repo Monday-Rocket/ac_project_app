@@ -7,11 +7,11 @@ import 'package:ac_project_app/cubits/links/link_list_state.dart';
 import 'package:ac_project_app/cubits/links/links_from_selected_folder_cubit.dart';
 import 'package:ac_project_app/cubits/tool_tip/my_link_upload_tool_tip_cubit.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
+import 'package:ac_project_app/gen/fonts.gen.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/provider/api/folders/link_api.dart';
 import 'package:ac_project_app/provider/tool_tip_check.dart';
-import 'package:ac_project_app/resource.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/scaffold_with_tool_tip.dart';
@@ -386,13 +386,13 @@ class MyLinkView extends StatelessWidget {
                         unselectedLabelColor: grey700,
                         labelColor: primaryTab,
                         labelStyle: TextStyle(
-                          fontFamily: R_Font.PRETENDARD,
+                          fontFamily: FontFamily.pretendard,
                           fontSize: 16.sp,
                           height: (19 / 16).h,
                           fontWeight: FontWeight.w800,
                         ),
                         unselectedLabelStyle: TextStyle(
-                          fontFamily: R_Font.PRETENDARD,
+                          fontFamily: FontFamily.pretendard,
                           fontSize: 16.sp,
                           height: (19 / 16).h,
                           fontWeight: FontWeight.bold,

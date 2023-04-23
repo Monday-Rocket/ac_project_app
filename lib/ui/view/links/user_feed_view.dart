@@ -8,11 +8,11 @@ import 'package:ac_project_app/cubits/feed/feed_view_cubit.dart';
 import 'package:ac_project_app/cubits/folders/get_user_folders_cubit.dart';
 import 'package:ac_project_app/cubits/scroll/scroll_cubit.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
+import 'package:ac_project_app/gen/fonts.gen.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/models/profile/profile_image.dart';
 import 'package:ac_project_app/models/user/detail_user.dart';
-import 'package:ac_project_app/resource.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/bottom_dialog.dart';
 import 'package:ac_project_app/ui/widget/user/user_info.dart';
@@ -260,13 +260,13 @@ class _UserFeedViewState extends State<UserFeedView> {
                         unselectedLabelColor: lightGrey700,
                         labelColor: primaryTab,
                         labelStyle: TextStyle(
-                          fontFamily: R_Font.PRETENDARD,
+                          fontFamily: FontFamily.pretendard,
                           fontSize: 16.sp,
                           height: (19 / 16).h,
                           fontWeight: FontWeight.w800,
                         ),
                         unselectedLabelStyle: TextStyle(
-                          fontFamily: R_Font.PRETENDARD,
+                          fontFamily: FontFamily.pretendard,
                           fontSize: 16.sp,
                           height: (19 / 16).h,
                           fontWeight: FontWeight.bold,

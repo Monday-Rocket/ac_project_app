@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
+import 'package:ac_project_app/gen/fonts.gen.dart';
 import 'package:ac_project_app/initial_settings.dart';
 import 'package:ac_project_app/provider/share_db.dart';
-import 'package:ac_project_app/resource.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -52,7 +52,7 @@ class MultiPlatformApp {
               onGenerateRoute: Pages.getPages,
               themeMode: ThemeMode.light,
               theme: ThemeData(
-                fontFamily: R_Font.PRETENDARD,
+                fontFamily: FontFamily.pretendard,
                 brightness: Brightness.light,
                 progressIndicatorTheme: const ProgressIndicatorThemeData(
                   color: primary600,
