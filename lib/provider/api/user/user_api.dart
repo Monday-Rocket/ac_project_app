@@ -86,7 +86,7 @@ class UserApi {
 
   Future<bool> checkDuplicatedNickname(String nickName) async {
     final fullUrl = '$baseUrl/users?nickname=$nickName';
-    final result = await client.head(Uri.parse(fullUrl));
+    final result = await client.headUri(fullUrl);
     Log.i('HEAD: $fullUrl');
 
     if (result.statusCode == 404) {

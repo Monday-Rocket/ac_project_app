@@ -5,7 +5,7 @@ part 'api_result.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class ApiResult {
-  ApiResult(this.status, this.data, this.error);
+  ApiResult({this.status, this.data, this.error});
 
   factory ApiResult.fromJson(Map<String, dynamic> json) =>
       _$ApiResultFromJson(json);

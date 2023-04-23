@@ -12,15 +12,25 @@ import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 
 class CustomClient extends http.BaseClient {
-  final http.Client _inner = http.Client();
+  CustomClient({
+    http.Client? client,
+    FirebaseAuth? auth,
+  }) {
+    _inner = client ?? http.Client();
+    _auth = auth ?? FirebaseAuth.instance;
+  }
+
+  late final http.Client _inner;
+  late final FirebaseAuth _auth;
 
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
     request.headers['Content-Type'] = 'application/json';
     try {
-      final idToken = await FirebaseAuth.instance.currentUser?.getIdToken();
+      final idToken = await _auth.currentUser?.getIdToken();
       request.headers['x-auth-token'] = idToken ?? 'test-token';
     } catch (e) {
+      Log.e(e);
       Log.e('토큰 없음');
     }
     return _inner.send(request);
@@ -89,7 +99,7 @@ class CustomClient extends http.BaseClient {
         Uri.parse(finalUrl),
         headers: headers,
         body: makeBody(body),
-        encoding: encoding,
+        encoding: utf8,
       ),
     );
   }
@@ -112,7 +122,7 @@ class CustomClient extends http.BaseClient {
     );
   }
 
-  Future<Result<dynamic>> headUri(
+  Future<Response> headUri(
     String uri, {
     Map<String, String>? headers,
     dynamic body,
@@ -120,11 +130,9 @@ class CustomClient extends http.BaseClient {
   }) async {
     final finalUrl = baseUrl + uri;
     Log.i(finalUrl);
-    return _makeResult(
-      () async => super.head(
-        Uri.parse(finalUrl),
-        headers: headers,
-      ),
+    return super.head(
+      Uri.parse(finalUrl),
+      headers: headers,
     );
   }
 
@@ -157,6 +165,7 @@ class CustomClient extends http.BaseClient {
       Log.e(errorMessage);
       return Result.error(errorMessage);
     } catch (e) {
+      Log.e(e);
       return const Result.error('통신 에러');
     }
   }

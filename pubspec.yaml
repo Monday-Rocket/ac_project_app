@@ -71,6 +71,9 @@ dependencies:
   ## Web
   url_launcher: ^6.1.10
 
+  # for mock test
+  mockito: ^5.4.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

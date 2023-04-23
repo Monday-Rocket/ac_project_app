@@ -22,7 +22,7 @@ class DetailUser {
     _nickname = json['nickname'] as String?;
     _jobGroup =
         json['job_group'] != null ? JobGroup.fromJson(json['job_group']) : null;
-    _profileImg = json['profile_img'] as String?;
+    _profileImg = json['profileImg'] as String?;
   }
   int? _id;
   String? _nickname;
