@@ -23,91 +23,93 @@ void showPopUp({
     builder: (BuildContext context) {
       return Dialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        child: Stack(
-          children: [
-            Container(
-              width: (width - (45 * 2)).w,
-              padding: EdgeInsets.all(16.r),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SizedBox(
-                    height: icon ? 26.h : 16.h,
-                  ),
-                  if (icon) iconImage,
-                  Container(
-                    margin: EdgeInsets.only(top: icon ? 14.h : 0, bottom: 10.h.h),
-                    child: Text(
-                      title,
+        child: SizedBox(
+          width: width - (45.w * 2),
+          child: Stack(
+            children: [
+              Padding(
+                padding: EdgeInsets.all(16.r),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(
+                      height: icon ? 26.h : 16.h,
+                    ),
+                    if (icon) iconImage,
+                    Container(
+                      margin: EdgeInsets.only(top: icon ? 14.h : 0, bottom: 10.h.h),
+                      child: Text(
+                        title,
+                        style: TextStyle(
+                          fontFamily: FontFamily.pretendard,
+                          fontSize: 20.sp,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: -0.2.w,
+                          height: (23.8 / 20).h,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      content,
+                      textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontFamily: FontFamily.pretendard,
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: -0.2.w,
-                        height: (23.8 / 20).h,
+                        color: grey500,
+                        fontSize: 14.sp,
+                        letterSpacing: -0.1.w,
+                        fontWeight: FontWeight.w500,
+                        height: (18.9 / 14).h,
                       ),
                     ),
-                  ),
-                  Text(
-                    content,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: grey500,
-                      fontSize: 14.sp,
-                      letterSpacing: -0.1.w,
-                      fontWeight: FontWeight.w500,
-                      height: (18.9 / 14).h,
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(
-                      left: 4.w,
-                      right: 4.w,
-                      bottom: 4.h,
-                      top: 32.h,
-                    ),
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: 48.h,
-                      child: ElevatedButton(
-                        onPressed: callback,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: primary600,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                    Container(
+                      margin: EdgeInsets.only(
+                        left: 4.w,
+                        right: 4.w,
+                        bottom: 4.h,
+                        top: 32.h,
+                      ),
+                      child: SizedBox(
+                        width: double.infinity,
+                        height: 48.h,
+                        child: ElevatedButton(
+                          onPressed: callback,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: primary600,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            shadowColor: Colors.transparent,
                           ),
-                          shadowColor: Colors.transparent,
-                        ),
-                        child: Text(
-                          buttonText,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.bold,
+                          child: Text(
+                            buttonText,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-            if (hasClose)
-              Positioned(
-                right: 5.w,
-                top: 5.h,
-                child: IconButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  icon: const Icon(
-                    Icons.close,
-                  ),
+                  ],
                 ),
-              )
-            else
-              const SizedBox.shrink(),
-          ],
+              ),
+              if (hasClose)
+                Positioned(
+                  right: 5.w,
+                  top: 5.h,
+                  child: IconButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: const Icon(
+                      Icons.close,
+                    ),
+                  ),
+                )
+              else
+                const SizedBox.shrink(),
+            ],
+          ),
         ),
       );
     },
@@ -130,121 +132,125 @@ void showMyPageDialog({
     builder: (BuildContext context) {
       return Dialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        child: Stack(
-          children: [
-            Container(
-              width: (width - (45 * 2)).w,
-              padding: EdgeInsets.all(16.r),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SizedBox(
-                    height: icon ? 14 : 16,
-                  ),
-                  if (icon)
-                    const Icon(
-                      Icons.error,
-                      color: grey800,
-                      size: 27,
+        insetPadding: EdgeInsets.zero,
+        alignment: Alignment.center,
+        child: SizedBox(
+          width: width - (45.w * 2),
+          child: Stack(
+            children: [
+              Padding(
+                padding: EdgeInsets.all(16.r),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(
+                      height: icon ? 14 : 16,
                     ),
-                  Container(
-                    margin: EdgeInsets.only(top: icon ? 7 : 0, bottom: 10.h),
-                    child: Text(
-                      title,
-                      style: TextStyle(
-                        fontFamily: FontFamily.pretendard,
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.w700,
+                    if (icon)
+                      const Icon(
+                        Icons.error,
+                        color: grey800,
+                        size: 27,
+                      ),
+                    Container(
+                      margin: EdgeInsets.only(top: icon ? 7 : 0, bottom: 10.h),
+                      child: Text(
+                        title,
+                        style: TextStyle(
+                          fontFamily: FontFamily.pretendard,
+                          fontSize: 20.sp,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                     ),
-                  ),
-                  Text(
-                    content,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: grey500,
-                      fontSize: 14.sp,
-                      letterSpacing: -0.1.w,
-                      fontWeight: FontWeight.w500,
-                      height: (16.7 / 14).h,
+                    Text(
+                      content,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: grey500,
+                        fontSize: 14.sp,
+                        letterSpacing: -0.1.w,
+                        fontWeight: FontWeight.w500,
+                        height: (16.7 / 14).h,
+                      ),
                     ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(
-                      left: 4.w,
-                      right: 4.w,
-                      bottom: 4.h,
-                      top: 32.h,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          child: SizedBox(
-                            height: 48.h,
-                            child: ElevatedButton(
-                              onPressed: leftCallback,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: grey200,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
+                    Container(
+                      margin: EdgeInsets.only(
+                        left: 4.w,
+                        right: 4.w,
+                        bottom: 4.h,
+                        top: 32.h,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: SizedBox(
+                              height: 48.h,
+                              child: ElevatedButton(
+                                onPressed: leftCallback,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: grey200,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  shadowColor: Colors.transparent,
                                 ),
-                                shadowColor: Colors.transparent,
-                              ),
-                              child: Text(
-                                leftText,
-                                style: TextStyle(
-                                  color: grey800,
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.bold,
+                                child: Text(
+                                  leftText,
+                                  style: TextStyle(
+                                    color: grey800,
+                                    fontSize: 16.sp,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                        SizedBox(width: 7.w),
-                        Expanded(
-                          child: SizedBox(
-                            height: 48.h,
-                            child: ElevatedButton(
-                              onPressed: rightCallback,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: grey800,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
+                          SizedBox(width: 7.w),
+                          Expanded(
+                            child: SizedBox(
+                              height: 48.h,
+                              child: ElevatedButton(
+                                onPressed: rightCallback,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: grey800,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  shadowColor: Colors.transparent,
                                 ),
-                                shadowColor: Colors.transparent,
-                              ),
-                              child: Text(
-                                rightText,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.bold,
+                                child: Text(
+                                  rightText,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16.sp,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-            Positioned(
-              right: 5.w,
-              top: 5.h,
-              child: IconButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: const Icon(
-                  Icons.close,
+                  ],
                 ),
               ),
-            ),
-          ],
+              Positioned(
+                right: 5.w,
+                top: 5.h,
+                child: IconButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: const Icon(
+                    Icons.close,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       );
     },
