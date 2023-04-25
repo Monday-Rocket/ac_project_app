@@ -2,7 +2,6 @@
 
 import 'dart:async';
 
-import 'package:ac_project_app/const/strings.dart';
 import 'package:ac_project_app/models/job/topic.dart';
 import 'package:ac_project_app/models/result.dart';
 import 'package:ac_project_app/models/user/detail_user.dart';
@@ -85,7 +84,7 @@ class UserApi {
   }
 
   Future<bool> checkDuplicatedNickname(String nickName) async {
-    final fullUrl = '$baseUrl/users?nickname=$nickName';
+    final fullUrl = '/users?nickname=$nickName';
     final result = await client.headUri(fullUrl);
     Log.i('HEAD: $fullUrl');
 
