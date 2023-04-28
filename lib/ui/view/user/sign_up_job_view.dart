@@ -7,7 +7,7 @@ import 'package:ac_project_app/cubits/sign_up/sign_up_cubit.dart';
 import 'package:ac_project_app/models/user/detail_user.dart';
 import 'package:ac_project_app/models/user/user.dart';
 import 'package:ac_project_app/ui/widget/only_back_app_bar.dart';
-import 'package:ac_project_app/util/get_json_argument.dart';
+import 'package:ac_project_app/util/get_arguments.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,7 +18,7 @@ class SignUpJobView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final arg = getJsonArgument(context);
+    final arg = getArguments(context);
     final nickname = arg['nickname'] as String?;
     final user = arg['user'] as User?;
     final textController = TextEditingController();

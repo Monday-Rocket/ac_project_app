@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:ac_project_app/const/colors.dart';
-import 'package:ac_project_app/const/consts.dart';
 import 'package:ac_project_app/cubits/folders/folder_view_type_cubit.dart';
 import 'package:ac_project_app/cubits/folders/get_my_folders_cubit.dart';
 import 'package:ac_project_app/cubits/folders/get_user_folders_cubit.dart';
@@ -9,6 +8,7 @@ import 'package:ac_project_app/cubits/home/get_job_list_cubit.dart';
 import 'package:ac_project_app/cubits/home_view_cubit.dart';
 import 'package:ac_project_app/cubits/links/links_from_selected_job_group_cubit.dart';
 import 'package:ac_project_app/cubits/tool_tip/upload_tool_tip_cubit.dart';
+import 'package:ac_project_app/enums/navigator_pop_type.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/provider/api/folders/folder_api.dart';
 import 'package:ac_project_app/provider/tool_tip_check.dart';
@@ -20,7 +20,7 @@ import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/scaffold_with_tool_tip.dart';
 import 'package:ac_project_app/ui/widget/shape/triangle_painter.dart';
 import 'package:ac_project_app/ui/widget/widget_offset.dart';
-import 'package:ac_project_app/util/get_widget_arguments.dart';
+import 'package:ac_project_app/util/get_arguments.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -266,7 +266,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
     Navigator.pushNamed(context, Routes.upload).then(
       (value) => setState(
         () {
-          if (NavigatorPopResult.saveLink == value) {
+          if (NavigatorPopType.saveLink == value) {
             showBottomToast(
               context: context,
               '링크가 저장되었어요!',

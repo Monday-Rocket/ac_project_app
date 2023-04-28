@@ -4,23 +4,12 @@ import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:intl/intl.dart';
 
-Object toEncodableFallback(dynamic object) {
-  return object.toString();
-}
-
 String stringifyMessage(List<dynamic> listData) {
-  const encoder = JsonEncoder.withIndent('  ', toEncodableFallback);
+  final encoder = JsonEncoder.withIndent('  ', (o) => o.toString());
   return encoder.convert(listData);
 }
 
-String getSafeTitleText(String? text) {
-  if (text == null || text.isEmpty) {
-    return '';
-  }
-  return text;
-}
-
-bool isLinkVerified(Link link) =>
+bool hasHttpImageUrl(Link link) =>
     link.image != null &&
     link.image!.isNotEmpty &&
     link.image!.contains('http');

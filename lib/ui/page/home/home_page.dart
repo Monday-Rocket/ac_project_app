@@ -214,7 +214,7 @@ class HomePage extends StatelessWidget {
                 borderRadius: BorderRadius.all(
                   Radius.circular(7.r),
                 ),
-                child: isLinkVerified(link)
+                child: hasHttpImageUrl(link)
                     ? Container(
                         constraints: const BoxConstraints(
                           minWidth: double.infinity,

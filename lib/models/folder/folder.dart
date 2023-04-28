@@ -27,4 +27,8 @@ class Folder {
   String? time;
 
   bool? isClassified = true;
+
+  static bool containsNameFromFolderList(List<Folder> folders, String? value) {
+    return folders.map((folder) => folder.name).toList().contains(value ?? '');
+  }
 }

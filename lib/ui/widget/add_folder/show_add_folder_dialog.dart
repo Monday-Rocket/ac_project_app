@@ -9,7 +9,6 @@ import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/ui/page/my_folder/folder_visible_state.dart';
 import 'package:ac_project_app/ui/widget/bottom_dialog.dart';
 import 'package:ac_project_app/ui/widget/text/custom_font.dart';
-import 'package:ac_project_app/util/list_utils.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -181,12 +180,7 @@ Padding _buildDialogBody(
                         hintText: '새로운 폴더 이름',
                       ),
                       validator: (value) {
-                        final isSameName = folders
-                            .map((folder) => folder.name)
-                            .toList()
-                            .checkContains(value);
-
-                        if (isSameName) {
+                        if (Folder.containsNameFromFolderList(folders, value)) {
                           return '이미 사용하고 있는 폴더명이예요. 새로운 폴더명을 입력해주세요.';
                         }
 

@@ -13,7 +13,7 @@ import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/models/profile/profile_image.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/bottom_dialog.dart';
-import 'package:ac_project_app/util/get_widget_arguments.dart';
+import 'package:ac_project_app/util/get_arguments.dart';
 import 'package:ac_project_app/util/string_utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
@@ -316,7 +316,7 @@ class _SearchViewState extends State<SearchView> {
                                 borderRadius: BorderRadius.all(
                                   Radius.circular(7.r),
                                 ),
-                                child: isLinkVerified(link)
+                                child: hasHttpImageUrl(link)
                                     ? Container(
                                         constraints: const BoxConstraints(
                                           minWidth: double.infinity,
