@@ -11,6 +11,7 @@ void main(List<String> arguments) async {
       'lib/models/*/*.g.dart '
       'lib/gen/*.gen.dart '
       'lib/firebase_options.dart '
+      'lib/util/logger.dart '
       '-o coverage/lcov.info');
   await execute('genhtml coverage/lcov.info -o coverage/html');
   await execute('open coverage/html/index.html');
