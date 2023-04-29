@@ -32,7 +32,10 @@ void main() {
 
   group('UTC 시간을 일정 시간 간격 별로 변환하는 makeLinkTimeString() 테스트', () {
     // 현재 위치의 UTC 시간 간격 계산
-    final inMinutes = DateTime.now().timeZoneOffset.inMinutes;
+    final inMinutes = DateTime
+        .now()
+        .timeZoneOffset
+        .inMinutes;
     final hourGap = inMinutes ~/ 60;
     final minuteGap = inMinutes % 60;
 
@@ -114,10 +117,13 @@ void main() {
   });
 
   group('링크 제목 문자열 30자 이하로만 표현하도록 자르는 함수 테스트', () {
-    const textThatMoreThan30Chars = '0123456789'
+    const textThatMoreThan30Chars =
+        '0123456789'
         '0123456789'
         '0123456789'
         '30자가 넘는 구간';
+
+    const textThatLessThan30Chars = '0123456789';
 
     test('30자가 넘는 String을 변환했을 때 30자까지만 표현', () {
       final result = getShortTitle(textThatMoreThan30Chars);
@@ -125,33 +131,35 @@ void main() {
       expect(
           result,
           '0123456789'
-          '0123456789'
-          '0123456789');
+              '0123456789'
+              '0123456789');
     });
-
-    test('30자가 넘고 base64 인코딩 된 String을 변환했을 때 30자까지만 표현', () {
-      final test = base64Encode(utf8.encode(textThatMoreThan30Chars));
-
-      final result = getShortTitleFromBase64String(test);
-
-      expect(
-          result,
-          '0123456789'
-          '0123456789'
-          '0123456789');
-    });
-
-    const textThatLessThan30Chars = '0123456789';
 
     test('30자가 넘지 않는 String을 변환했을 때 그대로 리턴', () {
-      final actual1 = getShortTitle(textThatLessThan30Chars);
-      expect(actual1, textThatLessThan30Chars);
+      final actual = getShortTitle(textThatLessThan30Chars);
+      expect(actual, textThatLessThan30Chars);
 
-      final actual2 = getShortTitleFromBase64String(
-        base64Encode(utf8.encode(textThatLessThan30Chars)),
-      );
+      expect(actual, textThatLessThan30Chars);
+    });
+  });
 
-      expect(actual2, textThatLessThan30Chars);
+  group('base64 텍스트를 decode하는 함수 테스트', () {
+    const testText = '1234';
+
+    test('정상적으로 base64 인코딩된 텍스트를 decode 하는 테스트', () {
+      final encoded = base64Encode(utf8.encode(testText));
+
+      final actual = decodeBase64Text(encoded);
+
+      expect(actual, testText);
+    });
+
+    test('비정상적으로 base64 인코딩된 텍스트를 decode 하는 테스트', () {
+      const encoded = '비정상적 텍스트';
+
+      final actual = decodeBase64Text(encoded);
+
+      expect(actual, '');
     });
   });
 }

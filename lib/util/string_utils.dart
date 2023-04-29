@@ -59,14 +59,11 @@ String getShortTitle(String title) {
   return title;
 }
 
-String getShortTitleFromBase64String(String title) {
+String decodeBase64Text(String text) {
   try {
     final encoder = utf8.fuse(base64);
-    final decodedTitle = encoder.decode(title);
-
-    return getShortTitle(decodedTitle);
+    return encoder.decode(text);
   } on FormatException catch (e) {
-    Log.e(e);
     Log.e(e.message);
     return '';
   }
