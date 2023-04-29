@@ -25,7 +25,7 @@ class ShareDataProvider {
         final item =
             jsonDecode(newLinks[url].toString()) as Map<String, dynamic>;
         Log.i(item);
-        final shortTitle = getShortTitle(item['title'] as String? ?? '');
+        final shortTitle = getShortTitleFromBase64String(item['title'] as String? ?? '');
         links.add({
           'url': url,
           'title': shortTitle,

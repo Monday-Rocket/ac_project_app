@@ -12,16 +12,16 @@ String stringifyMessage(List<dynamic> listData) {
 bool hasHttpImageUrl(Link link) =>
     link.image != null &&
     link.image!.isNotEmpty &&
-    link.image!.contains('http');
+    link.image!.startsWith('http');
 
-String makeLinkTimeString(String timeString) {
+String makeLinkTimeString(String timeString, [DateTime? inputTime]) {
   final formattedString = '${timeString}Z';
 
   final time = DateTime.tryParse(formattedString);
   if (time == null) {
-    return '알 수 없음'; /* TODO 예외 상황 */
+    return '알 수 없음';
   } else {
-    final now = DateTime.now().toUtc();
+    final now = inputTime ?? DateTime.now().toUtc();
     final duration = now.difference(time);
 
     if (duration.compareTo(const Duration(hours: 1)) < 0) {
@@ -43,23 +43,28 @@ String makeLinkTimeString(String timeString) {
   }
 }
 
-String getCurrentTime() {
+/// Time Format: yyyy-MM-ddTHH:mm:ssZ
+String getCurrentTime([DateTime? inputTime]) {
   final dateFormatter = DateFormat('yyyy-MM-dd');
   final timeFormatter = DateFormat('HH:mm:ss');
 
-  final now = DateTime.now().toUtc();
+  final now = inputTime ?? DateTime.now().toUtc();
   return '${dateFormatter.format(now)}T${timeFormatter.format(now)}Z';
 }
 
 String getShortTitle(String title) {
-  try {
-    final encoded = utf8.fuse(base64);
-    final decodedTitle = encoded.decode(title);
+  if (title.length > 30) {
+    return title.substring(0, 30);
+  }
+  return title;
+}
 
-    if (decodedTitle.length > 30) {
-      return decodedTitle.substring(0, 30);
-    }
-    return decodedTitle;
+String getShortTitleFromBase64String(String title) {
+  try {
+    final encoder = utf8.fuse(base64);
+    final decodedTitle = encoder.decode(title);
+
+    return getShortTitle(decodedTitle);
   } on FormatException catch (e) {
     Log.e(e);
     Log.e(e.message);
