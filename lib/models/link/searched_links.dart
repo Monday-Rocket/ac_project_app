@@ -30,4 +30,7 @@ class SearchedLinks {
   final int? totalPage;
 
   final List<Link>? contents;
+
+  bool hasMorePage() =>
+      (pageNum ?? 0) < (totalPage ?? 0) - 1;
 }
