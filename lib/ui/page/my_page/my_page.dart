@@ -123,6 +123,7 @@ class MyPage extends StatelessWidget {
       Color color = grey900,
     }) {
       return InkWell(
+        key: Key('menu:$menuName'),
         onTap: () {
           switch (menuName) {
             case '이용 약관':

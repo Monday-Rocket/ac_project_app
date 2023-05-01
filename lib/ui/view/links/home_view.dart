@@ -234,6 +234,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
+        key: const Key('MainBottomNavigationBar'),
         type: BottomNavigationBarType.fixed,
         selectedItemColor: primary600,
         selectedFontSize: 10.sp,
