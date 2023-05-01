@@ -32,6 +32,7 @@ class LoginView extends StatelessWidget {
     return BlocProvider(
       create: (_) => LoginCubit(),
       child: Scaffold(
+        key: const Key('LoginView'),
         backgroundColor: Colors.white,
         body: SafeArea(
           child: Center(
@@ -468,11 +469,13 @@ class LoginView extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               GestureDetector(
+                key: const Key('KakaoLoginButton'),
                 onTap: () => context.read<LoginCubit>().login(LoginType.kakao),
                 child: Assets.images.kakaoIcon.image(),
               ),
               SizedBox(width: 16.w),
               GestureDetector(
+                key: const Key('NaverLoginButton'),
                 onTap: () => context.read<LoginCubit>().login(LoginType.naver),
                 child: Assets.images.naverIcon.image(),
               ),
@@ -480,6 +483,7 @@ class LoginView extends StatelessWidget {
           ),
           SizedBox(height: 53.h),
           InkWell(
+            key: const Key('EmailLoginButton'),
             onTap: () => Navigator.pushNamed(context, Routes.emailLogin),
             child: Text(
               '이메일로 로그인',
@@ -492,6 +496,11 @@ class LoginView extends StatelessWidget {
             ),
           ),
           SizedBox(height: 12.h),
+          InkWell(
+            key: const Key('SignedUserLoginButton'),
+            onTap: () => context.read<LoginCubit>().login(LoginType.signedLoginTest),
+            child: Container(width: 1, height: 1, color: Colors.transparent),
+          ),
         ],
       ),
     );
@@ -516,6 +525,7 @@ class LoginView extends StatelessWidget {
 
   Widget buildGoogleLoginButton(BuildContext context) {
     return GestureDetector(
+      key: const Key('GoogleLoginButton'),
       onTap: () => context.read<LoginCubit>().login(LoginType.google),
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 24.w),
@@ -570,6 +580,7 @@ class LoginView extends StatelessWidget {
         Container(
           margin: EdgeInsets.symmetric(horizontal: 24.w),
           child: SignInWithAppleButton(
+            key: const Key('AppleLoginButton'),
             onPressed: () => context.read<LoginCubit>().login(LoginType.apple),
           ),
         ),

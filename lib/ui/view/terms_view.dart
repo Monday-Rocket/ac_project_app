@@ -5,7 +5,7 @@ import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/buttons/bottom_sheet_button.dart';
 import 'package:ac_project_app/ui/widget/only_back_app_bar.dart';
 import 'package:ac_project_app/ui/widget/text/custom_font.dart';
-import 'package:ac_project_app/util/get_widget_arguments.dart';
+import 'package:ac_project_app/util/get_arguments.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:url_launcher/url_launcher.dart';

@@ -188,6 +188,7 @@ void showMyPageDialog({
                             child: SizedBox(
                               height: 48.h,
                               child: ElevatedButton(
+                                key: const Key('MyPageDialogLeftButtonKey'),
                                 onPressed: leftCallback,
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: grey200,
@@ -212,6 +213,7 @@ void showMyPageDialog({
                             child: SizedBox(
                               height: 48.h,
                               child: ElevatedButton(
+                                key: const Key('MyPageDialogRightButtonKey'),
                                 onPressed: rightCallback,
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: grey800,

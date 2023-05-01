@@ -15,6 +15,7 @@ void main() {
           profile: Profile(
             nickname: '오키',
             profileImage: '02',
+            jobGroup: null,
           ),
         );
       },
@@ -39,12 +40,14 @@ void main() {
     expect(actual, findsWidgets);
   });
 
-  testWidgets('4번 프로필을 선택했을 때 화면이 바뀌는 지 테스트', (tester) async {
+  testWidgets('8번 프로필을 선택했을 때 화면이 바뀌는 지 테스트', (tester) async {
     await tester.pumpWidget(testWidget);
 
     // 4번 이미지 버튼 tap
-    const selectIndex = 4;
+    const selectIndex = 8;
     const key = Key('select:$selectIndex');
+    await tester.scrollUntilVisible(find.byKey(key), 100);
+
     GestureDetectorButton(key)
         .onTap!
         .call(); // 동작 안 함 -> await tester.tap(found, warnIfMissed: false);

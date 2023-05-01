@@ -3,7 +3,6 @@ import 'package:ac_project_app/cubits/links/link_list_state.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/models/link/searched_links.dart';
 import 'package:ac_project_app/provider/api/folders/link_api.dart';
-import 'package:ac_project_app/util/page_utils.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SearchLinksCubit extends Cubit<LinkListState> {
@@ -56,7 +55,7 @@ class SearchLinksCubit extends Cubit<LinkListState> {
 
   List<Link> _setScrollState(SearchedLinks data) {
     page = data.pageNum ?? 0;
-    final hasPage = hasMorePage(data);
+    final hasPage = data.hasMorePage();
     hasMore.emit(hasPage ? ScrollableType.can : ScrollableType.cannot);
 
     return data.contents ?? [];

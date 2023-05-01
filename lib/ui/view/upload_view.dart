@@ -1,7 +1,6 @@
 // ignore_for_file: avoid_positional_boolean_parameters
 
 import 'package:ac_project_app/const/colors.dart';
-import 'package:ac_project_app/const/consts.dart';
 import 'package:ac_project_app/const/strings.dart';
 import 'package:ac_project_app/cubits/folders/folders_state.dart';
 import 'package:ac_project_app/cubits/folders/get_my_folders_cubit.dart';
@@ -9,6 +8,7 @@ import 'package:ac_project_app/cubits/home_view_cubit.dart';
 import 'package:ac_project_app/cubits/links/upload_link_cubit.dart';
 import 'package:ac_project_app/cubits/links/upload_result_state.dart';
 import 'package:ac_project_app/cubits/sign_up/button_state_cubit.dart';
+import 'package:ac_project_app/enums/navigator_pop_type.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/link/upload_type.dart';
 import 'package:ac_project_app/ui/widget/add_folder/folder_add_title.dart';
@@ -17,7 +17,7 @@ import 'package:ac_project_app/ui/widget/add_folder/subtitle.dart';
 import 'package:ac_project_app/ui/widget/buttons/bottom_sheet_button.dart';
 import 'package:ac_project_app/ui/widget/dialog.dart';
 import 'package:ac_project_app/ui/widget/loading.dart';
-import 'package:ac_project_app/util/get_widget_arguments.dart';
+import 'package:ac_project_app/util/get_arguments.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:ac_project_app/util/url_valid.dart';
 import 'package:flutter/material.dart';
@@ -435,7 +435,7 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
         )
         .then((result) {
       if (result == UploadResultState.success) {
-        Navigator.pop(context, NavigatorPopResult.saveLink);
+        Navigator.pop(context, NavigatorPopType.saveLink);
       } else if (result == UploadResultState.duplicated) {
         showPopUp(
           title: '업로드 실패',

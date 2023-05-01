@@ -18,7 +18,7 @@ import 'package:ac_project_app/ui/widget/scaffold_with_tool_tip.dart';
 import 'package:ac_project_app/ui/widget/shape/reverse_triangle_painter.dart';
 import 'package:ac_project_app/ui/widget/slidable/link_slidable_widget.dart';
 import 'package:ac_project_app/ui/widget/widget_offset.dart';
-import 'package:ac_project_app/util/get_widget_arguments.dart';
+import 'package:ac_project_app/util/get_arguments.dart';
 import 'package:ac_project_app/util/number_commas.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';

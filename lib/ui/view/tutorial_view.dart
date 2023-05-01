@@ -95,6 +95,7 @@ class _TutorialViewState extends State<TutorialView> {
             ),
           ),
           buildBottomSheetButton(
+            key: const Key('StartAppButton'),
             context: context,
             text: '시작하기',
             backgroundColor: primary700,

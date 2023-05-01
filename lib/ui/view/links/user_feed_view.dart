@@ -16,7 +16,7 @@ import 'package:ac_project_app/models/user/detail_user.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/bottom_dialog.dart';
 import 'package:ac_project_app/ui/widget/user/user_info.dart';
-import 'package:ac_project_app/util/get_widget_arguments.dart';
+import 'package:ac_project_app/util/get_arguments.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:ac_project_app/util/string_utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -420,7 +420,7 @@ class _UserFeedViewState extends State<UserFeedView> {
                 borderRadius: BorderRadius.all(
                   Radius.circular(7.r),
                 ),
-                child: isLinkVerified(link)
+                child: hasHttpImageUrl(link)
                     ? Container(
                         constraints: const BoxConstraints(
                           minWidth: double.infinity,

@@ -1,3 +1,3 @@
 enum LoginType {
-  apple, google, kakao, naver
+  apple, google, kakao, naver, signedLoginTest
 }

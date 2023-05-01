@@ -2,7 +2,6 @@ import 'package:ac_project_app/cubits/links/has_more_cubit.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/models/link/searched_links.dart';
 import 'package:ac_project_app/provider/api/folders/link_api.dart';
-import 'package:ac_project_app/util/page_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -69,7 +68,7 @@ class LinksFromSelectedJobGroupCubit extends Cubit<List<Link>> {
 
   List<Link> _setScrollState(SearchedLinks data) {
     page = data.pageNum ?? 0;
-    hasLoadMore = hasMorePage(data);
+    hasLoadMore = data.hasMorePage();
     hasMore.emit(hasLoadMore ? ScrollableType.can : ScrollableType.cannot);
 
     return data.contents ?? [];

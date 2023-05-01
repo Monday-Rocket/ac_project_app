@@ -6,7 +6,7 @@ import 'package:ac_project_app/models/report/report_type.dart';
 import 'package:ac_project_app/provider/api/report/report_api.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/dialog.dart';
-import 'package:ac_project_app/util/get_widget_arguments.dart';
+import 'package:ac_project_app/util/get_arguments.dart';
 import 'package:extended_text/extended_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

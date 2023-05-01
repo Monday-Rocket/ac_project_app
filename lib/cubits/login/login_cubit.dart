@@ -4,6 +4,7 @@ import 'package:ac_project_app/cubits/login/login_type.dart';
 import 'package:ac_project_app/cubits/login/login_user_state.dart';
 import 'package:ac_project_app/provider/api/user/user_api.dart';
 import 'package:ac_project_app/provider/login/apple_login.dart';
+import 'package:ac_project_app/provider/login/email_password.dart';
 import 'package:ac_project_app/provider/login/google_login.dart';
 import 'package:ac_project_app/provider/login/kakao_login.dart';
 import 'package:ac_project_app/provider/login/naver_login.dart';
@@ -30,7 +31,7 @@ class LoginCubit extends Cubit<LoginUserState> {
     emit(LoginEmptyState());
   }
 
-  void login(LoginType loginType, {String? email}) {
+  void login(LoginType loginType, {String? email, String? password}) {
     emit(LoginLoadingState());
     switch (loginType) {
       case LoginType.google:
@@ -44,6 +45,9 @@ class LoginCubit extends Cubit<LoginUserState> {
         break;
       case LoginType.naver:
         Naver.login().then(sendResult);
+        break;
+      case LoginType.signedLoginTest:
+        EmailPassword.signedLogin(email, password).then(sendResult);
         break;
     }
   }
