@@ -20,27 +20,26 @@ String makeLinkTimeString(String timeString, [DateTime? inputTime]) {
   final time = DateTime.tryParse(formattedString);
   if (time == null) {
     return '알 수 없음';
-  } else {
-    final now = inputTime ?? DateTime.now().toUtc();
-    final duration = now.difference(time);
-
-    if (duration.compareTo(const Duration(hours: 1)) < 0) {
-      if (duration.inMinutes < 0) {
-        return '';
-      } else if (duration.inMinutes == 0) {
-        return '방금 전';
-      } else {
-        return '${duration.inMinutes}분 전';
-      }
-    }
-    if (duration.compareTo(const Duration(days: 1)) < 0) {
-      return '${duration.inHours}시간 전';
-    }
-    if (duration.compareTo(const Duration(days: 7)) < 0) {
-      return '${duration.inDays}일 전';
-    }
-    return DateFormat('yyyy/MM/dd').format(time);
   }
+  final now = inputTime ?? DateTime.now().toUtc();
+  final duration = now.difference(time);
+
+  if (duration.compareTo(const Duration(hours: 1)) < 0) {
+    if (duration.inMinutes < 0) {
+      return '';
+    } else if (duration.inMinutes == 0) {
+      return '방금 전';
+    } else {
+      return '${duration.inMinutes}분 전';
+    }
+  }
+  if (duration.compareTo(const Duration(days: 1)) < 0) {
+    return '${duration.inHours}시간 전';
+  }
+  if (duration.compareTo(const Duration(days: 7)) < 0) {
+    return '${duration.inDays}일 전';
+  }
+  return DateFormat('yyyy/MM/dd').format(time);
 }
 
 /// Time Format: yyyy-MM-ddTHH:mm:ssZ
