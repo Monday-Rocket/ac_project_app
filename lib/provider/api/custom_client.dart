@@ -23,6 +23,8 @@ class CustomClient extends http.BaseClient {
   late final http.Client _inner;
   late final FirebaseAuth _auth;
 
+  FirebaseAuth get auth => _auth;
+
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
     request.headers['Content-Type'] = 'application/json';

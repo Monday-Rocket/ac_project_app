@@ -1,16 +1,12 @@
-import 'dart:convert';
-import 'dart:io';
-
-import 'package:ac_project_app/const/strings.dart';
 import 'package:ac_project_app/models/net/api_result.dart';
 import 'package:ac_project_app/models/user/detail_user.dart';
 import 'package:ac_project_app/provider/api/custom_client.dart';
 import 'package:ac_project_app/provider/api/user/profile_api.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:http/http.dart' as http;
-import 'package:http/testing.dart';
 import 'package:mockito/mockito.dart';
+
+import '../mock_client_generator.dart';
 
 class MockFirebaseAuth extends Mock implements FirebaseAuth {}
 
@@ -26,18 +22,7 @@ void main() {
     );
 
     // When 1: ProfileApi의 MockClient 설정하고
-    final mockClient = MockClient((request) async {
-      if (request.url.toString() == '$baseUrl/users/me') {
-        return http.Response(
-          jsonEncode(expectedResult),
-          200,
-          headers: {
-            HttpHeaders.contentTypeHeader: 'application/json; charset=utf-8'
-          },
-        );
-      }
-      return http.Response('error', 404);
-    });
+    final mockClient = getMockClient(expectedResult, '/users/me');
 
     final profileApi = ProfileApi(
       client: CustomClient(
