@@ -5,11 +5,15 @@ import 'package:ac_project_app/provider/api/custom_client.dart';
 import 'package:ac_project_app/provider/api/user/user_api.dart';
 import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/testing.dart';
+import 'package:mockito/mockito.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../mock_client_generator.dart';
+
+class MockMethodChannel extends Mock implements MethodChannel {}
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

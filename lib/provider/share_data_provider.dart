@@ -99,8 +99,8 @@ class ShareDataProvider {
       final result = await _platform.invokeMethod('clearData');
       await ShareDB.deleteAllFolder();
       Log.i('clear all data: $result');
-    } on PlatformException catch (e) {
-      Log.e(e.message);
+    } on Exception {
+      Log.e('shared preference 데이터 비우기 실패');
     }
   }
 
