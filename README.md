@@ -1,9 +1,34 @@
-# 링크풀(LINKPOOL)
+# 링크풀(LINKPOOL) - 체계적인 링크 관리의 시작
+![codecov](https://codecov.io/gh/Monday-Rocket/ac_project_app/branch/develop/graph/badge.svg?token=R0YZX3YNE8)
 
-- 링크풀 - 체계적인 링크 관리의 시작
+![img](https://codecov.io/gh/Monday-Rocket/ac_project_app/branch/develop/graphs/tree.svg?token=R0YZX3YNE8)
+
+## 설치 링크
+
 - PlayStore: https://play.google.com/store/apps/details?id=com.mr.ac_project_app
 - AppStore: https://apps.apple.com/us/app/링크풀-체계적인-링크-관리의-시작/id1644108674
 
+## 상태 관리
+
+![bloc.png](docs/bloc_white.png)
+
+- [flutter_bloc](https://pub.dev/packages/flutter_bloc)
+
+## CI/CD
+
+![CI/CD](cicd.png)
+
+## Platform Specification
+
+### Android OS
+- sdk: 24 ~ 33
+- gradle: 7.4
+
+### iOS
+- Minimum Deployments: iOS 15.0
+
+### Source Directory Structure
+![project_directory.png](docs/project_directory.png)
 
 ## 앱 소개
 "나중에 봐야지"
@@ -28,25 +53,3 @@
 
 **[인사이트 모아보기]**<br>
 다른 사람들은 어떤 링크를 저장했을까요? 홈피드에서 직군별로 인사이트를 얻어보세요!
-
-## 상태 관리
-
-![bloc.png](docs/bloc_white.png)
-
-- [flutter_bloc](https://pub.dev/packages/flutter_bloc)
-
-## CI/CD
-
-![CI/CD](cicd.png)
-
-## Platform Specification
-
-### Android OS
-- sdk: 24 ~ 33
-- gradle: 7.4
-
-### iOS
-- Minimum Deployments: iOS 15.0
-
-### Source Directory Structure
-![project_directory.png](docs/project_directory.png)
