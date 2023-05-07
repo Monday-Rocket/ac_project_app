@@ -15,6 +15,8 @@ jobs:
           flutter-version: '3.7.12'
       - name: Install packages
         run: flutter pub get
+      - run: echo '${{ secrets.DOTENV }}' | base64 -d > .env
+      - run: echo "${{ secrets.FIREBASE_OPTIONS }}" | base64 -d > ./lib/firebase_options.dart
       - name: run flutter test
         run: flutter test --coverage
       - name: Upload coverage reports to Codecov
