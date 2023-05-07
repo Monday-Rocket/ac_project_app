@@ -2,7 +2,6 @@
 
 import 'dart:async';
 
-import 'package:ac_project_app/models/job/topic.dart';
 import 'package:ac_project_app/models/result.dart';
 import 'package:ac_project_app/models/user/detail_user.dart';
 import 'package:ac_project_app/models/user/user.dart';
@@ -10,10 +9,20 @@ import 'package:ac_project_app/provider/api/custom_client.dart';
 import 'package:ac_project_app/provider/logout.dart';
 import 'package:ac_project_app/provider/share_data_provider.dart';
 import 'package:ac_project_app/util/logger.dart';
-import 'package:flutter/material.dart';
 
 class UserApi {
-  final client = CustomClient();
+
+  UserApi({
+    CustomClient? client,
+  }) {
+    if (client == null) {
+      this.client = CustomClient();
+    } else {
+      this.client = client;
+    }
+  }
+
+  late final CustomClient client;
 
   Future<Result<User>> postUsers() async {
     final result = await client.postUri('/users');
@@ -60,17 +69,7 @@ class UserApi {
     );
   }
 
-  Future<Result<List<Topic>>> getTopics() async {
-    final result = await client.getUri('/topics');
-    return result.when(
-      success: (data) => Result.success(
-        Topic.fromJsonList(data as List<dynamic>),
-      ),
-      error: Result.error,
-    );
-  }
-
-  Future<bool> deleteUser(BuildContext context) async {
+  Future<bool> deleteUser() async {
     // 1. 공유패널 데이터 비우기
     unawaited(ShareDataProvider.clearAllData());
 
@@ -78,7 +77,7 @@ class UserApi {
     // 3. 로그아웃
     final result = await client.deleteUri('/users');
     return result.when(
-      success: (_) async => logoutWithoutPush(context),
+      success: (_) async => logoutWithoutPush(client.auth),
       error: (_) => false,
     );
   }
