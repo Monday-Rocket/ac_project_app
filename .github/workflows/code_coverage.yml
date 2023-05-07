@@ -4,9 +4,7 @@ on:
     branches:
       - develop
 jobs:
-  # internal test
-  code-coverage:
-    name: Flutter Test and Measure Code Coverage
+  test-coverage:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
