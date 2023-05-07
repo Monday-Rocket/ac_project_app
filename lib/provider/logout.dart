@@ -3,13 +3,12 @@ import 'dart:async';
 import 'package:ac_project_app/provider/login/kakao_login.dart';
 import 'package:ac_project_app/provider/login/naver_login.dart';
 import 'package:ac_project_app/provider/share_data_provider.dart';
-import 'package:ac_project_app/routes.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-void logout(BuildContext context) {
+void logout(BuildContext context, void Function() callback) {
   // 1. 공유패널 비우기
   ShareDataProvider.clearAllData();
 
@@ -23,23 +22,23 @@ void logout(BuildContext context) {
             'email',
           ],
         ).signOut().then((value) {
-          firebaseLogout(context);
+          firebaseLogout(context, callback);
         });
         break;
       case 'naver':
-        Naver.logout().then((value) => firebaseLogout(context));
+        Naver.logout().then((value) => firebaseLogout(context, callback));
         break;
       case 'kakao':
-        Kakao.logout().then((value) => firebaseLogout(context));
+        Kakao.logout().then((value) => firebaseLogout(context, callback));
         break;
       default:
-        firebaseLogout(context);
+        firebaseLogout(context, callback);
         break;
     }
   });
 }
 
-Future<bool> logoutWithoutPush(BuildContext context) async {
+Future<bool> logoutWithoutPush(FirebaseAuth auth) async {
   try {
     final prefs = await SharedPreferences.getInstance();
     final loginType = prefs.getString('loginType') ?? '';
@@ -60,16 +59,15 @@ Future<bool> logoutWithoutPush(BuildContext context) async {
       default:
         break;
     }
-    await FirebaseAuth.instance.signOut();
+    await auth.signOut();
     return true;
   } catch (e) {
     return false;
   }
 }
 
-void firebaseLogout(BuildContext context) {
+void firebaseLogout(BuildContext context, void Function() callback) {
   FirebaseAuth.instance.signOut().then((value) {
-    Navigator.of(context).pop(true);
-    Navigator.pushReplacementNamed(context, Routes.login);
+    callback();
   });
 }

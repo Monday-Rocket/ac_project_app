@@ -159,7 +159,10 @@ class MyPage extends StatelessWidget {
                   leftText: '취소',
                   rightText: '로그아웃',
                   leftCallback: () => Navigator.pop(context),
-                  rightCallback: () => logout(context),
+                  rightCallback: () => logout(context, () {
+                    Navigator.of(context).pop(true);
+                    Navigator.pushReplacementNamed(context, Routes.login);
+                  }),
                 );
                 break;
               }
@@ -172,7 +175,7 @@ class MyPage extends StatelessWidget {
                   leftText: '회원 탈퇴',
                   rightText: '탈퇴 취소',
                   leftCallback: () {
-                    UserApi().deleteUser(context).then((value) {
+                    UserApi().deleteUser().then((value) {
                       if (value) {
                         Navigator.of(context).pop(true);
                         Navigator.pushReplacementNamed(context, Routes.login);

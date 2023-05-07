@@ -35,6 +35,8 @@ dependencies:
   flutter_dotenv: ^5.0.2
   flutter_naver_login: ^1.7.0
 
+  firebase_auth_mocks: ^0.11.0
+
   ## UI Sizer
   flutter_screenutil: ^5.7.0
 
