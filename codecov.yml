@@ -1,0 +1,8 @@
+ignore:
+  - 'lib/models/result.freezed.dart'
+  - 'lib/models/**/*.freezed.dart'
+  - 'lib/models/*/*.freezed.dart'
+  - 'lib/models/*/*.g.dart'
+  - 'lib/gen/*.gen.dart'
+  - 'lib/firebase_options.dart'
+  - 'lib/util/logger.dart'
