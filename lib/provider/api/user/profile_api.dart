@@ -7,19 +7,15 @@ class ProfileApi {
   ProfileApi({
     CustomClient? client,
   }) {
-    if (client == null) {
-      this.client = CustomClient();
-    } else {
-      this.client = client;
-    }
+    _client = client ?? CustomClient();
   }
 
-  late final CustomClient client;
+  late final CustomClient _client;
 
   Future<Result<DetailUser>> changeImage({
     required String? profileImg,
   }) async {
-    final result = await client.patchUri(
+    final result = await _client.patchUri(
       '/users/me',
       body: {
         'profile_img': profileImg

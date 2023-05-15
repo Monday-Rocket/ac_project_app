@@ -6,11 +6,11 @@ import 'package:ac_project_app/models/net/api_result.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 
-MockClient getMockClient(ApiResult expected, String path, {bool? hasError}) {
+MockClient getMockClient(ApiResult expected, String path, {bool? hasError, int errorCode = 404}) {
   final mockClient = MockClient((request) async {
     final url = Uri.decodeFull(request.url.toString());
 
-    if (hasError ?? false) return http.Response('error', 404);
+    if (hasError ?? false) return http.Response('error', errorCode);
     if (url == '$baseUrl$path') {
       return http.Response(
         jsonEncode(expected),
@@ -20,7 +20,7 @@ MockClient getMockClient(ApiResult expected, String path, {bool? hasError}) {
         },
       );
     }
-    return http.Response('error', 404);
+    return http.Response('error', errorCode);
   });
   return mockClient;
 }

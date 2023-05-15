@@ -2,13 +2,10 @@ import 'package:ac_project_app/models/net/api_result.dart';
 import 'package:ac_project_app/models/user/detail_user.dart';
 import 'package:ac_project_app/provider/api/custom_client.dart';
 import 'package:ac_project_app/provider/api/user/profile_api.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
 
 import '../mock_client_generator.dart';
-
-class MockFirebaseAuth extends Mock implements FirebaseAuth {}
 
 void main() {
   test('ProfileApi ChangeApi Success Test', () async {

@@ -15,17 +15,13 @@ class UserApi {
   UserApi({
     CustomClient? client,
   }) {
-    if (client == null) {
-      this.client = CustomClient();
-    } else {
-      this.client = client;
-    }
+    _client = client ?? CustomClient();
   }
 
-  late final CustomClient client;
+  late final CustomClient _client;
 
   Future<Result<User>> postUsers() async {
-    final result = await client.postUri('/users');
+    final result = await _client.postUri('/users');
     return result.when(
       success: (data) =>
           Result.success(User.fromJson(data as Map<String, dynamic>)),
@@ -37,7 +33,7 @@ class UserApi {
     String? nickname,
     int? jobGroupId,
   }) async {
-    final result = await client.patchUri(
+    final result = await _client.patchUri(
       '/users/me',
       body: {
         'nickname': nickname,
@@ -52,7 +48,7 @@ class UserApi {
   }
 
   Future<Result<DetailUser>> getUsers() async {
-    final result = await client.getUri('/users/me');
+    final result = await _client.getUri('/users/me');
     return result.when(
       success: (data) => Result.success(DetailUser.fromJson(data)),
       error: Result.error,
@@ -60,7 +56,7 @@ class UserApi {
   }
 
   Future<Result<List<JobGroup>>> getJobGroups() async {
-    final result = await client.getUri('/job-groups');
+    final result = await _client.getUri('/job-groups');
     return result.when(
       success: (data) => Result.success(
         JobGroup.fromJsonList(data as List<dynamic>),
@@ -75,16 +71,16 @@ class UserApi {
 
     // 2. 데이터 삭제
     // 3. 로그아웃
-    final result = await client.deleteUri('/users');
+    final result = await _client.deleteUri('/users');
     return result.when(
-      success: (_) async => logoutWithoutPush(client.auth),
+      success: (_) async => logoutWithoutPush(_client.auth),
       error: (_) => false,
     );
   }
 
   Future<bool> checkDuplicatedNickname(String nickName) async {
     final fullUrl = '/users?nickname=$nickName';
-    final result = await client.headUri(fullUrl);
+    final result = await _client.headUri(fullUrl);
     Log.i('HEAD: $fullUrl');
 
     if (result.statusCode == 404) {

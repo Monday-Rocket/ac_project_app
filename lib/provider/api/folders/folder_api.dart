@@ -7,31 +7,16 @@ import 'package:ac_project_app/provider/share_data_provider.dart';
 import 'package:ac_project_app/util/logger.dart';
 
 class FolderApi {
-  final client = CustomClient();
-
-  Future<Result<Folder>> postFolders(List<String> folderNames) async {
-    final body = <Map<String, dynamic>>[];
-
-    for (final name in folderNames) {
-      body.add({
-        'name': name,
-      });
-    }
-
-    final result = await client.postUri(
-      '/folders',
-      body: folderNames,
-    );
-    return result.when(
-      success: (data) => Result.success(
-        Folder.fromJson(data as Map<String, dynamic>),
-      ),
-      error: Result.error,
-    );
+  FolderApi({
+    CustomClient? client,
+  }) {
+    _client = client ?? CustomClient();
   }
 
+  late final CustomClient _client;
+
   Future<Result<List<Folder>>> getMyFolders() async {
-    final result = await client.getUri('/folders');
+    final result = await _client.getUri('/folders');
     return result.when(
       success: (folders) {
         final list = <Folder>[];
@@ -54,7 +39,7 @@ class FolderApi {
   }
 
   Future<Result<List<Folder>>> getMyFoldersWithoutUnclassified() async {
-    final result = await client.getUri('/folders');
+    final result = await _client.getUri('/folders');
     return result.when(
       success: (folders) {
         final list = <Folder>[];
@@ -75,7 +60,7 @@ class FolderApi {
   }
 
   Future<Result<List<Folder>>> getOthersFolders(int userId) async {
-    final result = await client.getUri('/users/$userId/folders');
+    final result = await _client.getUri('/users/$userId/folders');
     return result.when(
       success: (folders) {
         final list = <Folder>[];
@@ -98,7 +83,7 @@ class FolderApi {
   }
 
   Future<bool> add(Folder folder) async {
-    final result = await client.postUri(
+    final result = await _client.postUri(
       '/folders',
       body: {
         'name': folder.name,
@@ -126,7 +111,7 @@ class FolderApi {
       'new_folders': newFolders,
     };
 
-    final result = await client.postUri('/bulk', body: body);
+    final result = await _client.postUri('/bulk', body: body);
     result.when(
       success: (_) {
         Log.i('bulk save success');
@@ -137,7 +122,7 @@ class FolderApi {
   }
 
   Future<bool> deleteFolder(Folder folder) async {
-    final result = await client.deleteUri('/folders/${folder.id}');
+    final result = await _client.deleteUri('/folders/${folder.id}');
     return result.when(
       success: (data) {
         return true;
@@ -149,7 +134,7 @@ class FolderApi {
   }
 
   Future<bool> patchFolder(int id, Map<String, dynamic> body) async {
-    final result = await client.patchUri(
+    final result = await _client.patchUri(
       '/folders/$id',
       body: body,
     );
@@ -165,7 +150,7 @@ class FolderApi {
   }
 
   Future<bool> changeVisible(Folder folder) async {
-    final result = await client.patchUri(
+    final result = await _client.patchUri(
       '/folders/${folder.id}',
       body: {
         'visible': !folder.visible!,

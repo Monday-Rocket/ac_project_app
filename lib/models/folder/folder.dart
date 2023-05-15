@@ -1,9 +1,10 @@
+import 'package:equatable/equatable.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'folder.g.dart';
 
 @JsonSerializable()
-class Folder {
+class Folder extends Equatable {
   Folder({
     this.id,
     this.thumbnail,
@@ -31,4 +32,9 @@ class Folder {
   static bool containsNameFromFolderList(List<Folder> folders, String? value) {
     return folders.map((folder) => folder.name).toList().contains(value ?? '');
   }
+
+  @override
+  List<Object?> get props => [id, thumbnail, visible, name, links];
+
+
 }
