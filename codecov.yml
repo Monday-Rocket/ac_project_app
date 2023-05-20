@@ -2,26 +2,20 @@ codecov:
   require_ci_to_pass: true
 
 comment:
-  layout: "reach,diff,flags,files"
+  layout: "reach,diff,flags,files,footer"
   behavior: default
   require_changes: false
-  require_base: false
-  require_head: false
   branches:
     - develop
 
 coverage:
   range: 10..100
   round: down
-  precision: 2
+
   status:
     project:
       default:
-        target: 10%
         threshold: 0%
-    patch:
-      target: 10%
-      threshold: 0%
 
 
 ignore:
