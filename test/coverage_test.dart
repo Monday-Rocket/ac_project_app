@@ -1,7 +1,6 @@
 /// *** GENERATED FILE - ANY CHANGES WOULD BE OBSOLETE ON NEXT GENERATION *** ///
 
 /// Helper to test coverage for all project files
-import 'package:ac_project_app/animtaion_test.dart';
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/const/consts.dart';
 import 'package:ac_project_app/const/strings.dart';
@@ -93,7 +92,7 @@ import 'package:ac_project_app/ui/page/home/home_page.dart';
 import 'package:ac_project_app/ui/page/my_folder/folder_visible_state.dart';
 import 'package:ac_project_app/ui/page/my_folder/my_folder_page.dart';
 import 'package:ac_project_app/ui/page/my_page/my_page.dart';
-import 'package:ac_project_app/ui/view/links/home_view.dart';
+import 'package:ac_project_app/ui/view/home_view.dart';
 import 'package:ac_project_app/ui/view/links/link_detail_view.dart';
 import 'package:ac_project_app/ui/view/links/my_link_view.dart';
 import 'package:ac_project_app/ui/view/links/search_view.dart';

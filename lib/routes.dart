@@ -1,5 +1,5 @@
 import 'package:ac_project_app/ui/page/my_page/my_page.dart';
-import 'package:ac_project_app/ui/view/links/home_view.dart';
+import 'package:ac_project_app/ui/view/home_view.dart';
 import 'package:ac_project_app/ui/view/links/link_detail_view.dart';
 import 'package:ac_project_app/ui/view/links/my_link_view.dart';
 import 'package:ac_project_app/ui/view/links/search_view.dart';
