@@ -9,13 +9,12 @@ comment:
     - develop
 
 coverage:
-  range: 10..100
-  round: down
-
   status:
     project:
       default:
-        threshold: 0%
+        target: 60%
+        threshold: 5%
+        if_ci_failed: error
 
 
 ignore:
