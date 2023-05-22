@@ -26,14 +26,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class UserFeedView extends StatefulWidget {
+class UserFeedView extends StatelessWidget {
   const UserFeedView({super.key});
 
-  @override
-  State<UserFeedView> createState() => _UserFeedViewState();
-}
-
-class _UserFeedViewState extends State<UserFeedView> {
   @override
   Widget build(BuildContext context) {
     final args = getArguments(context);

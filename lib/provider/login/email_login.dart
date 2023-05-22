@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:ac_project_app/gen/assets.gen.dart';
+import 'package:ac_project_app/models/user/user.dart' as user;
+import 'package:ac_project_app/provider/api/user/user_api.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/dialog.dart';
 import 'package:ac_project_app/util/logger.dart';
@@ -10,7 +12,13 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Email {
-  static Future<bool> login(String email, String emailLink) async {
+  static Future<void> login(
+    String email,
+    String emailLink, {
+    required void Function(user.User) onSuccess,
+    required void Function(String) onError,
+        required void Function() onFail,
+  }) async {
     final prefs = await SharedPreferences.getInstance();
     unawaited(prefs.setString('loginType', 'email'));
     final userCredential = await FirebaseAuth.instance.signInWithEmailLink(
@@ -18,7 +26,16 @@ class Email {
       emailLink: emailLink,
     );
 
-    return userCredential.user != null;
+    final isSuccess = userCredential.user != null;
+    if (isSuccess) {
+      final user = await UserApi().postUsers();
+      user.when(
+        success: (result) => onSuccess(result),
+        error: (msg) => onError(msg),
+      );
+    } else {
+      onFail();
+    }
   }
 
   static Future<void> send(

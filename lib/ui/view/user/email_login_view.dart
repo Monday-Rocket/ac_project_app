@@ -4,7 +4,6 @@ import 'dart:async';
 
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
-import 'package:ac_project_app/provider/api/user/user_api.dart';
 import 'package:ac_project_app/provider/login/email_login.dart';
 import 'package:ac_project_app/provider/share_data_provider.dart';
 import 'package:ac_project_app/routes.dart';
@@ -87,10 +86,12 @@ class _EmailLoginViewState extends State<EmailLoginView>
                               color: redError,
                             ),
                             focusedErrorBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: redError, width: 2.w),
+                              borderSide:
+                                  BorderSide(color: redError, width: 2.w),
                             ),
                             enabledBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: greyTab, width: 2.w),
+                              borderSide:
+                                  BorderSide(color: greyTab, width: 2.w),
                             ),
                             contentPadding: EdgeInsets.zero,
                             suffix: buttonState
@@ -140,8 +141,7 @@ class _EmailLoginViewState extends State<EmailLoginView>
                         child: Column(
                           children: [
                             Padding(
-                              padding:
-                                  EdgeInsets.only(top: 14.h, bottom: 12.h),
+                              padding: EdgeInsets.only(top: 14.h, bottom: 12.h),
                               child: SvgPicture.asset(
                                 Assets.images.emailNotice,
                               ),
@@ -267,53 +267,47 @@ class _EmailLoginViewState extends State<EmailLoginView>
 
   void _handleLink(String email, String link) {
     hasError = true;
-    Email.login(email, link).then((isSuccess) async {
-      if (isSuccess) {
-        final user = await UserApi().postUsers();
+    Email.login(
+      email,
+      link,
+      onSuccess: (data) {
+        if (data.is_new ?? false) {
+          Navigator.pushReplacementNamed(
+            context,
+            Routes.terms,
+            arguments: {
+              'user': data,
+            },
+          );
+          Future.delayed(
+            const Duration(milliseconds: 500),
+            () => showBottomToast(
+              context: context,
+              '가입된 계정이 없어 회원 가입 화면으로 이동합니다.',
+            ),
+          );
+        } else {
+          ShareDataProvider.loadServerData();
 
-        user.when(
-          success: (data) {
-            if (!mounted) {
-              return;
-            }
-            if (data.is_new ?? false) {
-              Navigator.pushReplacementNamed(
-                context,
-                Routes.terms,
-                arguments: {
-                  'user': data,
-                },
-              );
-              Future.delayed(
-                const Duration(milliseconds: 500),
-                () => showBottomToast(
-                  context: context,
-                  '가입된 계정이 없어 회원 가입 화면으로 이동합니다.',
-                ),
-              );
-            } else {
-              ShareDataProvider.loadServerData();
-
-              Navigator.pushNamedAndRemoveUntil(
-                context,
-                Routes.home,
-                (_) => false,
-                arguments: {'index': 0},
-              );
-            }
-          },
-          error: (msg) {
-            setState(() {
-              hasError = true;
-            });
-            Log.e('login fail');
-          },
-        );
-      } else {
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            Routes.home,
+            (_) => false,
+            arguments: {'index': 0},
+          );
+        }
+      },
+      onError: (msg) {
+        setState(() {
+          hasError = true;
+        });
+        Log.e('login fail');
+      },
+      onFail: () {
         showError(context);
         Log.e('login fail');
-      }
-    });
+      },
+    );
   }
 
   String? validateEmail(String? value) {

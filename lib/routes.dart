@@ -4,12 +4,12 @@ import 'package:ac_project_app/ui/view/links/link_detail_view.dart';
 import 'package:ac_project_app/ui/view/links/my_link_view.dart';
 import 'package:ac_project_app/ui/view/links/search_view.dart';
 import 'package:ac_project_app/ui/view/links/user_feed_view.dart';
+import 'package:ac_project_app/ui/view/profile/change_profile_view.dart';
 import 'package:ac_project_app/ui/view/report_view.dart';
 import 'package:ac_project_app/ui/view/splash_view.dart';
 import 'package:ac_project_app/ui/view/terms_view.dart';
 import 'package:ac_project_app/ui/view/tutorial_view.dart';
 import 'package:ac_project_app/ui/view/upload_view.dart';
-import 'package:ac_project_app/ui/view/profile/change_profile_view.dart';
 import 'package:ac_project_app/ui/view/user/email_login_view.dart';
 import 'package:ac_project_app/ui/view/user/login_view.dart';
 import 'package:ac_project_app/ui/view/user/sign_up_job_view.dart';
@@ -60,7 +60,7 @@ class Pages {
       case Routes.linkDetail:
         return router.create(child: const LinkDetailView());
       case Routes.userFeed:
-        return router.create(child: UserFeedView());
+        return router.create(child: const UserFeedView());
       case Routes.signUpNickname:
         return router.create(child: const SignUpNicknameView());
       case Routes.singUpJob:

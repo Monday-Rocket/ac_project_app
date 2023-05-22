@@ -98,12 +98,12 @@ class FolderApi {
     );
   }
 
-  Future<void> bulkSave() async {
+  Future<bool> bulkSave() async {
     final newLinks = await ShareDataProvider.getNewLinks();
     final newFolders = await ShareDataProvider.getNewFolders();
 
     if (newLinks.isEmpty && newFolders.isEmpty) {
-      return;
+      return true;
     }
 
     final body = {
@@ -112,12 +112,16 @@ class FolderApi {
     };
 
     final result = await _client.postUri('/bulk', body: body);
-    result.when(
+    return result.when(
       success: (_) {
         Log.i('bulk save success');
         ShareDataProvider.clearLinksAndFolders();
+        return true;
       },
-      error: Result.error,
+      error: (message) {
+        Log.e('bulk save error: $message');
+        return false;
+      },
     );
   }
 

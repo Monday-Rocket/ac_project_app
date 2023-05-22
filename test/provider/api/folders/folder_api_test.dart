@@ -3,12 +3,16 @@ import 'package:ac_project_app/models/net/api_result.dart';
 import 'package:ac_project_app/provider/api/custom_client.dart';
 import 'package:ac_project_app/provider/api/folders/folder_api.dart';
 import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/testing.dart';
 
+import '../../../test_strings.dart';
 import '../mock_client_generator.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   group('get My Folder Api Test', () {
     final apiExpected = ApiResult(
       status: 0,
@@ -128,7 +132,90 @@ void main() {
     expect(result, true);
   });
 
-  // TODO bulkSave 테스트 코드 작성하기
+  test('bulk save success test', () async {
+    const channel = MethodChannel('share_data_provider');
+    // channel.setMockMethodCallHandler((call) async {});
+
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+      channel,
+      (call) async {
+        if (call.method == 'getNewLinks') {
+          return {
+            getNewLinksKey: getNewLinksValue,
+          };
+        } else if (call.method == 'getNewFolders') {
+          return getNewFoldersResult;
+        }
+        return null;
+      },
+    );
+
+    final apiExpected = ApiResult(status: 0);
+
+    final mockClient = getMockClient(apiExpected, '/bulk');
+    final api = getFolderApi(mockClient);
+    final result = await api.bulkSave();
+
+    expect(result, true);
+  });
+
+  test('delete folder success test', () async {
+    final apiExpected = ApiResult(status: 0);
+
+    final folder = Folder(
+      id: 1,
+      thumbnail: '01',
+      visible: true,
+      name: '폴더명1',
+      links: 2,
+      time: '2023-05-15T10:30:00.861975',
+    );
+
+    final mockClient = getMockClient(apiExpected, '/folders/${folder.id}');
+    final api = getFolderApi(mockClient);
+    final result = await api.deleteFolder(folder);
+
+    expect(result, true);
+  });
+
+  test('patch folder name success test', () async {
+    final apiExpected = ApiResult(status: 0);
+
+    final folder = Folder(
+      id: 1,
+      thumbnail: '01',
+      visible: true,
+      name: '폴더명1',
+      links: 2,
+      time: '2023-05-15T10:30:00.861975',
+    );
+
+    final mockClient = getMockClient(apiExpected, '/folders/${folder.id}');
+    final api = getFolderApi(mockClient);
+    final result = await api.patchFolder(folder.id!, {'name': '바꿀 폴더명'});
+
+    expect(result, true);
+  });
+
+  test('change folder visibility success test', () async {
+    final apiExpected = ApiResult(status: 0);
+
+    final folder = Folder(
+      id: 1,
+      thumbnail: '01',
+      visible: true,
+      name: '폴더명1',
+      links: 2,
+      time: '2023-05-15T10:30:00.861975',
+    );
+
+    final mockClient = getMockClient(apiExpected, '/folders/${folder.id}');
+    final api = getFolderApi(mockClient);
+    final result = await api.changeVisible(folder);
+
+    expect(result, true);
+  });
 }
 
 FolderApi getFolderApi(MockClient mockClient) {

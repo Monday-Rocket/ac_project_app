@@ -5,8 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class DetailEditCubit extends Cubit<EditState> {
-  DetailEditCubit(Link link) : super(EditState.view) {
-    textController.text = link.describe ?? '';
+  DetailEditCubit(Object? argument) : super(EditState.view) {
+    if (argument is Map) {
+      final link = (argument['link'] ?? Link()) as Link;
+      textController.text = link.describe ?? '';
+    }
   }
 
   final linkApi = LinkApi();

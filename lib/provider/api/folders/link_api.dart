@@ -6,13 +6,20 @@ import 'package:ac_project_app/models/result.dart';
 import 'package:ac_project_app/provider/api/custom_client.dart';
 
 class LinkApi {
-  final client = CustomClient();
+  
+  LinkApi({
+    CustomClient? client,
+  }) {
+    _client = client ?? CustomClient();
+  }
+
+  late final CustomClient _client;
 
   Future<Result<SearchedLinks>> getLinksFromSelectedFolder(
     Folder folder,
     int pageNum,
   ) async {
-    final result = await client.getUri(
+    final result = await _client.getUri(
       '/folders/${folder.id}/links?page_no=$pageNum&page_size=10',
     );
     return result.when(
@@ -26,7 +33,7 @@ class LinkApi {
   }
 
   Future<UploadResultState> postLink(Link link) async {
-    final result = await client.postUri(
+    final result = await _client.postUri(
       '/links',
       body: {
         'url': link.url,
@@ -52,7 +59,7 @@ class LinkApi {
   }
 
   Future<bool> patchLink(Link link) async {
-    final result = await client.patchUri(
+    final result = await _client.patchUri(
       '/links/${link.id}',
       body: link.toJson(),
     );
@@ -70,7 +77,7 @@ class LinkApi {
     int jobGroup,
     int pageNum,
   ) async {
-    final result = await client.getUri('/job-groups/$jobGroup/links?'
+    final result = await _client.getUri('/job-groups/$jobGroup/links?'
         'page_no=$pageNum&'
         'page_size=10');
 
@@ -85,7 +92,7 @@ class LinkApi {
   }
 
   Future<Result<SearchedLinks>> getUnClassifiedLinks(int pageNum) async {
-    final result = await client.getUri('/links/unclassified?'
+    final result = await _client.getUri('/links/unclassified?'
         'page_no=$pageNum&'
         'page_size=10');
     return result.when(
@@ -99,7 +106,7 @@ class LinkApi {
   }
 
   Future<bool> deleteLink(Link link) async {
-    final result = await client.deleteUri('/links/${link.id}');
+    final result = await _client.deleteUri('/links/${link.id}');
     return result.when(
       success: (data) {
         return true;
@@ -114,7 +121,7 @@ class LinkApi {
     String text,
     int pageNum,
   ) async {
-    final result = await client.getUri(
+    final result = await _client.getUri(
       '/links/search?'
       'my_links_only=false&'
       'keyword=$text&'
@@ -132,7 +139,7 @@ class LinkApi {
   }
 
   Future<Result<SearchedLinks>> searchMyLinks(String text, int pageNum) async {
-    final result = await client.getUri(
+    final result = await _client.getUri(
       '/links/search?'
       'my_links_only=true&'
       'keyword=$text&'
@@ -150,7 +157,7 @@ class LinkApi {
   }
 
   Future<bool> changeFolder(Link link, int folderId) async {
-    final result = await client.patchUri(
+    final result = await _client.patchUri(
       '/links/${link.id}',
       body: {
         'folder_id': folderId,

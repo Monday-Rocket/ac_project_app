@@ -50,7 +50,7 @@ dependencies:
   oktoast:
   shimmer: ^2.0.0
   share_plus: ^6.3.1
-  flutter_keyboard_visibility: ^5.4.1
+  flutter_keyboard_visibility: ^5.4.3
   extended_text: ^11.0.0-dev
   carousel_slider: ^4.2.1
   lottie:
@@ -83,6 +83,8 @@ dev_dependencies:
     sdk: flutter
 
   flutter_lints: ^2.0.0
+
+  bloc_test: ^9.1.2
 
   # for model class
   build_runner: ^2.3.3

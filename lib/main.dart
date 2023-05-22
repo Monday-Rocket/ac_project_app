@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:ac_project_app/const/colors.dart';
-import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/gen/fonts.gen.dart';
 import 'package:ac_project_app/initial_settings.dart';
+import 'package:ac_project_app/provider/global_providers.dart';
 import 'package:ac_project_app/provider/share_db.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:flutter/material.dart';
@@ -43,8 +43,8 @@ class MultiPlatformApp {
       designSize: const Size(393, 852),
       minTextAdapt: true,
       builder: (context, child) {
-        return BlocProvider<GetProfileInfoCubit>(
-          create: (_) => GetProfileInfoCubit(),
+        return MultiBlocProvider(
+          providers: globalProviders,
           child: OKToast(
             child: MaterialApp(
               debugShowCheckedModeBanner: false,
