@@ -1,20 +1,12 @@
-codecov:
-  require_ci_to_pass: true
-
-comment:
-  layout: "reach,diff,flags,files,footer"
-  behavior: default
-  require_changes: false
-  branches:
-    - develop
-
 coverage:
-  range: 10..100
-  round: down
-
   status:
     project:
       default:
+        target: 100%
+        threshold: 0%
+    patch:
+      default:
+        target: 100%
         threshold: 0%
 
 
