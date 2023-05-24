@@ -1,4 +1,5 @@
 import 'package:ac_project_app/cubits/home/topic_list_state.dart';
+import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/models/user/detail_user.dart';
 import 'package:ac_project_app/provider/api/user/user_api.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,7 +9,7 @@ class GetJobListCubit extends Cubit<JobListState> {
     getJobList();
   }
 
-  final userApi = UserApi();
+  final userApi = getIt<UserApi>();
 
   Future<void> getJobList() async {
     emit(LoadingState());

@@ -4,13 +4,9 @@ import 'package:ac_project_app/provider/api/custom_client.dart';
 
 class ProfileApi {
 
-  ProfileApi({
-    CustomClient? client,
-  }) {
-    _client = client ?? CustomClient();
-  }
+  ProfileApi(this._client);
 
-  late final CustomClient _client;
+  final CustomClient _client;
 
   Future<Result<DetailUser>> changeImage({
     required String? profileImg,

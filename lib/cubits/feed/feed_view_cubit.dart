@@ -1,4 +1,5 @@
 import 'package:ac_project_app/cubits/links/has_more_cubit.dart';
+import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/models/link/searched_links.dart';
@@ -15,7 +16,7 @@ class FeedViewCubit extends Cubit<List<Link>> {
     }
   }
 
-  final linkApi = LinkApi();
+  final LinkApi linkApi = getIt<LinkApi>();
   final hasMore = HasMoreCubit();
   final globalFolders = <Folder>[];
 

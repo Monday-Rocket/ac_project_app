@@ -1,4 +1,5 @@
 import 'package:ac_project_app/cubits/links/has_more_cubit.dart';
+import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/models/link/searched_links.dart';
 import 'package:ac_project_app/provider/api/folders/link_api.dart';
@@ -10,7 +11,7 @@ class LinksFromSelectedJobGroupCubit extends Cubit<List<Link>> {
     initialize();
   }
 
-  final linkApi = LinkApi();
+  final linkApi = getIt<LinkApi>();
 
   HasMoreCubit hasMore = HasMoreCubit();
   int selectedJobId = 1;

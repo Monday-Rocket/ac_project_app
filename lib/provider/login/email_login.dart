@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/user/user.dart' as user;
 import 'package:ac_project_app/provider/api/user/user_api.dart';
@@ -28,7 +29,7 @@ class Email {
 
     final isSuccess = userCredential.user != null;
     if (isSuccess) {
-      final user = await UserApi().postUsers();
+      final user = await getIt<UserApi>().postUsers();
       user.when(
         success: (result) => onSuccess(result),
         error: (msg) => onError(msg),

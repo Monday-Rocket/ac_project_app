@@ -1,4 +1,5 @@
 import 'package:ac_project_app/cubits/links/edit_state.dart';
+import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/provider/api/folders/link_api.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +13,7 @@ class DetailEditCubit extends Cubit<EditState> {
     }
   }
 
-  final linkApi = LinkApi();
+  final linkApi = getIt<LinkApi>();
   final textController = TextEditingController();
 
   void toggle() {

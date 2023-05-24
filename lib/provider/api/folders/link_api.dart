@@ -7,13 +7,9 @@ import 'package:ac_project_app/provider/api/custom_client.dart';
 
 class LinkApi {
   
-  LinkApi({
-    CustomClient? client,
-  }) {
-    _client = client ?? CustomClient();
-  }
+  LinkApi(this._client);
 
-  late final CustomClient _client;
+  final CustomClient _client;
 
   Future<Result<SearchedLinks>> getLinksFromSelectedFolder(
     Folder folder,

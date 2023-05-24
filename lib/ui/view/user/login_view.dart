@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/const/strings.dart';
-import 'package:ac_project_app/cubits/http_client_cubit.dart';
 import 'package:ac_project_app/cubits/login/login_cubit.dart';
 import 'package:ac_project_app/cubits/login/login_type.dart';
 import 'package:ac_project_app/cubits/login/login_user_state.dart';
@@ -30,7 +29,7 @@ class LoginView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (c) => LoginCubit(c.read<HttpClientCubit>()),
+      create: (c) => LoginCubit(),
       child: Scaffold(
         key: const Key('LoginView'),
         backgroundColor: Colors.white,

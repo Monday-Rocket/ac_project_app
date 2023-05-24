@@ -20,7 +20,7 @@ void main() {
     final mockClient = getMockClient(expectedResult, '/reports');
 
     final reportApi = ReportApi(
-      client: CustomClient(
+      CustomClient(
         client: mockClient,
         auth: MockFirebaseAuth(),
       ),
@@ -47,7 +47,7 @@ void main() {
     final mockClient = getMockClient(expectedResult, '/reports');
 
     final reportApi = ReportApi(
-      client: CustomClient(
+      CustomClient(
         client: mockClient,
         auth: MockFirebaseAuth(),
       ),

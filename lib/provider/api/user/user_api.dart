@@ -12,13 +12,9 @@ import 'package:ac_project_app/util/logger.dart';
 
 class UserApi {
 
-  UserApi({
-    CustomClient? client,
-  }) {
-    _client = client ?? CustomClient();
-  }
+  UserApi(this._client);
 
-  late final CustomClient _client;
+  final CustomClient _client;
 
   Future<Result<User>> postUsers() async {
     final result = await _client.postUri('/users');

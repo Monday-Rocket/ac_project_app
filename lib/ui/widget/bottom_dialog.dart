@@ -4,6 +4,7 @@ import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/folders/folder_name_cubit.dart';
 import 'package:ac_project_app/cubits/folders/folders_state.dart';
 import 'package:ac_project_app/cubits/folders/get_my_folders_cubit.dart';
+import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/models/report/report_type.dart';
@@ -74,7 +75,7 @@ Future<bool?> showMyLinkOptionsDialog(
                         _buildItem(
                           '링크 삭제',
                           callback: () {
-                            LinkApi().deleteLink(link).then((result) {
+                            getIt<LinkApi>().deleteLink(link).then((result) {
                               Navigator.pop(context);
                               if (popCallback != null) {
                                 popCallback.call();
@@ -160,7 +161,7 @@ Future<bool?> showChangeFolderDialog(Link link, BuildContext parentContext) {
                             folderContext: foldersContext,
                             state: state,
                             callback: (_, folderId) {
-                              LinkApi()
+                              getIt<LinkApi>()
                                   .changeFolder(link, folderId)
                                   .then((result) {
                                 Navigator.pop(context);

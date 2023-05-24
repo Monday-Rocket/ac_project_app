@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:ac_project_app/cubits/http_client_cubit.dart';
 import 'package:ac_project_app/cubits/login/login_type.dart';
 import 'package:ac_project_app/cubits/login/login_user_state.dart';
+import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/provider/api/user/user_api.dart';
 import 'package:ac_project_app/provider/login/apple_login.dart';
 import 'package:ac_project_app/provider/login/email_password.dart';
@@ -14,9 +14,9 @@ import 'package:ac_project_app/util/logger.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LoginCubit extends Cubit<LoginUserState> {
-  LoginCubit(this.httpClientCubit) : super(LoginInitialState());
+  LoginCubit() : super(LoginInitialState());
 
-  final HttpClientCubit httpClientCubit;
+  final userApi = getIt<UserApi>();
 
   void initialize() {
     emit(LoginInitialState());
@@ -59,7 +59,7 @@ class LoginCubit extends Cubit<LoginUserState> {
   // ignore: avoid_positional_boolean_parameters
   Future<void> sendResult(bool isSuccess) async {
     if (isSuccess) {
-      final user = await UserApi(client: httpClientCubit.state).postUsers();
+      final user = await userApi.postUsers();
 
       user.when(
         success: (data) {

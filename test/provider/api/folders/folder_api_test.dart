@@ -220,7 +220,7 @@ void main() {
 
 FolderApi getFolderApi(MockClient mockClient) {
   return FolderApi(
-    client: CustomClient(
+    CustomClient(
       client: mockClient,
       auth: MockFirebaseAuth(
         mockUser: MockUser(

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:ac_project_app/const/colors.dart';
+import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/gen/fonts.gen.dart';
 import 'package:ac_project_app/initial_settings.dart';
 import 'package:ac_project_app/provider/global_providers.dart';
@@ -15,6 +16,7 @@ import 'package:oktoast/oktoast.dart';
 Future<void> main() async {
   await initSettings();
   await ShareDB.initSqflite();
+  locator();
   runApp(const MyApp());
 }
 

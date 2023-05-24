@@ -6,6 +6,7 @@ import 'package:ac_project_app/cubits/folders/get_selected_folder_cubit.dart';
 import 'package:ac_project_app/cubits/links/link_list_state.dart';
 import 'package:ac_project_app/cubits/links/links_from_selected_folder_cubit.dart';
 import 'package:ac_project_app/cubits/tool_tip/my_link_upload_tool_tip_cubit.dart';
+import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/gen/fonts.gen.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
@@ -523,7 +524,7 @@ class MyLinkView extends StatelessWidget {
         link: link,
         child: buildBodyListItem(width, link),
         callback: () {
-          LinkApi().deleteLink(link).then(
+          getIt<LinkApi>().deleteLink(link).then(
             (result) {
               if (result) {
                 showBottomToast(

@@ -1,3 +1,4 @@
+import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/provider/api/folders/folder_api.dart';
 import 'package:ac_project_app/provider/share_db.dart';
@@ -10,7 +11,7 @@ class FolderNameCubit extends Cubit<String> {
     emit(name);
   }
 
-  FolderApi folderApi = FolderApi();
+  final folderApi = getIt<FolderApi>();
 
   Future<bool> add(Folder folder) async {
     if (await folderApi.add(folder)) {

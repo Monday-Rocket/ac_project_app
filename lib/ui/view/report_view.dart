@@ -1,5 +1,6 @@
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/const/consts.dart';
+import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/report/report.dart';
 import 'package:ac_project_app/models/report/report_result_type.dart';
@@ -243,8 +244,7 @@ class _ReportViewState extends State<ReportView> {
     int id,
     String text,
   ) =>
-      ReportApi()
-          .report(
+      getIt<ReportApi>().report(
         Report(
           targetType: targetType.name,
           targetId: id,

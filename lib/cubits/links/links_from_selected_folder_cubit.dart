@@ -1,5 +1,6 @@
 import 'package:ac_project_app/cubits/links/has_more_cubit.dart';
 import 'package:ac_project_app/cubits/links/link_list_state.dart';
+import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/models/link/searched_links.dart';
@@ -12,7 +13,7 @@ class LinksFromSelectedFolderCubit extends Cubit<LinkListState> {
     getSelectedLinks(folder, pageNum);
   }
 
-  final linkApi = LinkApi();
+  final linkApi = getIt<LinkApi>();
 
   HasMoreCubit hasMore = HasMoreCubit();
   Folder? currentFolder;

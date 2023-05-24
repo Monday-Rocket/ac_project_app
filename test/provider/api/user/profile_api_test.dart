@@ -22,7 +22,7 @@ void main() {
     final mockClient = getMockClient(expectedResult, '/users/me');
 
     final profileApi = ProfileApi(
-      client: CustomClient(
+      CustomClient(
         client: mockClient,
         auth: MockFirebaseAuth(),
       ),
