@@ -10,9 +10,9 @@ import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/link/link.dart';
-import 'package:ac_project_app/models/profile/profile_image.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/bottom_dialog.dart';
+import 'package:ac_project_app/ui/widget/user/user_info.dart';
 import 'package:ac_project_app/util/get_arguments.dart';
 import 'package:ac_project_app/util/string_utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -42,8 +42,15 @@ class _SearchViewState extends State<SearchView> {
     final isMine = args['isMine'] as bool;
     final totalLinks = <Link>[];
 
-    return BlocProvider(
-      create: (_) => SearchLinksCubit(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) => SearchLinksCubit(),
+        ),
+        BlocProvider(
+          create: (_) => GetUserFoldersCubit(),
+        ),
+      ],
       child: GestureDetector(
         onTap: () {
           final currentFocus = FocusScope.of(context);
@@ -190,104 +197,7 @@ class _SearchViewState extends State<SearchView> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            GestureDetector(
-                              onTap: () async {
-                                final profileState = context
-                                    .read<GetProfileInfoCubit>()
-                                    .state as ProfileLoadedState;
-                                await Navigator.of(context).pushNamed(
-                                  Routes.userFeed,
-                                  arguments: {
-                                    'user': link.user,
-                                    'folders': await context
-                                        .read<GetUserFoldersCubit>()
-                                        .getFolders(link.user!.id!),
-                                    'isMine': profileState.profile.id ==
-                                        link.user!.id,
-                                  },
-                                );
-                              },
-                              child: Row(
-                                children: [
-                                  Image.asset(
-                                    ProfileImage.makeImagePath(
-                                      link.user?.profile_img ?? '01',
-                                    ),
-                                    width: 32.w,
-                                    height: 32.h,
-                                    errorBuilder: (_, __, ___) {
-                                      return Container(
-                                        width: 32.w,
-                                        height: 32.h,
-                                        decoration: const BoxDecoration(
-                                          color: grey300,
-                                          shape: BoxShape.circle,
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                  SizedBox(
-                                    width: 8.w,
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Text(
-                                            link.user?.nickname ?? '',
-                                            style: const TextStyle(
-                                              color: grey900,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                          Container(
-                                            margin: EdgeInsets.only(
-                                              left: 4.w,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color: primary66_200,
-                                              borderRadius: BorderRadius.all(
-                                                Radius.circular(4.r),
-                                              ),
-                                            ),
-                                            child: Center(
-                                              child: Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                  vertical: 3.h,
-                                                  horizontal: 4.w,
-                                                ),
-                                                child: Text(
-                                                  link.user?.jobGroup?.name ??
-                                                      '',
-                                                  style: TextStyle(
-                                                    color: primary600,
-                                                    fontSize: 10.sp,
-                                                    letterSpacing: -0.2.w,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Container(
-                                        margin: EdgeInsets.only(top: 4.h),
-                                        child: Text(
-                                          makeLinkTimeString(link.time ?? ''),
-                                          style: TextStyle(
-                                            color: grey400,
-                                            fontSize: 12.sp,
-                                            letterSpacing: -0.2.w,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  )
-                                ],
-                              ),
-                            ),
+                            UserInfoWidget(context: context, link: link),
                             if (link.describe != null &&
                                 (link.describe?.isNotEmpty ?? false))
                               Column(

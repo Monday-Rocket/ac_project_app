@@ -38,12 +38,8 @@ class UserFeedView extends StatelessWidget {
 
     return MultiBlocProvider(
       providers: [
-        BlocProvider<FeedViewCubit>(
-          create: (_) => FeedViewCubit(folders),
-        ),
-        BlocProvider<GetUserFoldersCubit>(
-          create: (_) => GetUserFoldersCubit(),
-        ),
+        BlocProvider(create: (_) => FeedViewCubit(folders)),
+        BlocProvider(create: (_) => GetUserFoldersCubit()),
       ],
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -387,7 +383,7 @@ class UserFeedView extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            buildUserInfo(context: context, link: link),
+            UserInfoWidget(context: context, link: link),
             if (link.describe != null && (link.describe?.isNotEmpty ?? false))
               Column(
                 children: [
