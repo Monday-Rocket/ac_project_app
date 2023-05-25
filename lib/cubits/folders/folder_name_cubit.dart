@@ -11,7 +11,7 @@ class FolderNameCubit extends Cubit<String> {
     emit(name);
   }
 
-  final folderApi = getIt<FolderApi>();
+  final FolderApi folderApi = getIt();
 
   Future<bool> add(Folder folder) async {
     if (await folderApi.add(folder)) {

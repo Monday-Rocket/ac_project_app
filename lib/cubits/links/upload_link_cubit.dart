@@ -10,7 +10,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class UploadLinkCubit extends Cubit<UploadResultState> {
   UploadLinkCubit() : super(UploadResultState.success);
 
-  final linkApi = getIt<LinkApi>();
+  final LinkApi linkApi = getIt();
 
   // ignore: avoid_positional_boolean_parameters
   Future<UploadResultState> completeRegister(

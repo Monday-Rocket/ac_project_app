@@ -8,7 +8,7 @@ class GetUserFoldersCubit extends Cubit<List<Folder>> {
 
   List<Folder> folders = [];
 
-  final folderApi = getIt<FolderApi>();
+  final FolderApi folderApi = getIt();
 
   Future<List<Folder>> getFolders(int userId) async {
     try {

@@ -9,7 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class SearchLinksCubit extends Cubit<LinkListState> {
   SearchLinksCubit() : super(LinkListInitialState());
 
-  final linkApi = getIt<LinkApi>();
+  final LinkApi linkApi = getIt();
   HasMoreCubit hasMore = HasMoreCubit();
   int page = 0;
   String currentText = '';

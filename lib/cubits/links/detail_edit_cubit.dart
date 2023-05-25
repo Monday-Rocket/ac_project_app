@@ -13,7 +13,7 @@ class DetailEditCubit extends Cubit<EditState> {
     }
   }
 
-  final linkApi = getIt<LinkApi>();
+  final LinkApi linkApi = getIt();
   final textController = TextEditingController();
 
   void toggle() {

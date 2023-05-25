@@ -13,7 +13,7 @@ class LinksFromSelectedFolderCubit extends Cubit<LinkListState> {
     getSelectedLinks(folder, pageNum);
   }
 
-  final linkApi = getIt<LinkApi>();
+  final LinkApi linkApi = getIt();
 
   HasMoreCubit hasMore = HasMoreCubit();
   Folder? currentFolder;

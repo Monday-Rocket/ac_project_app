@@ -12,8 +12,8 @@ class GetProfileInfoCubit extends Cubit<ProfileState> {
     loadProfileData();
   }
 
-  final userApi = getIt<UserApi>();
-  final profileApi = getIt<ProfileApi>();
+  final UserApi userApi = getIt();
+  final ProfileApi profileApi = getIt();
 
   Future<void> loadProfileData() async {
     if (state == ProfileLoadingState()) return;

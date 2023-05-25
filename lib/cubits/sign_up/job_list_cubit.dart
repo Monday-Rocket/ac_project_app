@@ -8,7 +8,7 @@ class JobListCubit extends Cubit<List<JobGroup>> {
     getJobList();
   }
 
-  final _userApi = getIt<UserApi>();
+  final UserApi _userApi = getIt();
 
   Future<void> getJobList() async {
     final jobs = await _userApi.getJobGroups();

@@ -10,7 +10,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class SignUpCubit extends Cubit<String?> {
   SignUpCubit(): super(null);
 
-  final _userApi = getIt<UserApi>();
+  final UserApi _userApi = getIt();
 
   Future<Result<String>> signUp({User? user, String? nickname, JobGroup? job}) async {
     Log.i(user?.toJson());

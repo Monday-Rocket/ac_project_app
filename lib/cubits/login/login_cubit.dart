@@ -16,7 +16,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class LoginCubit extends Cubit<LoginUserState> {
   LoginCubit() : super(LoginInitialState());
 
-  final userApi = getIt<UserApi>();
+  final UserApi userApi = getIt();
 
   void initialize() {
     emit(LoginInitialState());

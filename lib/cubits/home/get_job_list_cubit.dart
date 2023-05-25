@@ -9,7 +9,7 @@ class GetJobListCubit extends Cubit<JobListState> {
     getJobList();
   }
 
-  final userApi = getIt<UserApi>();
+  final UserApi userApi = getIt();
 
   Future<void> getJobList() async {
     emit(LoadingState());

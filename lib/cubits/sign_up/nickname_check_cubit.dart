@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class NicknameCheckCubit extends Cubit<bool?> {
   NicknameCheckCubit() : super(null);
 
-  final userApi = getIt<UserApi>();
+  final UserApi userApi = getIt();
 
   Future<bool> isDuplicated(String nickname) async {
     final result = await userApi.checkDuplicatedNickname(nickname);

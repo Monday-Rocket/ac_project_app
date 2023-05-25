@@ -11,7 +11,7 @@ class LinksFromSelectedJobGroupCubit extends Cubit<List<Link>> {
     initialize();
   }
 
-  final linkApi = getIt<LinkApi>();
+  final LinkApi linkApi = getIt();
 
   HasMoreCubit hasMore = HasMoreCubit();
   int selectedJobId = 1;

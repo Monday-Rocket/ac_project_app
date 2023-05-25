@@ -16,7 +16,7 @@ class FeedViewCubit extends Cubit<List<Link>> {
     }
   }
 
-  final LinkApi linkApi = getIt<LinkApi>();
+  final LinkApi linkApi = getIt();
   final hasMore = HasMoreCubit();
   final globalFolders = <Folder>[];
 
