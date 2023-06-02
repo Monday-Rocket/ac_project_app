@@ -3,7 +3,7 @@ import 'dart:io';
 
 void main(List<String> arguments) async {
   // brew install lcov
-  await execute('brew install lcov', skipError: true);
+  // await execute('brew install lcov', skipError: true);
   await execute('flutter test --coverage');
   await execute('lcov --remove coverage/lcov.info '
       'lib/models/result.freezed.dart '

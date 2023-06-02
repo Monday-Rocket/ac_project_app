@@ -4,6 +4,7 @@ import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/models/link/searched_links.dart';
 import 'package:ac_project_app/provider/api/folders/link_api.dart';
+import 'package:ac_project_app/util/logger.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -38,7 +39,7 @@ class FeedViewCubit extends Cubit<List<Link>> {
         emit(links);
       },
       error: (msg) {
-
+        Log.e(msg);
       },
     );
   }

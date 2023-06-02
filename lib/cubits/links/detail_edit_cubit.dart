@@ -8,7 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class DetailEditCubit extends Cubit<EditState> {
   DetailEditCubit(Object? argument) : super(EditState.view) {
     if (argument is Map) {
-      final link = (argument['link'] ?? Link()) as Link;
+      final link = (argument['link'] ?? const Link()) as Link;
       textController.text = link.describe ?? '';
     }
   }
@@ -25,7 +25,7 @@ class DetailEditCubit extends Cubit<EditState> {
   }
 
   Future<bool> saveComment(Link link) async {
-    link.describe = textController.text;
-    return linkApi.patchLink(link);
+    final newLink = link.copyWith(describe: textController.text);
+    return linkApi.patchLink(newLink);
   }
 }

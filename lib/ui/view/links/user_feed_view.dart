@@ -363,14 +363,14 @@ class UserFeedView extends StatelessWidget {
     List<Link> totalLinks,
     BuildContext parentContext,
   ) {
-    link.user = user;
+    final newLink = link.copyWith(user: user);
     return GestureDetector(
       onTap: () {
         Navigator.pushNamed(
           context,
           Routes.linkDetail,
           arguments: {
-            'link': link,
+            'link': newLink,
           },
         );
       },
