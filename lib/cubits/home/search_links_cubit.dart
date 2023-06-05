@@ -1,5 +1,6 @@
 import 'package:ac_project_app/cubits/links/has_more_cubit.dart';
 import 'package:ac_project_app/cubits/links/link_list_state.dart';
+import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/models/link/searched_links.dart';
 import 'package:ac_project_app/provider/api/folders/link_api.dart';
@@ -8,7 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class SearchLinksCubit extends Cubit<LinkListState> {
   SearchLinksCubit() : super(LinkListInitialState());
 
-  final linkApi = LinkApi();
+  final LinkApi linkApi = getIt();
   HasMoreCubit hasMore = HasMoreCubit();
   int page = 0;
   String currentText = '';

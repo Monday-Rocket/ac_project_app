@@ -3,10 +3,12 @@ import 'package:ac_project_app/models/report/report_result_type.dart';
 import 'package:ac_project_app/provider/api/custom_client.dart';
 
 class ReportApi {
-  final client = CustomClient();
+  ReportApi(this._client);
+
+  final CustomClient _client;
 
   Future<ReportResultType> report(Report report) async {
-    final result = await client.postUri('/reports', body: report.toJson());
+    final result = await _client.postUri('/reports', body: report.toJson());
     return result.when(
       success: (data) {
         return ReportResultType.success;

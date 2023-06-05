@@ -2,33 +2,38 @@ import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/folders/get_user_folders_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_state.dart';
+import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/models/profile/profile_image.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/util/string_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-Widget buildUserInfo({
+Widget UserInfoWidget({
   required BuildContext context,
   required Link link,
   bool? jobVisible = true,
 }) {
   return GestureDetector(
     onTap: () async {
-      final profileState =
-          context.read<GetProfileInfoCubit>().state as ProfileLoadedState;
-      await Navigator.of(context).pushNamed(
-        Routes.userFeed,
-        arguments: {
-          'user': link.user,
-          'folders': await context
-              .read<GetUserFoldersCubit>()
-              .getFolders(link.user!.id!),
-          'isMine': profileState.profile.id == link.user!.id,
-        },
-      );
+      final profileInfoCubit = getIt<GetProfileInfoCubit>();
+      final userFoldersCubit = getIt<GetUserFoldersCubit>();
+
+      final isMine =
+          (profileInfoCubit.state as ProfileLoadedState).profile.id ==
+              link.user!.id;
+
+      await userFoldersCubit.getFolders(link.user!.id!).then((_) {
+        Navigator.of(context).pushNamed(
+          Routes.userFeed,
+          arguments: {
+            'user': link.user,
+            'folders': userFoldersCubit.state.folderList,
+            'isMine': isMine,
+          },
+        );
+      });
     },
     child: Row(
       children: [
@@ -62,7 +67,7 @@ Widget buildUserInfo({
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                if (jobVisible ?? true) _buildUserJobView(link),
+                if (jobVisible ?? true) _UserJobView(link),
               ],
             ),
             Container(
@@ -83,7 +88,7 @@ Widget buildUserInfo({
   );
 }
 
-Container _buildUserJobView(Link link) {
+Container _UserJobView(Link link) {
   return Container(
     margin: EdgeInsets.only(
       left: 4.w,

@@ -10,7 +10,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: subosito/flutter-action@v2.8.0
         with:
-          flutter-version: '3.7.12'
+          flutter-version: '3.10.2'
       - name: Install packages
         run: flutter pub get
       - run: echo '${{ secrets.DOTENV }}' | base64 -d > .env

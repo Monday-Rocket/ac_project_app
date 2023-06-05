@@ -4,6 +4,7 @@ import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/const/strings.dart';
 import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_state.dart';
+import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/profile/profile_image.dart';
 import 'package:ac_project_app/models/user/detail_user.dart';
@@ -175,7 +176,7 @@ class MyPage extends StatelessWidget {
                   leftText: '회원 탈퇴',
                   rightText: '탈퇴 취소',
                   leftCallback: () {
-                    UserApi().deleteUser().then((value) {
+                    getIt<UserApi>().deleteUser().then((value) {
                       if (value) {
                         Navigator.of(context).pop(true);
                         Navigator.pushReplacementNamed(context, Routes.login);

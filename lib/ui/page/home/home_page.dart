@@ -186,7 +186,7 @@ class HomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            buildUserInfo(context: context, link: link),
+            UserInfoWidget(context: context, link: link),
             if (link.describe != null && (link.describe?.isNotEmpty ?? false))
               Column(
                 children: [

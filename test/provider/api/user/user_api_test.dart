@@ -191,7 +191,7 @@ void main() {
 
 UserApi getUserApi(MockClient mockClient) {
   return UserApi(
-    client: CustomClient(
+    CustomClient(
       client: mockClient,
       auth: MockFirebaseAuth(
         mockUser: MockUser(

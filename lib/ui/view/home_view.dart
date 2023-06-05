@@ -8,6 +8,7 @@ import 'package:ac_project_app/cubits/home/get_job_list_cubit.dart';
 import 'package:ac_project_app/cubits/home_view_cubit.dart';
 import 'package:ac_project_app/cubits/links/links_from_selected_job_group_cubit.dart';
 import 'package:ac_project_app/cubits/tool_tip/upload_tool_tip_cubit.dart';
+import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/enums/navigator_pop_type.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/provider/api/folders/folder_api.dart';
@@ -39,7 +40,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
-    FolderApi().bulkSave().then((value) {
+    getIt<FolderApi>().bulkSave().then((value) {
       setState(() {});
     });
     super.initState();
@@ -54,7 +55,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      FolderApi().bulkSave();
+      getIt<FolderApi>().bulkSave();
     }
   }
 

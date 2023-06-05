@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:ac_project_app/const/colors.dart';
+import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/provider/api/user/user_api.dart';
 import 'package:ac_project_app/provider/share_data_provider.dart';
@@ -47,7 +48,7 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
   void moveToNextView() {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      UserApi().postUsers().then((result) {
+      getIt<UserApi>().postUsers().then((result) {
         result.when(
           success: (data) {
             if (data.is_new ?? false) {

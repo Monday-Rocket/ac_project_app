@@ -1,7 +1,6 @@
 import 'package:flutter/widgets.dart';
 
 extension FontSize on Text {
-
   Text fontSize(double fontSize) {
     final curStyle = style == null ? const TextStyle() : style!;
     return Text(
@@ -45,6 +44,18 @@ extension Roboto on Text {
       style: curStyle.copyWith(
         fontFamily: 'Roboto',
       ),
+    );
+  }
+}
+
+extension FigmaHeight on Text {
+  Text height(double figmaHeight) {
+    return Text(
+      data ?? '',
+      style: style ??
+          const TextStyle().copyWith(
+            height: style?.height ?? 1 / figmaHeight,
+          ),
     );
   }
 }

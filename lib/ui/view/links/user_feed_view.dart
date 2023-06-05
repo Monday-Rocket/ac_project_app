@@ -26,14 +26,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class UserFeedView extends StatefulWidget {
+class UserFeedView extends StatelessWidget {
   const UserFeedView({super.key});
 
-  @override
-  State<UserFeedView> createState() => _UserFeedViewState();
-}
-
-class _UserFeedViewState extends State<UserFeedView> {
   @override
   Widget build(BuildContext context) {
     final args = getArguments(context);
@@ -43,12 +38,8 @@ class _UserFeedViewState extends State<UserFeedView> {
 
     return MultiBlocProvider(
       providers: [
-        BlocProvider<FeedViewCubit>(
-          create: (_) => FeedViewCubit(folders),
-        ),
-        BlocProvider<GetUserFoldersCubit>(
-          create: (_) => GetUserFoldersCubit(),
-        ),
+        BlocProvider(create: (_) => FeedViewCubit(folders)),
+        BlocProvider(create: (_) => GetUserFoldersCubit()),
       ],
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -372,14 +363,14 @@ class _UserFeedViewState extends State<UserFeedView> {
     List<Link> totalLinks,
     BuildContext parentContext,
   ) {
-    link.user = user;
+    final newLink = link.copyWith(user: user);
     return GestureDetector(
       onTap: () {
         Navigator.pushNamed(
           context,
           Routes.linkDetail,
           arguments: {
-            'link': link,
+            'link': newLink,
           },
         );
       },
@@ -392,7 +383,7 @@ class _UserFeedViewState extends State<UserFeedView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            buildUserInfo(context: context, link: link),
+            UserInfoWidget(context: context, link: link),
             if (link.describe != null && (link.describe?.isNotEmpty ?? false))
               Column(
                 children: [

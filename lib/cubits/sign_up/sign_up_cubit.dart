@@ -1,3 +1,4 @@
+import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/models/result.dart';
 import 'package:ac_project_app/models/user/detail_user.dart';
 import 'package:ac_project_app/models/user/user.dart';
@@ -9,7 +10,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class SignUpCubit extends Cubit<String?> {
   SignUpCubit(): super(null);
 
-  final UserApi _userApi = UserApi();
+  final UserApi _userApi = getIt();
 
   Future<Result<String>> signUp({User? user, String? nickname, JobGroup? job}) async {
     Log.i(user?.toJson());

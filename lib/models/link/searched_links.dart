@@ -1,11 +1,12 @@
 import 'package:ac_project_app/models/link/link.dart';
+import 'package:equatable/equatable.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'searched_links.g.dart';
 
 @JsonSerializable()
-class SearchedLinks {
-  SearchedLinks({
+class SearchedLinks extends Equatable {
+  const SearchedLinks({
     this.pageNum,
     this.pageSize,
     this.totalCount,
@@ -33,4 +34,7 @@ class SearchedLinks {
 
   bool hasMorePage() =>
       (pageNum ?? 0) < (totalPage ?? 0) - 1;
+
+  @override
+  List<Object?> get props => [pageNum, pageSize, totalCount, totalPage, contents];
 }

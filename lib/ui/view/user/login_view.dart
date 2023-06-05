@@ -8,7 +8,6 @@ import 'package:ac_project_app/cubits/login/login_type.dart';
 import 'package:ac_project_app/cubits/login/login_user_state.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/user/user.dart' as custom;
-import 'package:ac_project_app/provider/api/user/user_api.dart';
 import 'package:ac_project_app/provider/login/email_login.dart';
 import 'package:ac_project_app/provider/share_data_provider.dart';
 import 'package:ac_project_app/routes.dart';
@@ -30,7 +29,7 @@ class LoginView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => LoginCubit(),
+      create: (c) => LoginCubit(),
       child: Scaffold(
         key: const Key('LoginView'),
         backgroundColor: Colors.white,
@@ -80,47 +79,42 @@ class LoginView extends StatelessWidget {
   }
 
   void _handleLink(String email, String link, BuildContext context) {
-    Email.login(email, link).then((isSuccess) async {
-      if (isSuccess) {
-        final user = await UserApi().postUsers();
-
-        user.when(
-          success: (data) {
-            if (data.is_new ?? false) {
-              Navigator.pushNamed(
-                context,
-                Routes.terms,
-                arguments: {
-                  'user': data,
-                },
-              ).then((_) => context.read<LoginCubit>().showNothing());
-              Future.delayed(
-                const Duration(milliseconds: 500),
-                () => showBottomToast(
-                  context: context,
-                  '가입된 계정이 없어 회원 가입 화면으로 이동합니다.',
-                ),
-              );
-            } else {
-              ShareDataProvider.loadServerData();
-              Navigator.pushNamedAndRemoveUntil(
-                context,
-                Routes.home,
-                (_) => false,
-                arguments: {'index': 0},
-              );
-            }
-          },
-          error: (msg) {
-            context.read<LoginCubit>().showError('이메일 로그인/회원가입 실패');
-            Log.e('login fail');
-          },
-        );
-      } else {
+    Email.login(
+      email,
+      link,
+      onSuccess: (data) {
+        if (data.is_new ?? false) {
+          Navigator.pushNamed(
+            context,
+            Routes.terms,
+            arguments: {
+              'user': data,
+            },
+          ).then((_) => context.read<LoginCubit>().showNothing());
+          Future.delayed(
+            const Duration(milliseconds: 500),
+            () => showBottomToast(
+              context: context,
+              '가입된 계정이 없어 회원 가입 화면으로 이동합니다.',
+            ),
+          );
+        } else {
+          ShareDataProvider.loadServerData();
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            Routes.home,
+            (_) => false,
+            arguments: {'index': 0},
+          );
+        }
+      },
+      onError: (msg) {
         context.read<LoginCubit>().showError('이메일 로그인/회원가입 실패');
-        Log.e('login fail');
-      }
-    });
+      },
+      onFail: () {
+        context.read<LoginCubit>().showError('이메일 로그인/회원가입 실패');
+      },
+    );
   }
 
   void showErrorBanner(BuildContext context, String message) {
@@ -498,7 +492,8 @@ class LoginView extends StatelessWidget {
           SizedBox(height: 12.h),
           InkWell(
             key: const Key('SignedUserLoginButton'),
-            onTap: () => context.read<LoginCubit>().login(LoginType.signedLoginTest),
+            onTap: () =>
+                context.read<LoginCubit>().login(LoginType.signedLoginTest),
             child: Container(width: 1, height: 1, color: Colors.transparent),
           ),
         ],

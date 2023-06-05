@@ -1,10 +1,8 @@
-/// id : "1"
-/// nickname : "test"
-/// job_group : {"id":1,"name":"소프트웨어 엔지니어"}
-
 // ignore_for_file: avoid_dynamic_calls, test_types_in_equals
 
-class DetailUser {
+import 'package:equatable/equatable.dart';
+
+class DetailUser extends Equatable {
   DetailUser({
     int? id,
     String? nickname,
@@ -24,10 +22,11 @@ class DetailUser {
         json['job_group'] != null ? JobGroup.fromJson(json['job_group']) : null;
     _profile_img = json['profile_img'] as String?;
   }
-  int? _id;
-  String? _nickname;
-  JobGroup? _jobGroup;
-  String? _profile_img;
+  late final int? _id;
+  late final String? _nickname;
+  late final JobGroup? _jobGroup;
+  late final String? _profile_img;
+
   DetailUser copyWith({
     int? id,
     String? nickname,
@@ -69,6 +68,9 @@ class DetailUser {
   int get hashCode => super.hashCode;
 
   bool isNotEmpty() => _id != null;
+
+  @override
+  List<Object?> get props => [_id, _nickname, _jobGroup, _profile_img];
 }
 
 /// id : 1

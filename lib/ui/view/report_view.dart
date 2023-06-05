@@ -1,4 +1,6 @@
 import 'package:ac_project_app/const/colors.dart';
+import 'package:ac_project_app/const/consts.dart';
+import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/report/report.dart';
 import 'package:ac_project_app/models/report/report_result_type.dart';
@@ -24,15 +26,6 @@ class ReportView extends StatefulWidget {
 class _ReportViewState extends State<ReportView> {
   int radioValue = 0;
   List<bool> radioStateList = [true, false, false, false, false, false, false];
-  List<String> reportTypeList = [
-    'COMMERCIAL',
-    'ILLEGAL',
-    'OBSCENE',
-    'SLANDER',
-    'SPAM',
-    'PERSONAL_INFO',
-    'OTHER'
-  ];
 
   final textController = TextEditingController();
 
@@ -45,9 +38,6 @@ class _ReportViewState extends State<ReportView> {
     if (name.length > 8) {
       name = '${name.substring(0, 8)}...';
     }
-
-    final targetType = reportType == ReportType.user ? 'USER' : 'LINK';
-    final subText = reportType == ReportType.user ? '을 신고하는' : ' 게시글을 신고하는';
 
     return KeyboardDismissOnTap(
       child: Scaffold(
@@ -77,7 +67,7 @@ class _ReportViewState extends State<ReportView> {
           actions: [
             TextButton(
               onPressed: () =>
-                  reportData(context, targetType, id, textController.text),
+                  reportData(context, reportType, id, textController.text),
               style: TextButton.styleFrom(
                 disabledForegroundColor: grey400,
                 foregroundColor: primary1000,
@@ -97,7 +87,7 @@ class _ReportViewState extends State<ReportView> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ExtendedText(
-                    "'$name'$subText",
+                    "'$name'${reportType.subText}",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 20.sp,
@@ -250,16 +240,15 @@ class _ReportViewState extends State<ReportView> {
 
   void reportData(
     BuildContext context,
-    String targetType,
+    ReportType targetType,
     int id,
     String text,
   ) =>
-      ReportApi()
-          .report(
+      getIt<ReportApi>().report(
         Report(
-          targetType: targetType,
+          targetType: targetType.name,
           targetId: id,
-          reasonType: reportTypeList[radioValue],
+          reasonType: reportReasons[radioValue],
           otherReason: text,
         ),
       )

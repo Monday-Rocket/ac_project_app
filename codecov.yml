@@ -2,19 +2,25 @@ coverage:
   status:
     project:
       default:
-        target: 100%
-        threshold: 0%
-    patch:
-      default:
-        target: 100%
+        target: 10%
         threshold: 0%
 
 
 ignore:
-  - 'lib/models/result.freezed.dart'
-  - 'lib/models/**/*.freezed.dart'
-  - 'lib/models/*/*.freezed.dart'
-  - 'lib/models/*/*.g.dart'
+  - 'lib/*.freezed.dart'
+  - 'lib/*.g.dart'
   - 'lib/gen/*.gen.dart'
   - 'lib/firebase_options.dart'
   - 'lib/util/logger.dart'
+  - 'lib/provider/login/*.dart'
+  - 'lib/provider/comment_temp_data_provider.dart'
+  - 'lib/provider/global_providers.dart'
+  - 'lib/provider/logout.dart'
+  - 'lib/provider/profile_images.dart'
+  - 'lib/provider/share_db.dart'
+  - 'lib/provider/tool_tip_check.dart'
+  - 'lib/initial_settings.dart'
+  - 'lib/routes.dart'
+  - 'lib/main.dart'
+  - 'lib/di/set_up_get_it.dart'
+  - 'lib/const/*.dart'

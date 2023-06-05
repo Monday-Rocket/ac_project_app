@@ -70,24 +70,6 @@ class CustomClient extends http.BaseClient {
     );
   }
 
-  Future<Result<dynamic>> putUri(
-    String uri, {
-    Map<String, String>? headers,
-    dynamic body,
-    Encoding? encoding,
-  }) async {
-    final finalUrl = baseUrl + uri;
-    Log.i('PUT: $finalUrl');
-    return _makeResult(
-      () async => super.put(
-        Uri.parse(finalUrl),
-        headers: headers,
-        body: makeBody(body),
-        encoding: encoding,
-      ),
-    );
-  }
-
   Future<Result<dynamic>> patchUri(
     String uri, {
     Map<String, String>? headers,

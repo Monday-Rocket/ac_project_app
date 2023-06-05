@@ -1,4 +1,5 @@
 import 'package:ac_project_app/cubits/profile/profile_state.dart';
+import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/models/profile/profile.dart';
 import 'package:ac_project_app/models/user/detail_user.dart';
 import 'package:ac_project_app/provider/api/user/profile_api.dart';
@@ -11,8 +12,8 @@ class GetProfileInfoCubit extends Cubit<ProfileState> {
     loadProfileData();
   }
 
-  final userApi = UserApi();
-  final profileApi = ProfileApi();
+  final UserApi userApi = getIt();
+  final ProfileApi profileApi = getIt();
 
   Future<void> loadProfileData() async {
     if (state == ProfileLoadingState()) return;

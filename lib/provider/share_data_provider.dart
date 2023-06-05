@@ -3,6 +3,7 @@ import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/provider/api/folders/folder_api.dart';
 import 'package:ac_project_app/provider/share_db.dart';
 import 'package:ac_project_app/util/logger.dart';
@@ -106,7 +107,7 @@ class ShareDataProvider {
 
   static void loadServerData() {
     try {
-      FolderApi().getMyFoldersWithoutUnclassified().then(
+      getIt<FolderApi>().getMyFoldersWithoutUnclassified().then(
             (result) => result.when(
               success: (folders) {
                 ShareDB.loadData(folders)

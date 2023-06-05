@@ -3,35 +3,32 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ToolTipCheck {
   static Future<bool> hasNotBottomUploaded() async {
     final prefs = await SharedPreferences.getInstance();
-    final check = prefs.getBool('BottomUploadToolTip') ?? false;
-    if (!check) {
+    final hasChecked = prefs.getBool('BottomUploadToolTip') ?? false;
+    if (!hasChecked) {
       await prefs.setBool('BottomUploadToolTip', true);
       return true;
     }
     return false;
   }
 
-  static Future<bool> setBottomUploaded() async {
-    final prefs = await SharedPreferences.getInstance();
-    if (prefs.getBool('BottomUploadToolTip') ?? false) return true;
-    final result = await prefs.setBool('BottomUploadToolTip', true);
-    return result;
+  static void setBottomUploaded() {
+    SharedPreferences.getInstance().then((prefs) {
+      prefs.setBool('BottomUploadToolTip', true);
+    });
   }
 
   static Future<bool> hasNotUploadLinkInMyFolder() async {
     final prefs = await SharedPreferences.getInstance();
-    final check = prefs.getBool('UploadLinkInMyFolder') ?? false;
-    if (!check) {
-      await prefs.setBool('UploadLinkInMyFolder', true);
-      return true;
+    final hasChecked = prefs.getBool('UploadLinkInMyFolder') ?? false;
+    if (!hasChecked) {
+      return prefs.setBool('UploadLinkInMyFolder', true);
     }
     return false;
   }
 
-  static Future<bool> setMyLinkUploaded() async {
-    final prefs = await SharedPreferences.getInstance();
-    if (prefs.getBool('UploadLinkInMyFolder') ?? false) return true;
-    final result = await prefs.setBool('UploadLinkInMyFolder', true);
-    return result;
+  static void setMyLinkUploaded() {
+    SharedPreferences.getInstance().then((prefs) {
+      prefs.setBool('UploadLinkInMyFolder', true);
+    });
   }
 }
