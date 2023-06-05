@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 
 MockClient getMockClient(
-  ApiResult expected,
+  ApiResult apiExpected,
   String path, {
   bool? hasError,
   int errorCode = 404,
@@ -19,7 +19,7 @@ MockClient getMockClient(
     if (hasError ?? false) return http.Response(errorMessage, errorCode);
     if (url == '$baseUrl$path') {
       return http.Response(
-        jsonEncode(expected),
+        jsonEncode(apiExpected),
         200,
         headers: {
           HttpHeaders.contentTypeHeader: 'application/json;charset=utf-8',

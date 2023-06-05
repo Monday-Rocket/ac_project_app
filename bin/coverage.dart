@@ -5,15 +5,26 @@ void main(List<String> arguments) async {
   // brew install lcov
   // await execute('brew install lcov', skipError: true);
   await execute('flutter test --coverage');
-  await execute('lcov --remove coverage/lcov.info '
-      'lib/models/result.freezed.dart '
-      'lib/models/*/*.freezed.dart '
-      'lib/models/*/*.g.dart '
+  await execute('../../Downloads/lcov-1.16/bin/lcov --remove coverage/lcov.info '
+      'lib/main.dart '
+      'lib/initial_settings.dart '
+      'lib/routes.dart '
+      'lib/provider/login/*.dart '
+      'lib/provider/comment_temp_data_provider.dart '
+      'lib/provider/global_providers.dart '
+      'lib/provider/logout.dart '
+      'lib/provider/profile_images.dart '
+      'lib/provider/share_db.dart '
+      'lib/provider/tool_tip_check.dart '
+      'lib/*.freezed.dart '
+      'lib/*.g.dart '
       'lib/gen/*.gen.dart '
       'lib/firebase_options.dart '
       'lib/util/logger.dart '
+      'lib/di/set_up_get_it.dart '
+      'lib/const/*.dart '
       '-o coverage/lcov.info');
-  await execute('genhtml coverage/lcov.info -o coverage/html');
+  await execute('../../Downloads/lcov-1.16/bin/genhtml coverage/lcov.info -o coverage/html');
   await execute('open coverage/html/index.html');
 }
 

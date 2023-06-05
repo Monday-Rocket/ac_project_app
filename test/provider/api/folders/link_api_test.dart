@@ -234,6 +234,179 @@ void main() {
       error: (e) => expect(e, apiExpected.message),
     );
   });
+
+  test('getUnClassifiedLinks success test', () async {
+    final apiExpected = ApiResult(
+      status: 0,
+      data: const SearchedLinks(
+        pageNum: 0,
+        pageSize: 10,
+        totalCount: 2,
+        totalPage: 1,
+        contents: [
+          Link(
+            id: 1,
+            title: '링크제목1',
+            url: 'https://www.naver.com',
+            time: '2023-05-15T10:30:00.861975',
+          ),
+          Link(
+            id: 2,
+            title: '링크제목2',
+            url: 'https://www.naver.com',
+            time: '2023-05-15T10:30:00.861975',
+          ),
+        ],
+      ),
+    );
+
+    const pageNum = 0;
+
+    final mockClient = getMockClient(
+      apiExpected,
+      '/links/unclassified?page_no=$pageNum&page_size=10',
+    );
+    final api = getLinkApi(mockClient);
+    final result = await api.getUnClassifiedLinks(pageNum);
+
+    result.when(
+      success: (data) => expect(data, apiExpected.data),
+      error: fail,
+    );
+  });
+
+  test('deleteLink Success Test', () async {
+    final apiExpected = ApiResult(
+      status: 0,
+    );
+
+    const link = Link(
+      id: 1,
+      title: '링크제목1',
+      url: 'https://www.naver.com',
+      time: '2023-05-15T10:30:00.861975',
+    );
+
+    final mockClient = getMockClient(apiExpected, '/links/${link.id}');
+    final api = getLinkApi(mockClient);
+    final result = await api.deleteLink(link);
+
+    expect(result, true);
+  });
+  
+  test('searchOtherLinks success test', () async {
+    final apiExpected = ApiResult(
+      status: 0,
+      data: const SearchedLinks(
+        pageNum: 0,
+        pageSize: 10,
+        totalCount: 2,
+        totalPage: 1,
+        contents: [
+          Link(
+            id: 3,
+            title: 'keyword1',
+            url: 'https://www.naver.com',
+            time: '2023-05-15T10:30:00.861975',
+            folderId: 1,
+          ),
+          Link(
+            id: 4,
+            title: 'keyword2',
+            url: 'https://www.naver.com',
+            time: '2023-05-15T10:30:00.861975',
+            folderId: 1,
+          ),
+        ],
+      ),
+    );
+
+    const keyword = 'keyword';
+    const pageNum = 0;
+
+    final mockClient = getMockClient(
+      apiExpected,
+      '/links/search?'
+          'my_links_only=false&'
+          'keyword=$keyword&'
+          'page_no=$pageNum&'
+          'page_size=10',
+    );
+    final api = getLinkApi(mockClient);
+    final result = await api.searchOtherLinks(keyword, pageNum);
+
+    result.when(
+      success: (data) => expect(data, apiExpected.data),
+      error: fail,
+    );
+  });
+
+  test('search my links', () async {
+    final apiExpected = ApiResult(
+      status: 0,
+      data: const SearchedLinks(
+        pageNum: 0,
+        pageSize: 10,
+        totalCount: 2,
+        totalPage: 1,
+        contents: [
+          Link(
+            id: 3,
+            title: 'keyword1',
+            url: 'https://www.naver.com',
+            time: '2023-05-15T10:30:00.861975',
+            folderId: 1,
+          ),
+          Link(
+            id: 4,
+            title: 'keyword2',
+            url: 'https://www.naver.com',
+            time: '2023-05-15T10:30:00.861975',
+            folderId: 1,
+          ),
+        ],
+      ),
+    );
+
+    const keyword = 'keyword';
+    const pageNum = 0;
+
+    final mockClient = getMockClient(
+      apiExpected,
+      '/links/search?'
+          'my_links_only=true&'
+          'keyword=$keyword&'
+          'page_no=$pageNum&'
+          'page_size=10',
+    );
+    final api = getLinkApi(mockClient);
+    final result = await api.searchMyLinks(keyword, pageNum);
+
+    result.when(
+      success: (data) => expect(data, apiExpected.data),
+      error: fail,
+    );
+  });
+
+  test('changeFolder success test', () async {
+    final apiExpected = ApiResult(
+      status: 0,
+    );
+
+    const link = Link(
+      id: 1,
+      title: '링크제목1',
+      url: 'https://www.naver.com',
+      time: '2023-05-15T10:30:00.861975',
+      folderId: 1,
+    );
+
+    final mockClient = getMockClient(apiExpected, '/links/${link.id}');
+    final api = getLinkApi(mockClient);
+    final result = await api.changeFolder(link, 2);
+
+    expect(result, true);
+  });
 }
 
 LinkApi getLinkApi(MockClient mockClient) {
