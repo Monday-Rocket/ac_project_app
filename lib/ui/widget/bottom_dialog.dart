@@ -165,7 +165,7 @@ Future<bool?> showChangeFolderDialog(Link link, BuildContext parentContext) {
                                   .changeFolder(link, folderId)
                                   .then((result) {
                                 Navigator.pop(context);
-                                Navigator.pop(context);
+                                Navigator.pop(context, 'changed');
                                 if (result) {
                                   showBottomToast(
                                     context: context,

@@ -156,7 +156,7 @@ class LinkDetailView extends StatelessWidget {
               keyboardVisible: visible,
               onPressed: () =>
                   cubitContext.read<DetailEditCubit>().saveComment(link).then(
-                        (value) => value ? Navigator.pop(context) : null,
+                        (value) => value ? Navigator.pop(context, 'changed') : null,
                       ),
             );
           } else {
