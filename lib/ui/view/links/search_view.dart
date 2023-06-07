@@ -12,6 +12,7 @@ import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/bottom_dialog.dart';
+import 'package:ac_project_app/ui/widget/link_hero.dart';
 import 'package:ac_project_app/ui/widget/user/user_info.dart';
 import 'package:ac_project_app/util/get_arguments.dart';
 import 'package:ac_project_app/util/string_utils.dart';
@@ -222,39 +223,42 @@ class _SearchViewState extends State<SearchView> {
                                 top: 16.h,
                                 bottom: 18.h,
                               ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(7.r),
-                                ),
-                                child: hasHttpImageUrl(link)
-                                    ? Container(
-                                        constraints: const BoxConstraints(
-                                          minWidth: double.infinity,
-                                        ),
-                                        color: grey100,
-                                        child: CachedNetworkImage(
-                                          imageUrl: link.image ?? '',
-                                          fadeInDuration:
-                                              const Duration(milliseconds: 300),
-                                          fadeOutDuration:
-                                              const Duration(milliseconds: 300),
-                                          imageBuilder:
-                                              (context, imageProvider) =>
-                                                  Container(
-                                            height: 160.h,
-                                            decoration: BoxDecoration(
-                                              image: DecorationImage(
-                                                image: imageProvider,
-                                                fit: BoxFit.cover,
+                              child: LinkHero(
+                                tag: 'linkImage${link.id}',
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(7.r),
+                                  ),
+                                  child: hasHttpImageUrl(link)
+                                      ? Container(
+                                          constraints: const BoxConstraints(
+                                            minWidth: double.infinity,
+                                          ),
+                                          color: grey100,
+                                          child: CachedNetworkImage(
+                                            imageUrl: link.image ?? '',
+                                            fadeInDuration:
+                                                const Duration(milliseconds: 300),
+                                            fadeOutDuration:
+                                                const Duration(milliseconds: 300),
+                                            imageBuilder:
+                                                (context, imageProvider) =>
+                                                    Container(
+                                              height: 160.h,
+                                              decoration: BoxDecoration(
+                                                image: DecorationImage(
+                                                  image: imageProvider,
+                                                  fit: BoxFit.cover,
+                                                ),
                                               ),
                                             ),
+                                            errorWidget: (_, __, ___) {
+                                              return const SizedBox();
+                                            },
                                           ),
-                                          errorWidget: (_, __, ___) {
-                                            return const SizedBox();
-                                          },
-                                        ),
-                                      )
-                                    : const SizedBox(),
+                                        )
+                                      : const SizedBox(),
+                                ),
                               ),
                             ),
                             Column(
@@ -267,13 +271,16 @@ class _SearchViewState extends State<SearchView> {
                                   children: [
                                     SizedBox(
                                       width: (width - (24 * 2 + 25)).w,
-                                      child: Text(
-                                        link.title ?? '',
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          color: blackBold,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16.sp,
+                                      child: LinkHero(
+                                        tag: 'linkTitle${link.id}',
+                                        child: Text(
+                                          link.title ?? '',
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            color: blackBold,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16.sp,
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -310,13 +317,16 @@ class _SearchViewState extends State<SearchView> {
                                 SizedBox(height: 6.h),
                                 Padding(
                                   padding: EdgeInsets.only(right: 25.w),
-                                  child: Text(
-                                    link.url ?? '',
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      color: grey500,
-                                      fontSize: 12.sp,
+                                  child: LinkHero(
+                                    tag: 'linkUrl${link.id}',
+                                    child: Text(
+                                      link.url ?? '',
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        color: grey500,
+                                        fontSize: 12.sp,
+                                      ),
                                     ),
                                   ),
                                 ),
