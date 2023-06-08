@@ -12,6 +12,7 @@ import 'package:ac_project_app/provider/comment_temp_data_provider.dart';
 import 'package:ac_project_app/ui/widget/bottom_dialog.dart';
 import 'package:ac_project_app/ui/widget/buttons/bottom_sheet_button.dart';
 import 'package:ac_project_app/ui/widget/dialog.dart';
+import 'package:ac_project_app/ui/widget/link_hero.dart';
 import 'package:ac_project_app/ui/widget/user/user_info.dart';
 import 'package:ac_project_app/util/date_utils.dart';
 import 'package:ac_project_app/util/get_arguments.dart';
@@ -155,7 +156,7 @@ class LinkDetailView extends StatelessWidget {
               keyboardVisible: visible,
               onPressed: () =>
                   cubitContext.read<DetailEditCubit>().saveComment(link).then(
-                        (value) => value ? Navigator.pop(context) : null,
+                        (value) => value ? Navigator.pop(context, 'changed') : null,
                       ),
             );
           } else {
@@ -243,30 +244,33 @@ class LinkDetailView extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(10.r),
-                        topRight: Radius.circular(10.r),
-                      ),
-                      child: Image.network(
-                        link.image ?? '',
-                        fit: BoxFit.cover,
-                        width: MediaQuery.of(cubitContext).size.width - 48.w,
-                        height: 193.h,
-                        errorBuilder: (_, __, ___) {
-                          return Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(10.r),
-                                topRight: Radius.circular(10.r),
+                    LinkHero(
+                      tag: 'linkImage${link.id}',
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(10.r),
+                          topRight: Radius.circular(10.r),
+                        ),
+                        child: Image.network(
+                          link.image ?? '',
+                          fit: BoxFit.cover,
+                          width: MediaQuery.of(cubitContext).size.width - 48.w,
+                          height: 193.h,
+                          errorBuilder: (_, __, ___) {
+                            return Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(10.r),
+                                  topRight: Radius.circular(10.r),
+                                ),
                               ),
-                            ),
-                            width:
-                                MediaQuery.of(cubitContext).size.width - 48.w,
-                            height: 10.h,
-                          );
-                        },
+                              width:
+                                  MediaQuery.of(cubitContext).size.width - 48.w,
+                              height: 10.h,
+                            );
+                          },
+                        ),
                       ),
                     ),
                     DecoratedBox(
@@ -284,27 +288,33 @@ class LinkDetailView extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                link.title ?? '',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontSize: 17.sp,
-                                  color: blackBold,
-                                  letterSpacing: -0.2.w,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(top: 7.h),
+                              LinkHero(
+                                tag: 'linkTitle${link.id}',
                                 child: Text(
-                                  link.url ?? '',
+                                  link.title ?? '',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
-                                    fontSize: 12.sp,
-                                    color: const Color(0xFFC0C2C4),
-                                    letterSpacing: -0.1.w,
+                                    fontSize: 17.sp,
+                                    color: blackBold,
+                                    letterSpacing: -0.2.w,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                              LinkHero(
+                                tag: 'linkUrl${link.id}',
+                                child: Container(
+                                  margin: EdgeInsets.only(top: 7.h),
+                                  child: Text(
+                                    link.url ?? '',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontSize: 12.sp,
+                                      color: const Color(0xFFC0C2C4),
+                                      letterSpacing: -0.1.w,
+                                    ),
                                   ),
                                 ),
                               ),

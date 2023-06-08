@@ -15,11 +15,13 @@ import 'package:ac_project_app/provider/api/folders/link_api.dart';
 import 'package:ac_project_app/provider/tool_tip_check.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
+import 'package:ac_project_app/ui/widget/link_hero.dart';
 import 'package:ac_project_app/ui/widget/scaffold_with_tool_tip.dart';
 import 'package:ac_project_app/ui/widget/shape/reverse_triangle_painter.dart';
 import 'package:ac_project_app/ui/widget/slidable/link_slidable_widget.dart';
 import 'package:ac_project_app/ui/widget/widget_offset.dart';
 import 'package:ac_project_app/util/get_arguments.dart';
+import 'package:ac_project_app/util/logger.dart';
 import 'package:ac_project_app/util/number_commas.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -497,7 +499,6 @@ class MyLinkView extends StatelessWidget {
   ) {
     return InkWell(
       onTap: () {
-        context.read<LinksFromSelectedFolderCubit>().loading();
         Navigator.pushNamed(
           context,
           Routes.linkDetail,
@@ -506,9 +507,8 @@ class MyLinkView extends StatelessWidget {
             'isMine': true,
           },
         ).then((result) {
-          if (result == 'deleted') {
-            Navigator.pop(context);
-          } else {
+          Log.i(result);
+          if (result == 'changed') {
             // update
             totalLinks.clear();
 
@@ -516,6 +516,8 @@ class MyLinkView extends StatelessWidget {
             context
                 .read<LinksFromSelectedFolderCubit>()
                 .getSelectedLinks(folder, 0);
+          } else if (result == 'deleted') {
+            Navigator.pop(context);
           }
         });
       },
@@ -609,36 +611,39 @@ class MyLinkView extends StatelessWidget {
           ),
           Padding(
             padding: EdgeInsets.only(right: 4.w),
-            child: ClipRRect(
-              borderRadius: BorderRadius.all(
-                Radius.circular(7.r),
-              ),
-              child: ColoredBox(
-                color: grey100,
-                child: link.image != null && link.image!.isNotEmpty
-                    ? CachedNetworkImage(
-                        imageUrl: link.image ?? '',
-                        imageBuilder: (context, imageProvider) => Container(
-                          width: 159.w,
-                          height: 116.h,
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                              image: imageProvider,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                        errorWidget: (_, __, ___) {
-                          return SizedBox(
+            child: LinkHero(
+              tag: 'linkImage${link.id}',
+              child: ClipRRect(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(7.r),
+                ),
+                child: ColoredBox(
+                  color: grey100,
+                  child: link.image != null && link.image!.isNotEmpty
+                      ? CachedNetworkImage(
+                          imageUrl: link.image ?? '',
+                          imageBuilder: (context, imageProvider) => Container(
                             width: 159.w,
                             height: 116.h,
-                          );
-                        },
-                      )
-                    : SizedBox(
-                        width: 159.w,
-                        height: 116.h,
-                      ),
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: imageProvider,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          errorWidget: (_, __, ___) {
+                            return SizedBox(
+                              width: 159.w,
+                              height: 116.h,
+                            );
+                          },
+                        )
+                      : SizedBox(
+                          width: 159.w,
+                          height: 116.h,
+                        ),
+                ),
               ),
             ),
           )
