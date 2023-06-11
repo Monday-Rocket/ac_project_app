@@ -1,13 +1,16 @@
 import 'dart:async';
 
 import 'package:ac_project_app/cubits/login/login_type.dart';
+import 'package:ac_project_app/models/link/link.dart' as MyLink;
 import 'package:ac_project_app/provider/login/firebase_auth_remote_data_source.dart';
+import 'package:ac_project_app/util/logger.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 import 'package:kakao_flutter_sdk_share/kakao_flutter_sdk_share.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:ac_project_app/models/link/link.dart' as MyLink;
 
 class Kakao {
   static Future<bool> login() async {
@@ -85,24 +88,36 @@ class Kakao {
         title: link.title ?? '',
         imageUrl: Uri.parse(link.image ?? ''),
         link: Link(
-          webUrl: Uri.parse(link.url ?? ''),
-          mobileWebUrl: Uri.parse(link.url ?? ''),
-
+          androidExecutionParams: {'linkId': '${link.id}'},
+          iosExecutionParams: {'linkId': '${link.id}'},
         ),
+        description: link.describe ?? '',
       ),
       itemContent: ItemContent(
-        profileImageUrl: Uri.parse('https://is4-ssl.mzstatic.com/image/thumb/Purple116/v4/93/92/c7/9392c7d0-4e50-1240-9716-0df433767bdd/AppIcon-1x_U007emarketing-0-6-0-85-220.png/460x0w.webp'),
+        profileImageUrl: Uri.parse(
+          'https://is4-ssl.mzstatic.com/image/thumb/Purple116/v4/93/92/c7/9392c7d0-4e50-1240-9716-0df433767bdd/AppIcon-1x_U007emarketing-0-6-0-85-220.png/460x0w.webp',
+        ),
         profileText: link.user?.nickname ?? '',
       ),
-      buttonTitle: '링크풀에서 확인하기',
+      buttons: [
+        Button(
+          title: '링크풀에서 확인하기',
+          link: Link(
+            androidExecutionParams: {'linkId': '${link.id}'},
+            iosExecutionParams: {'linkId': '${link.id}'},
+          ),
+        ),
+      ],
     );
 
     // 카카오톡 실행 가능 여부 확인
-    final isKakaoTalkSharingAvailable = await ShareClient.instance.isKakaoTalkSharingAvailable();
+    final isKakaoTalkSharingAvailable =
+        await ShareClient.instance.isKakaoTalkSharingAvailable();
 
     if (isKakaoTalkSharingAvailable) {
       try {
-        final uri = await ShareClient.instance.shareDefault(template: defaultFeed);
+        final uri =
+            await ShareClient.instance.shareDefault(template: defaultFeed);
         await ShareClient.instance.launchKakaoTalk(uri);
         print('카카오톡 공유 완료');
       } catch (error) {
@@ -110,11 +125,42 @@ class Kakao {
       }
     } else {
       try {
-        final shareUrl = await WebSharerClient.instance.makeDefaultUrl(template: defaultFeed);
+        final shareUrl = await WebSharerClient.instance
+            .makeDefaultUrl(template: defaultFeed);
         await launchBrowserTab(shareUrl, popupOpen: true);
       } catch (error) {
         print('카카오톡 공유 실패 $error');
       }
+    }
+  }
+
+  static void receiveLink(BuildContext context, {String? url}) {
+    if (url != null) {
+      _receiveLink(url, context);
+    } else {
+      kakaoSchemeStream.listen(
+        (url) {
+          if (url != null) {
+            _receiveLink(url, context);
+          }
+        },
+        onError: Log.e,
+      );
+    }
+  }
+
+  static void _receiveLink(String url, BuildContext context) {
+    final query = Uri.parse(url).queryParameters;
+    final linkId = query['linkId'] ?? '';
+    if (linkId.isNotEmpty) {
+      // TODO API 조회 linkId로
+      // Navigator.pushNamed(
+      //   context,
+      //   Routes.linkDetail,
+      //   arguments: {
+      //     'linkId': linkId,
+      //   },
+      // );
     }
   }
 }
