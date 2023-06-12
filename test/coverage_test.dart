@@ -79,7 +79,7 @@ import 'package:ac_project_app/provider/login/email_login.dart';
 import 'package:ac_project_app/provider/login/email_password.dart';
 import 'package:ac_project_app/provider/login/firebase_auth_remote_data_source.dart';
 import 'package:ac_project_app/provider/login/google_login.dart';
-import 'package:ac_project_app/provider/login/kakao_login.dart';
+import 'package:ac_project_app/provider/kakao/kakao.dart';
 import 'package:ac_project_app/provider/login/naver_login.dart';
 import 'package:ac_project_app/provider/logout.dart';
 import 'package:ac_project_app/provider/profile_images.dart';

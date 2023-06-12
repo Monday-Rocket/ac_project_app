@@ -133,7 +133,7 @@ class CustomClient extends http.BaseClient {
         if (apiResult.error == null && apiResult.status == 0) {
           return Result.success(apiResult.data);
         } else {
-          Log.e(apiResult.error!.message);
+          Log.e(apiResult.message);
           return Result.error('${apiResult.status}');
         }
       } else if (response.statusCode == 400) {
@@ -142,12 +142,16 @@ class CustomClient extends http.BaseClient {
           jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>,
         );
         // 결과 출력
-        Log.e(apiResult);
-        return Result.error('${apiResult.status}');
+        Log.e(apiResult.toJson());
+        if (apiResult.status == 3000 || apiResult.status == 2001) {
+          return Result.error('${apiResult.status}');
+        } else {
+          return Result.error(apiResult.message ?? '예상치 못한 에러');
+        }
       }
       final errorMessage = 'Network Error: ${response.statusCode}';
       Log.e(errorMessage);
-      return Result.error(errorMessage);
+      return Result.error(response.statusCode.toString());
     } catch (e) {
       Log.e(e);
       return const Result.error('통신 에러');

@@ -10,6 +10,7 @@ import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/models/report/report_type.dart';
 import 'package:ac_project_app/models/user/detail_user.dart';
 import 'package:ac_project_app/provider/api/folders/link_api.dart';
+import 'package:ac_project_app/provider/kakao/kakao.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/page/my_folder/folder_visible_state.dart';
 import 'package:ac_project_app/ui/widget/add_folder/folder_add_title.dart';
@@ -70,6 +71,12 @@ Future<bool?> showMyLinkOptionsDialog(
                                 '링크 주소가 복사 되었어요!',
                               ),
                             );
+                          },
+                        ),
+                        _buildItem(
+                          '카카오톡 공유',
+                          callback: () {
+                            Kakao.sendKakaoShare(link);
                           },
                         ),
                         _buildItem(
@@ -234,6 +241,12 @@ Future<bool?> showLinkOptionsDialog(
                             link.url ?? '',
                             subject: link.title,
                           ),
+                        ),
+                        _buildItem(
+                          '카카오톡 공유',
+                          callback: () {
+                            Kakao.sendKakaoShare(link);
+                          },
                         ),
                         _buildItem(
                           '내 폴더 담기',
