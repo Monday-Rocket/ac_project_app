@@ -213,7 +213,7 @@ void main() {
   test('getJobGroupLinks apiError test', () async {
     final apiExpected = ApiResult(
       status: 1,
-      message: 'Network Error: 404',
+      message: '404',
     );
 
     const jobGroup = 1;

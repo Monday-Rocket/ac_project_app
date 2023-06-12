@@ -142,8 +142,8 @@ class CustomClient extends http.BaseClient {
           jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>,
         );
         // 결과 출력
-        Log.e(apiResult);
-        if (apiResult.status == '3000' || apiResult.status == '2001') {
+        Log.e(apiResult.toJson());
+        if (apiResult.status == 3000 || apiResult.status == 2001) {
           return Result.error('${apiResult.status}');
         } else {
           return Result.error(apiResult.message ?? '예상치 못한 에러');
