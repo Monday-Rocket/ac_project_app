@@ -6,7 +6,6 @@ import 'package:ac_project_app/models/result.dart';
 import 'package:ac_project_app/provider/api/custom_client.dart';
 
 class LinkApi {
-  
   LinkApi(this._client);
 
   final CustomClient _client;
@@ -166,6 +165,17 @@ class LinkApi {
       error: (_) {
         return false;
       },
+    );
+  }
+
+  Future<Result<Link>> getLinkFromId(String linkId) async {
+    final result = await _client.getUri('/links/$linkId');
+
+    return result.when(
+      success: (data) => Result.success(
+        Link.fromJson(data as Map<String, dynamic>),
+      ),
+      error: Result.error,
     );
   }
 }

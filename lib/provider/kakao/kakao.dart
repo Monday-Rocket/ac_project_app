@@ -1,8 +1,12 @@
 import 'dart:async';
 
 import 'package:ac_project_app/cubits/login/login_type.dart';
+import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/models/link/link.dart' as MyLink;
+import 'package:ac_project_app/provider/api/folders/link_api.dart';
 import 'package:ac_project_app/provider/login/firebase_auth_remote_data_source.dart';
+import 'package:ac_project_app/routes.dart';
+import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -93,12 +97,6 @@ class Kakao {
         ),
         description: link.describe ?? '',
       ),
-      itemContent: ItemContent(
-        profileImageUrl: Uri.parse(
-          'https://is4-ssl.mzstatic.com/image/thumb/Purple116/v4/93/92/c7/9392c7d0-4e50-1240-9716-0df433767bdd/AppIcon-1x_U007emarketing-0-6-0-85-220.png/460x0w.webp',
-        ),
-        profileText: link.user?.nickname ?? '',
-      ),
       buttons: [
         Button(
           title: '링크풀에서 확인하기',
@@ -153,14 +151,24 @@ class Kakao {
     final query = Uri.parse(url).queryParameters;
     final linkId = query['linkId'] ?? '';
     if (linkId.isNotEmpty) {
-      // TODO API 조회 linkId로
-      // Navigator.pushNamed(
-      //   context,
-      //   Routes.linkDetail,
-      //   arguments: {
-      //     'linkId': linkId,
-      //   },
-      // );
+      getIt<LinkApi>().getLinkFromId(linkId).then((result) {
+        result.when(
+          success: (link) {
+            Navigator.pushNamed(
+              context,
+              Routes.linkDetail,
+              arguments: {
+                'link': link,
+              },
+            );
+          },
+          error: (msg) {
+            var errorMessage = msg;
+            if (msg.isEmpty || msg == '404') errorMessage = '링크 정보를 확인할 수 없습니다.';
+            showBottomToast(context: context, errorMessage);
+          },
+        );
+      });
     }
   }
 }
