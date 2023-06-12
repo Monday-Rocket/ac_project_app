@@ -93,19 +93,21 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
 
           final bottomItems = [
             BottomNavigationBarItem(
-              icon: Container(
-                padding: const EdgeInsets.all(2),
-                width: 24.w,
-                height: 24.h,
-                child: icons[0],
+              icon: Column(
+                children: [
+                  SizedBox(
+                    width: 24.w,
+                    height: 24.h,
+                    child: icons[0],
+                  ),
+                ],
               ),
-              label: '홈',
+              label: '마이폴더',
             ),
             BottomNavigationBarItem(
               icon: Container(
                 key: uploadToolTipButtonKey,
-                child: Container(
-                  padding: const EdgeInsets.all(2),
+                child: SizedBox(
                   width: 24.w,
                   height: 24.h,
                   child: icons[1],
@@ -114,17 +116,15 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
               label: '업로드',
             ),
             BottomNavigationBarItem(
-              icon: Container(
-                padding: const EdgeInsets.all(2),
+              icon: SizedBox(
                 width: 24.w,
                 height: 24.h,
                 child: icons[2],
               ),
-              label: '마이폴더',
+              label: '탐색',
             ),
             BottomNavigationBarItem(
-              icon: Container(
-                padding: const EdgeInsets.all(2),
+              icon: SizedBox(
                 width: 24.w,
                 height: 24.h,
                 child: icons[3],
@@ -222,6 +222,15 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
         children: <Widget>[
           MultiBlocProvider(
             providers: [
+              BlocProvider<FolderViewTypeCubit>(
+                create: (_) => FolderViewTypeCubit(),
+              ),
+            ],
+            child: const MyFolderPage(),
+          ),
+          const Scaffold(),
+          MultiBlocProvider(
+            providers: [
               BlocProvider(
                 create: (_) => GetJobListCubit(),
               ),
@@ -230,15 +239,6 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
               ),
             ],
             child: const HomePage(),
-          ),
-          const Scaffold(),
-          MultiBlocProvider(
-            providers: [
-              BlocProvider<FolderViewTypeCubit>(
-                create: (_) => FolderViewTypeCubit(),
-              ),
-            ],
-            child: const MyFolderPage(),
           ),
           const MyPage(),
         ],
@@ -257,13 +257,13 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
         currentIndex: index,
         onTap: (index) {
           if (index == 0) {
-            context.read<LinksFromSelectedJobGroupCubit>().refresh();
+            context.read<GetFoldersCubit>().getFolders();
             context.read<HomeViewCubit>().moveTo(index);
           } else if (index == 1) {
             ToolTipCheck.setBottomUploaded();
             pushUploadView(context);
           } else if (index == 2) {
-            context.read<GetFoldersCubit>().getFolders();
+            context.read<LinksFromSelectedJobGroupCubit>().refresh();
             context.read<HomeViewCubit>().moveTo(index);
           } else {
             context.read<HomeViewCubit>().moveTo(index);
@@ -283,7 +283,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
               '링크가 저장되었어요!',
               callback: () {
                 context.read<GetFoldersCubit>().getFolders();
-                context.read<HomeViewCubit>().moveTo(2);
+                context.read<HomeViewCubit>().moveTo(0);
               },
             );
           }
@@ -294,16 +294,16 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
 
   List<SvgPicture> getBottomIcons(int index) {
     final enabledIcons = [
-      SvgPicture.asset(Assets.images.icHome),
-      SvgPicture.asset(Assets.images.icUpload),
       SvgPicture.asset(Assets.images.icMyfolder),
+      SvgPicture.asset(Assets.images.icUpload),
+      SvgPicture.asset(Assets.images.icSearch),
       SvgPicture.asset(Assets.images.icMypage),
     ];
 
     final disabledIcons = [
-      SvgPicture.asset(Assets.images.icHomeDisabled),
-      SvgPicture.asset(Assets.images.icUploadDisabled),
       SvgPicture.asset(Assets.images.icMyfolderDisabled),
+      SvgPicture.asset(Assets.images.icUploadDisabled),
+      SvgPicture.asset(Assets.images.icSearchDisabled),
       SvgPicture.asset(Assets.images.icMypageDisabled),
     ];
 

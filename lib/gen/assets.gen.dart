@@ -61,12 +61,6 @@ class $AssetsImagesGen {
   /// File path: assets/images/ic_change.svg
   String get icChange => 'assets/images/ic_change.svg';
 
-  /// File path: assets/images/ic_home.svg
-  String get icHome => 'assets/images/ic_home.svg';
-
-  /// File path: assets/images/ic_home_disabled.svg
-  String get icHomeDisabled => 'assets/images/ic_home_disabled.svg';
-
   /// File path: assets/images/ic_lock.png
   AssetGenImage get icLockPng =>
       const AssetGenImage('assets/images/ic_lock.png');
@@ -85,6 +79,12 @@ class $AssetsImagesGen {
 
   /// File path: assets/images/ic_mypage_disabled.svg
   String get icMypageDisabled => 'assets/images/ic_mypage_disabled.svg';
+
+  /// File path: assets/images/ic_search.svg
+  String get icSearch => 'assets/images/ic_search.svg';
+
+  /// File path: assets/images/ic_search_disabled.svg
+  String get icSearchDisabled => 'assets/images/ic_search_disabled.svg';
 
   /// File path: assets/images/ic_upload.svg
   String get icUpload => 'assets/images/ic_upload.svg';
@@ -154,14 +154,14 @@ class $AssetsImagesGen {
         gridIcon,
         icBack,
         icChange,
-        icHome,
-        icHomeDisabled,
         icLockPng,
         icLockSvg,
         icMyfolder,
         icMyfolderDisabled,
         icMypage,
         icMypageDisabled,
+        icSearch,
+        icSearchDisabled,
         icUpload,
         icUploadDisabled,
         icWriteComment,
