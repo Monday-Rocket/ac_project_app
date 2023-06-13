@@ -421,11 +421,16 @@ class LoginView extends StatelessWidget {
                                   disabledForegroundColor: Colors.white,
                                 ),
                                 onPressed: allChecked
-                                    ? () => Navigator.pushNamed(
-                                          context,
-                                          Routes.signUpNickname,
-                                          arguments: user,
-                                        )
+                                    ? () {
+                                        Navigator.pop(context);
+                                        Future.microtask(
+                                          () => Navigator.pushNamed(
+                                            context,
+                                            Routes.signUpNickname,
+                                            arguments: user,
+                                          ),
+                                        );
+                                      }
                                     : null,
                                 child: Text(
                                   '약관동의',
