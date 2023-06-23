@@ -15,7 +15,7 @@ import 'package:ac_project_app/ui/widget/add_folder/folder_add_title.dart';
 import 'package:ac_project_app/ui/widget/add_folder/horizontal_folder_list.dart';
 import 'package:ac_project_app/ui/widget/add_folder/subtitle.dart';
 import 'package:ac_project_app/ui/widget/buttons/bottom_sheet_button.dart';
-import 'package:ac_project_app/ui/widget/dialog.dart';
+import 'package:ac_project_app/ui/widget/dialog/center_dialog.dart';
 import 'package:ac_project_app/ui/widget/loading.dart';
 import 'package:ac_project_app/util/get_arguments.dart';
 import 'package:ac_project_app/util/logger.dart';
