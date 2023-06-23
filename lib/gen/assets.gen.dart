@@ -68,6 +68,10 @@ class $AssetsImagesGen {
   /// File path: assets/images/ic_lock.svg
   String get icLockSvg => 'assets/images/ic_lock.svg';
 
+  /// File path: assets/images/ic_lock_color.png
+  AssetGenImage get icLockColor =>
+      const AssetGenImage('assets/images/ic_lock_color.png');
+
   /// File path: assets/images/ic_myfolder.svg
   String get icMyfolder => 'assets/images/ic_myfolder.svg';
 
@@ -156,6 +160,7 @@ class $AssetsImagesGen {
         icChange,
         icLockPng,
         icLockSvg,
+        icLockColor,
         icMyfolder,
         icMyfolderDisabled,
         icMypage,

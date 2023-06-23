@@ -14,10 +14,9 @@ import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/profile/profile_image.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/add_folder/show_add_folder_dialog.dart';
-import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/custom_reorderable_list_view.dart';
+import 'package:ac_project_app/ui/widget/dialog/center_dialog.dart';
 import 'package:ac_project_app/ui/widget/rename_folder/show_rename_folder_dialog.dart';
-import 'package:ac_project_app/ui/widget/text/custom_font.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:ac_project_app/util/number_commas.dart';
 import 'package:flutter/material.dart';
@@ -512,7 +511,7 @@ class _MyFolderPageState extends State<MyFolderPage>
                           ),
                           InkWell(
                             onTap: () =>
-                                deleteFolder(parentContext, currFolder),
+                                deleteFolderDialog(parentContext, currFolder),
                             child: Container(
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.all(
@@ -571,103 +570,6 @@ class _MyFolderPageState extends State<MyFolderPage>
       if (value) {
         Navigator.pop(context, true);
         context.read<GetFoldersCubit>().getFolders();
-      }
-    });
-  }
-
-  void deleteFolder(BuildContext context, Folder folder) {
-    final width = MediaQuery.of(context).size.width;
-    showDialog<bool?>(
-      context: context,
-      builder: (ctx) {
-        return AlertDialog(
-          backgroundColor: Colors.transparent,
-          content: Container(
-            width: width - 45 * 2,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.all(
-                Radius.circular(16.r),
-              ),
-            ),
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: GestureDetector(
-                      onTap: () => Navigator.pop(context),
-                      child: Icon(
-                        Icons.close_rounded,
-                        size: 24.r,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(top: 2.h, bottom: 10.h),
-                    child: Text(
-                      '폴더를 삭제하시겠어요?',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 20.sp,
-                        color: grey900,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  Text(
-                    '폴더를 삭제하면, 폴더 안에 있는\n콘텐츠도 사라져요',
-                    style: TextStyle(
-                      color: grey500,
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(
-                      top: 33.h,
-                      left: 6.w,
-                      right: 6.w,
-                      bottom: 6.h,
-                    ),
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: Size.fromHeight(48.h),
-                        backgroundColor: primary600,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      onPressed: () {
-                        final cubit = context.read<GetFoldersCubit>();
-                        cubit.delete(folder).then((result) {
-                          Navigator.pop(context, true);
-                          cubit.getFolders();
-                          if (result) {
-                            showBottomToast(context: context, '폴더가 삭제되었어요!');
-                          }
-                        });
-                      },
-                      child: Text(
-                        '삭제하기',
-                        style: TextStyle(color: Colors.white, fontSize: 16.sp),
-                      ).bold(),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    ).then((bool? value) {
-      Navigator.pop(context);
-      if (value ?? false) {
-        // 삭제 토스트가 두번뜨는 이슈 수정
-        //showBottomToast(context:context,'폴더가 삭제되었어요!');
       }
     });
   }

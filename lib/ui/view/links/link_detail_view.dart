@@ -9,9 +9,9 @@ import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/provider/comment_temp_data_provider.dart';
-import 'package:ac_project_app/ui/widget/bottom_dialog.dart';
 import 'package:ac_project_app/ui/widget/buttons/bottom_sheet_button.dart';
-import 'package:ac_project_app/ui/widget/dialog.dart';
+import 'package:ac_project_app/ui/widget/dialog/bottom_dialog.dart';
+import 'package:ac_project_app/ui/widget/dialog/center_dialog.dart';
 import 'package:ac_project_app/ui/widget/link_hero.dart';
 import 'package:ac_project_app/ui/widget/user/user_info.dart';
 import 'package:ac_project_app/util/date_utils.dart';
@@ -33,6 +33,7 @@ class LinkDetailView extends StatelessWidget {
     final args = getArguments(context);
     final link = args['link'] as Link;
     final isMine = args['isMine'] as bool?;
+    final linkVisible = args['visible'] as bool? ?? true;
     final scrollController = ScrollController();
 
     final profileState = context.watch<GetProfileInfoCubit>().state;
@@ -74,6 +75,7 @@ class LinkDetailView extends StatelessWidget {
                       cubitContext,
                       keyboardHeight,
                       visible,
+                      linkVisible,
                     ),
                   );
                 } else {
@@ -86,6 +88,7 @@ class LinkDetailView extends StatelessWidget {
                     cubitContext,
                     keyboardHeight,
                     visible,
+                    linkVisible,
                   );
                 }
               },
@@ -105,6 +108,7 @@ class LinkDetailView extends StatelessWidget {
     BuildContext cubitContext,
     double keyboardHeight,
     bool visible,
+    bool linkVisible,
   ) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -121,7 +125,11 @@ class LinkDetailView extends StatelessWidget {
         actions: [
           InkWell(
             onTap: () => isMyLink
-                ? showMyLinkOptionsDialog(link, context)
+                ? showMyLinkOptionsDialog(
+                    link,
+                    context,
+                    linkVisible: linkVisible,
+                  )
                 : showLinkOptionsDialog(
                     link,
                     context,
@@ -156,7 +164,8 @@ class LinkDetailView extends StatelessWidget {
               keyboardVisible: visible,
               onPressed: () =>
                   cubitContext.read<DetailEditCubit>().saveComment(link).then(
-                        (value) => value ? Navigator.pop(context, 'changed') : null,
+                        (value) =>
+                            value ? Navigator.pop(context, 'changed') : null,
                       ),
             );
           } else {
