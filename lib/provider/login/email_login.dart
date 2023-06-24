@@ -5,7 +5,7 @@ import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/user/user.dart' as user;
 import 'package:ac_project_app/provider/api/user/user_api.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
-import 'package:ac_project_app/ui/widget/dialog.dart';
+import 'package:ac_project_app/ui/widget/dialog/center_dialog.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -57,7 +57,7 @@ class Email {
         ),
       )
           .catchError((dynamic error) {
-        showPopUp(
+        showEmailPopUp(
           title: '인증 실패',
           content: '다른 계정으로 시도 해보세요\nerror: $error',
           parentContext: context,
@@ -65,7 +65,7 @@ class Email {
           icon: true,
         );
       }).then((value) {
-        showPopUp(
+        showEmailPopUp(
           title: '인증 메일 발송',
           content: '메일주소로 인증 메일이 발송되었습니다\n'
               '이메일의 링크로 $type을 완료해주세요',
@@ -77,7 +77,7 @@ class Email {
       });
     } catch (e) {
       Log.e(e.toString());
-      showPopUp(
+      showEmailPopUp(
         title: '일시적인 오류가 발생했어요',
         content: '서비스 오류로 인해 일반 가입이 안되고 있어요\n불편하시겠지만 다른 방식으로 이용해 주세요',
         parentContext: context,

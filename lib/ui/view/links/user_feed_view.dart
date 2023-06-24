@@ -14,7 +14,7 @@ import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/models/profile/profile_image.dart';
 import 'package:ac_project_app/models/user/detail_user.dart';
 import 'package:ac_project_app/routes.dart';
-import 'package:ac_project_app/ui/widget/bottom_dialog.dart';
+import 'package:ac_project_app/ui/widget/dialog/bottom_dialog.dart';
 import 'package:ac_project_app/ui/widget/user/user_info.dart';
 import 'package:ac_project_app/util/get_arguments.dart';
 import 'package:ac_project_app/util/logger.dart';
@@ -356,21 +356,21 @@ class UserFeedView extends StatelessWidget {
 
   GestureDetector buildBodyListItem(
     BuildContext context,
-    Link link,
+    Link newLink,
     DetailUser user,
     bool isMine,
     double width,
     List<Link> totalLinks,
     BuildContext parentContext,
   ) {
-    final newLink = link.copyWith(user: user);
+    final link = newLink.copyWith(user: user);
     return GestureDetector(
       onTap: () {
         Navigator.pushNamed(
           context,
           Routes.linkDetail,
           arguments: {
-            'link': newLink,
+            'link': link,
           },
         );
       },

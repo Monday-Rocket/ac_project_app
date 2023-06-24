@@ -505,6 +505,7 @@ class MyLinkView extends StatelessWidget {
           arguments: {
             'link': link,
             'isMine': true,
+            'visible': folder.visible,
           },
         ).then((result) {
           Log.i(result);

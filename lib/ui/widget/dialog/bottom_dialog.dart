@@ -5,6 +5,7 @@ import 'package:ac_project_app/cubits/folders/folder_name_cubit.dart';
 import 'package:ac_project_app/cubits/folders/folders_state.dart';
 import 'package:ac_project_app/cubits/folders/get_my_folders_cubit.dart';
 import 'package:ac_project_app/di/set_up_get_it.dart';
+import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/models/report/report_type.dart';
@@ -16,6 +17,7 @@ import 'package:ac_project_app/ui/page/my_folder/folder_visible_state.dart';
 import 'package:ac_project_app/ui/widget/add_folder/folder_add_title.dart';
 import 'package:ac_project_app/ui/widget/add_folder/horizontal_folder_list.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
+import 'package:ac_project_app/ui/widget/dialog/center_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -26,6 +28,7 @@ Future<bool?> showMyLinkOptionsDialog(
   Link link,
   BuildContext parentContext, {
   void Function()? popCallback,
+  bool? linkVisible,
 }) {
   return showModalBottomSheet<bool?>(
     backgroundColor: Colors.transparent,
@@ -76,7 +79,18 @@ Future<bool?> showMyLinkOptionsDialog(
                         _buildItem(
                           '카카오톡 공유',
                           callback: () {
-                            Kakao.sendKakaoShare(link);
+                            if (linkVisible ?? true) {
+                              Kakao.sendKakaoShare(link);
+                            } else {
+                              showPopUp(
+                                title: '폴더를 공개해 주세요',
+                                content: '카카오톡 공유는\n공개 폴더로 전환 후 가능해요!',
+                                parentContext: parentContext,
+                                callback: () => Navigator.pop(context),
+                                icon: true,
+                                iconImage: Assets.images.icLockColor.image(width: 27.w, height: 27.w),
+                              );
+                            }
                           },
                         ),
                         _buildItem(
@@ -139,7 +153,8 @@ Future<bool?> showChangeFolderDialog(Link link, BuildContext parentContext) {
                       top: 29.h,
                       bottom: (Platform.isAndroid
                               ? MediaQuery.of(context).padding.bottom
-                              : 16.h) + 30.h,
+                              : 16.h) +
+                          30.h,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
