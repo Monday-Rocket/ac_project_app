@@ -162,4 +162,24 @@ void main() {
       expect(actual, '');
     });
   });
+
+  // isLinkValid 테스트
+  group('링크가 유효한지 확인하는 함수 테스트', () {
+    test('링크가 유효한 경우', () {
+      final actual = isLinkValid('https://url');
+      expect(actual, true);
+    });
+
+    // case1
+    test('링크가 유효하지 않은 경우1', () {
+      final actual = isLinkValid('');
+      expect(actual, false);
+    });
+
+    // case2
+    test('링크가 유효하지 않은 경우2', () {
+      final actual = isLinkValid('https://');
+      expect(actual, false);
+    });
+  });
 }

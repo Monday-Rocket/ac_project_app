@@ -160,7 +160,7 @@ class MyPage extends StatelessWidget {
                   leftText: '취소',
                   rightText: '로그아웃',
                   leftCallback: () => Navigator.pop(context),
-                  rightCallback: () => logout(context, () {
+                  rightCallback: () => logout(() {
                     Navigator.of(context).pop(true);
                     Navigator.pushReplacementNamed(context, Routes.login);
                   }),

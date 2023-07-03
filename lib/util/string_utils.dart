@@ -67,3 +67,11 @@ String decodeBase64Text(String text) {
     return '';
   }
 }
+
+bool isLinkValid(String text) {
+  final regex = RegExp(
+    r'^(http://|https://|ftp://|www.)(\w+)(.\w+){1,2}$',
+    caseSensitive: false,
+  );
+  return regex.hasMatch(text);
+}

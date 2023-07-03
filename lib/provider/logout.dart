@@ -4,11 +4,10 @@ import 'package:ac_project_app/provider/kakao/kakao.dart';
 import 'package:ac_project_app/provider/login/naver_login.dart';
 import 'package:ac_project_app/provider/share_data_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-void logout(BuildContext context, void Function() callback) {
+void logout(void Function() callback) {
   // 1. 공유패널 비우기
   ShareDataProvider.clearAllData();
 
@@ -22,17 +21,17 @@ void logout(BuildContext context, void Function() callback) {
             'email',
           ],
         ).signOut().then((value) {
-          firebaseLogout(context, callback);
+          firebaseLogout(callback);
         });
         break;
       case 'naver':
-        Naver.logout().then((value) => firebaseLogout(context, callback));
+        Naver.logout().then((value) => firebaseLogout(callback));
         break;
       case 'kakao':
-        Kakao.logout().then((value) => firebaseLogout(context, callback));
+        Kakao.logout().then((value) => firebaseLogout(callback));
         break;
       default:
-        firebaseLogout(context, callback);
+        firebaseLogout(callback);
         break;
     }
   });
@@ -66,7 +65,7 @@ Future<bool> logoutWithoutPush(FirebaseAuth auth) async {
   }
 }
 
-void firebaseLogout(BuildContext context, void Function() callback) {
+void firebaseLogout(void Function() callback) {
   FirebaseAuth.instance.signOut().then((value) {
     callback();
   });

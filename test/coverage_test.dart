@@ -42,7 +42,7 @@ import 'package:ac_project_app/cubits/sign_up/nickname_cubit.dart';
 import 'package:ac_project_app/cubits/sign_up/sign_up_cubit.dart';
 import 'package:ac_project_app/cubits/tool_tip/my_link_upload_tool_tip_cubit.dart';
 import 'package:ac_project_app/cubits/tool_tip/upload_tool_tip_cubit.dart';
-import 'package:ac_project_app/cubits/url_data_cubit.dart';
+import 'package:ac_project_app/util/url_loader.dart';
 import 'package:ac_project_app/enums/navigator_pop_type.dart';
 import 'package:ac_project_app/firebase_options.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
