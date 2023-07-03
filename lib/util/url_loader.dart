@@ -4,11 +4,18 @@ import 'package:metadata_fetch/metadata_fetch.dart';
 
 class UrlLoader {
   static Future<Metadata> loadData(String url) async {
-
-    final dio = Dio();
-    dio.options.followRedirects = true;
-    dio.options.responseType = ResponseType.plain;
-    final tempResponse = await dio.get<dynamic>(url);
+    final dio = Dio(
+      BaseOptions(
+        followRedirects: true,
+        responseType: ResponseType.plain,
+      ),
+    );
+    final tempResponse = await dio.get<dynamic>(
+      url,
+      options: Options(
+        headers: {'User-Agent': 'facebookexternalhit/1.1'},
+      ),
+    );
 
     if (tempResponse.redirects.isNotEmpty) {
       final redirectPath = tempResponse.redirects.last.location.toString();
@@ -27,7 +34,8 @@ class UrlLoader {
   static Future<Metadata> _getMetadata(String url, String realUrl) async {
     final extractedMetadata = await _extract(url, realUrl);
     if (extractedMetadata == null) {
-      final response = await http.get(Uri.parse(url), headers: {'User-Agent': 'facebookexternalhit/1.1'});
+      final response = await http.get(Uri.parse(url),
+          headers: {'User-Agent': 'facebookexternalhit/1.1'});
       final document = MetadataFetch.responseToDocument(response);
       final openGraph = MetadataParser.openGraph(document)..url = realUrl;
       return openGraph;
