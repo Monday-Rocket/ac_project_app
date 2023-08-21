@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:ac_project_app/cubits/login/login_type.dart';
 import 'package:ac_project_app/di/set_up_get_it.dart';
+import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/link/link.dart' as MyLink;
 import 'package:ac_project_app/provider/api/folders/link_api.dart';
 import 'package:ac_project_app/provider/login/firebase_auth_remote_data_source.dart';
@@ -86,7 +87,7 @@ class Kakao {
     }
   }
 
-  static Future<void> sendKakaoShare(MyLink.Link link) async {
+  static Future<void> sendKakaoLinkShare(MyLink.Link link) async {
     final defaultFeed = FeedTemplate(
       content: Content(
         title: link.title ?? '',
@@ -99,7 +100,7 @@ class Kakao {
       ),
       buttons: [
         Button(
-          title: '링크풀에서 확인하기',
+          title: '앱으로 보기',
           link: Link(
             androidExecutionParams: {'linkId': '${link.id}'},
             iosExecutionParams: {'linkId': '${link.id}'},
@@ -130,6 +131,10 @@ class Kakao {
         print('카카오톡 공유 실패 $error');
       }
     }
+  }
+
+  static Future<void> sendFolderKakaoShare(Folder folder) async {
+    // TODO 폴더 공유하기 기능 추가
   }
 
   static void receiveLink(BuildContext context, {String? url}) {

@@ -12,9 +12,11 @@ import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/profile/profile_image.dart';
+import 'package:ac_project_app/provider/kakao/kakao.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/add_folder/show_add_folder_dialog.dart';
 import 'package:ac_project_app/ui/widget/custom_reorderable_list_view.dart';
+import 'package:ac_project_app/ui/widget/dialog/bottom_dialog.dart';
 import 'package:ac_project_app/ui/widget/dialog/center_dialog.dart';
 import 'package:ac_project_app/ui/widget/rename_folder/show_rename_folder_dialog.dart';
 import 'package:ac_project_app/util/logger.dart';
@@ -90,7 +92,11 @@ class _MyFolderPageState extends State<MyFolderPage>
                                     top: 90.h,
                                     bottom: 6.h,
                                   ),
-                                  child: Image.asset(ProfileImage.makeImagePath(profile.profileImage)),
+                                  child: Image.asset(
+                                    ProfileImage.makeImagePath(
+                                      profile.profileImage,
+                                    ),
+                                  ),
                                 ),
                                 Text(
                                   profile.nickname,
@@ -139,7 +145,8 @@ class _MyFolderPageState extends State<MyFolderPage>
                                     contentPadding: EdgeInsets.symmetric(
                                       horizontal: 10.w,
                                     ),
-                                    prefixIcon: Assets.images.folderSearchIcon.image(),
+                                    prefixIcon:
+                                        Assets.images.folderSearchIcon.image(),
                                   ),
                                   onChanged: (value) {
                                     context
@@ -298,8 +305,7 @@ class _MyFolderPageState extends State<MyFolderPage>
                                     Align(
                                       alignment: Alignment.bottomRight,
                                       child: Padding(
-                                        padding:
-                                            EdgeInsets.only(bottom: 3.h),
+                                        padding: EdgeInsets.only(bottom: 3.h),
                                         child: Assets.images.icLockPng.image(),
                                       ),
                                     )
@@ -448,94 +454,36 @@ class _MyFolderPageState extends State<MyFolderPage>
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          InkWell(
-                            onTap: () => changeFolderVisible(
-                              parentContext,
-                              currFolder,
-                            ),
-                            highlightColor: grey100,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(10.r),
-                                ),
-                              ),
-                              padding: EdgeInsets.only(
-                                top: 14.h,
-                                bottom: 14.h,
-                                left: 24.w,
-                              ),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  visible ? '비공개로 전환' : '공개로 전환',
-                                  style: TextStyle(
-                                    color: blackBold,
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 16.sp,
-                                  ),
-                                ),
-                              ),
-                            ),
+                          BottomListItem(
+                            visible ? '비공개로 전환' : '공개로 전환',
+                            callback: () {
+                              changeFolderVisible(
+                                parentContext,
+                                currFolder,
+                              );
+                            },
                           ),
-                          InkWell(
-                            onTap: () => changeFolderName(
-                              parentContext,
-                              folders,
-                              currFolder,
-                            ),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(10.r),
-                                ),
-                                color: Colors.transparent,
-                              ),
-                              padding: EdgeInsets.only(
-                                top: 14.h,
-                                bottom: 14.h,
-                                left: 24.w,
-                              ),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  '폴더명 변경',
-                                  style: TextStyle(
-                                    color: blackBold,
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 16.sp,
-                                  ),
-                                ),
-                              ),
-                            ),
+                          BottomListItem(
+                            '폴더명 변경',
+                            callback: () {
+                              changeFolderName(
+                                parentContext,
+                                folders,
+                                currFolder,
+                              );
+                            },
                           ),
-                          InkWell(
-                            onTap: () =>
-                                deleteFolderDialog(parentContext, currFolder),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(10.r),
-                                ),
-                                color: Colors.transparent,
-                              ),
-                              padding: EdgeInsets.only(
-                                top: 14.h,
-                                bottom: 14.h,
-                                left: 24.w,
-                              ),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  '폴더 삭제',
-                                  style: TextStyle(
-                                    color: blackBold,
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 16.sp,
-                                  ),
-                                ),
-                              ),
-                            ),
+                          BottomListItem(
+                            '폴더 삭제',
+                            callback: () {
+                              deleteFolderDialog(parentContext, currFolder);
+                            },
+                          ),
+                          BottomListItem(
+                            '카카오톡 폴더 공유',
+                            callback: () {
+                              Kakao.sendFolderKakaoShare(currFolder);
+                            },
                           ),
                         ],
                       ),
