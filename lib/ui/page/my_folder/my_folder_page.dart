@@ -9,6 +9,7 @@ import 'package:ac_project_app/cubits/folders/folders_state.dart';
 import 'package:ac_project_app/cubits/folders/get_my_folders_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_state.dart';
+import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/profile/profile_image.dart';
@@ -482,7 +483,11 @@ class _MyFolderPageState extends State<MyFolderPage>
                           BottomListItem(
                             '카카오톡 폴더 공유',
                             callback: () {
-                              Kakao.sendFolderKakaoShare(currFolder);
+                              final profileInfoCubit = getIt<GetProfileInfoCubit>();
+                              if (profileInfoCubit.state is ProfileLoadedState) {
+                                final profile = (profileInfoCubit.state as ProfileLoadedState).profile;
+                                Kakao.sendFolderKakaoShare(currFolder, profile);
+                              }
                             },
                           ),
                         ],

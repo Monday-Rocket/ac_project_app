@@ -1,10 +1,15 @@
 import 'dart:async';
 
+import 'package:ac_project_app/cubits/folders/get_user_folders_cubit.dart';
 import 'package:ac_project_app/cubits/login/login_type.dart';
+import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
+import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/link/link.dart' as MyLink;
+import 'package:ac_project_app/models/profile/profile_image.dart';
 import 'package:ac_project_app/provider/api/folders/link_api.dart';
+import 'package:ac_project_app/provider/api/user/user_api.dart' as MyUserApi;
 import 'package:ac_project_app/provider/login/firebase_auth_remote_data_source.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
@@ -12,10 +17,10 @@ import 'package:ac_project_app/util/logger.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
 import 'package:kakao_flutter_sdk_share/kakao_flutter_sdk_share.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ac_project_app/models/profile/profile.dart' as Profile;
 
 class Kakao {
   static Future<bool> login() async {
@@ -133,8 +138,59 @@ class Kakao {
     }
   }
 
-  static Future<void> sendFolderKakaoShare(Folder folder) async {
-    // TODO 폴더 공유하기 기능 추가
+  static Future<void> sendFolderKakaoShare(
+      Folder folder, Profile.Profile profile) async {
+    final profileImageUrl =
+        await ProfileImage(profile.profileImage).makeImageUrl();
+
+    final params = {'folderId': '${folder.id}', 'userId': '${profile.id}'};
+    final defaultFeed = FeedTemplate(
+      content: Content(
+        title: '링크풀에서 폴더를 공유받았어요!',
+        imageUrl: Uri.parse(folder.thumbnail ?? ''),
+        link: Link(
+          androidExecutionParams: params,
+          iosExecutionParams: params,
+        ),
+        description: '',
+      ),
+      itemContent: ItemContent(
+        profileText: profile.nickname,
+        profileImageUrl: Uri.parse(profileImageUrl),
+      ),
+      buttons: [
+        Button(
+          title: '앱으로 보기',
+          link: Link(
+            androidExecutionParams: params,
+            iosExecutionParams: params,
+          ),
+        ),
+      ],
+    );
+
+    // 카카오톡 실행 가능 여부 확인
+    final isKakaoTalkSharingAvailable =
+        await ShareClient.instance.isKakaoTalkSharingAvailable();
+
+    if (isKakaoTalkSharingAvailable) {
+      try {
+        final uri =
+            await ShareClient.instance.shareDefault(template: defaultFeed);
+        await ShareClient.instance.launchKakaoTalk(uri);
+        print('카카오톡 공유 완료');
+      } catch (error) {
+        print('카카오톡 공유 실패 $error');
+      }
+    } else {
+      try {
+        final shareUrl = await WebSharerClient.instance
+            .makeDefaultUrl(template: defaultFeed);
+        await launchBrowserTab(shareUrl, popupOpen: true);
+      } catch (error) {
+        print('카카오톡 공유 실패 $error');
+      }
+    }
   }
 
   static void receiveLink(BuildContext context, {String? url}) {
@@ -154,9 +210,9 @@ class Kakao {
 
   static void _receiveLink(String url, BuildContext context) {
     final query = Uri.parse(url).queryParameters;
-    final linkId = query['linkId'] ?? '';
-    if (linkId.isNotEmpty) {
-      getIt<LinkApi>().getLinkFromId(linkId).then((result) {
+
+    if (query.keys.contains('linkId')) {
+      getIt<LinkApi>().getLinkFromId(query['linkId']!).then((result) {
         result.when(
           success: (link) {
             Navigator.pushNamed(
@@ -169,11 +225,44 @@ class Kakao {
           },
           error: (msg) {
             var errorMessage = msg;
-            if (msg.isEmpty || msg == '404') errorMessage = '링크 정보를 확인할 수 없습니다.';
+            if (msg.isEmpty || msg == '404') {
+              errorMessage = '링크 정보를 확인할 수 없습니다.';
+            }
             showBottomToast(context: context, errorMessage);
           },
         );
       });
+    } else {
+      if (query.keys.contains('folderId')) {
+        final folderId = query['folderId']!;
+        final userId = query['userId'] ?? '';
+        getIt<MyUserApi.UserApi>().getUsersId(userId).then((result) {
+          result.when(
+            success: (user) {
+              final profileInfoCubit = getIt<GetProfileInfoCubit>();
+              final userFoldersCubit = getIt<GetUserFoldersCubit>();
+              final isMine =
+                  (profileInfoCubit.state as ProfileLoadedState).profile.id ==
+                      user.id;
+
+              userFoldersCubit.getFolders(user.id!).then((_) {
+                Navigator.of(context).pushNamed(
+                  Routes.userFeed,
+                  arguments: {
+                    'user': user,
+                    'folders': userFoldersCubit.state.folderList,
+                    'folderId': folderId,
+                    'isMine': isMine,
+                  },
+                );
+              });
+            },
+            error: (e) {
+              Log.e(e);
+            },
+          );
+        });
+      }
     }
   }
 }

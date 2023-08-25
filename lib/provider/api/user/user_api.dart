@@ -11,7 +11,6 @@ import 'package:ac_project_app/provider/share_data_provider.dart';
 import 'package:ac_project_app/util/logger.dart';
 
 class UserApi {
-
   UserApi(this._client);
 
   final CustomClient _client;
@@ -86,5 +85,13 @@ class UserApi {
     }
 
     return false;
+  }
+
+   Future<Result<DetailUser>> getUsersId(String id) async {
+    final result = await _client.getUri('/users/$id');
+    return result.when(
+      success: (data) => Result.success(DetailUser.fromJson(data)),
+      error: Result.error,
+    );
   }
 }

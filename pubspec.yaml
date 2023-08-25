@@ -58,6 +58,7 @@ dependencies:
   carousel_slider: ^4.2.1
   lottie:
   flutter_slidable: ^2.0.0
+  firebase_storage: ^11.2.6
 
   ## lint
   very_good_analysis: ^4.0.0+1

@@ -35,6 +35,13 @@ class UserFeedView extends StatelessWidget {
     final user = args['user'] as DetailUser;
     final folders = args['folders'] as List<Folder>;
     final isMine = args['isMine'] as bool;
+    final folderId = args['folderId'] as String?;
+
+    // find index from folders by folderId
+    final index = folders.indexWhere((it) => it.id == folderId);
+
+    // index가 처음이 되는 리스트로 folders를 재정렬
+    folders.insert(0, folders.removeAt(index));
 
     return MultiBlocProvider(
       providers: [
@@ -135,7 +142,7 @@ class UserFeedView extends StatelessWidget {
                       ],
                     ),
                   ),
-                  buildJobListView(context, folders),
+                  FolderNameListView(context, folders),
                   buildListBody(
                     context,
                     totalLinks,
@@ -196,7 +203,7 @@ class UserFeedView extends StatelessWidget {
     );
   }
 
-  Widget buildJobListView(
+  Widget FolderNameListView(
     BuildContext parentContext,
     List<Folder> folders,
   ) {
