@@ -3,7 +3,7 @@ description: 링크풀 - 체계적인 링크 관리의 시작
 
 publish_to: 'none'
 
-version: 1.0.44+44
+version: 1.0.45+45
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
@@ -54,10 +54,11 @@ dependencies:
   oktoast:
   share_plus: ^6.3.1
   flutter_keyboard_visibility: ^5.4.1
-  extended_text: ^11.0.1
+  extended_text: ^11.1.0
   carousel_slider: ^4.2.1
   lottie:
   flutter_slidable: ^2.0.0
+  firebase_storage: ^11.2.6
 
   ## lint
   very_good_analysis: ^4.0.0+1

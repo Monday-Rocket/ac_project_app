@@ -236,6 +236,8 @@ class _EmailLoginViewState extends State<EmailLoginView>
       case AppLifecycleState.detached:
         Log.d('detached');
         break;
+      case AppLifecycleState.hidden:
+        break;
     }
   }
 

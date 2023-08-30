@@ -59,7 +59,7 @@ Future<bool?> showMyLinkOptionsDialog(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildItem(
+                        BottomListItem(
                           '공유',
                           callback: () {
                             Share.share(
@@ -76,11 +76,11 @@ Future<bool?> showMyLinkOptionsDialog(
                             );
                           },
                         ),
-                        _buildItem(
+                        BottomListItem(
                           '카카오톡 공유',
                           callback: () {
                             if (linkVisible ?? true) {
-                              Kakao.sendKakaoShare(link);
+                              Kakao.sendKakaoLinkShare(link);
                             } else {
                               showPopUp(
                                 title: '폴더를 공개해 주세요',
@@ -93,7 +93,7 @@ Future<bool?> showMyLinkOptionsDialog(
                             }
                           },
                         ),
-                        _buildItem(
+                        BottomListItem(
                           '링크 삭제',
                           callback: () {
                             getIt<LinkApi>().deleteLink(link).then((result) {
@@ -112,7 +112,7 @@ Future<bool?> showMyLinkOptionsDialog(
                             });
                           },
                         ),
-                        _buildItem(
+                        BottomListItem(
                           '폴더 이동',
                           callback: () {
                             showChangeFolderDialog(
@@ -250,20 +250,20 @@ Future<bool?> showLinkOptionsDialog(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildItem(
+                        BottomListItem(
                           '공유',
                           callback: () => Share.share(
                             link.url ?? '',
                             subject: link.title,
                           ),
                         ),
-                        _buildItem(
+                        BottomListItem(
                           '카카오톡 공유',
                           callback: () {
-                            Kakao.sendKakaoShare(link);
+                            Kakao.sendKakaoLinkShare(link);
                           },
                         ),
-                        _buildItem(
+                        BottomListItem(
                           '내 폴더 담기',
                           callback: () {
                             Navigator.pushNamed(
@@ -286,7 +286,7 @@ Future<bool?> showLinkOptionsDialog(
                             });
                           },
                         ),
-                        _buildItem(
+                        BottomListItem(
                           '신고하기',
                           callback: () {
                             Navigator.pushNamed(
@@ -350,7 +350,7 @@ Future<bool?> showUserOptionDialog(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildItem(
+                        BottomListItem(
                           '신고하기',
                           callback: () {
                             Navigator.pushNamed(
@@ -408,7 +408,7 @@ Container buildTitle(BuildContext context, String title, {double? titleLeft}) {
   );
 }
 
-Widget _buildItem(String text, {required void Function() callback}) {
+Widget BottomListItem(String text, {required void Function() callback}) {
   return InkWell(
     onTap: callback,
     highlightColor: grey100,

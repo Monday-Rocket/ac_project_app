@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/di/set_up_get_it.dart';
@@ -7,6 +8,7 @@ import 'package:ac_project_app/initial_settings.dart';
 import 'package:ac_project_app/provider/global_providers.dart';
 import 'package:ac_project_app/provider/share_db.dart';
 import 'package:ac_project_app/routes.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,6 +19,12 @@ Future<void> main() async {
   await initSettings();
   await ShareDB.initSqflite();
   locator();
+
+  final gsReference =
+  FirebaseStorage.instance.refFromURL('gs://ac-project-d04ee.appspot.com/img_01_on.png');
+
+  print(await gsReference.getDownloadURL());
+
   runApp(const MyApp());
 }
 
