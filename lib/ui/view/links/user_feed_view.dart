@@ -38,10 +38,12 @@ class UserFeedView extends StatelessWidget {
     final folderId = args['folderId'] as String?;
 
     // find index from folders by folderId
-    final index = folders.indexWhere((it) => it.id == folderId);
+    final index = folders.indexWhere((element) => element.id.toString() == folderId);
 
-    // index가 처음이 되는 리스트로 folders를 재정렬
-    folders.insert(0, folders.removeAt(index));
+    if (folders.isNotEmpty && index != -1) {
+      // index가 처음이 되는 리스트로 folders를 재정렬
+      folders.insert(0, folders.removeAt(index));
+    }
 
     return MultiBlocProvider(
       providers: [

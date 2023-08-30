@@ -486,7 +486,19 @@ class _MyFolderPageState extends State<MyFolderPage>
                               final profileInfoCubit = getIt<GetProfileInfoCubit>();
                               if (profileInfoCubit.state is ProfileLoadedState) {
                                 final profile = (profileInfoCubit.state as ProfileLoadedState).profile;
-                                Kakao.sendFolderKakaoShare(currFolder, profile);
+
+                                if (currFolder.visible ?? false) {
+                                  Kakao.sendFolderKakaoShare(currFolder, profile);
+                                } else {
+                                  showPopUp(
+                                    title: '폴더를 공개해 주세요',
+                                    content: '카카오톡 폴더 공유는\n공개 폴더로 전환 후 가능해요!',
+                                    parentContext: parentContext,
+                                    callback: () => Navigator.pop(context),
+                                    icon: true,
+                                    iconImage: Assets.images.icLockColor.image(width: 27.w, height: 27.w),
+                                  );
+                                }
                               }
                             },
                           ),

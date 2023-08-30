@@ -14,7 +14,9 @@ import 'package:ac_project_app/provider/login/firebase_auth_remote_data_source.d
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/util/logger.dart';
+import 'package:ac_project_app/util/url_valid.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kakao_flutter_sdk_share/kakao_flutter_sdk_share.dart';
@@ -143,16 +145,20 @@ class Kakao {
     final profileImageUrl =
         await ProfileImage(profile.profileImage).makeImageUrl();
 
+    // isValidUrl(url)
+    final isValid = await isValidUrl(folder.thumbnail ?? '');
+    final imageUrl = await getFolderImageUrl(isValid, folder);
+
     final params = {'folderId': '${folder.id}', 'userId': '${profile.id}'};
     final defaultFeed = FeedTemplate(
       content: Content(
         title: '링크풀에서 폴더를 공유받았어요!',
-        imageUrl: Uri.parse(folder.thumbnail ?? ''),
+        imageUrl: Uri.parse(imageUrl),
         link: Link(
           androidExecutionParams: params,
           iosExecutionParams: params,
         ),
-        description: '',
+        description: '공유받은 폴더 속 링크를 확인해 볼까요?',
       ),
       itemContent: ItemContent(
         profileText: profile.nickname,
@@ -191,6 +197,13 @@ class Kakao {
         print('카카오톡 공유 실패 $error');
       }
     }
+  }
+
+  static Future<String> getFolderImageUrl(bool isValid, Folder folder) async {
+    final imageUrl = isValid ? folder.thumbnail : await FirebaseStorage.instance
+        .refFromURL('gs://ac-project-d04ee.appspot.com/empty_folder.png')
+        .getDownloadURL();
+    return imageUrl ?? '';
   }
 
   static void receiveLink(BuildContext context, {String? url}) {

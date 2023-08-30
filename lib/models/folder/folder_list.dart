@@ -3,7 +3,7 @@ import 'package:equatable/equatable.dart';
 
 class FolderList extends Equatable {
 
-  FolderList(this.folderList);
+  const FolderList(this.folderList);
 
   final List<Folder> folderList;
 
