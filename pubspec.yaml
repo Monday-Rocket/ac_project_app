@@ -3,7 +3,7 @@ description: 링크풀 - 체계적인 링크 관리의 시작
 
 publish_to: 'none'
 
-version: 1.0.45+45
+version: 1.0.46+46
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
@@ -32,7 +32,7 @@ dependencies:
   firebase_auth: ^4.6.2
   firebase_dynamic_links: ^5.3.2
 
-  kakao_flutter_sdk_user: ^1.4.3
+  kakao_flutter_sdk_user: ^1.5.0
   flutter_dotenv: ^5.0.2
   flutter_naver_login: ^1.8.0
 
@@ -42,7 +42,7 @@ dependencies:
   flutter_screenutil: ^5.7.0
 
   ## kakao_share
-  kakao_flutter_sdk_share: ^1.4.3
+  kakao_flutter_sdk_share: ^1.5.0
 
   ## Utils
   metadata_fetch: ^0.4.1

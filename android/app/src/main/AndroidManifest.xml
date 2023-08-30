@@ -48,23 +48,20 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data
-                    android:host="acprojectapp.page.link"
-                    android:scheme="https" />
+                <data android:host="acprojectapp.page.link" android:scheme="https" />
+                <data android:host="kakaolink" android:scheme="kakao${KAKAO_API_KEY}" />
             </intent-filter>
         </activity>
         <activity
                 android:name="com.kakao.sdk.flutter.AuthCodeCustomTabsActivity"
                 android:exported="true">
-            <intent-filter>
+            <intent-filter android:label="flutter_web_auth">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <!-- Redirect URI: "kakao${NATIVE_APP_KEY}://oauth" -->
                 <data android:host="oauth"
-                      android:scheme="kakao${KAKAO_API_KEY}" />
-                <data android:host="kakaolink"
                       android:scheme="kakao${KAKAO_API_KEY}" />
             </intent-filter>
         </activity>

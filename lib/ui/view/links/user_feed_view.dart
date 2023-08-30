@@ -452,7 +452,7 @@ class UserFeedView extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     SizedBox(
-                      width: (width - (24 * 2 + 25)).w,
+                      width: (width - (24 * 2 + 25 + 18)).w,
                       child: Text(
                         link.title ?? '',
                         overflow: TextOverflow.ellipsis,
