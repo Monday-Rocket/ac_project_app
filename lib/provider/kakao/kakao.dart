@@ -210,14 +210,13 @@ class Kakao {
     if (url != null) {
       _receiveLink(url, context);
     } else {
-      kakaoSchemeStream.listen(
-        (url) {
+      receiveKakaoScheme().then((_) {
+        kakaoSchemeStream.listen((url) {
           if (url != null) {
             _receiveLink(url, context);
           }
-        },
-        onError: Log.e,
-      );
+        });
+      });
     }
   }
 

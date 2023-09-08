@@ -117,7 +117,7 @@ Future<bool?> showMyLinkOptionsDialog(
                           callback: () {
                             showChangeFolderDialog(
                               link,
-                              parentContext,
+                              context,
                             );
                           },
                         ),
@@ -186,6 +186,7 @@ Future<bool?> showChangeFolderDialog(Link link, BuildContext parentContext) {
                               getIt<LinkApi>()
                                   .changeFolder(link, folderId)
                                   .then((result) {
+                                Navigator.pop(context);
                                 Navigator.pop(context);
                                 Navigator.pop(context, 'changed');
                                 if (result) {
