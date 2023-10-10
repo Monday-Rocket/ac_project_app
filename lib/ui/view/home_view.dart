@@ -6,15 +6,12 @@ import 'package:ac_project_app/cubits/home/get_job_list_cubit.dart';
 import 'package:ac_project_app/cubits/home_view_cubit.dart';
 import 'package:ac_project_app/cubits/links/links_from_selected_job_group_cubit.dart';
 import 'package:ac_project_app/di/set_up_get_it.dart';
-import 'package:ac_project_app/enums/navigator_pop_type.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/provider/api/folders/folder_api.dart';
 import 'package:ac_project_app/provider/kakao/kakao.dart';
-import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/page/home/home_page.dart';
 import 'package:ac_project_app/ui/page/my_folder/my_folder_page.dart';
 import 'package:ac_project_app/ui/page/my_page/my_page.dart';
-import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/util/get_arguments.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -120,34 +117,29 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
   ) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Stack(
-        children: [
-          IndexedStack(
-            index: index,
-            children: <Widget>[
-              MultiBlocProvider(
-                providers: [
-                  BlocProvider<FolderViewTypeCubit>(
-                    create: (_) => FolderViewTypeCubit(),
-                  ),
-                ],
-                child: const MyFolderPage(),
+      body: IndexedStack(
+        index: index,
+        children: <Widget>[
+          MultiBlocProvider(
+            providers: [
+              BlocProvider<FolderViewTypeCubit>(
+                create: (_) => FolderViewTypeCubit(),
               ),
-              MultiBlocProvider(
-                providers: [
-                  BlocProvider(
-                    create: (_) => GetJobListCubit(),
-                  ),
-                  BlocProvider(
-                    create: (_) => GetUserFoldersCubit(),
-                  ),
-                ],
-                child: const HomePage(),
-              ),
-              const MyPage(),
             ],
+            child: const MyFolderPage(),
           ),
-          FloatingUploadButton(),
+          MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: (_) => GetJobListCubit(),
+              ),
+              BlocProvider(
+                create: (_) => GetUserFoldersCubit(),
+              ),
+            ],
+            child: const HomePage(),
+          ),
+          const MyPage(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -177,25 +169,6 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
     );
   }
 
-  void pushUploadView(BuildContext context) {
-    Navigator.pushNamed(context, Routes.upload).then(
-      (value) => setState(
-        () {
-          if (NavigatorPopType.saveLink == value) {
-            showBottomToast(
-              context: context,
-              '링크가 저장되었어요!',
-              callback: () {
-                context.read<GetFoldersCubit>().getFolders();
-                context.read<HomeViewCubit>().moveTo(0);
-              },
-            );
-          }
-        },
-      ),
-    );
-  }
-
   List<SvgPicture> getBottomIcons(int index) {
     final enabledIcons = [
       SvgPicture.asset(Assets.images.icMyfolder),
@@ -219,47 +192,5 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
       }
     }
     return icons;
-  }
-
-  Widget FloatingUploadButton() {
-    return Positioned(
-      bottom: 20.w,
-      right: 20.w,
-      child: GestureDetector(
-        onTap: () {
-          pushUploadView(context);
-        },
-        child: Container(
-          width: 94.w,
-          height: 42.w,
-          decoration: BoxDecoration(
-            color: primary600,
-            borderRadius: BorderRadius.circular(40.r),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.1),
-                offset: const Offset(6, 6),
-                blurRadius: 40.r,
-              ),
-            ],
-          ),
-          child: Row(
-            children: [
-              12.horizontalSpace,
-              SvgPicture.asset(Assets.images.uploadPlus),
-              2.horizontalSpace,
-              Text(
-                '업로드',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 16.sp,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
   }
 }
