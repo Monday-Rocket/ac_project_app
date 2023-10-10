@@ -16,6 +16,7 @@ import 'package:ac_project_app/models/profile/profile_image.dart';
 import 'package:ac_project_app/provider/kakao/kakao.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/add_folder/show_add_folder_dialog.dart';
+import 'package:ac_project_app/ui/widget/buttons/upload_button.dart';
 import 'package:ac_project_app/ui/widget/custom_reorderable_list_view.dart';
 import 'package:ac_project_app/ui/widget/dialog/bottom_dialog.dart';
 import 'package:ac_project_app/ui/widget/dialog/center_dialog.dart';
@@ -65,9 +66,9 @@ class _MyFolderPageState extends State<MyFolderPage>
     final width = MediaQuery.of(context).size.width;
 
     return BlocBuilder<FolderViewTypeCubit, FolderViewType>(
-      builder: (context, folderViewType) {
+      builder: (cubitContext, folderViewType) {
         return GestureDetector(
-          onTap: () => FocusScope.of(context).unfocus(),
+          onTap: () => FocusScope.of(cubitContext).unfocus(),
           child: Stack(
             children: [
               Assets.images.myFolderBack.image(
@@ -214,6 +215,7 @@ class _MyFolderPageState extends State<MyFolderPage>
                   );
                 },
               ),
+              FloatingUploadButton(context, setState: setState),
             ],
           ),
         );
@@ -483,12 +485,17 @@ class _MyFolderPageState extends State<MyFolderPage>
                           BottomListItem(
                             '카카오톡 폴더 공유',
                             callback: () {
-                              final profileInfoCubit = getIt<GetProfileInfoCubit>();
-                              if (profileInfoCubit.state is ProfileLoadedState) {
-                                final profile = (profileInfoCubit.state as ProfileLoadedState).profile;
+                              final profileInfoCubit =
+                                  getIt<GetProfileInfoCubit>();
+                              if (profileInfoCubit.state
+                                  is ProfileLoadedState) {
+                                final profile = (profileInfoCubit.state
+                                        as ProfileLoadedState)
+                                    .profile;
 
                                 if (currFolder.visible ?? false) {
-                                  Kakao.sendFolderKakaoShare(currFolder, profile);
+                                  Kakao.sendFolderKakaoShare(
+                                      currFolder, profile);
                                 } else {
                                   showPopUp(
                                     title: '폴더를 공개해 주세요',
@@ -496,7 +503,8 @@ class _MyFolderPageState extends State<MyFolderPage>
                                     parentContext: parentContext,
                                     callback: () => Navigator.pop(context),
                                     icon: true,
-                                    iconImage: Assets.images.icLockColor.image(width: 27.w, height: 27.w),
+                                    iconImage: Assets.images.icLockColor
+                                        .image(width: 27.w, height: 27.w),
                                   );
                                 }
                               }

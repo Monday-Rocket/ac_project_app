@@ -15,6 +15,7 @@ import 'package:ac_project_app/provider/api/folders/link_api.dart';
 import 'package:ac_project_app/provider/tool_tip_check.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
+import 'package:ac_project_app/ui/widget/buttons/upload_button.dart';
 import 'package:ac_project_app/ui/widget/link_hero.dart';
 import 'package:ac_project_app/ui/widget/scaffold_with_stack_widget.dart';
 import 'package:ac_project_app/ui/widget/shape/reverse_triangle_painter.dart';
@@ -112,6 +113,15 @@ class MyLinkView extends StatelessWidget {
                                     ),
                                   ],
                                 ),
+                              ),
+                              FloatingUploadButton(
+                                context,
+                                callback: () {
+                                  links.clear();
+                                  context
+                                      .read<LinksFromSelectedFolderCubit>()
+                                      .refresh();
+                                },
                               ),
                               if (state is LinkListLoadingState ||
                                   state is LinkListInitialState)
