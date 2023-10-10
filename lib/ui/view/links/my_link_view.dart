@@ -16,7 +16,7 @@ import 'package:ac_project_app/provider/tool_tip_check.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/link_hero.dart';
-import 'package:ac_project_app/ui/widget/scaffold_with_tool_tip.dart';
+import 'package:ac_project_app/ui/widget/scaffold_with_stack_widget.dart';
 import 'package:ac_project_app/ui/widget/shape/reverse_triangle_painter.dart';
 import 'package:ac_project_app/ui/widget/slidable/link_slidable_widget.dart';
 import 'package:ac_project_app/ui/widget/widget_offset.dart';
@@ -66,7 +66,7 @@ class MyLinkView extends StatelessWidget {
             ],
             child: BlocBuilder<GetSelectedFolderCubit, Folder>(
               builder: (context, folder) {
-                return ScaffoldWithToolTip(
+                return ScaffoldWithStackWidget(
                   scaffold: Scaffold(
                     backgroundColor: Colors.white,
                     body: SafeArea(
@@ -131,7 +131,7 @@ class MyLinkView extends StatelessWidget {
                       ),
                     ),
                   ),
-                  tooltip: BlocBuilder<MyLinkUploadToolTipCubit, WidgetOffset?>(
+                  widget: BlocBuilder<MyLinkUploadToolTipCubit, WidgetOffset?>(
                     builder: (ctx, widgetOffset) {
                       if (widgetOffset == null) {
                         return const SizedBox.shrink();
