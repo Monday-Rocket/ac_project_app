@@ -237,10 +237,12 @@ class _SearchViewState extends State<SearchView> {
                                           color: grey100,
                                           child: CachedNetworkImage(
                                             imageUrl: link.image ?? '',
-                                            fadeInDuration:
-                                                const Duration(milliseconds: 300),
-                                            fadeOutDuration:
-                                                const Duration(milliseconds: 300),
+                                            fadeInDuration: const Duration(
+                                              milliseconds: 300,
+                                            ),
+                                            fadeOutDuration: const Duration(
+                                              milliseconds: 300,
+                                            ),
                                             imageBuilder:
                                                 (context, imageProvider) =>
                                                     Container(
@@ -443,7 +445,7 @@ class _SearchViewState extends State<SearchView> {
                       height: (18 / 14).h,
                       color: lightGrey700,
                     ),
-                  )
+                  ),
                 ],
               ),
             ),

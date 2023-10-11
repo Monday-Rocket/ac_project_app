@@ -140,7 +140,7 @@ class UserFeedView extends StatelessWidget {
                             fontSize: 28.sp,
                             letterSpacing: -0.6.w,
                           ),
-                        )
+                        ),
                       ],
                     ),
                   ),

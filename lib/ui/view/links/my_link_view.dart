@@ -488,7 +488,7 @@ class MyLinkView extends StatelessWidget {
                         endIndent: 24.w,
                       ),
                     ),
-                  )
+                  ),
               ],
             );
           },
@@ -657,7 +657,7 @@ class MyLinkView extends StatelessWidget {
                 ),
               ),
             ),
-          )
+          ),
         ],
       ),
     );

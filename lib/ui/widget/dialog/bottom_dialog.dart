@@ -18,6 +18,7 @@ import 'package:ac_project_app/ui/widget/add_folder/folder_add_title.dart';
 import 'package:ac_project_app/ui/widget/add_folder/horizontal_folder_list.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/dialog/center_dialog.dart';
+import 'package:ac_project_app/ui/widget/move_to_my_folder_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -38,7 +39,7 @@ Future<bool?> showMyLinkOptionsDialog(
       return Wrap(
         children: [
           DecoratedBox(
-            decoration: _dialogDecoration(),
+            decoration: DialogDecoration(),
             child: Padding(
               padding: EdgeInsets.only(
                 top: 29.h,
@@ -88,7 +89,8 @@ Future<bool?> showMyLinkOptionsDialog(
                                 parentContext: parentContext,
                                 callback: () => Navigator.pop(context),
                                 icon: true,
-                                iconImage: Assets.images.icLockColor.image(width: 27.w, height: 27.w),
+                                iconImage: Assets.images.icLockColor
+                                    .image(width: 27.w, height: 27.w),
                               );
                             }
                           },
@@ -147,7 +149,7 @@ Future<bool?> showChangeFolderDialog(Link link, BuildContext parentContext) {
             child: BlocBuilder<GetFoldersCubit, FoldersState>(
               builder: (foldersContext, state) {
                 return DecoratedBox(
-                  decoration: _dialogDecoration(),
+                  decoration: DialogDecoration(),
                   child: Padding(
                     padding: EdgeInsets.only(
                       top: 29.h,
@@ -230,13 +232,13 @@ Future<bool?> showLinkOptionsDialog(
       return Wrap(
         children: [
           DecoratedBox(
-            decoration: _dialogDecoration(),
+            decoration: DialogDecoration(),
             child: Padding(
               padding: EdgeInsets.only(
                 top: 29.h,
                 bottom: Platform.isAndroid
-                    ? MediaQuery.of(context).padding.bottom
-                    : 16.h,
+                    ? MediaQuery.of(context).viewInsets.bottom
+                    : 4.h,
               ),
               child: Column(
                 children: [
@@ -267,24 +269,7 @@ Future<bool?> showLinkOptionsDialog(
                         BottomListItem(
                           '내 폴더 담기',
                           callback: () {
-                            Navigator.pushNamed(
-                              context,
-                              Routes.upload,
-                              arguments: {
-                                'url': link.url,
-                                'isCopied': true,
-                              },
-                            ).then((value) {
-                              Navigator.pop(context);
-                              callback?.call();
-                              Navigator.pushReplacementNamed(
-                                context,
-                                Routes.home,
-                                arguments: {
-                                  'index': 2,
-                                },
-                              );
-                            });
+                            moveToMyFolderDialog(parentContext);
                           },
                         ),
                         BottomListItem(
@@ -330,7 +315,7 @@ Future<bool?> showUserOptionDialog(
       return Wrap(
         children: [
           DecoratedBox(
-            decoration: _dialogDecoration(),
+            decoration: DialogDecoration(),
             child: Padding(
               padding: EdgeInsets.only(
                 top: 29.h,
@@ -440,7 +425,7 @@ Widget BottomListItem(String text, {required void Function() callback}) {
   );
 }
 
-BoxDecoration _dialogDecoration() {
+BoxDecoration DialogDecoration() {
   return BoxDecoration(
     color: Colors.white,
     borderRadius: BorderRadius.only(

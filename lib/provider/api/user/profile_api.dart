@@ -14,7 +14,7 @@ class ProfileApi {
     final result = await _client.patchUri(
       '/users/me',
       body: {
-        'profile_img': profileImg
+        'profile_img': profileImg,
       },
     );
     return result.when(

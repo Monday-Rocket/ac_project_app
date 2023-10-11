@@ -52,7 +52,7 @@ class LinkDetailView extends StatelessWidget {
         ),
         BlocProvider(
           create: (_) => GetUserFoldersCubit(),
-        )
+        ),
       ],
       child: KeyboardDismissOnTap(
         child: KeyboardVisibilityBuilder(
@@ -111,7 +111,6 @@ class LinkDetailView extends StatelessWidget {
     bool linkVisible,
   ) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,

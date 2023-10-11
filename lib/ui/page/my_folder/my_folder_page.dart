@@ -343,9 +343,9 @@ class _MyFolderPageState extends State<MyFolderPage>
                                     fontWeight: FontWeight.w500,
                                     color: greyText,
                                   ),
-                                )
+                                ),
                               ],
-                            )
+                            ),
                           ],
                         ),
                         if (isNotClassified)
@@ -495,7 +495,9 @@ class _MyFolderPageState extends State<MyFolderPage>
 
                                 if (currFolder.visible ?? false) {
                                   Kakao.sendFolderKakaoShare(
-                                      currFolder, profile);
+                                    currFolder,
+                                    profile,
+                                  );
                                 } else {
                                   showPopUp(
                                     title: '폴더를 공개해 주세요',

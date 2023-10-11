@@ -6,5 +6,5 @@ const reportReasons = [
   'SLANDER',
   'SPAM',
   'PERSONAL_INFO',
-  'OTHER'
+  'OTHER',
 ];

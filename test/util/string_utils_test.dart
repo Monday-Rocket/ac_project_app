@@ -8,23 +8,23 @@ import 'package:intl/intl.dart';
 void main() {
   group('hasHttpImageUrl() test', () {
     test('link url이 http로 시작할 때만 true이다', () {
-      final link1 = Link();
+      const link1 = Link();
       var actual = hasHttpImageUrl(link1);
       expect(actual, false);
 
-      final link2 = Link(image: '');
+      const link2 = Link(image: '');
       actual = hasHttpImageUrl(link2);
       expect(actual, false);
 
-      final link3 = Link(image: '_____https://');
+      const link3 = Link(image: '_____https://');
       actual = hasHttpImageUrl(link3);
       expect(actual, false);
 
-      final link4 = Link(image: 'http://');
+      const link4 = Link(image: 'http://');
       actual = hasHttpImageUrl(link4);
       expect(actual, true);
 
-      final link5 = Link(image: 'https://');
+      const link5 = Link(image: 'https://');
       actual = hasHttpImageUrl(link5);
       expect(actual, true);
     });
@@ -32,10 +32,7 @@ void main() {
 
   group('UTC 시간을 일정 시간 간격 별로 변환하는 makeLinkTimeString() 테스트', () {
     // 현재 위치의 UTC 시간 간격 계산
-    final inMinutes = DateTime
-        .now()
-        .timeZoneOffset
-        .inMinutes;
+    final inMinutes = DateTime.now().timeZoneOffset.inMinutes;
     final hourGap = inMinutes ~/ 60;
     final minuteGap = inMinutes % 60;
 
@@ -117,8 +114,7 @@ void main() {
   });
 
   group('링크 제목 문자열 30자 이하로만 표현하도록 자르는 함수 테스트', () {
-    const textThatMoreThan30Chars =
-        '0123456789'
+    const textThatMoreThan30Chars = '0123456789'
         '0123456789'
         '0123456789'
         '30자가 넘는 구간';
@@ -131,8 +127,8 @@ void main() {
       expect(
           result,
           '0123456789'
-              '0123456789'
-              '0123456789');
+          '0123456789'
+          '0123456789');
     });
 
     test('30자가 넘지 않는 String을 변환했을 때 그대로 리턴', () {

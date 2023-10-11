@@ -4,7 +4,7 @@ import 'package:ac_project_app/provider/api/folders/folder_api.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class GetUserFoldersCubit extends Cubit<FolderList> {
-  GetUserFoldersCubit(): super(FolderList([]));
+  GetUserFoldersCubit(): super(const FolderList([]));
 
   final FolderApi folderApi = getIt();
 
@@ -16,11 +16,11 @@ class GetUserFoldersCubit extends Cubit<FolderList> {
           emit(FolderList(list));
         },
         error: (msg) {
-          emit(FolderList([]));
+          emit(const FolderList([]));
         },
       );
     } catch (e) {
-      emit(FolderList([]));
+      emit(const FolderList([]));
     }
   }
 }

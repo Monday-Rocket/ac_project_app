@@ -1,11 +1,11 @@
 import 'package:ac_project_app/cubits/links/upload_result_state.dart';
-import 'package:ac_project_app/util/url_loader.dart';
 import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/models/link/upload_type.dart';
 import 'package:ac_project_app/provider/api/folders/link_api.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:ac_project_app/util/string_utils.dart';
+import 'package:ac_project_app/util/url_loader.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class UploadLinkCubit extends Cubit<UploadResultState> {

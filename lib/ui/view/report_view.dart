@@ -76,7 +76,7 @@ class _ReportViewState extends State<ReportView> {
                 '완료',
                 style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16.sp),
               ),
-            )
+            ),
           ],
         ),
         body: SingleChildScrollView(
@@ -228,7 +228,7 @@ class _ReportViewState extends State<ReportView> {
                         ),
                       ),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
@@ -334,7 +334,7 @@ class _ReportViewState extends State<ReportView> {
               fontSize: 14.sp,
               fontWeight: FontWeight.w500,
             ),
-          )
+          ),
         ],
       ),
     );

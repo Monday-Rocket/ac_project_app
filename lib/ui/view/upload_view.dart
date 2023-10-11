@@ -198,7 +198,7 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
                       child: LoadingWidget(),
                     )
                   else
-                    const SizedBox.shrink()
+                    const SizedBox.shrink(),
                 ],
               ),
               bottomSheet: buildBottomSheetButton(
