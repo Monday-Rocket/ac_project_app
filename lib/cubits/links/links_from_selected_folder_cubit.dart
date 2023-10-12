@@ -52,6 +52,11 @@ class LinksFromSelectedFolderCubit extends Cubit<LinkListState> {
     }
   }
 
+  Future<void> refresh() async {
+    emit(LinkListLoadingState());
+    await getSelectedLinks(currentFolder!, 0);
+  }
+
   void loadMore() {
     if (hasMore.state == ScrollableType.can) {
       getSelectedLinks(currentFolder!, page + 1);

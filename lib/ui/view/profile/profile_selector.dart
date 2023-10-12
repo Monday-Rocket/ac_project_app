@@ -212,7 +212,7 @@ class _ProfileSelectorState extends State<ProfileSelector> {
             '완료',
             style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16.sp),
           ),
-        )
+        ),
       ],
     );
   }

@@ -6,6 +6,7 @@ void showBottomToast(
   String text, {
   double? bottomPadding,
   BuildContext? context,
+  int duration = 4000,
   void Function()? callback,
   String? subMsg,
   String actionTitle = '확인하기',
@@ -55,7 +56,7 @@ void showBottomToast(
               ],
             ),
       backgroundColor: grey900,
-      duration: const Duration(milliseconds: 2000),
+      duration: Duration(milliseconds: duration),
       behavior: SnackBarBehavior.floating,
       action: (callback == null)
           ? null

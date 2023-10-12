@@ -137,6 +137,9 @@ class $AssetsImagesGen {
   /// File path: assets/images/toggle_on.svg
   String get toggleOn => 'assets/images/toggle_on.svg';
 
+  /// File path: assets/images/upload_plus.svg
+  String get uploadPlus => 'assets/images/upload_plus.svg';
+
   /// File path: assets/images/warning_mark.svg
   String get warningMark => 'assets/images/warning_mark.svg';
 
@@ -180,6 +183,7 @@ class $AssetsImagesGen {
         naverIcon,
         toggleOff,
         toggleOn,
+        uploadPlus,
         warningMark,
         waveBack
       ];
@@ -343,7 +347,16 @@ class AssetGenImage {
     );
   }
 
-  ImageProvider provider() => AssetImage(_assetName);
+  ImageProvider provider({
+    AssetBundle? bundle,
+    String? package,
+  }) {
+    return AssetImage(
+      _assetName,
+      bundle: bundle,
+      package: package,
+    );
+  }
 
   String get path => _assetName;
 

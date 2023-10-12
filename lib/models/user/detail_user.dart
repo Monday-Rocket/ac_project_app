@@ -22,6 +22,7 @@ class DetailUser extends Equatable {
         json['job_group'] != null ? JobGroup.fromJson(json['job_group']) : null;
     _profile_img = json['profile_img'] as String?;
   }
+
   late final int? _id;
   late final String? _nickname;
   late final JobGroup? _jobGroup;
@@ -39,9 +40,13 @@ class DetailUser extends Equatable {
         jobGroup: jobGroup ?? _jobGroup,
         profile_img: profile_img ?? _profile_img,
       );
+
   int? get id => _id;
+
   String get nickname => _nickname ?? '';
+
   JobGroup? get jobGroup => _jobGroup;
+
   String get profile_img => _profile_img ?? '';
 
   Map<String, dynamic> toJson() {
@@ -85,6 +90,11 @@ class JobGroup {
     _name = name;
   }
 
+  JobGroup.fromJson(dynamic json) {
+    _id = json['id'] as int?;
+    _name = json['name'] as String?;
+  }
+
   static List<JobGroup> fromJsonList(List<dynamic> jsonList) {
     final result = <JobGroup>[];
     for (final json in jsonList) {
@@ -93,12 +103,9 @@ class JobGroup {
     return result;
   }
 
-  JobGroup.fromJson(dynamic json) {
-    _id = json['id'] as int?;
-    _name = json['name'] as String?;
-  }
   int? _id;
   String? _name;
+
   JobGroup copyWith({
     int? id,
     String? name,
@@ -107,7 +114,9 @@ class JobGroup {
         id: id ?? _id,
         name: name ?? _name,
       );
+
   int? get id => _id;
+
   String? get name => _name;
 
   Map<String, dynamic> toJson() {
