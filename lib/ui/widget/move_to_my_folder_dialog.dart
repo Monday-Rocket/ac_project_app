@@ -1,14 +1,19 @@
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/folders/folders_state.dart';
 import 'package:ac_project_app/cubits/folders/get_my_folders_cubit.dart';
+import 'package:ac_project_app/cubits/links/upload_link_cubit.dart';
+import 'package:ac_project_app/cubits/links/upload_result_state.dart';
+import 'package:ac_project_app/models/link/link.dart';
+import 'package:ac_project_app/models/link/upload_type.dart';
 import 'package:ac_project_app/ui/widget/add_folder/folder_add_title.dart';
 import 'package:ac_project_app/ui/widget/add_folder/horizontal_folder_list.dart';
+import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/dialog/bottom_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-Future<bool?> moveToMyFolderDialog(BuildContext parentContext) {
+Future<bool?> moveToMyFolderDialog(BuildContext parentContext, Link link) {
   return showModalBottomSheet<bool?>(
     backgroundColor: Colors.transparent,
     context: parentContext,
@@ -53,7 +58,14 @@ Future<bool?> moveToMyFolderDialog(BuildContext parentContext) {
                           child: buildFolderList(
                             folderContext: foldersContext,
                             state: state,
-                            callback: (_, folderId) {},
+                            callback: (_, folderId) {
+                              onSelectFolder(
+                                parentContext,
+                                link,
+                                folderId,
+                                context,
+                              );
+                            },
                           ),
                         ),
                       ],
@@ -67,4 +79,22 @@ Future<bool?> moveToMyFolderDialog(BuildContext parentContext) {
       );
     },
   );
+}
+
+void onSelectFolder(
+    BuildContext parentContext, Link link, int folderId, BuildContext context) {
+  parentContext
+      .read<UploadLinkCubit>()
+      .completeRegister(
+        link.url ?? '',
+        link.describe ?? '',
+        folderId,
+        UploadType.bring,
+      )
+      .then((result) {
+    if (result == UploadResultState.success) {
+      Navigator.pop(parentContext);
+      Navigator.pop(context);
+    }
+  });
 }

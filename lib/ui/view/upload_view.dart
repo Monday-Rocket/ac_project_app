@@ -88,11 +88,6 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
     if (url.isNotEmpty) {
       linkTextController.text = url;
     }
-    final isCopied = args['isCopied'] as bool? ?? false;
-    if (isCopied) {
-      buttonState = isCopied ? ButtonState.enabled : ButtonState.disabled;
-    }
-    Log.i('buttonState: ${buttonState.name}');
 
     return MultiBlocProvider(
       providers: [
@@ -206,7 +201,7 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
                 text: '등록완료',
                 keyboardVisible: visible,
                 onPressed: buttonState == ButtonState.enabled
-                    ? () => completeRegister(context, isCopied)
+                    ? () => completeRegister(context)
                     : null,
                 buttonShadow: false,
               ),
@@ -422,8 +417,7 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
     );
   }
 
-  void completeRegister(BuildContext context, bool isCopied) {
-    final uploadType = isCopied ? UploadType.bring : UploadType.create;
+  void completeRegister(BuildContext context) {
     setLoading();
     context
         .read<UploadLinkCubit>()
@@ -431,7 +425,7 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
           linkTextController.text,
           commentTextController.text,
           selectedFolderId,
-          uploadType,
+          UploadType.create,
         )
         .then((result) {
       if (result == UploadResultState.success) {

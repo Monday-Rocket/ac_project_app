@@ -6,6 +6,7 @@ import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/const/strings.dart';
 import 'package:ac_project_app/cubits/feed/feed_view_cubit.dart';
 import 'package:ac_project_app/cubits/folders/get_user_folders_cubit.dart';
+import 'package:ac_project_app/cubits/links/upload_link_cubit.dart';
 import 'package:ac_project_app/cubits/scroll/scroll_cubit.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/gen/fonts.gen.dart';
@@ -38,7 +39,8 @@ class UserFeedView extends StatelessWidget {
     final folderId = args['folderId'] as String?;
 
     // find index from folders by folderId
-    final index = folders.indexWhere((element) => element.id.toString() == folderId);
+    final index =
+        folders.indexWhere((element) => element.id.toString() == folderId);
 
     if (folders.isNotEmpty && index != -1) {
       // index가 처음이 되는 리스트로 folders를 재정렬
@@ -49,6 +51,7 @@ class UserFeedView extends StatelessWidget {
       providers: [
         BlocProvider(create: (_) => FeedViewCubit(folders)),
         BlocProvider(create: (_) => GetUserFoldersCubit()),
+        BlocProvider(create: (_) => UploadLinkCubit()),
       ],
       child: Scaffold(
         backgroundColor: Colors.white,

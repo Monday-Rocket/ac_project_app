@@ -4,6 +4,7 @@ import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/folders/get_user_folders_cubit.dart';
 import 'package:ac_project_app/cubits/links/detail_edit_cubit.dart';
 import 'package:ac_project_app/cubits/links/edit_state.dart';
+import 'package:ac_project_app/cubits/links/upload_link_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
@@ -47,12 +48,9 @@ class LinkDetailView extends StatelessWidget {
 
     return MultiBlocProvider(
       providers: [
-        BlocProvider(
-          create: (_) => DetailEditCubit(link),
-        ),
-        BlocProvider(
-          create: (_) => GetUserFoldersCubit(),
-        ),
+        BlocProvider(create: (_) => DetailEditCubit(link)),
+        BlocProvider(create: (_) => GetUserFoldersCubit()),
+        BlocProvider(create: (_) => UploadLinkCubit()),
       ],
       child: KeyboardDismissOnTap(
         child: KeyboardVisibilityBuilder(

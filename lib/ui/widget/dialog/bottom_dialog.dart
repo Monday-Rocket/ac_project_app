@@ -269,7 +269,7 @@ Future<bool?> showLinkOptionsDialog(
                         BottomListItem(
                           '내 폴더 담기',
                           callback: () {
-                            moveToMyFolderDialog(parentContext);
+                            moveToMyFolderDialog(parentContext, link);
                           },
                         ),
                         BottomListItem(
