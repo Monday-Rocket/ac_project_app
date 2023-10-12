@@ -6,6 +6,7 @@ import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/folders/get_user_folders_cubit.dart';
 import 'package:ac_project_app/cubits/home/search_links_cubit.dart';
 import 'package:ac_project_app/cubits/links/link_list_state.dart';
+import 'package:ac_project_app/cubits/links/upload_link_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
@@ -51,6 +52,7 @@ class _SearchViewState extends State<SearchView> {
         BlocProvider(
           create: (_) => GetUserFoldersCubit(),
         ),
+        BlocProvider(create: (_) => UploadLinkCubit()),
       ],
       child: GestureDetector(
         onTap: () {
@@ -237,10 +239,12 @@ class _SearchViewState extends State<SearchView> {
                                           color: grey100,
                                           child: CachedNetworkImage(
                                             imageUrl: link.image ?? '',
-                                            fadeInDuration:
-                                                const Duration(milliseconds: 300),
-                                            fadeOutDuration:
-                                                const Duration(milliseconds: 300),
+                                            fadeInDuration: const Duration(
+                                              milliseconds: 300,
+                                            ),
+                                            fadeOutDuration: const Duration(
+                                              milliseconds: 300,
+                                            ),
                                             imageBuilder:
                                                 (context, imageProvider) =>
                                                     Container(
@@ -443,7 +447,7 @@ class _SearchViewState extends State<SearchView> {
                       height: (18 / 14).h,
                       color: lightGrey700,
                     ),
-                  )
+                  ),
                 ],
               ),
             ),

@@ -38,8 +38,9 @@ class HomePage extends StatelessWidget {
                 child: NotificationListener<ScrollEndNotification>(
                   onNotification: (scrollNotification) {
                     final metrics = scrollNotification.metrics;
-                    if (metrics.axisDirection != AxisDirection.down)
+                    if (metrics.axisDirection != AxisDirection.down) {
                       return false;
+                    }
                     if (metrics.extentAfter <= 800) {
                       context.read<LinksFromSelectedJobGroupCubit>().loadMore();
                     }
@@ -56,7 +57,10 @@ class HomePage extends StatelessWidget {
                         SliverToBoxAdapter(
                           child: Container(
                             margin: EdgeInsets.only(
-                                left: 24.w, right: 24.w, top: 20.h),
+                              left: 24.w,
+                              right: 24.w,
+                              top: 20.h,
+                            ),
                             child: GestureDetector(
                               onTap: () => Navigator.pushNamed(
                                 context,
@@ -151,7 +155,7 @@ class HomePage extends StatelessWidget {
                           thickness: 1.w,
                           color: ccGrey200,
                         ),
-                      )
+                      ),
                   ],
                 );
               },

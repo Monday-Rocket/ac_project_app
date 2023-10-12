@@ -7,6 +7,11 @@ class Topic {
     _name = name;
   }
 
+  Topic.fromJson(dynamic json) {
+    _id = json['id'] as int?;
+    _name = json['name'] as String?;
+  }
+
   static List<Topic> fromJsonList(List<dynamic> jsonList) {
     final result = <Topic>[];
     for (final json in jsonList) {
@@ -15,12 +20,9 @@ class Topic {
     return result;
   }
 
-  Topic.fromJson(dynamic json) {
-    _id = json['id'] as int?;
-    _name = json['name'] as String?;
-  }
   int? _id;
   String? _name;
+
   Topic copyWith({
     int? id,
     String? name,
@@ -29,7 +31,9 @@ class Topic {
         id: id ?? _id,
         name: name ?? _name,
       );
+
   int? get id => _id;
+
   String? get name => _name;
 
   Map<String, dynamic> toJson() {

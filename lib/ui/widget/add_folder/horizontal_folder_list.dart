@@ -1,12 +1,13 @@
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/folders/folders_state.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
+import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 Widget buildFolderList({
-  void Function(int index, int folderId)? callback,
+  void Function(int index, Folder folder)? callback,
   int? selectedIndex,
   required BuildContext folderContext,
   required FoldersState state,
@@ -23,7 +24,7 @@ Widget buildFolderList({
         curve: Curves.easeInOutCubic,
       );
 
-      callback?.call(folders.length - 1, folders.last.id!);
+      callback?.call(folders.length - 1, folders.last);
     }
 
     if (isLast ?? false) Future.microtask(gotoLastIndex);
@@ -42,7 +43,7 @@ Widget buildFolderList({
           final visible = folder.visible ?? false;
           return GestureDetector(
             onTap: () {
-              callback?.call(index, folder.id!);
+              callback?.call(index, folder);
             },
             child: Container(
               margin: EdgeInsets.only(
@@ -86,7 +87,8 @@ Widget buildFolderList({
                           width: 95.w,
                           height: 95.h,
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(32.r)),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(32.r)),
                             color: secondary400,
                           ),
                         ),

@@ -6,10 +6,11 @@ import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
-import 'package:ac_project_app/models/link/link.dart' as MyLink;
+import 'package:ac_project_app/models/link/link.dart' as my_link;
+import 'package:ac_project_app/models/profile/profile.dart' as Profile;
 import 'package:ac_project_app/models/profile/profile_image.dart';
 import 'package:ac_project_app/provider/api/folders/link_api.dart';
-import 'package:ac_project_app/provider/api/user/user_api.dart' as MyUserApi;
+import 'package:ac_project_app/provider/api/user/user_api.dart' as my_user_api;
 import 'package:ac_project_app/provider/login/firebase_auth_remote_data_source.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
@@ -22,7 +23,6 @@ import 'package:flutter/services.dart';
 import 'package:kakao_flutter_sdk_share/kakao_flutter_sdk_share.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:ac_project_app/models/profile/profile.dart' as Profile;
 
 class Kakao {
   static Future<bool> login() async {
@@ -94,7 +94,7 @@ class Kakao {
     }
   }
 
-  static Future<void> sendKakaoLinkShare(MyLink.Link link) async {
+  static Future<void> sendKakaoLinkShare(my_link.Link link) async {
     final defaultFeed = FeedTemplate(
       content: Content(
         title: link.title ?? '',
@@ -248,7 +248,7 @@ class Kakao {
       if (query.keys.contains('folderId')) {
         final folderId = query['folderId']!;
         final userId = query['userId'] ?? '';
-        getIt<MyUserApi.UserApi>().getUsersId(userId).then((result) {
+        getIt<my_user_api.UserApi>().getUsersId(userId).then((result) {
           result.when(
             success: (user) {
               final profileInfoCubit = getIt<GetProfileInfoCubit>();

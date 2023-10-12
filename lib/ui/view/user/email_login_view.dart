@@ -183,12 +183,12 @@ class _EmailLoginViewState extends State<EmailLoginView>
                                   ),
                                 ),
                               ),
-                            )
+                            ),
                           ],
                         ),
                       ),
                     ),
-                    SizedBox(height: keyboardHeight)
+                    SizedBox(height: keyboardHeight),
                   ],
                 ),
               ),

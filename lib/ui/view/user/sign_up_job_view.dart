@@ -281,7 +281,7 @@ class SignUpJobView extends StatelessWidget {
           ),
           SizedBox(
             height: 24.h,
-          )
+          ),
         ],
       ),
     );

@@ -283,7 +283,7 @@ Padding _buildDialogBody(
                   ),
                 );
               },
-            )
+            ),
           ],
         );
       },

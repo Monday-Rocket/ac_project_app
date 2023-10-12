@@ -19,6 +19,7 @@ Container buildFolderSelectTitle(
     ),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      verticalDirection: VerticalDirection.up,
       children: [
         buildSubTitle(text),
         InkWell(
@@ -29,10 +30,7 @@ Container buildFolderSelectTitle(
             callback: callback,
           ),
           child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: 8.w,
-              vertical: 8.h,
-            ),
+            padding: EdgeInsets.all(8.w),
             child: SvgPicture.asset(
               Assets.images.btnAdd,
             ),

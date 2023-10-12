@@ -34,7 +34,7 @@ class ShareDataProvider {
           'describe': item['comment'],
           'image': item['image_link'],
           'folder_name': item['folder_name'],
-          'created_at': item['created_at']
+          'created_at': item['created_at'],
         });
       }
 
@@ -57,7 +57,7 @@ class ShareDataProvider {
         final folder = {
           'name': json['name'],
           'visible': json['visible'],
-          'created_at': json['created_at']
+          'created_at': json['created_at'],
         };
         result.add(folder);
       }

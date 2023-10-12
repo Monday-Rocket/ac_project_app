@@ -18,7 +18,6 @@ import 'package:ac_project_app/ui/widget/buttons/bottom_sheet_button.dart';
 import 'package:ac_project_app/ui/widget/dialog/center_dialog.dart';
 import 'package:ac_project_app/ui/widget/loading.dart';
 import 'package:ac_project_app/util/get_arguments.dart';
-import 'package:ac_project_app/util/logger.dart';
 import 'package:ac_project_app/util/url_valid.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -88,11 +87,6 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
     if (url.isNotEmpty) {
       linkTextController.text = url;
     }
-    final isCopied = args['isCopied'] as bool? ?? false;
-    if (isCopied) {
-      buttonState = isCopied ? ButtonState.enabled : ButtonState.disabled;
-    }
-    Log.i('buttonState: ${buttonState.name}');
 
     return MultiBlocProvider(
       providers: [
@@ -167,10 +161,9 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
                                     buildFolderList(
                                       folderContext: folderContext,
                                       state: state,
-                                      callback: (index, folderId) =>
-                                          setState(() {
+                                      callback: (index, folder) => setState(() {
                                         selectedIndex = index;
-                                        selectedFolderId = folderId;
+                                        selectedFolderId = folder.id;
                                         isSavedNewFolder = false;
                                       }),
                                       selectedIndex: selectedIndex,
@@ -198,7 +191,7 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
                       child: LoadingWidget(),
                     )
                   else
-                    const SizedBox.shrink()
+                    const SizedBox.shrink(),
                 ],
               ),
               bottomSheet: buildBottomSheetButton(
@@ -206,7 +199,7 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
                 text: '등록완료',
                 keyboardVisible: visible,
                 onPressed: buttonState == ButtonState.enabled
-                    ? () => completeRegister(context, isCopied)
+                    ? () => completeRegister(context)
                     : null,
                 buttonShadow: false,
               ),
@@ -422,8 +415,7 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
     );
   }
 
-  void completeRegister(BuildContext context, bool isCopied) {
-    final uploadType = isCopied ? UploadType.bring : UploadType.create;
+  void completeRegister(BuildContext context) {
     setLoading();
     context
         .read<UploadLinkCubit>()
@@ -431,7 +423,7 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
           linkTextController.text,
           commentTextController.text,
           selectedFolderId,
-          uploadType,
+          UploadType.create,
         )
         .then((result) {
       if (result == UploadResultState.success) {
