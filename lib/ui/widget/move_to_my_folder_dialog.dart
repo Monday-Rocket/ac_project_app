@@ -3,8 +3,10 @@ import 'package:ac_project_app/cubits/folders/folders_state.dart';
 import 'package:ac_project_app/cubits/folders/get_my_folders_cubit.dart';
 import 'package:ac_project_app/cubits/links/upload_link_cubit.dart';
 import 'package:ac_project_app/cubits/links/upload_result_state.dart';
+import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/models/link/upload_type.dart';
+import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/add_folder/folder_add_title.dart';
 import 'package:ac_project_app/ui/widget/add_folder/horizontal_folder_list.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
@@ -58,11 +60,11 @@ Future<bool?> moveToMyFolderDialog(BuildContext parentContext, Link link) {
                           child: buildFolderList(
                             folderContext: foldersContext,
                             state: state,
-                            callback: (_, folderId) {
+                            callback: (_, folder) {
                               onSelectFolder(
                                 parentContext,
                                 link,
-                                folderId,
+                                folder,
                                 context,
                               );
                             },
@@ -82,19 +84,48 @@ Future<bool?> moveToMyFolderDialog(BuildContext parentContext, Link link) {
 }
 
 void onSelectFolder(
-    BuildContext parentContext, Link link, int folderId, BuildContext context) {
+  BuildContext parentContext,
+  Link link,
+  Folder folder,
+  BuildContext context,
+) {
   parentContext
       .read<UploadLinkCubit>()
       .completeRegister(
         link.url ?? '',
         link.describe ?? '',
-        folderId,
+        folder.id,
         UploadType.bring,
       )
       .then((result) {
     if (result == UploadResultState.success) {
       Navigator.pop(parentContext);
       Navigator.pop(context);
+      showBottomToast(
+        "링크가 '${_getFolderName(folder.name ?? '')}' 폴더에 담겼어요!",
+        context: parentContext,
+        actionTitle: '이동하기',
+        callback: () {
+          Navigator.pushNamed(
+            parentContext,
+            Routes.linkDetail,
+            arguments: {
+              'link': link,
+              'isMine': true,
+              'visible': folder.visible,
+            },
+          );
+        },
+      );
     }
   });
+}
+
+// if folderName length is over 6, show only 4 characters and add '...'
+String _getFolderName(String folderName) {
+  if (folderName.length > 6) {
+    return '${folderName.substring(0, 6)}...';
+  } else {
+    return folderName;
+  }
 }

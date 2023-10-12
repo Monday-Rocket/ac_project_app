@@ -184,9 +184,9 @@ Future<bool?> showChangeFolderDialog(Link link, BuildContext parentContext) {
                           child: buildFolderList(
                             folderContext: foldersContext,
                             state: state,
-                            callback: (_, folderId) {
+                            callback: (_, folder) {
                               getIt<LinkApi>()
-                                  .changeFolder(link, folderId)
+                                  .changeFolder(link, folder.id!)
                                   .then((result) {
                                 Navigator.pop(context);
                                 Navigator.pop(context);

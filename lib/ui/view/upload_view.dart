@@ -18,7 +18,6 @@ import 'package:ac_project_app/ui/widget/buttons/bottom_sheet_button.dart';
 import 'package:ac_project_app/ui/widget/dialog/center_dialog.dart';
 import 'package:ac_project_app/ui/widget/loading.dart';
 import 'package:ac_project_app/util/get_arguments.dart';
-import 'package:ac_project_app/util/logger.dart';
 import 'package:ac_project_app/util/url_valid.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -162,10 +161,9 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
                                     buildFolderList(
                                       folderContext: folderContext,
                                       state: state,
-                                      callback: (index, folderId) =>
-                                          setState(() {
+                                      callback: (index, folder) => setState(() {
                                         selectedIndex = index;
-                                        selectedFolderId = folderId;
+                                        selectedFolderId = folder.id;
                                         isSavedNewFolder = false;
                                       }),
                                       selectedIndex: selectedIndex,
