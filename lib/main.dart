@@ -35,15 +35,10 @@ class MyApp extends StatelessWidget {
       ),
     );
 
-    return MultiPlatformApp.create();
-  }
-}
-
-class MultiPlatformApp {
-  static Widget create() {
     return ScreenUtilInit(
       designSize: const Size(393, 852),
       minTextAdapt: true,
+      useInheritedMediaQuery: true,
       builder: (context, child) {
         return MultiBlocProvider(
           providers: globalProviders,
