@@ -1,4 +1,5 @@
 import 'package:ac_project_app/cubits/folders/get_user_folders_cubit.dart';
+import 'package:ac_project_app/cubits/login/auto_login_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/provider/api/custom_client.dart';
 import 'package:ac_project_app/provider/api/folders/folder_api.dart';
@@ -20,11 +21,10 @@ void locator() {
   ..registerLazySingleton(() => LinkApi(httpClient))
   ..registerLazySingleton(() => ReportApi(httpClient))
   ..registerLazySingleton(() => ProfileApi(httpClient))
-  ..registerLazySingleton(() => UserApi(httpClient));
-
+  ..registerLazySingleton(() => UserApi(httpClient))
 
   // Cubits
-  final profileCubit = GetProfileInfoCubit();
-  getIt..registerLazySingleton(GetUserFoldersCubit.new)
-  ..registerLazySingleton(() => profileCubit);
+  ..registerLazySingleton(GetUserFoldersCubit.new)
+  ..registerLazySingleton(GetProfileInfoCubit.new)
+  ..registerLazySingleton(AutoLoginCubit.new);
 }
