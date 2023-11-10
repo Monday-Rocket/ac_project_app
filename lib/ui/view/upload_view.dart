@@ -18,7 +18,6 @@ import 'package:ac_project_app/ui/widget/buttons/bottom_sheet_button.dart';
 import 'package:ac_project_app/ui/widget/dialog/center_dialog.dart';
 import 'package:ac_project_app/ui/widget/loading.dart';
 import 'package:ac_project_app/util/get_arguments.dart';
-import 'package:ac_project_app/util/url_valid.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -27,13 +26,15 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class UploadView extends StatefulWidget {
-  const UploadView({super.key});
+  const UploadView({super.key, this.args});
+
+  final Map<String, dynamic>? args;
 
   @override
   State<UploadView> createState() => _UploadViewState();
 }
 
-class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
+class _UploadViewState extends State<UploadView> {
   final linkTextController = TextEditingController();
   final commentTextController = TextEditingController();
 
@@ -48,51 +49,19 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
 
   @override
   void initState() {
-    WidgetsBinding.instance.addObserver(this);
-    setClipboardUrl();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      setClipboardUrl();
+    if (widget.args != null) {
+      linkTextController.text = widget.args!['url'] as String;
+      buttonState = ButtonState.enabled;
     }
-  }
-
-  // 클립보드에 링크 있으면 불러오기
-  void setClipboardUrl() {
-    Clipboard.getData(Clipboard.kTextPlain).then((value) {
-      isValidUrl(value?.text ?? '').then((result) {
-        if (result) {
-          setState(() {
-            linkTextController.text = value?.text ?? '';
-            buttonState = ButtonState.enabled;
-          });
-        }
-      });
-    });
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     final args = getArguments(context);
-    final url = args['url'] as String? ?? '';
-    if (url.isNotEmpty) {
-      linkTextController.text = url;
-    }
 
     return MultiBlocProvider(
       providers: [
-        BlocProvider(
-          create: (_) => HomeViewCubit((args['index'] as int?) ?? 0),
-        ),
         BlocProvider<GetFoldersCubit>(
           create: (_) => GetFoldersCubit(excludeUnclassified: true),
         ),

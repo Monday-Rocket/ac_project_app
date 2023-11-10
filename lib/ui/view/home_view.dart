@@ -10,11 +10,14 @@ import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/provider/api/folders/folder_api.dart';
 import 'package:ac_project_app/provider/kakao/kakao.dart';
+import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/page/home/home_page.dart';
 import 'package:ac_project_app/ui/page/my_folder/my_folder_page.dart';
 import 'package:ac_project_app/ui/page/my_page/my_page.dart';
 import 'package:ac_project_app/util/get_arguments.dart';
+import 'package:ac_project_app/util/url_valid.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -41,6 +44,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
       if (!mounted) return;
       Kakao.receiveLink(context, url: url);
     });
+    checkClipboardLink();
     super.initState();
   }
 
@@ -54,9 +58,24 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       getIt<FolderApi>().bulkSave();
-
       Kakao.receiveLink(context);
     }
+  }
+
+  void checkClipboardLink() {
+    Clipboard.getData(Clipboard.kTextPlain).then((value) {
+      isValidUrl(value?.text ?? '').then((isValid) {
+        if (isValid) {
+          Navigator.pushNamed(
+            context,
+            Routes.upload,
+            arguments: {
+              'url': value?.text,
+            },
+          );
+        }
+      });
+    });
   }
 
   @override

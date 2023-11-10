@@ -74,7 +74,7 @@ class Pages {
       case Routes.report:
         return router.create(child: const ReportView());
       case Routes.upload:
-        return router.create(child: const UploadView());
+        return router.create(child: UploadView(args: arguments as Map<String, dynamic>?));
       case Routes.tutorial:
         return router.create(child: const TutorialView());
       default:

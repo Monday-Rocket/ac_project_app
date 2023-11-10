@@ -1,17 +1,16 @@
 import 'dart:async';
 
 import 'package:ac_project_app/const/colors.dart';
+import 'package:ac_project_app/cubits/login/auto_login_cubit.dart';
+import 'package:ac_project_app/cubits/login/login_user_state.dart';
 import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
-import 'package:ac_project_app/provider/api/user/user_api.dart';
-import 'package:ac_project_app/provider/share_data_provider.dart';
+import 'package:ac_project_app/provider/tutorial_provider.dart';
 import 'package:ac_project_app/routes.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashView extends StatefulWidget {
   const SplashView({super.key});
@@ -24,51 +23,36 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
   late AnimationController firstAnimationController;
   late AnimationController secondAnimationController;
 
+  final autoLoginCubit = getIt<AutoLoginCubit>();
+
   @override
   void initState() {
+    autoLoginCubit.userCheck();
     setAnimationController();
-    _loginAfterAnimation();
+    loginAfterAnimation();
     super.initState();
   }
 
-  void _loginAfterAnimation() {
+  void loginAfterAnimation() {
     Future.delayed(const Duration(milliseconds: 1500), () {
-      SharedPreferences.getInstance().then((SharedPreferences prefs) {
-        final tutorial = prefs.getBool('tutorial2') ?? false;
-        if (tutorial) {
-          prefs.setBool('tutorial2', false);
-          moveToTutorialView();
-        } else {
-          moveToNextView();
-        }
-      });
+      checkTutorial2(
+        onMoveToTutorialView: moveToTutorialView,
+        onMoveToNextView: moveToNextView,
+      );
     });
   }
 
   void moveToNextView() {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      getIt<UserApi>().postUsers().then((result) {
-        result.when(
-          success: (data) {
-            if (data.is_new ?? false) {
-              moveToLoginView();
-            } else {
-              ShareDataProvider.loadServerDataAtFirst();
-              Navigator.pushReplacementNamed(
-                context,
-                Routes.home,
-                arguments: {
-                  'index': 0,
-                },
-              );
-            }
-          },
-          error: (_) => moveToLoginView(),
-        );
-      });
-    } else {
+    if (autoLoginCubit.state is LoginInitialState) {
       moveToLoginView();
+    } else {
+      Navigator.pushReplacementNamed(
+        context,
+        Routes.home,
+        arguments: {
+          'index': 0,
+        },
+      );
     }
   }
 
@@ -79,26 +63,36 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
       Navigator.pushReplacementNamed(context, Routes.tutorial);
 
   void setAnimationController() {
-    firstAnimationController = AnimationController(
-      vsync: this,
-      duration: const Duration(
-        milliseconds: 700,
-      ),
-    );
+    setFirstAnimationController();
+    setSecondAnimationController();
+    firstAnimationController.forward();
+    forwardSecondAnimationAfter300mills();
+    secondAnimationController.forward();
+  }
 
+  void forwardSecondAnimationAfter300mills() {
+    Timer(
+      const Duration(milliseconds: 300),
+      () => secondAnimationController.forward(),
+    );
+  }
+
+  void setSecondAnimationController() {
     secondAnimationController = AnimationController(
       vsync: this,
       duration: const Duration(
         milliseconds: 700,
       ),
     );
+  }
 
-    firstAnimationController.forward();
-    Timer(
-      const Duration(milliseconds: 300),
-      () => secondAnimationController.forward(),
+  void setFirstAnimationController() {
+    firstAnimationController = AnimationController(
+      vsync: this,
+      duration: const Duration(
+        milliseconds: 700,
+      ),
     );
-    secondAnimationController.forward();
   }
 
   @override
