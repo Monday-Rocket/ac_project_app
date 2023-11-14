@@ -44,7 +44,6 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
       if (!mounted) return;
       Kakao.receiveLink(context, url: url);
     });
-    checkClipboardLink();
     super.initState();
   }
 
@@ -59,6 +58,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
     if (state == AppLifecycleState.resumed) {
       getIt<FolderApi>().bulkSave();
       Kakao.receiveLink(context);
+      checkClipboardLink();
     }
   }
 
