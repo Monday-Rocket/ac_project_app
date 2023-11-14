@@ -53,19 +53,24 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
     super.dispose();
   }
 
+  final resumeState = ValueNotifier(true);
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
+      if (!resumeState.value) return;
+      resetResumeState();
       getIt<FolderApi>().bulkSave();
       Kakao.receiveLink(context);
-      checkClipboardLink();
+      navigateToUploadViewIfClipboardIsValid();
     }
   }
 
-  void checkClipboardLink() {
+  void navigateToUploadViewIfClipboardIsValid() {
     Clipboard.getData(Clipboard.kTextPlain).then((value) {
       isValidUrl(value?.text ?? '').then((isValid) {
         if (isValid) {
+          Clipboard.setData(const ClipboardData(text: ''));
           Navigator.pushNamed(
             context,
             Routes.upload,
@@ -75,6 +80,13 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
           );
         }
       });
+    });
+  }
+
+  void resetResumeState() {
+    resumeState.value = false;
+    Future.delayed(const Duration(seconds: 3), () {
+      resumeState.value = true;
     });
   }
 
