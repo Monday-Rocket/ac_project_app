@@ -51,6 +51,11 @@ class MyApp extends StatelessWidget {
               theme: ThemeData(
                 fontFamily: FontFamily.pretendard,
                 brightness: Brightness.light,
+                textButtonTheme: TextButtonThemeData(
+                  style: ButtonStyle(
+                    foregroundColor: MaterialStateProperty.all(Colors.white),
+                  ),
+                ),
                 progressIndicatorTheme: const ProgressIndicatorThemeData(
                   color: primary600,
                 ),

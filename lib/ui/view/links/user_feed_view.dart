@@ -260,7 +260,9 @@ class UserFeedView extends StatelessWidget {
                         );
                       }
                       return TabBar(
+                        padding: EdgeInsets.zero,
                         isScrollable: true,
+                        tabAlignment: TabAlignment.start,
                         unselectedLabelColor: lightGrey700,
                         labelColor: primaryTab,
                         labelStyle: TextStyle(
@@ -279,10 +281,6 @@ class UserFeedView extends StatelessWidget {
                           borderSide: BorderSide(
                             color: primaryTab,
                             width: 2.5.w,
-                          ),
-                          insets: EdgeInsets.only(
-                            left: 15.w,
-                            right: 15.w,
                           ),
                         ),
                         tabs: tabs,

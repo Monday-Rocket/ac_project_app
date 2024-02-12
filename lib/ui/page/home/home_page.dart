@@ -8,15 +8,11 @@ import 'package:ac_project_app/cubits/links/links_from_selected_job_group_cubit.
 import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
-import 'package:ac_project_app/gen/fonts.gen.dart';
 import 'package:ac_project_app/models/link/link.dart';
-import 'package:ac_project_app/models/user/detail_user.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/dialog/bottom_dialog.dart';
 import 'package:ac_project_app/ui/widget/link_hero.dart';
-import 'package:ac_project_app/ui/widget/sliver/custom_header_delegate.dart';
 import 'package:ac_project_app/ui/widget/user/user_info.dart';
-import 'package:ac_project_app/util/list_utils.dart';
 import 'package:ac_project_app/util/string_utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -91,10 +87,6 @@ class HomePage extends StatelessWidget {
                               ),
                             ),
                           ),
-                        ),
-                        buildJobListView(
-                          jobContext,
-                          state.jobs.sortMyJobs(profileState.profile),
                         ),
                         buildListBody(jobContext),
                       ],
@@ -343,124 +335,6 @@ class HomePage extends StatelessWidget {
       context.read<LinksFromSelectedJobGroupCubit>().hasRefresh = false;
     }
     totalLinks.addAll(links);
-  }
-
-  Widget buildJobListView(
-    BuildContext jobContext,
-    List<JobGroup> jobs,
-  ) {
-    return SliverPersistentHeader(
-      pinned: true,
-      delegate: CustomHeaderDelegate(
-        buildJobListWidget(jobContext, jobs),
-      ),
-    );
-  }
-
-  Widget buildJobListWidget(BuildContext jobContext, List<JobGroup> jobs) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          color: Colors.white,
-          padding: EdgeInsets.only(top: 19.h, left: 12.w, right: 20.w),
-          child: DefaultTabController(
-            length: jobs.length,
-            child: SizedBox(
-              height: 36.h,
-              child: Stack(
-                children: [
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Padding(
-                      padding: EdgeInsets.only(
-                        left: 15.w,
-                        right: 11.w,
-                        bottom: 1.h,
-                      ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Container(
-                              color: greyTab,
-                              height: 1.h,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(right: 7.w),
-                    child: Builder(
-                      builder: (context) {
-                        final tabs = <Widget>[];
-                        for (final job in jobs) {
-                          tabs.add(
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                vertical: 7.h,
-                              ),
-                              child: Text(
-                                job.name ?? '',
-                              ),
-                            ),
-                          );
-                        }
-                        return TabBar(
-                          isScrollable: true,
-                          unselectedLabelColor: grey700,
-                          labelColor: primaryTab,
-                          labelPadding: EdgeInsets.symmetric(horizontal: 13.w),
-                          labelStyle: TextStyle(
-                            fontFamily: FontFamily.pretendard,
-                            fontSize: 16.sp,
-                            height: (19 / 16).h,
-                            fontWeight: FontWeight.w800,
-                          ),
-                          unselectedLabelStyle: TextStyle(
-                            fontFamily: FontFamily.pretendard,
-                            fontSize: 16.sp,
-                            height: (19 / 16).h,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          indicator: UnderlineTabIndicator(
-                            borderSide: BorderSide(
-                              color: primaryTab,
-                              width: 2.5.w,
-                            ),
-                            insets: EdgeInsets.symmetric(horizontal: 15.w),
-                          ),
-                          tabs: tabs,
-                          onTap: (index) {
-                            jobContext
-                                .read<LinksFromSelectedJobGroupCubit>()
-                                .hasLoadMore = false;
-                            final selectedJobGroupId = jobs[index].id!;
-                            jobContext
-                                .read<LinksFromSelectedJobGroupCubit>()
-                                .clear();
-                            jobContext
-                                .read<LinksFromSelectedJobGroupCubit>()
-                                .getSelectedJobLinks(selectedJobGroupId, 0)
-                                .then(
-                                  (value) => jobContext
-                                      .read<LinksFromSelectedJobGroupCubit>()
-                                      .scrollController
-                                      .jumpTo(0),
-                                );
-                          },
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
   }
 
   Future<void> refresh(BuildContext context) async {

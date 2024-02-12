@@ -73,6 +73,7 @@ class SignUpJobView extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 17.sp,
                           fontWeight: FontWeight.bold,
+                          color: Colors.white,
                         ),
                         textWidthBasis: TextWidthBasis.parent,
                       ),
