@@ -11,6 +11,7 @@ import 'package:ac_project_app/ui/widget/add_folder/folder_add_title.dart';
 import 'package:ac_project_app/ui/widget/add_folder/horizontal_folder_list.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/dialog/bottom_dialog.dart';
+import 'package:ac_project_app/util/navigator_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -89,6 +90,8 @@ void onSelectFolder(
   Folder folder,
   BuildContext context,
 ) {
+  popIfCan(parentContext);
+  popIfCan(context);
   parentContext
       .read<UploadLinkCubit>()
       .completeRegister(
@@ -99,8 +102,6 @@ void onSelectFolder(
       )
       .then((result) {
     if (result == UploadResultState.success) {
-      Navigator.pop(parentContext);
-      Navigator.pop(context);
       showBottomToast(
         "링크가 '${_getFolderName(folder.name ?? '')}' 폴더에 담겼어요!",
         context: parentContext,

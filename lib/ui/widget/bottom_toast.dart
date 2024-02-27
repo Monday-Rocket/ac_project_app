@@ -11,7 +11,9 @@ void showBottomToast(
   String? subMsg,
   String actionTitle = '확인하기',
 }) {
-  ScaffoldMessenger.of(context!).showSnackBar(
+  if (context == null) return;
+
+  ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
       margin: EdgeInsets.only(
         left: 21.w,

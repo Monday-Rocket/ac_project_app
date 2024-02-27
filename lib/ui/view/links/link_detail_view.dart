@@ -59,10 +59,10 @@ class LinkDetailView extends StatelessWidget {
               builder: (cubitContext, editState) {
                 final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
                 if (editState == EditState.edit) {
-                  return WillPopScope(
-                    onWillPop: () async {
+                  return PopScope(
+                    onPopInvoked: (bool didPop) {
+                      if (didPop) return;
                       goBackPage(editState, context, link.id);
-                      return true;
                     },
                     child: buildMainScreen(
                       editState,
@@ -356,10 +356,10 @@ class LinkDetailView extends StatelessWidget {
                   visible: isMyLink,
                   child: GestureDetector(
                     onTap: () {
-                      toggleEditorWithDialog(state, cubitContext, link.id);
+                      toggleEditorWithDialog(state, cubitContext, link);
                     },
                     onDoubleTap: () {
-                      toggleEditorWithDialog(state, cubitContext, link.id);
+                      toggleEditorWithDialog(state, cubitContext, link);
                     },
                     child: Padding(
                       padding: EdgeInsets.all(12.r),
@@ -456,8 +456,9 @@ class LinkDetailView extends StatelessWidget {
   void toggleEditorWithDialog(
     EditState state,
     BuildContext cubitContext,
-    int? linkId,
+    Link link,
   ) {
+    final linkId = link.id;
     if (state == EditState.edit) {
       showWaitDialog(
         cubitContext,
@@ -475,6 +476,11 @@ class LinkDetailView extends StatelessWidget {
       getValueFromKey(linkId!.toString()).then((temp) {
         if (temp.isNotEmpty) {
           cubitContext.read<DetailEditCubit>().textController.text = temp;
+        } else {
+          cubitContext
+              .read<DetailEditCubit>()
+              .textController
+              .text = link.describe ?? '';
         }
         toggleEditor(cubitContext);
       });

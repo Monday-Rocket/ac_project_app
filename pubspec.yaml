@@ -15,13 +15,13 @@ dependencies:
   cupertino_icons:
 
   ## Network
-  dio: ^5.2.0+1
+  dio: ^5.4.1
   json_annotation: ^4.8.0
   http: ^0.13.6
   cached_network_image: ^3.3.1
 
   ## Architecture
-  flutter_bloc: ^8.1.3
+  flutter_bloc: ^8.1.4
   equatable: ^2.0.5
   get_it: ^7.6.0
 
@@ -39,7 +39,7 @@ dependencies:
   firebase_auth_mocks:
 
   ## UI Sizer
-  flutter_screenutil: ^5.7.0
+  flutter_screenutil: ^5.9.0
 
   ## kakao_share
   kakao_flutter_sdk_share: ^1.6.1
@@ -52,12 +52,12 @@ dependencies:
   intl: ^0.18.1
   path: ^1.8.3
   oktoast:
-  share_plus: ^6.3.1
+  share_plus: ^7.2.2
   flutter_keyboard_visibility: ^5.4.1
-  extended_text: ^12.0.1
+  extended_text: ^13.0.0
   carousel_slider: ^4.2.1
   lottie:
-  flutter_slidable: ^2.0.0
+  flutter_slidable: ^3.0.1
   firebase_storage:
 
   ## lint
@@ -91,10 +91,10 @@ dev_dependencies:
   bloc_test: ^9.1.2
 
   # for model class
-  build_runner: ^2.3.3
+  build_runner: ^2.4.8
   json_serializable: ^6.6.1
   analyzer: ^5.10.0
-  freezed: ^2.3.2
+  freezed: ^2.4.7
 
 flutter:
 
