@@ -4,17 +4,22 @@ import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/const/strings.dart';
 import 'package:ac_project_app/cubits/home/get_job_list_cubit.dart';
 import 'package:ac_project_app/cubits/home/topic_list_state.dart';
+import 'package:ac_project_app/cubits/linkpool_pick/linkpool_pick_cubit.dart';
+import 'package:ac_project_app/cubits/linkpool_pick/linkpool_pick_result_state.dart';
 import 'package:ac_project_app/cubits/links/links_from_selected_job_group_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/link/link.dart';
+import 'package:ac_project_app/models/linkpool_pick/linkpool_pick.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/dialog/bottom_dialog.dart';
 import 'package:ac_project_app/ui/widget/link_hero.dart';
 import 'package:ac_project_app/ui/widget/user/user_info.dart';
+import 'package:ac_project_app/util/logger.dart';
 import 'package:ac_project_app/util/string_utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -25,83 +30,94 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<GetProfileInfoCubit, ProfileState>(
-      builder: (context, profileState) {
-        return BlocBuilder<GetJobListCubit, JobListState>(
-          builder: (jobContext, state) {
-            if (state is LoadedState && profileState is ProfileLoadedState) {
-              return SafeArea(
-                child: NotificationListener<ScrollEndNotification>(
-                  onNotification: (scrollNotification) {
-                    final metrics = scrollNotification.metrics;
-                    if (metrics.axisDirection != AxisDirection.down) {
-                      return false;
-                    }
-                    if (metrics.extentAfter <= 800) {
-                      context.read<LinksFromSelectedJobGroupCubit>().loadMore();
-                    }
-                    return true;
-                  },
-                  child: RefreshIndicator(
-                    onRefresh: () => refresh(context),
-                    color: primary600,
-                    child: CustomScrollView(
-                      controller: context
-                          .read<LinksFromSelectedJobGroupCubit>()
-                          .scrollController,
-                      slivers: <Widget>[
-                        SliverToBoxAdapter(
-                          child: Container(
-                            margin: EdgeInsets.only(
-                              left: 24.w,
-                              right: 24.w,
-                              top: 20.h,
-                            ),
-                            child: GestureDetector(
-                              onTap: () => Navigator.pushNamed(
-                                context,
-                                Routes.search,
-                                arguments: {
-                                  'isMine': false,
-                                },
-                              ),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: ccGrey100,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(7.r)),
-                                ),
-                                width: double.infinity,
-                                height: 36.h,
-                                margin: EdgeInsets.only(right: 6.w),
-                                child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Padding(
-                                    padding: EdgeInsets.only(left: 10.w),
-                                    child: Assets.images.folderSearchIcon.image(
-                                      width: 24.w,
-                                      height: 24.h,
-                                    ), // Image.asset(
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
+    return BlocBuilder<LinkpoolPickCubit, LinkpoolPickResultState>(
+      builder: (pickContext, linkpoolPickState) {
+        return BlocBuilder<GetProfileInfoCubit, ProfileState>(
+          builder: (context, profileState) {
+            return BlocBuilder<GetJobListCubit, JobListState>(
+              builder: (jobContext, state) {
+                if (state is LoadedState &&
+                    profileState is ProfileLoadedState) {
+                  return SafeArea(
+                    child: NotificationListener<ScrollEndNotification>(
+                      onNotification: (scrollNotification) {
+                        final metrics = scrollNotification.metrics;
+                        if (metrics.axisDirection != AxisDirection.down) {
+                          return false;
+                        }
+                        if (metrics.extentAfter <= 800) {
+                          context
+                              .read<LinksFromSelectedJobGroupCubit>()
+                              .loadMore();
+                        }
+                        return true;
+                      },
+                      child: RefreshIndicator(
+                        onRefresh: () => refresh(context),
+                        color: primary600,
+                        child: CustomScrollView(
+                          controller: context
+                              .read<LinksFromSelectedJobGroupCubit>()
+                              .scrollController,
+                          slivers: <Widget>[
+                            SearchBar(context),
+                            LinkpoolPickMenu(context, linkpoolPickState),
+                            buildListBody(jobContext),
+                          ],
                         ),
-                        buildListBody(jobContext),
-                      ],
+                      ),
                     ),
-                  ),
-                ),
-              );
-            } else {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
+                  );
+                } else {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+              },
+            );
           },
         );
       },
+    );
+  }
+
+  SliverToBoxAdapter SearchBar(BuildContext context) {
+    return SliverToBoxAdapter(
+      child: Container(
+        margin: EdgeInsets.only(
+          left: 24.w,
+          right: 24.w,
+          top: 20.h,
+        ),
+        child: GestureDetector(
+          onTap: () => Navigator.pushNamed(
+            context,
+            Routes.search,
+            arguments: {
+              'isMine': false,
+            },
+          ),
+          child: Container(
+            decoration: BoxDecoration(
+              color: ccGrey100,
+              borderRadius: BorderRadius.all(Radius.circular(7.r)),
+            ),
+            width: double.infinity,
+            height: 36.h,
+            margin: EdgeInsets.only(right: 6.w),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: EdgeInsets.only(left: 10.w),
+                child: Assets.images.folderSearchIcon.image(
+                  width: 24.w,
+                  height: 24.h,
+                ), // Image.asset(
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -138,16 +154,8 @@ class HomePage extends StatelessWidget {
                 final link = totalLinks[index];
                 return Column(
                   children: [
-                    buildBodyListItem(context, link, width, totalLinks),
-                    if (index != totalLinks.length - 1)
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 24.w),
-                        child: Divider(
-                          height: 1.h,
-                          thickness: 1.w,
-                          color: ccGrey200,
-                        ),
-                      ),
+                    BodyListItem(context, link, width, totalLinks),
+                    GreyDivider(index, totalLinks.length - 1),
                   ],
                 );
               },
@@ -159,7 +167,22 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  GestureDetector buildBodyListItem(
+  Widget GreyDivider(int index, int length) {
+    if (index != length) {
+      return Padding(
+        padding: EdgeInsets.symmetric(horizontal: 24.w),
+        child: Divider(
+          height: 1.h,
+          thickness: 1.w,
+          color: ccGrey200,
+        ),
+      );
+    } else {
+      return const SizedBox.shrink();
+    }
+  }
+
+  GestureDetector BodyListItem(
     BuildContext context,
     Link link,
     double width,
@@ -339,5 +362,140 @@ class HomePage extends StatelessWidget {
 
   Future<void> refresh(BuildContext context) async {
     context.read<LinksFromSelectedJobGroupCubit>().refresh();
+  }
+
+  Widget LinkpoolPickMenu(BuildContext context, LinkpoolPickResultState state) {
+    Log.i('state: $state');
+    if (state is! LinkpoolPickResultLoadedState) {
+      return const SliverToBoxAdapter(child: SizedBox.shrink());
+    }
+    final linkpoolPicks = state.linkpoolPicks;
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: EdgeInsets.only(top: 30.h, left: 12.w, bottom: 12.h),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: EdgeInsets.only(left: 13.w, bottom: 16.h),
+              child: Text(
+                'LINKPOOL PICK',
+                style: TextStyle(
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black,
+                ),
+              ),
+            ),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              padding: EdgeInsets.symmetric(horizontal: 12.w),
+              child: Row(
+                children: [
+                  for (final pick in linkpoolPicks)
+                    Padding(
+                      padding: EdgeInsets.only(right: 12.w),
+                      child: LinkpoolPickItem(context, pick),
+                    ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget LinkpoolPickItem(BuildContext context, LinkpoolPick pick) {
+    final width = MediaQuery.of(context).size.width;
+
+    final color = pick.getColor();
+    return Container(
+      width: width - 60.w,
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.all(Radius.circular(6.r)),
+      ),
+      child: Row(
+        children: [
+          Padding(
+            padding: EdgeInsets.only(top: 12.h, left: 10.w, bottom: 12.h),
+            child: Stack(
+              children: [
+                Align(
+                    alignment: Alignment.topLeft,
+                    child: Container(
+                      width: 92.w,
+                      height: 90.w,
+                      color: Colors.transparent,
+                    )),
+                Padding(
+                  padding: EdgeInsets.only(left: 6.w),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.all(Radius.circular(4.r)),
+                    child: CachedNetworkImage(
+                      imageUrl: pick.image,
+                      width: 86.w,
+                      height: 86.w,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 4.h),
+                  child: Container(
+                    padding: EdgeInsets.only(
+                      top: 3.h,
+                      bottom: 2.h,
+                      left: 6.w,
+                      right: 6.w,
+                    ),
+                    decoration: BoxDecoration(
+                      color: grey900,
+                      borderRadius: BorderRadius.all(Radius.circular(3.r)),
+                    ),
+                    child: Text(
+                      'PICK',
+                      style: TextStyle(
+                        fontSize: 8.4.sp,
+                        letterSpacing: -0.17,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          10.horizontalSpace,
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '원형들, 힙한 케이크 맛집',//pick.title,
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.bold,
+                  color: grey900,
+                ),
+              ),
+              8.verticalSpace,
+              Text(
+                '색다른 음식에 진심인 사람이라면,\n무조건 방문해봐야 할 이색 케이크 맛집',// pick.describe,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.w500,
+                  color: grey600,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 }
