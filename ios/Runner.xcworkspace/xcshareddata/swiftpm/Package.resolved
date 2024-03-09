@@ -1,4 +1,5 @@
 {
+  "originHash" : "f378d0517ac7cb918b2824a5a8a6f024067823ced7c6dd92014d7f870db39003",
   "pins" : [
     {
       "identity" : "opengraph",
@@ -10,5 +11,5 @@
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }
