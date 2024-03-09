@@ -144,7 +144,7 @@ class HomePage extends StatelessWidget {
                 final link = totalLinks[index];
                 return Column(
                   children: [
-                    BodyListItem(context, link, width, totalLinks),
+                    BodyListItem(parentContext, link, width, totalLinks),
                     GreyDivider(index, totalLinks.length - 1),
                   ],
                 );

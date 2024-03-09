@@ -20,9 +20,11 @@ Widget UserInfoWidget({
       final profileInfoCubit = getIt<GetProfileInfoCubit>();
       final userFoldersCubit = getIt<GetUserFoldersCubit>();
 
-      final isMine =
-          (profileInfoCubit.state as ProfileLoadedState).profile.id ==
-              link.user!.id;
+      if (profileInfoCubit.state is! ProfileLoadedState) {
+        await profileInfoCubit.loadProfileData();
+      }
+
+      final isMine = (profileInfoCubit.state as ProfileLoadedState).profile.id == link.user!.id;
 
       await userFoldersCubit.getFolders(link.user!.id!).then((_) {
         Navigator.of(context).pushNamed(
