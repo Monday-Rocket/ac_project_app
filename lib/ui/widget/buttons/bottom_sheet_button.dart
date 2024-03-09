@@ -30,6 +30,7 @@ Widget buildBottomSheetButton({
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12.r),
           ),
+          foregroundColor: Colors.white,
           disabledBackgroundColor: secondary,
           disabledForegroundColor: Colors.white,
           shadowColor: buttonShadow! ? primary600 : Colors.transparent,
@@ -40,6 +41,7 @@ Widget buildBottomSheetButton({
           style: const TextStyle(
             fontSize: 17,
             fontWeight: FontWeight.bold,
+            color: Colors.white,
           ),
           textWidthBasis: TextWidthBasis.parent,
         ),

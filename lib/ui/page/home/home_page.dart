@@ -2,21 +2,19 @@ import 'dart:async';
 
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/const/strings.dart';
-import 'package:ac_project_app/cubits/home/get_job_list_cubit.dart';
-import 'package:ac_project_app/cubits/home/topic_list_state.dart';
+import 'package:ac_project_app/cubits/linkpool_pick/linkpool_pick_cubit.dart';
+import 'package:ac_project_app/cubits/linkpool_pick/linkpool_pick_result_state.dart';
 import 'package:ac_project_app/cubits/links/links_from_selected_job_group_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
-import 'package:ac_project_app/gen/fonts.gen.dart';
 import 'package:ac_project_app/models/link/link.dart';
-import 'package:ac_project_app/models/user/detail_user.dart';
+import 'package:ac_project_app/models/linkpool_pick/linkpool_pick.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/dialog/bottom_dialog.dart';
 import 'package:ac_project_app/ui/widget/link_hero.dart';
-import 'package:ac_project_app/ui/widget/sliver/custom_header_delegate.dart';
 import 'package:ac_project_app/ui/widget/user/user_info.dart';
-import 'package:ac_project_app/util/list_utils.dart';
+import 'package:ac_project_app/util/logger.dart';
 import 'package:ac_project_app/util/string_utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -29,11 +27,11 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<GetProfileInfoCubit, ProfileState>(
-      builder: (context, profileState) {
-        return BlocBuilder<GetJobListCubit, JobListState>(
-          builder: (jobContext, state) {
-            if (state is LoadedState && profileState is ProfileLoadedState) {
+    return BlocBuilder<LinkpoolPickCubit, LinkpoolPickResultState>(
+      builder: (pickContext, linkpoolPickState) {
+        return BlocBuilder<GetProfileInfoCubit, ProfileState>(
+          builder: (context, profileState) {
+            if (profileState is ProfileLoadedState) {
               return SafeArea(
                 child: NotificationListener<ScrollEndNotification>(
                   onNotification: (scrollNotification) {
@@ -42,7 +40,7 @@ class HomePage extends StatelessWidget {
                       return false;
                     }
                     if (metrics.extentAfter <= 800) {
-                      context.read<LinksFromSelectedJobGroupCubit>().loadMore();
+                      context.read<GetLinksCubit>().loadMore();
                     }
                     return true;
                   },
@@ -51,52 +49,12 @@ class HomePage extends StatelessWidget {
                     color: primary600,
                     child: CustomScrollView(
                       controller: context
-                          .read<LinksFromSelectedJobGroupCubit>()
+                          .read<GetLinksCubit>()
                           .scrollController,
                       slivers: <Widget>[
-                        SliverToBoxAdapter(
-                          child: Container(
-                            margin: EdgeInsets.only(
-                              left: 24.w,
-                              right: 24.w,
-                              top: 20.h,
-                            ),
-                            child: GestureDetector(
-                              onTap: () => Navigator.pushNamed(
-                                context,
-                                Routes.search,
-                                arguments: {
-                                  'isMine': false,
-                                },
-                              ),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: ccGrey100,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(7.r)),
-                                ),
-                                width: double.infinity,
-                                height: 36.h,
-                                margin: EdgeInsets.only(right: 6.w),
-                                child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Padding(
-                                    padding: EdgeInsets.only(left: 10.w),
-                                    child: Assets.images.folderSearchIcon.image(
-                                      width: 24.w,
-                                      height: 24.h,
-                                    ), // Image.asset(
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        buildJobListView(
-                          jobContext,
-                          state.jobs.sortMyJobs(profileState.profile),
-                        ),
-                        buildListBody(jobContext),
+                        SearchBar(context),
+                        LinkpoolPickMenu(pickContext, linkpoolPickState),
+                        buildListBody(pickContext),
                       ],
                     ),
                   ),
@@ -113,11 +71,51 @@ class HomePage extends StatelessWidget {
     );
   }
 
+  SliverToBoxAdapter SearchBar(BuildContext context) {
+    return SliverToBoxAdapter(
+      child: Container(
+        margin: EdgeInsets.only(
+          left: 24.w,
+          right: 24.w,
+          top: 20.h,
+        ),
+        child: GestureDetector(
+          onTap: () => Navigator.pushNamed(
+            context,
+            Routes.search,
+            arguments: {
+              'isMine': false,
+            },
+          ),
+          child: Container(
+            decoration: BoxDecoration(
+              color: ccGrey100,
+              borderRadius: BorderRadius.all(Radius.circular(7.r)),
+            ),
+            width: double.infinity,
+            height: 36.h,
+            margin: EdgeInsets.only(right: 6.w),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: EdgeInsets.only(left: 10.w),
+                child: Assets.images.folderSearchIcon.image(
+                  width: 24.w,
+                  height: 24.h,
+                ), // Image.asset(
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget buildListBody(BuildContext parentContext) {
     final width = MediaQuery.of(parentContext).size.width;
     final height = MediaQuery.of(parentContext).size.height;
 
-    return BlocBuilder<LinksFromSelectedJobGroupCubit, List<Link>>(
+    return BlocBuilder<GetLinksCubit, List<Link>>(
       builder: (context, links) {
         final totalLinks = _setTotalLinks(context, links);
         if (totalLinks.isEmpty) {
@@ -146,16 +144,8 @@ class HomePage extends StatelessWidget {
                 final link = totalLinks[index];
                 return Column(
                   children: [
-                    buildBodyListItem(context, link, width, totalLinks),
-                    if (index != totalLinks.length - 1)
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 24.w),
-                        child: Divider(
-                          height: 1.h,
-                          thickness: 1.w,
-                          color: ccGrey200,
-                        ),
-                      ),
+                    BodyListItem(parentContext, link, width, totalLinks),
+                    GreyDivider(index, totalLinks.length - 1),
                   ],
                 );
               },
@@ -167,7 +157,22 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  GestureDetector buildBodyListItem(
+  Widget GreyDivider(int index, int length) {
+    if (index != length) {
+      return Padding(
+        padding: EdgeInsets.symmetric(horizontal: 24.w),
+        child: Divider(
+          height: 1.h,
+          thickness: 1.w,
+          color: ccGrey200,
+        ),
+      );
+    } else {
+      return const SizedBox.shrink();
+    }
+  }
+
+  GestureDetector BodyListItem(
     BuildContext context,
     Link link,
     double width,
@@ -175,13 +180,7 @@ class HomePage extends StatelessWidget {
   ) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(
-          context,
-          Routes.linkDetail,
-          arguments: {
-            'link': link,
-          },
-        );
+        showLinkDetail(context, link);
       },
       child: Container(
         margin: EdgeInsets.symmetric(
@@ -326,144 +325,185 @@ class HomePage extends StatelessWidget {
     );
   }
 
+  void showLinkDetail(BuildContext context, Link link) {
+    Navigator.pushNamed(
+      context,
+      Routes.linkDetail,
+      arguments: {
+        'link': link,
+      },
+    );
+  }
+
   List<Link> _setTotalLinks(BuildContext context, List<Link> links) {
     final totalLinks =
-        context.watch<LinksFromSelectedJobGroupCubit>().totalLinks;
-    if (context.read<LinksFromSelectedJobGroupCubit>().hasRefresh) {
+        context.watch<GetLinksCubit>().totalLinks;
+    if (context.read<GetLinksCubit>().hasRefresh) {
       totalLinks.clear();
-      context.read<LinksFromSelectedJobGroupCubit>().hasRefresh = false;
+      context.read<GetLinksCubit>().hasRefresh = false;
     }
     totalLinks.addAll(links);
     return totalLinks;
   }
 
   void addLinks(BuildContext context, List<Link> totalLinks, List<Link> links) {
-    if (context.read<LinksFromSelectedJobGroupCubit>().hasRefresh) {
+    if (context.read<GetLinksCubit>().hasRefresh) {
       totalLinks.clear();
-      context.read<LinksFromSelectedJobGroupCubit>().hasRefresh = false;
+      context.read<GetLinksCubit>().hasRefresh = false;
     }
     totalLinks.addAll(links);
   }
 
-  Widget buildJobListView(
-    BuildContext jobContext,
-    List<JobGroup> jobs,
-  ) {
-    return SliverPersistentHeader(
-      pinned: true,
-      delegate: CustomHeaderDelegate(
-        buildJobListWidget(jobContext, jobs),
+  Future<void> refresh(BuildContext context) async {
+    context.read<GetLinksCubit>().refresh();
+  }
+
+  Widget LinkpoolPickMenu(BuildContext context, LinkpoolPickResultState state) {
+    Log.i('state: $state');
+    if (state is! LinkpoolPickResultLoadedState) {
+      return const SliverToBoxAdapter(child: SizedBox.shrink());
+    }
+    final linkpoolPicks = state.linkpoolPicks;
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: EdgeInsets.only(top: 30.h, left: 12.w, bottom: 12.h),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: EdgeInsets.only(left: 13.w, bottom: 16.h),
+              child: Text(
+                'LINKPOOL PICK',
+                style: TextStyle(
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black,
+                ),
+              ),
+            ),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              padding: EdgeInsets.symmetric(horizontal: 12.w),
+              child: Row(
+                children: [
+                  for (final pick in linkpoolPicks)
+                    Padding(
+                      padding: EdgeInsets.only(right: 12.w),
+                      child: LinkpoolPickItem(context, pick),
+                    ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget buildJobListWidget(BuildContext jobContext, List<JobGroup> jobs) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          color: Colors.white,
-          padding: EdgeInsets.only(top: 19.h, left: 12.w, right: 20.w),
-          child: DefaultTabController(
-            length: jobs.length,
-            child: SizedBox(
-              height: 36.h,
+  Widget LinkpoolPickItem(BuildContext context, LinkpoolPick pick) {
+    final width = MediaQuery.of(context).size.width;
+
+    final color = pick.getColor();
+    return GestureDetector(
+      onTap: () async {
+        final result = await context
+            .read<LinkpoolPickCubit>()
+            .getLinkpoolPickLink(pick.linkId);
+        result.when(
+          success: (link) {
+            showLinkDetail(context, link);
+          },
+          error: (msg) {},
+        );
+      },
+      child: Container(
+        width: width - 60.w,
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.all(Radius.circular(6.r)),
+        ),
+        child: Row(
+          children: [
+            Padding(
+              padding: EdgeInsets.only(top: 12.h, left: 10.w, bottom: 12.h),
               child: Stack(
                 children: [
                   Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Padding(
-                      padding: EdgeInsets.only(
-                        left: 15.w,
-                        right: 11.w,
-                        bottom: 1.h,
-                      ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Container(
-                              color: greyTab,
-                              height: 1.h,
-                            ),
-                          ),
-                        ],
+                    alignment: Alignment.topLeft,
+                    child: Container(
+                      width: 92.w,
+                      height: 90.w,
+                      color: Colors.transparent,
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 6.w),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.all(Radius.circular(4.r)),
+                      child: CachedNetworkImage(
+                        imageUrl: pick.image,
+                        width: 86.h,
+                        height: 86.h,
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),
-                  Container(
-                    margin: EdgeInsets.only(right: 7.w),
-                    child: Builder(
-                      builder: (context) {
-                        final tabs = <Widget>[];
-                        for (final job in jobs) {
-                          tabs.add(
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                vertical: 7.h,
-                              ),
-                              child: Text(
-                                job.name ?? '',
-                              ),
-                            ),
-                          );
-                        }
-                        return TabBar(
-                          isScrollable: true,
-                          unselectedLabelColor: grey700,
-                          labelColor: primaryTab,
-                          labelPadding: EdgeInsets.symmetric(horizontal: 13.w),
-                          labelStyle: TextStyle(
-                            fontFamily: FontFamily.pretendard,
-                            fontSize: 16.sp,
-                            height: (19 / 16).h,
-                            fontWeight: FontWeight.w800,
-                          ),
-                          unselectedLabelStyle: TextStyle(
-                            fontFamily: FontFamily.pretendard,
-                            fontSize: 16.sp,
-                            height: (19 / 16).h,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          indicator: UnderlineTabIndicator(
-                            borderSide: BorderSide(
-                              color: primaryTab,
-                              width: 2.5.w,
-                            ),
-                            insets: EdgeInsets.symmetric(horizontal: 15.w),
-                          ),
-                          tabs: tabs,
-                          onTap: (index) {
-                            jobContext
-                                .read<LinksFromSelectedJobGroupCubit>()
-                                .hasLoadMore = false;
-                            final selectedJobGroupId = jobs[index].id!;
-                            jobContext
-                                .read<LinksFromSelectedJobGroupCubit>()
-                                .clear();
-                            jobContext
-                                .read<LinksFromSelectedJobGroupCubit>()
-                                .getSelectedJobLinks(selectedJobGroupId, 0)
-                                .then(
-                                  (value) => jobContext
-                                      .read<LinksFromSelectedJobGroupCubit>()
-                                      .scrollController
-                                      .jumpTo(0),
-                                );
-                          },
-                        );
-                      },
+                  Padding(
+                    padding: EdgeInsets.only(top: 4.h),
+                    child: Container(
+                      padding: EdgeInsets.only(
+                        top: 3.h,
+                        bottom: 2.h,
+                        left: 6.w,
+                        right: 6.w,
+                      ),
+                      decoration: BoxDecoration(
+                        color: grey900,
+                        borderRadius: BorderRadius.all(Radius.circular(3.r)),
+                      ),
+                      child: Text(
+                        'PICK',
+                        style: TextStyle(
+                          fontSize: 8.4.sp,
+                          letterSpacing: -0.17,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
-          ),
+            10.horizontalSpace,
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  pick.title,
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.bold,
+                    color: grey900,
+                  ),
+                ),
+                8.verticalSpace,
+                Text(
+                  pick.describe,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w500,
+                    color: grey600,
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
-      ],
+      ),
     );
-  }
-
-  Future<void> refresh(BuildContext context) async {
-    context.read<LinksFromSelectedJobGroupCubit>().refresh();
   }
 }

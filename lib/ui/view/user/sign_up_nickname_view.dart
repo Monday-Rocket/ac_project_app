@@ -4,10 +4,11 @@ import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/sign_up/button_state_cubit.dart';
 import 'package:ac_project_app/cubits/sign_up/nickname_check_cubit.dart';
 import 'package:ac_project_app/cubits/sign_up/nickname_cubit.dart';
+import 'package:ac_project_app/cubits/sign_up/sign_up_cubit.dart';
 import 'package:ac_project_app/models/user/user.dart';
-import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/buttons/bottom_sheet_button.dart';
 import 'package:ac_project_app/ui/widget/only_back_app_bar.dart';
+import 'package:ac_project_app/util/logger.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
@@ -30,6 +31,9 @@ class SignUpNicknameView extends StatelessWidget {
         ),
         BlocProvider(
           create: (_) => NicknameCheckCubit(),
+        ),
+        BlocProvider(
+          create: (_) => SignUpCubit(),
         ),
       ],
       child: BlocBuilder<NicknameCubit, String?>(
@@ -57,14 +61,7 @@ class SignUpNicknameView extends StatelessWidget {
                                     .isDuplicated(nickname!)
                                     .then((bool result) {
                                   if (result) {
-                                    Navigator.pushNamed(
-                                      context,
-                                      Routes.singUpJob,
-                                      arguments: {
-                                        'nickname': nickname,
-                                        'user': user,
-                                      },
-                                    );
+                                    processSignUp(context, user, nickname);
                                   } else {
                                     formKey.currentState?.validate();
                                   }
@@ -206,6 +203,30 @@ class SignUpNicknameView extends StatelessWidget {
           },
         ),
       ),
+    );
+  }
+
+  Future<void> processSignUp(
+    BuildContext context,
+    User? user,
+    String? nickname,
+  ) async {
+    final result = await context.read<SignUpCubit>().signUp(
+          user: user,
+          nickname: nickname,
+        );
+    result.when(
+      success: (data) {
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          data,
+          (_) => false,
+          arguments: {
+            'index': 0,
+          },
+        );
+      },
+      error: Log.e,
     );
   }
 }

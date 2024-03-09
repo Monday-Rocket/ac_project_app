@@ -417,6 +417,7 @@ class LoginView extends StatelessWidget {
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12.r),
                                   ),
+                                  foregroundColor: Colors.white,
                                   disabledBackgroundColor: secondary,
                                   disabledForegroundColor: Colors.white,
                                 ),
@@ -437,6 +438,7 @@ class LoginView extends StatelessWidget {
                                   style: TextStyle(
                                     fontSize: 17.sp,
                                     fontWeight: FontWeight.bold,
+                                    color: Colors.white,
                                   ),
                                   textWidthBasis: TextWidthBasis.parent,
                                 ),

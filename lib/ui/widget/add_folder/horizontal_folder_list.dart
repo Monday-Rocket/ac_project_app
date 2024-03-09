@@ -45,6 +45,7 @@ Widget buildFolderList({
             onTap: () {
               callback?.call(index, folder);
             },
+            onDoubleTap: () {},
             child: Container(
               margin: EdgeInsets.only(
                 right: rightPadding.toDouble().w,

@@ -20,9 +20,11 @@ Widget UserInfoWidget({
       final profileInfoCubit = getIt<GetProfileInfoCubit>();
       final userFoldersCubit = getIt<GetUserFoldersCubit>();
 
-      final isMine =
-          (profileInfoCubit.state as ProfileLoadedState).profile.id ==
-              link.user!.id;
+      if (profileInfoCubit.state is! ProfileLoadedState) {
+        await profileInfoCubit.loadProfileData();
+      }
+
+      final isMine = (profileInfoCubit.state as ProfileLoadedState).profile.id == link.user!.id;
 
       await userFoldersCubit.getFolders(link.user!.id!).then((_) {
         Navigator.of(context).pushNamed(
@@ -58,17 +60,12 @@ Widget UserInfoWidget({
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Text(
-                  link.user?.nickname ?? '',
-                  style: const TextStyle(
-                    color: grey900,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                if (jobVisible ?? true) _UserJobView(link),
-              ],
+            Text(
+              link.user?.nickname ?? '',
+              style: const TextStyle(
+                color: grey900,
+                fontWeight: FontWeight.w500,
+              ),
             ),
             Container(
               margin: EdgeInsets.only(top: 4.h),
@@ -82,38 +79,8 @@ Widget UserInfoWidget({
               ),
             ),
           ],
-        )
+        ),
       ],
-    ),
-  );
-}
-
-Container _UserJobView(Link link) {
-  return Container(
-    margin: EdgeInsets.only(
-      left: 4.w,
-    ),
-    decoration: BoxDecoration(
-      color: primary66_200,
-      borderRadius: BorderRadius.all(
-        Radius.circular(4.r),
-      ),
-    ),
-    child: Center(
-      child: Padding(
-        padding: EdgeInsets.symmetric(
-          vertical: 3.h,
-          horizontal: 4.w,
-        ),
-        child: Text(
-          link.user?.jobGroup?.name ?? '',
-          style: TextStyle(
-            color: primary600,
-            fontSize: 10.sp,
-            letterSpacing: -0.2.w,
-          ),
-        ),
-      ),
     ),
   );
 }

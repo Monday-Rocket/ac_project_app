@@ -396,6 +396,7 @@ class MyLinkView extends StatelessWidget {
                       return TabBar(
                         isScrollable: true,
                         physics: const ClampingScrollPhysics(),
+                        tabAlignment: TabAlignment.start,
                         unselectedLabelColor: grey700,
                         labelColor: primaryTab,
                         labelStyle: TextStyle(
@@ -414,10 +415,6 @@ class MyLinkView extends StatelessWidget {
                           borderSide: BorderSide(
                             color: primaryTab,
                             width: 2.5.w,
-                          ),
-                          insets: EdgeInsets.only(
-                            left: 15.w,
-                            right: 15.w,
                           ),
                         ),
                         labelPadding: EdgeInsets.symmetric(horizontal: 13.w),

@@ -60,10 +60,6 @@ void main() {
       data: DetailUser(
         id: 0,
         nickname: '테스트',
-        jobGroup: JobGroup(
-          id: 1,
-          name: '개발자',
-        ),
         profile_img: '01', // 처음 기본 프로필 이미지는 01번
       ),
     );
@@ -85,10 +81,6 @@ void main() {
       data: DetailUser(
         id: 0,
         nickname: '테스트',
-        jobGroup: JobGroup(
-          id: 1,
-          name: '개발자',
-        ),
         profile_img: '01', // 처음 기본 프로필 이미지는 01번
       ),
     );
