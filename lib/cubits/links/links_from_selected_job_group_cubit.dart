@@ -6,15 +6,14 @@ import 'package:ac_project_app/provider/api/folders/link_api.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class LinksFromSelectedJobGroupCubit extends Cubit<List<Link>> {
-  LinksFromSelectedJobGroupCubit() : super([]) {
+class GetLinksCubit extends Cubit<List<Link>> {
+  GetLinksCubit() : super([]) {
     initialize();
   }
 
   final LinkApi linkApi = getIt();
 
   HasMoreCubit hasMore = HasMoreCubit();
-  int selectedJobId = 1;
   int page = 0;
   bool hasRefresh = false;
   List<Link> totalLinks = [];
@@ -23,13 +22,12 @@ class LinksFromSelectedJobGroupCubit extends Cubit<List<Link>> {
 
   void initialize() {
     emit([]);
-    getSelectedJobLinks(0, 0);
+    getLinks(0);
   }
 
-  Future<void> getSelectedJobLinks(int jobGroupId, int pageNum) async {
+  Future<void> getLinks(int pageNum) async {
     hasRefresh = false;
-    selectedJobId = jobGroupId;
-    final result = await linkApi.getJobGroupLinks(jobGroupId, pageNum);
+    final result = await linkApi.getLinks(pageNum);
     result.when(
       success: (data) {
         final links = _setScrollState(data);
@@ -47,14 +45,14 @@ class LinksFromSelectedJobGroupCubit extends Cubit<List<Link>> {
   void refresh() {
     totalLinks.clear();
     hasRefresh = true;
-    getSelectedJobLinks(selectedJobId, 0);
+    getLinks(0);
   }
 
   bool loadMore() {
     emit([]);
     hasLoadMore = hasMore.state == ScrollableType.can;
     if (hasLoadMore) {
-      getSelectedJobLinks(selectedJobId, page + 1);
+      getLinks(page + 1);
     }
     return hasLoadMore;
   }

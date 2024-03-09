@@ -2,8 +2,6 @@ import 'dart:async';
 
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/const/strings.dart';
-import 'package:ac_project_app/cubits/home/get_job_list_cubit.dart';
-import 'package:ac_project_app/cubits/home/topic_list_state.dart';
 import 'package:ac_project_app/cubits/linkpool_pick/linkpool_pick_cubit.dart';
 import 'package:ac_project_app/cubits/linkpool_pick/linkpool_pick_result_state.dart';
 import 'package:ac_project_app/cubits/links/links_from_selected_job_group_cubit.dart';
@@ -19,7 +17,6 @@ import 'package:ac_project_app/ui/widget/user/user_info.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:ac_project_app/util/string_utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -34,47 +31,40 @@ class HomePage extends StatelessWidget {
       builder: (pickContext, linkpoolPickState) {
         return BlocBuilder<GetProfileInfoCubit, ProfileState>(
           builder: (context, profileState) {
-            return BlocBuilder<GetJobListCubit, JobListState>(
-              builder: (jobContext, state) {
-                if (state is LoadedState &&
-                    profileState is ProfileLoadedState) {
-                  return SafeArea(
-                    child: NotificationListener<ScrollEndNotification>(
-                      onNotification: (scrollNotification) {
-                        final metrics = scrollNotification.metrics;
-                        if (metrics.axisDirection != AxisDirection.down) {
-                          return false;
-                        }
-                        if (metrics.extentAfter <= 800) {
-                          context
-                              .read<LinksFromSelectedJobGroupCubit>()
-                              .loadMore();
-                        }
-                        return true;
-                      },
-                      child: RefreshIndicator(
-                        onRefresh: () => refresh(context),
-                        color: primary600,
-                        child: CustomScrollView(
-                          controller: context
-                              .read<LinksFromSelectedJobGroupCubit>()
-                              .scrollController,
-                          slivers: <Widget>[
-                            SearchBar(context),
-                            LinkpoolPickMenu(context, linkpoolPickState),
-                            buildListBody(jobContext),
-                          ],
-                        ),
-                      ),
+            if (profileState is ProfileLoadedState) {
+              return SafeArea(
+                child: NotificationListener<ScrollEndNotification>(
+                  onNotification: (scrollNotification) {
+                    final metrics = scrollNotification.metrics;
+                    if (metrics.axisDirection != AxisDirection.down) {
+                      return false;
+                    }
+                    if (metrics.extentAfter <= 800) {
+                      context.read<GetLinksCubit>().loadMore();
+                    }
+                    return true;
+                  },
+                  child: RefreshIndicator(
+                    onRefresh: () => refresh(context),
+                    color: primary600,
+                    child: CustomScrollView(
+                      controller: context
+                          .read<GetLinksCubit>()
+                          .scrollController,
+                      slivers: <Widget>[
+                        SearchBar(context),
+                        LinkpoolPickMenu(pickContext, linkpoolPickState),
+                        buildListBody(pickContext),
+                      ],
                     ),
-                  );
-                } else {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-              },
-            );
+                  ),
+                ),
+              );
+            } else {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
           },
         );
       },
@@ -125,7 +115,7 @@ class HomePage extends StatelessWidget {
     final width = MediaQuery.of(parentContext).size.width;
     final height = MediaQuery.of(parentContext).size.height;
 
-    return BlocBuilder<LinksFromSelectedJobGroupCubit, List<Link>>(
+    return BlocBuilder<GetLinksCubit, List<Link>>(
       builder: (context, links) {
         final totalLinks = _setTotalLinks(context, links);
         if (totalLinks.isEmpty) {
@@ -190,13 +180,7 @@ class HomePage extends StatelessWidget {
   ) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(
-          context,
-          Routes.linkDetail,
-          arguments: {
-            'link': link,
-          },
-        );
+        showLinkDetail(context, link);
       },
       child: Container(
         margin: EdgeInsets.symmetric(
@@ -341,27 +325,37 @@ class HomePage extends StatelessWidget {
     );
   }
 
+  void showLinkDetail(BuildContext context, Link link) {
+    Navigator.pushNamed(
+      context,
+      Routes.linkDetail,
+      arguments: {
+        'link': link,
+      },
+    );
+  }
+
   List<Link> _setTotalLinks(BuildContext context, List<Link> links) {
     final totalLinks =
-        context.watch<LinksFromSelectedJobGroupCubit>().totalLinks;
-    if (context.read<LinksFromSelectedJobGroupCubit>().hasRefresh) {
+        context.watch<GetLinksCubit>().totalLinks;
+    if (context.read<GetLinksCubit>().hasRefresh) {
       totalLinks.clear();
-      context.read<LinksFromSelectedJobGroupCubit>().hasRefresh = false;
+      context.read<GetLinksCubit>().hasRefresh = false;
     }
     totalLinks.addAll(links);
     return totalLinks;
   }
 
   void addLinks(BuildContext context, List<Link> totalLinks, List<Link> links) {
-    if (context.read<LinksFromSelectedJobGroupCubit>().hasRefresh) {
+    if (context.read<GetLinksCubit>().hasRefresh) {
       totalLinks.clear();
-      context.read<LinksFromSelectedJobGroupCubit>().hasRefresh = false;
+      context.read<GetLinksCubit>().hasRefresh = false;
     }
     totalLinks.addAll(links);
   }
 
   Future<void> refresh(BuildContext context) async {
-    context.read<LinksFromSelectedJobGroupCubit>().refresh();
+    context.read<GetLinksCubit>().refresh();
   }
 
   Widget LinkpoolPickMenu(BuildContext context, LinkpoolPickResultState state) {
@@ -410,91 +404,105 @@ class HomePage extends StatelessWidget {
     final width = MediaQuery.of(context).size.width;
 
     final color = pick.getColor();
-    return Container(
-      width: width - 60.w,
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.all(Radius.circular(6.r)),
-      ),
-      child: Row(
-        children: [
-          Padding(
-            padding: EdgeInsets.only(top: 12.h, left: 10.w, bottom: 12.h),
-            child: Stack(
-              children: [
-                Align(
+    return GestureDetector(
+      onTap: () async {
+        final result = await context
+            .read<LinkpoolPickCubit>()
+            .getLinkpoolPickLink(pick.linkId);
+        result.when(
+          success: (link) {
+            showLinkDetail(context, link);
+          },
+          error: (msg) {},
+        );
+      },
+      child: Container(
+        width: width - 60.w,
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.all(Radius.circular(6.r)),
+        ),
+        child: Row(
+          children: [
+            Padding(
+              padding: EdgeInsets.only(top: 12.h, left: 10.w, bottom: 12.h),
+              child: Stack(
+                children: [
+                  Align(
                     alignment: Alignment.topLeft,
                     child: Container(
                       width: 92.w,
                       height: 90.w,
                       color: Colors.transparent,
-                    )),
-                Padding(
-                  padding: EdgeInsets.only(left: 6.w),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.all(Radius.circular(4.r)),
-                    child: CachedNetworkImage(
-                      imageUrl: pick.image,
-                      width: 86.w,
-                      height: 86.w,
-                      fit: BoxFit.cover,
                     ),
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top: 4.h),
-                  child: Container(
-                    padding: EdgeInsets.only(
-                      top: 3.h,
-                      bottom: 2.h,
-                      left: 6.w,
-                      right: 6.w,
-                    ),
-                    decoration: BoxDecoration(
-                      color: grey900,
-                      borderRadius: BorderRadius.all(Radius.circular(3.r)),
-                    ),
-                    child: Text(
-                      'PICK',
-                      style: TextStyle(
-                        fontSize: 8.4.sp,
-                        letterSpacing: -0.17,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                  Padding(
+                    padding: EdgeInsets.only(left: 6.w),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.all(Radius.circular(4.r)),
+                      child: CachedNetworkImage(
+                        imageUrl: pick.image,
+                        width: 86.h,
+                        height: 86.h,
+                        fit: BoxFit.cover,
                       ),
                     ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 4.h),
+                    child: Container(
+                      padding: EdgeInsets.only(
+                        top: 3.h,
+                        bottom: 2.h,
+                        left: 6.w,
+                        right: 6.w,
+                      ),
+                      decoration: BoxDecoration(
+                        color: grey900,
+                        borderRadius: BorderRadius.all(Radius.circular(3.r)),
+                      ),
+                      child: Text(
+                        'PICK',
+                        style: TextStyle(
+                          fontSize: 8.4.sp,
+                          letterSpacing: -0.17,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            10.horizontalSpace,
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  pick.title,
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.bold,
+                    color: grey900,
+                  ),
+                ),
+                8.verticalSpace,
+                Text(
+                  pick.describe,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w500,
+                    color: grey600,
                   ),
                 ),
               ],
             ),
-          ),
-          10.horizontalSpace,
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                '원형들, 힙한 케이크 맛집',//pick.title,
-                style: TextStyle(
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.bold,
-                  color: grey900,
-                ),
-              ),
-              8.verticalSpace,
-              Text(
-                '색다른 음식에 진심인 사람이라면,\n무조건 방문해봐야 할 이색 케이크 맛집',// pick.describe,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.w500,
-                  color: grey600,
-                ),
-              ),
-            ],
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

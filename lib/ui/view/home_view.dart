@@ -101,7 +101,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
           create: (_) => HomeViewCubit((args['index'] as int?) ?? 0),
         ),
         BlocProvider(
-          create: (_) => LinksFromSelectedJobGroupCubit(),
+          create: (_) => GetLinksCubit(),
         ),
         BlocProvider<GetFoldersCubit>(
           create: (_) => GetFoldersCubit(),
@@ -190,7 +190,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
             context.read<GetFoldersCubit>().getFolders();
             context.read<HomeViewCubit>().moveTo(index);
           } else if (index == 1) {
-            context.read<LinksFromSelectedJobGroupCubit>().refresh();
+            context.read<GetLinksCubit>().refresh();
             context.read<HomeViewCubit>().moveTo(index);
           } else {
             context.read<HomeViewCubit>().moveTo(index);

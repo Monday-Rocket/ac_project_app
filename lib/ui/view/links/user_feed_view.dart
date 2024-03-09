@@ -63,8 +63,6 @@ class UserFeedView extends StatelessWidget {
               feedContext.read<FeedViewCubit>().hasRefresh = false;
             }
 
-            Log.i('links ${links.length}');
-
             totalLinks.addAll(links);
             return BlocProvider(
               create: (_) => ScrollCubit(

@@ -201,7 +201,7 @@ void main() {
       'page_size=10',
     );
     final api = getLinkApi(mockClient);
-    final result = await api.getJobGroupLinks(jobGroup, pageNum);
+    final result = await api.getLinks(pageNum);
 
     result.when(
       success: (data) => expect(data, apiExpected.data),
@@ -227,7 +227,7 @@ void main() {
       hasError: true,
     );
     final api = getLinkApi(mockClient);
-    final result = await api.getJobGroupLinks(jobGroup, pageNum);
+    final result = await api.getLinks(pageNum);
 
     result.when(
       success: (_) => fail('should be error'),
