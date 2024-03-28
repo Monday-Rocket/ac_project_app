@@ -42,7 +42,7 @@ apply plugin: 'kotlin-parcelize'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
-    compileSdkVersion 33
+    compileSdkVersion 34
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -64,7 +64,7 @@ android {
     defaultConfig {
         applicationId "com.mr.ac_project_app"
         minSdkVersion 24
-        targetSdkVersion 33
+        targetSdkVersion 34
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         ndk.debugSymbolLevel 'FULL'
