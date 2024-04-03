@@ -39,4 +39,8 @@ class LinkpoolPick extends Equatable {
   Color getColor() {
     return Color(int.parse(backgroundColor.replaceAll('#', ''), radix: 16));
   }
+
+  String getPerfectTitle() {
+    return title.replaceAll(r'\n', '\n');
+  }
 }

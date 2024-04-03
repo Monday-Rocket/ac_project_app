@@ -486,13 +486,13 @@ class HomePage extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(right: 12),
                     child: Text(
-                      pick.title,
+                      pick.getPerfectTitle(),
+                      maxLines: 2,
                       style: TextStyle(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.bold,
                         color: grey900,
                       ),
-                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   8.verticalSpace,
