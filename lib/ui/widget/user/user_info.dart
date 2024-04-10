@@ -65,6 +65,7 @@ Widget UserInfoWidget({
               style: const TextStyle(
                 color: grey900,
                 fontWeight: FontWeight.w500,
+                letterSpacing: -0.2,
               ),
             ),
             Container(
