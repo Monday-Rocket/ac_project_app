@@ -214,6 +214,7 @@ class _SearchViewState extends State<SearchView> {
                                       fontSize: 16.sp,
                                       color: grey800,
                                       height: (26 / 16).h,
+                                      letterSpacing: -0.1,
                                     ),
                                   ),
                                 ],
@@ -284,6 +285,7 @@ class _SearchViewState extends State<SearchView> {
                                             color: blackBold,
                                             fontWeight: FontWeight.bold,
                                             fontSize: 16.sp,
+                                            letterSpacing: -0.2,
                                           ),
                                         ),
                                       ),
@@ -330,6 +332,7 @@ class _SearchViewState extends State<SearchView> {
                                       style: TextStyle(
                                         color: grey500,
                                         fontSize: 12.sp,
+                                        letterSpacing: -0.1,
                                       ),
                                     ),
                                   ),

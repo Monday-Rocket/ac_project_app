@@ -11,6 +11,7 @@ import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/provider/api/folders/folder_api.dart';
 import 'package:ac_project_app/provider/kakao/kakao.dart';
+import 'package:ac_project_app/provider/upload_state_variable.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/page/home/home_page.dart';
 import 'package:ac_project_app/ui/page/my_folder/my_folder_page.dart';
@@ -68,20 +69,22 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
   }
 
   void navigateToUploadViewIfClipboardIsValid() {
-    Clipboard.getData(Clipboard.kTextPlain).then((value) {
-      isValidUrl(value?.text ?? '').then((isValid) {
-        if (isValid) {
-          Clipboard.setData(const ClipboardData(text: ''));
-          Navigator.pushNamed(
-            context,
-            Routes.upload,
-            arguments: {
-              'url': value?.text,
-            },
-          );
-        }
+    if (isNotUploadState) {
+      Clipboard.getData(Clipboard.kTextPlain).then((value) {
+        isValidUrl(value?.text ?? '').then((isValid) {
+          if (isValid) {
+            Clipboard.setData(const ClipboardData(text: ''));
+            Navigator.pushNamed(
+              context,
+              Routes.upload,
+              arguments: {
+                'url': value?.text,
+              },
+            );
+          }
+        });
       });
-    });
+    }
   }
 
   void resetResumeState() {

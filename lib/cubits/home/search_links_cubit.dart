@@ -13,8 +13,10 @@ class SearchLinksCubit extends Cubit<LinkListState> {
   HasMoreCubit hasMore = HasMoreCubit();
   int page = 0;
   String currentText = '';
+  bool isMine = false;
 
   Future<void> searchLinks(String text, int pageNum) async {
+    isMine = false;
     currentText = text;
     emit(LinkListLoadingState());
 
@@ -31,6 +33,7 @@ class SearchLinksCubit extends Cubit<LinkListState> {
   }
 
   Future<void> searchMyLinks(String text, int pageNum) async {
+    isMine = true;
     currentText = text;
     emit(LinkListLoadingState());
 
@@ -46,11 +49,14 @@ class SearchLinksCubit extends Cubit<LinkListState> {
     );
   }
 
-  Future<void> refresh() => searchLinks(currentText, 0);
+  Future<void> refresh() =>
+      isMine ? searchMyLinks(currentText, 0) : searchLinks(currentText, 0);
 
   void loadMore() {
     if (hasMore.state == ScrollableType.can) {
-      searchLinks(currentText, page + 1);
+      isMine
+          ? searchMyLinks(currentText, page + 1)
+          : searchLinks(currentText, page + 1);
     }
   }
 

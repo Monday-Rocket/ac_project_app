@@ -17,9 +17,7 @@ import 'package:ac_project_app/ui/widget/user/user_info.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:ac_project_app/util/string_utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -209,6 +207,7 @@ class HomePage extends StatelessWidget {
                       fontSize: 16.sp,
                       color: grey800,
                       height: (26 / 16).h,
+                      letterSpacing: -0.1,
                     ),
                   ),
                 ],
@@ -272,6 +271,7 @@ class HomePage extends StatelessWidget {
                             color: blackBold,
                             fontWeight: FontWeight.bold,
                             fontSize: 16.sp,
+                            letterSpacing: -0.2,
                           ),
                         ),
                       ),
@@ -315,6 +315,7 @@ class HomePage extends StatelessWidget {
                       style: TextStyle(
                         color: grey500,
                         fontSize: 12.sp,
+                        letterSpacing: -0.1,
                       ),
                     ),
                   ),

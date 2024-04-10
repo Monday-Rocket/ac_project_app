@@ -10,6 +10,7 @@ import 'package:ac_project_app/cubits/sign_up/button_state_cubit.dart';
 import 'package:ac_project_app/enums/navigator_pop_type.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/link/upload_type.dart';
+import 'package:ac_project_app/provider/upload_state_variable.dart';
 import 'package:ac_project_app/ui/widget/add_folder/folder_add_title.dart';
 import 'package:ac_project_app/ui/widget/add_folder/horizontal_folder_list.dart';
 import 'package:ac_project_app/ui/widget/add_folder/subtitle.dart';
@@ -51,7 +52,14 @@ class _UploadViewState extends State<UploadView> {
       linkTextController.text = widget.args!['url'] as String;
       buttonState = ButtonState.enabled;
     }
+    isNotUploadState = false;
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    isNotUploadState = true;
+    super.dispose();
   }
 
   @override
