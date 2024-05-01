@@ -30,61 +30,61 @@ class _TutorialViewState extends State<TutorialView> {
             items: tutorials
                 .map(
                   (tutorial) => Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Image.asset(
-                    tutorial.image,
-                    height: (height * 0.6).h,
-                    fit: BoxFit.cover,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: tutorials.asMap().entries.map((entry) {
-                      return GestureDetector(
-                        onTap: () => _controller.animateToPage(entry.key),
-                        child: Container(
-                          width: 7.w,
-                          height: 7.h,
-                          margin: EdgeInsets.symmetric(
-                            horizontal: 3.w,
-                          ),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: _current == entry.key
-                                ? primary700
-                                : greyDot,
-                          ),
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Image.asset(
+                        tutorial.image,
+                        height: (height * 0.6).h,
+                        fit: BoxFit.cover,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: tutorials.asMap().entries.map((entry) {
+                          return GestureDetector(
+                            onTap: () => _controller.animateToPage(entry.key),
+                            child: Container(
+                              width: 7.w,
+                              height: 7.h,
+                              margin: EdgeInsets.symmetric(
+                                horizontal: 3.w,
+                              ),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: _current == entry.key
+                                    ? primary700
+                                    : greyDot,
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                      SizedBox(height: 22.h),
+                      Text(
+                        tutorial.title,
+                        style: TextStyle(
+                          fontSize: 26.sp,
+                          letterSpacing: -0.2.w,
+                          color: blackTutorial,
                         ),
-                      );
-                    }).toList(),
+                      ).bold(),
+                      SizedBox(height: 10.h),
+                      Text(
+                        tutorial.subTitle,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          color: greyTutorial,
+                          letterSpacing: -0.3.w,
+                          height: 24.h / 14,
+                        ),
+                      ),
+                    ],
                   ),
-                  SizedBox(height: 22.h),
-                  Text(
-                    tutorial.title,
-                    style: TextStyle(
-                      fontSize: 26.sp,
-                      letterSpacing: -0.2.w,
-                      color: blackTutorial,
-                    ),
-                  ).bold(),
-                  SizedBox(height: 10.h),
-                  Text(
-                    tutorial.subTitle,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      color: greyTutorial,
-                      letterSpacing: -0.3.w,
-                      height: 24.h / 14,
-                    ),
-                  ),
-                ],
-              ),
-            )
+                )
                 .toList(),
             carouselController: _controller,
             options: CarouselOptions(
-              height: (height * 646 / 812 - 10).h,
+              height: (height * 2) / 3,
               viewportFraction: 1,
               enableInfiniteScroll: false,
               onPageChanged: (index, reason) {
