@@ -381,6 +381,7 @@ class HomePage extends StatelessWidget {
                   fontSize: 18.sp,
                   fontWeight: FontWeight.w600,
                   color: Colors.black,
+                  letterSpacing: -0.2,
                 ),
               ),
             ),
@@ -426,6 +427,7 @@ class HomePage extends StatelessWidget {
           borderRadius: BorderRadius.all(Radius.circular(6.r)),
         ),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
               padding: EdgeInsets.only(top: 12.h, left: 10.w, bottom: 12.h),
@@ -479,35 +481,40 @@ class HomePage extends StatelessWidget {
               ),
             ),
             10.horizontalSpace,
-            Flexible(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 12),
-                    child: Text(
-                      pick.getPerfectTitle(),
-                      maxLines: 2,
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.bold,
-                        color: grey900,
+            Padding(
+              padding: EdgeInsets.only(top: 24.h),
+              child: Flexible(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(right: 12),
+                      child: Text(
+                        pick.getPerfectTitle(),
+                        maxLines: 2,
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.bold,
+                          color: grey900,
+                          letterSpacing: -0.17,
+                          height: 21/16,
+                        ),
                       ),
                     ),
-                  ),
-                  8.verticalSpace,
-                  Text(
-                    pick.describe,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.w500,
-                      color: grey600,
+                    3.verticalSpace,
+                    Text(
+                      pick.describe,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w500,
+                        color: grey600,
+                        letterSpacing: -0.17,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ],
