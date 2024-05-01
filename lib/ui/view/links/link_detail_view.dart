@@ -110,6 +110,7 @@ class LinkDetailView extends StatelessWidget {
   ) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
