@@ -483,38 +483,36 @@ class HomePage extends StatelessWidget {
             10.horizontalSpace,
             Padding(
               padding: EdgeInsets.only(top: 24.h),
-              child: Flexible(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(right: 12),
-                      child: Text(
-                        pick.getPerfectTitle(),
-                        maxLines: 2,
-                        style: TextStyle(
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.bold,
-                          color: grey900,
-                          letterSpacing: -0.17,
-                          height: 21/16,
-                        ),
-                      ),
-                    ),
-                    3.verticalSpace,
-                    Text(
-                      pick.describe,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 12),
+                    child: Text(
+                      pick.getPerfectTitle(),
                       maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.w500,
-                        color: grey600,
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.bold,
+                        color: grey900,
                         letterSpacing: -0.17,
+                        height: 21/16,
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                  3.verticalSpace,
+                  Text(
+                    pick.describe,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w500,
+                      color: grey600,
+                      letterSpacing: -0.17,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
