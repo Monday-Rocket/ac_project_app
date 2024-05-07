@@ -84,7 +84,7 @@ class _TutorialViewState extends State<TutorialView> {
                 .toList(),
             carouselController: _controller,
             options: CarouselOptions(
-              height: (height * 2) / 3,
+              height: (height * 3) / 4,
               viewportFraction: 1,
               enableInfiniteScroll: false,
               onPageChanged: (index, reason) {
