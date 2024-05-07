@@ -14,8 +14,6 @@
 		0F872E4128D875E3002954CC /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0F872E3F28D875E3002954CC /* MainInterface.storyboard */; };
 		0F872E4528D875E3002954CC /* Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 0F872E3B28D875E3002954CC /* Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		0F8AD1C028FC39E30006B1D6 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0F8AD1BF28FC39E30006B1D6 /* Images.xcassets */; };
-		0FB992B12917F2C6005F5D9C /* OpenGraph in Frameworks */ = {isa = PBXBuildFile; productRef = 0FB992B02917F2C6005F5D9C /* OpenGraph */; };
-		0FB992B32917F2F4005F5D9C /* OpenGraph in Frameworks */ = {isa = PBXBuildFile; productRef = 0FB992B22917F2F4005F5D9C /* OpenGraph */; };
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		51F09A2629711B8A00BA053D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 51F09A2529711B8A00BA053D /* GoogleService-Info.plist */; };
@@ -38,6 +36,8 @@
 		AE83E34C291CB70C00A43A2D /* FolderSaveSuccessViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE83E34B291CB70C00A43A2D /* FolderSaveSuccessViewController.swift */; };
 		AE83E34E291CB8FB00A43A2D /* SaveType.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE83E34D291CB8FB00A43A2D /* SaveType.swift */; };
 		AE83E351291CC6AA00A43A2D /* PaddingLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE83E350291CC6AA00A43A2D /* PaddingLabel.swift */; };
+		AE9181C22BEA83D8003E77E3 /* OpenGraph in Frameworks */ = {isa = PBXBuildFile; productRef = AE9181C12BEA83D8003E77E3 /* OpenGraph */; };
+		AE9181C42BEA83E0003E77E3 /* OpenGraph in Frameworks */ = {isa = PBXBuildFile; productRef = AE9181C32BEA83E0003E77E3 /* OpenGraph */; };
 		AEB8CBF52920B0CF00886882 /* TextFieldExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEB8CBF42920B0CF00886882 /* TextFieldExtension.swift */; };
 		AEDF4C8D291D8226000FC3D7 /* CustomeUIButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEDF4C8C291D8226000FC3D7 /* CustomeUIButton.swift */; };
 		AEDF4C91291D9C25000FC3D7 /* FolderSaveCancelDialogViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEDF4C90291D9C25000FC3D7 /* FolderSaveCancelDialogViewController.swift */; };
@@ -62,16 +62,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		9705A1C41CF9048500538489 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		AEE2471C28CF82200092F192 /* Embed App Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 12;
@@ -127,6 +117,8 @@
 		AE83E34B291CB70C00A43A2D /* FolderSaveSuccessViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderSaveSuccessViewController.swift; sourceTree = "<group>"; };
 		AE83E34D291CB8FB00A43A2D /* SaveType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveType.swift; sourceTree = "<group>"; };
 		AE83E350291CC6AA00A43A2D /* PaddingLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaddingLabel.swift; sourceTree = "<group>"; };
+		AE9181BA2BEA810C003E77E3 /* OpenGraph.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = OpenGraph.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		AE9181BD2BEA813C003E77E3 /* OpenGraph.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = OpenGraph.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		AE92A668298BF72F0086B31F /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
 		AEB8CBF42920B0CF00886882 /* TextFieldExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldExtension.swift; sourceTree = "<group>"; };
 		AEDF4C8C291D8226000FC3D7 /* CustomeUIButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomeUIButton.swift; sourceTree = "<group>"; };
@@ -147,7 +139,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0FB992B32917F2F4005F5D9C /* OpenGraph in Frameworks */,
+				AE9181C42BEA83E0003E77E3 /* OpenGraph in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -156,7 +148,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				917A62576C496F899ED82BAF /* Pods_Runner.framework in Frameworks */,
-				0FB992B12917F2C6005F5D9C /* OpenGraph in Frameworks */,
+				AE9181C22BEA83D8003E77E3 /* OpenGraph in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -187,6 +179,8 @@
 		41380AD61BDA3685827DB58C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				AE9181BD2BEA813C003E77E3 /* OpenGraph.framework */,
+				AE9181BA2BEA810C003E77E3 /* OpenGraph.framework */,
 				511FD4830B180C79ED690783 /* Pods_Runner.framework */,
 			);
 			name = Frameworks;
@@ -344,7 +338,7 @@
 			);
 			name = Extension;
 			packageProductDependencies = (
-				0FB992B22917F2F4005F5D9C /* OpenGraph */,
+				AE9181C32BEA83E0003E77E3 /* OpenGraph */,
 			);
 			productName = Extension;
 			productReference = 0F872E3B28D875E3002954CC /* Extension.appex */;
@@ -356,7 +350,6 @@
 			buildPhases = (
 				06D908F3BF919B7EE15A8705 /* [CP] Check Pods Manifest.lock */,
 				242C769F86A7805781E3C954 /* [CP] Embed Pods Frameworks */,
-				9705A1C41CF9048500538489 /* Embed Frameworks */,
 				AEE2471C28CF82200092F192 /* Embed App Extensions */,
 				9740EEB61CF901F6004384FC /* Run Script */,
 				97C146EA1CF9000F007C117D /* Sources */,
@@ -372,7 +365,7 @@
 			);
 			name = Runner;
 			packageProductDependencies = (
-				0FB992B02917F2C6005F5D9C /* OpenGraph */,
+				AE9181C12BEA83D8003E77E3 /* OpenGraph */,
 			);
 			productName = Runner;
 			productReference = 97C146EE1CF9000F007C117D /* Runner.app */;
@@ -1053,12 +1046,12 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		0FB992B02917F2C6005F5D9C /* OpenGraph */ = {
+		AE9181C12BEA83D8003E77E3 /* OpenGraph */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 0FB992AF2917F2C6005F5D9C /* XCRemoteSwiftPackageReference "OpenGraph" */;
 			productName = OpenGraph;
 		};
-		0FB992B22917F2F4005F5D9C /* OpenGraph */ = {
+		AE9181C32BEA83E0003E77E3 /* OpenGraph */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 0FB992AF2917F2C6005F5D9C /* XCRemoteSwiftPackageReference "OpenGraph" */;
 			productName = OpenGraph;
