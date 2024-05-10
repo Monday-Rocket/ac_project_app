@@ -61,6 +61,7 @@ class MyApp extends StatelessWidget {
                 ),
                 bottomSheetTheme: const BottomSheetThemeData(
                   backgroundColor: Colors.white,
+                  elevation: 0,
                 ),
                 elevatedButtonTheme: ElevatedButtonThemeData(
                   style: ButtonStyle(
