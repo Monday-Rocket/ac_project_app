@@ -38,8 +38,7 @@ class _EmailLoginViewState extends State<EmailLoginView>
   Widget build(BuildContext context) {
     return KeyboardDismissOnTap(
       child: KeyboardVisibilityBuilder(
-        builder: (context, visible) {
-          final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+        builder: (keyboardContext, visible) {
           return Scaffold(
             resizeToAvoidBottomInset: false,
             appBar: buildBackAppBar(context),
@@ -188,7 +187,7 @@ class _EmailLoginViewState extends State<EmailLoginView>
                         ),
                       ),
                     ),
-                    SizedBox(height: keyboardHeight),
+                    SizedBox(height: getKeyboardHeight(context)),
                   ],
                 ),
               ),
@@ -215,6 +214,8 @@ class _EmailLoginViewState extends State<EmailLoginView>
       ),
     );
   }
+
+  double getKeyboardHeight(BuildContext context) => MediaQuery.of(context).padding.bottom;
 
   void backToLogin(BuildContext context) {
     unawaited(Navigator.pushNamed(context, Routes.login));

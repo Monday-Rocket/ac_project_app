@@ -7,15 +7,15 @@ const approveFirstLink =
 
 // 이용 약관
 const approveSecondLink =
-    'https://linkpoolpd.notion.site/LINKPOOL-6f28bbd4f0914ffdad1614a3655d06fa';
+    'https://heejin-alex.notion.site/LINKPOOL-9c20eb96193e4ff2a5a2aeff8103730c';
 
 // 개인정보 처리방침
 const personalInfoLink =
-    'https://linkpoolpd.notion.site/LINKPOOL-71b2b45eda864d91882a6995bf20413f';
+    'https://heejin-alex.notion.site/LINKPOOL-84f8e8be14244cd7837889d1ec5800d2';
 
 // 도움말
 const helpLink =
-    'https://linkpoolpd.notion.site/c6ea6729dfac4dbc89c95d294bca43f8';
+    'https://heejin-alex.notion.site/14514c8fc84442fab1fc34d1377f8fc6';
 
 // API LINK
 const baseUrl = 'http://acprojectapiserver-env.eba-tazwmppk.ap-northeast-2.elasticbeanstalk.com';

@@ -44,8 +44,7 @@ class SignUpNicknameView extends StatelessWidget {
               return KeyboardDismissOnTap(
                 child: KeyboardVisibilityBuilder(
                   builder: (context, visible) {
-                    final keyboardHeight =
-                        MediaQuery.of(context).viewInsets.bottom;
+                    final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
                     return Scaffold(
                       resizeToAvoidBottomInset: false,
                       appBar: buildBackAppBar(context),
