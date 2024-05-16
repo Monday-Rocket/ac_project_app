@@ -36,6 +36,7 @@ def kakaoApiKey = signingProperties.getProperty('kakao.api.key')
 apply plugin: 'com.android.application'
 // START: FlutterFire Configuration
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.crashlytics'
 // END: FlutterFire Configuration
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-parcelize'

@@ -7,6 +7,7 @@ import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/provider/tutorial_provider.dart';
 import 'package:ac_project_app/routes.dart';
+import 'package:ac_project_app/ui/widget/dialog/center_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -43,8 +44,18 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
   }
 
   void moveToNextView() {
-    if (autoLoginCubit.state is LoginInitialState) {
+    final state = autoLoginCubit.state;
+    if (state is LoginInitialState) {
       moveToLoginView();
+    } else if (state is InspectionState) {
+      showPopUp(
+        title: state.title,
+        content: state.description,
+        parentContext: context,
+        callback: () {
+          Navigator.pop(context);
+        },
+      );
     } else {
       Navigator.pushReplacementNamed(
         context,

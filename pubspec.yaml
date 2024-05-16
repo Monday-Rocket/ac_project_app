@@ -31,6 +31,8 @@ dependencies:
   firebase_core: 2.31.0
   firebase_auth: 4.19.5
   firebase_dynamic_links: 5.5.5
+  firebase_database: ^10.5.5
+  firebase_crashlytics: ^3.5.5
 
   kakao_flutter_sdk_user: ^1.6.1
   flutter_dotenv: ^5.0.2
