@@ -9,6 +9,7 @@ import 'package:ac_project_app/provider/api/linkpool_pick/linkpool_pick_api.dart
 import 'package:ac_project_app/provider/api/report/report_api.dart';
 import 'package:ac_project_app/provider/api/user/profile_api.dart';
 import 'package:ac_project_app/provider/api/user/user_api.dart';
+import 'package:ac_project_app/provider/manager/app_pause_manager.dart';
 import 'package:get_it/get_it.dart';
 
 final getIt = GetIt.instance;
@@ -31,5 +32,6 @@ void locator() {
     ..registerLazySingleton(GetUserFoldersCubit.new)
     ..registerLazySingleton(GetProfileInfoCubit.new)
     ..registerLazySingleton(AutoLoginCubit.new)
-    ..registerLazySingleton(LinkpoolPickCubit.new);
+    ..registerLazySingleton(LinkpoolPickCubit.new)
+    ..registerLazySingleton(AppPauseManager.new);
 }

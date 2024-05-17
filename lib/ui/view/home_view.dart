@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/folders/folder_view_type_cubit.dart';
 import 'package:ac_project_app/cubits/folders/get_my_folders_cubit.dart';
@@ -11,6 +13,7 @@ import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/provider/api/folders/folder_api.dart';
 import 'package:ac_project_app/provider/kakao/kakao.dart';
+import 'package:ac_project_app/provider/manager/app_pause_manager.dart';
 import 'package:ac_project_app/provider/upload_state_variable.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/page/home/home_page.dart';
@@ -34,19 +37,28 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
   final uploadToolTipButtonKey = GlobalKey();
+  final appPauseManager = getIt<AppPauseManager>();
 
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
+    saveLinksFromOutside();
+    processAfterGetContext();
+    super.initState();
+  }
+
+  void saveLinksFromOutside() {
     getIt<FolderApi>().bulkSave().then((value) {
       setState(() {});
     });
+  }
+
+  void processAfterGetContext() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       final url = await receiveKakaoScheme();
       if (!mounted) return;
       Kakao.receiveLink(context, url: url);
     });
-    super.initState();
   }
 
   @override
@@ -62,6 +74,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
     if (state == AppLifecycleState.resumed) {
       if (!resumeState.value) return;
       resetResumeState();
+      appPauseManager.showPopupIfPaused(context);
       getIt<FolderApi>().bulkSave();
       Kakao.receiveLink(context);
       navigateToUploadViewIfClipboardIsValid();
@@ -226,5 +239,9 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
       }
     }
     return icons;
+  }
+
+  void checkAppPause(BuildContext context) {
+    appPauseManager.showPopupIfPaused(context);
   }
 }

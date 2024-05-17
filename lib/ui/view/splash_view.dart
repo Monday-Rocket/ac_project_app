@@ -54,6 +54,7 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
         parentContext: context,
         callback: () {
           Navigator.pop(context);
+          autoLoginCubit.closeApp();
         },
       );
     } else {
