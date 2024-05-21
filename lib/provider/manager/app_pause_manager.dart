@@ -18,10 +18,15 @@ class AppPauseManager {
     return (await database.ref('description').get()).value as String? ?? '';
   }
 
+  Future<String> getTimeText() async {
+    return (await database.ref('time').get()).value as String? ?? '';
+  }
+
   Future<void> showPopup(BuildContext context) async {
-    showPopUp(
+    showPausePopup(
       title: await getTitle(),
-      content: await getDescription(),
+      description: await getDescription(),
+      timeText: await getTimeText(),
       parentContext: context,
       callback: () {
         Navigator.pop(context);

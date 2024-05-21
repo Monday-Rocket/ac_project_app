@@ -48,9 +48,10 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
     if (state is LoginInitialState) {
       moveToLoginView();
     } else if (state is InspectionState) {
-      showPopUp(
+      showPausePopup(
         title: state.title,
-        content: state.description,
+        description: state.description,
+        timeText: state.timeText,
         parentContext: context,
         callback: () {
           Navigator.pop(context);

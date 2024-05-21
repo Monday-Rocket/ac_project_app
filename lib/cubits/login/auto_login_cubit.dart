@@ -24,7 +24,8 @@ class AutoLoginCubit extends Cubit<LoginUserState> {
   Future<void> _showInspectionMessage() async {
     final title = await appPauseManager.getTitle();
     final description = await appPauseManager.getDescription();
-    emit(InspectionState(title, description));
+    final timeText = await appPauseManager.getTimeText();
+    emit(InspectionState(title, description, timeText));
   }
 
   void _userCheck() {
