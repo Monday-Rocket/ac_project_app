@@ -493,7 +493,7 @@ void showPausePopup({
   required BuildContext parentContext,
   required void Function()? callback,
   bool icon = false,
-  String buttonText = '삭제',
+  String buttonText = '확인',
   bool hasClose = true,
 }) {
   final width = MediaQuery.of(parentContext).size.width;
