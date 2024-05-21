@@ -485,3 +485,135 @@ void showError(BuildContext context) {
     icon: true,
   );
 }
+
+void showPausePopup({
+  required String title,
+  required String description,
+  required String timeText,
+  required BuildContext parentContext,
+  required void Function()? callback,
+  bool icon = false,
+  String buttonText = '삭제',
+  bool hasClose = true,
+}) {
+  final width = MediaQuery.of(parentContext).size.width;
+  showDialog<dynamic>(
+    context: parentContext,
+    builder: (BuildContext context) {
+      return Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        insetPadding: EdgeInsets.zero,
+        child: SizedBox(
+          width: width - (45.w * 2),
+          child: Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(
+                      height: icon ? 10.h : 16.h,
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(top: icon ? 14.h : 0, bottom: 10.h),
+                      child: Text(
+                        title,
+                        style: TextStyle(
+                          fontSize: 20.sp,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: -0.2.w,
+                          height: (23.8 / 20).h,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 14),
+                      child: Text(
+                        description,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: grey500,
+                          fontSize: 14.sp,
+                          letterSpacing: -0.1.w,
+                          fontWeight: FontWeight.w500,
+                          height: (18.9 / 14).h,
+                        ),
+                      ),
+                    ),
+                    12.verticalSpace,
+                    DecoratedBox(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        color: grey200_9a,
+                      ),
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          child: Text(
+                            '링크풀 서비스 점검시간\n$timeText',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: grey600,
+                              fontSize: 14.sp,
+                              letterSpacing: -0.1.w,
+                              fontWeight: FontWeight.w600,
+                              height: (20 / 14).h,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(
+                        left: 4.w,
+                        right: 4.w,
+                        bottom: 4.h,
+                        top: 24.h,
+                      ),
+                      child: SizedBox(
+                        width: double.infinity,
+                        height: 48.h,
+                        child: ElevatedButton(
+                          onPressed: callback,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: primary600,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            shadowColor: Colors.transparent,
+                          ),
+                          child: Text(
+                            buttonText,
+                            style: TextStyle(
+                              fontFamily: FontFamily.pretendard,
+                              color: Colors.white,
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Positioned(
+                right: 0,
+                top: 0,
+                child: IconButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: const Icon(
+                    Icons.close,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}

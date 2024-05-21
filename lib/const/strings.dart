@@ -18,7 +18,7 @@ const helpLink =
     'https://heejin-alex.notion.site/14514c8fc84442fab1fc34d1377f8fc6';
 
 // API LINK
-const baseUrl = 'http://acprojectapiserver-env.eba-tazwmppk.ap-northeast-2.elasticbeanstalk.com';
+const baseUrl = 'https://api.linkpool.co.kr';
 
 //warning message
 const warningMsgTitle = '링크풀은 건전한 링크 관리 및 공유 문화를 지향해요';
