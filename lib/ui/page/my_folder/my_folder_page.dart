@@ -1,7 +1,6 @@
 // ignore_for_file: avoid_positional_boolean_parameters
 
 import 'dart:async';
-import 'dart:io';
 
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/folders/folder_view_type_cubit.dart';
@@ -9,18 +8,14 @@ import 'package:ac_project_app/cubits/folders/folders_state.dart';
 import 'package:ac_project_app/cubits/folders/get_my_folders_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_state.dart';
-import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/profile/profile_image.dart';
-import 'package:ac_project_app/provider/kakao/kakao.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/add_folder/show_add_folder_dialog.dart';
 import 'package:ac_project_app/ui/widget/buttons/upload_button.dart';
 import 'package:ac_project_app/ui/widget/custom_reorderable_list_view.dart';
 import 'package:ac_project_app/ui/widget/dialog/bottom_dialog.dart';
-import 'package:ac_project_app/ui/widget/dialog/center_dialog.dart';
-import 'package:ac_project_app/ui/widget/rename_folder/show_rename_folder_dialog.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:ac_project_app/util/number_commas.dart';
 import 'package:flutter/material.dart';
@@ -394,160 +389,5 @@ class _MyFolderPageState extends State<MyFolderPage>
         ),
       ),
     );
-  }
-
-  Future<bool?> showFolderOptionsDialog(
-    List<Folder> folders,
-    Folder currFolder,
-    BuildContext parentContext,
-  ) async {
-    final visible = currFolder.visible ?? false;
-    return showModalBottomSheet<bool?>(
-      backgroundColor: Colors.transparent,
-      context: parentContext,
-      isScrollControlled: true,
-      builder: (BuildContext context) {
-        return Wrap(
-          children: [
-            DecoratedBox(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20.r),
-                  topRight: Radius.circular(20.r),
-                ),
-              ),
-              child: Padding(
-                padding: EdgeInsets.only(
-                  top: 29.h,
-                  bottom: Platform.isAndroid
-                      ? MediaQuery.of(context).padding.bottom
-                      : 0,
-                ),
-                child: Column(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(left: 30.w, right: 20.w),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            '폴더 옵션',
-                            style: TextStyle(
-                              color: grey800,
-                              fontSize: 20.sp,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          InkWell(
-                            onTap: () => Navigator.pop(context),
-                            child: Icon(
-                              Icons.close_rounded,
-                              size: 24.r,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(
-                        top: 17.h,
-                        left: 6.w,
-                        right: 6.w,
-                        bottom: 20.h,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          BottomListItem(
-                            visible ? '비공개로 전환' : '공개로 전환',
-                            callback: () {
-                              changeFolderVisible(
-                                parentContext,
-                                currFolder,
-                              );
-                            },
-                          ),
-                          BottomListItem(
-                            '폴더명 변경',
-                            callback: () {
-                              changeFolderName(
-                                parentContext,
-                                folders,
-                                currFolder,
-                              );
-                            },
-                          ),
-                          BottomListItem(
-                            '폴더 삭제',
-                            callback: () {
-                              deleteFolderDialog(parentContext, currFolder);
-                            },
-                          ),
-                          BottomListItem(
-                            '카카오톡 폴더 공유',
-                            callback: () {
-                              final profileInfoCubit =
-                                  getIt<GetProfileInfoCubit>();
-                              if (profileInfoCubit.state
-                                  is ProfileLoadedState) {
-                                final profile = (profileInfoCubit.state
-                                        as ProfileLoadedState)
-                                    .profile;
-
-                                if (currFolder.visible ?? false) {
-                                  Kakao.sendFolderKakaoShare(
-                                    currFolder,
-                                    profile,
-                                  );
-                                } else {
-                                  showPopUp(
-                                    title: '폴더를 공개해 주세요',
-                                    content: '카카오톡 폴더 공유는\n공개 폴더로 전환 후 가능해요!',
-                                    parentContext: parentContext,
-                                    callback: () => Navigator.pop(context),
-                                    icon: true,
-                                    iconImage: Assets.images.icLockColor
-                                        .image(width: 27.w, height: 27.w),
-                                  );
-                                }
-                              }
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void changeFolderVisible(BuildContext context, Folder folder) {
-    context.read<GetFoldersCubit>().transferVisible(folder).then((value) {
-      Navigator.pop(context);
-    });
-  }
-
-  void changeFolderName(
-    BuildContext context,
-    List<Folder> folders,
-    Folder currFolder,
-  ) {
-    showRenameFolderDialog(
-      context,
-      currFolder: currFolder,
-      folders: folders,
-    ).then((value) {
-      value = value ?? false;
-      if (value) {
-        Navigator.pop(context, true);
-        context.read<GetFoldersCubit>().getFolders();
-      }
-    });
   }
 }

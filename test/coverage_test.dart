@@ -23,7 +23,7 @@ import 'package:ac_project_app/cubits/links/feed_data_state.dart';
 import 'package:ac_project_app/cubits/links/has_more_cubit.dart';
 import 'package:ac_project_app/cubits/links/link_list_state.dart';
 import 'package:ac_project_app/cubits/links/links_from_selected_folder_cubit.dart';
-import 'package:ac_project_app/cubits/links/links_from_selected_job_group_cubit.dart';
+import 'package:ac_project_app/cubits/links/get_links_cubit.dart';
 import 'package:ac_project_app/cubits/links/upload_link_cubit.dart';
 import 'package:ac_project_app/cubits/links/upload_result_state.dart';
 import 'package:ac_project_app/cubits/login/login_cubit.dart';

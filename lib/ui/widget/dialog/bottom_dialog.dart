@@ -4,6 +4,9 @@ import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/folders/folder_name_cubit.dart';
 import 'package:ac_project_app/cubits/folders/folders_state.dart';
 import 'package:ac_project_app/cubits/folders/get_my_folders_cubit.dart';
+import 'package:ac_project_app/cubits/folders/get_selected_folder_cubit.dart';
+import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
+import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
@@ -19,6 +22,7 @@ import 'package:ac_project_app/ui/widget/add_folder/horizontal_folder_list.dart'
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/dialog/center_dialog.dart';
 import 'package:ac_project_app/ui/widget/move_to_my_folder_dialog.dart';
+import 'package:ac_project_app/ui/widget/rename_folder/show_rename_folder_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -494,4 +498,175 @@ void runCallback(
   final folders = parentContext.read<GetFoldersCubit>().folders;
   moveToMyLinksView?.call(parentContext, folders, folders.length - 1);
   callback?.call();
+}
+
+Future<bool?> showFolderOptionsDialog(
+  List<Folder> folders,
+  Folder currFolder,
+  BuildContext parentContext, {
+  bool fromLinkView = false,
+}) async {
+  final visible = currFolder.visible ?? false;
+  return showModalBottomSheet<bool?>(
+    backgroundColor: Colors.transparent,
+    context: parentContext,
+    isScrollControlled: true,
+    builder: (BuildContext context) {
+      return Wrap(
+        children: [
+          DecoratedBox(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20.r),
+                topRight: Radius.circular(20.r),
+              ),
+            ),
+            child: Padding(
+              padding: EdgeInsets.only(
+                top: 29.h,
+                bottom: Platform.isAndroid
+                    ? MediaQuery.of(context).padding.bottom
+                    : 0,
+              ),
+              child: Column(
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(left: 30.w, right: 20.w),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '폴더 옵션',
+                          style: TextStyle(
+                            color: grey800,
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () => Navigator.pop(context),
+                          child: Icon(
+                            Icons.close_rounded,
+                            size: 24.r,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(
+                      top: 17.h,
+                      left: 6.w,
+                      right: 6.w,
+                      bottom: 20.h,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        BottomListItem(
+                          visible ? '비공개로 전환' : '공개로 전환',
+                          callback: () {
+                            changeFolderVisible(
+                              parentContext,
+                              currFolder,
+                            );
+                          },
+                        ),
+                        BottomListItem(
+                          '폴더명 변경',
+                          callback: () {
+                            changeFolderName(
+                              parentContext,
+                              folders,
+                              currFolder,
+                            );
+                          },
+                        ),
+                        BottomListItem(
+                          '폴더 삭제',
+                          callback: () {
+                            deleteFolderDialog(
+                              parentContext,
+                              currFolder,
+                              callback: () {
+                                if (fromLinkView) {
+                                  Navigator.pop(parentContext);
+                                }
+                              },
+                            );
+                          },
+                        ),
+                        BottomListItem(
+                          '카카오톡 폴더 공유',
+                          callback: () {
+                            final profileInfoCubit =
+                                getIt<GetProfileInfoCubit>();
+                            if (profileInfoCubit.state is ProfileLoadedState) {
+                              final profile =
+                                  (profileInfoCubit.state as ProfileLoadedState)
+                                      .profile;
+
+                              if (currFolder.visible ?? false) {
+                                Kakao.sendFolderKakaoShare(
+                                  currFolder,
+                                  profile,
+                                );
+                              } else {
+                                showPopUp(
+                                  title: '폴더를 공개해 주세요',
+                                  content: '카카오톡 폴더 공유는\n공개 폴더로 전환 후 가능해요!',
+                                  parentContext: parentContext,
+                                  callback: () => Navigator.pop(context),
+                                  icon: true,
+                                  iconImage: Assets.images.icLockColor
+                                      .image(width: 27.w, height: 27.w),
+                                );
+                              }
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+void changeFolderVisible(BuildContext context, Folder folder) {
+  context.read<GetFoldersCubit>().transferVisible(folder).then((value) {
+    Navigator.pop(context);
+    if (value) {
+      context
+          .read<GetSelectedFolderCubit>()
+          .update(folder.copyWith(visible: !(folder.visible ?? false)));
+    }
+  });
+}
+
+void changeFolderName(
+  BuildContext context,
+  List<Folder> folders,
+  Folder currFolder,
+) {
+  showRenameFolderDialog(
+    context,
+    currFolder: currFolder,
+    folders: folders,
+  ).then((name) {
+    name = name ?? '';
+    if (name.isNotEmpty) {
+      Navigator.pop(context, true);
+      context.read<GetFoldersCubit>().getFolders();
+      context
+          .read<GetSelectedFolderCubit>()
+          .update(currFolder.copyWith(name: name));
+    }
+  });
 }

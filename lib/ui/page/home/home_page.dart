@@ -4,7 +4,7 @@ import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/const/strings.dart';
 import 'package:ac_project_app/cubits/linkpool_pick/linkpool_pick_cubit.dart';
 import 'package:ac_project_app/cubits/linkpool_pick/linkpool_pick_result_state.dart';
-import 'package:ac_project_app/cubits/links/links_from_selected_job_group_cubit.dart';
+import 'package:ac_project_app/cubits/links/get_links_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
@@ -117,7 +117,13 @@ class HomePage extends StatelessWidget {
 
     return BlocBuilder<GetLinksCubit, List<Link>>(
       builder: (context, links) {
-        final totalLinks = _setTotalLinks(context, links);
+        final totalLinks =
+            context.watch<GetLinksCubit>().totalLinks;
+        if (context.read<GetLinksCubit>().hasRefresh) {
+          totalLinks.clear();
+          context.read<GetLinksCubit>().hasRefresh = false;
+        }
+
         if (totalLinks.isEmpty) {
           return SliverToBoxAdapter(
             child: Center(
