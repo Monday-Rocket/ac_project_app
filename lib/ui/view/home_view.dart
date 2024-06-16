@@ -7,7 +7,7 @@ import 'package:ac_project_app/cubits/folders/get_user_folders_cubit.dart';
 import 'package:ac_project_app/cubits/home/get_job_list_cubit.dart';
 import 'package:ac_project_app/cubits/home_view_cubit.dart';
 import 'package:ac_project_app/cubits/linkpool_pick/linkpool_pick_cubit.dart';
-import 'package:ac_project_app/cubits/links/links_from_selected_job_group_cubit.dart';
+import 'package:ac_project_app/cubits/links/get_links_cubit.dart';
 import 'package:ac_project_app/cubits/links/upload_link_cubit.dart';
 import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
@@ -201,6 +201,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
         showUnselectedLabels: true,
         items: bottomItems,
         currentIndex: index,
+        backgroundColor: Colors.white,
         onTap: (index) {
           if (index == 0) {
             context.read<GetFoldersCubit>().getFolders();

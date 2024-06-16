@@ -95,22 +95,12 @@ class _SearchViewState extends State<SearchView> {
         color: grey900,
         padding: EdgeInsets.only(left: 20.w, right: 8.w),
       ),
-      title: searchState ? buildSearchBar() : buildEmptySearchBar(),
+      title: searchState ? buildSearchBar(totalLinks, isMine, context) : buildEmptySearchBar(),
       titleSpacing: 0,
       actions: [
         Center(
           child: InkWell(
-            onTap: buttonState
-                ? () {
-                    totalLinks.clear();
-                    final text = textController.text;
-                    if (isMine) {
-                      context.read<SearchLinksCubit>().searchMyLinks(text, 0);
-                    } else {
-                      context.read<SearchLinksCubit>().searchLinks(text, 0);
-                    }
-                  }
-                : null,
+            onTap: () => onTapSearch(totalLinks, isMine, context),
             child: Padding(
               padding: EdgeInsets.only(
                 left: 16.w,
@@ -131,6 +121,18 @@ class _SearchViewState extends State<SearchView> {
         ),
       ],
     );
+  }
+
+  void onTapSearch(List<Link> totalLinks, bool isMine, BuildContext context) {
+    if (buttonState) {
+      totalLinks.clear();
+      final text = textController.text;
+      if (isMine) {
+        context.read<SearchLinksCubit>().searchMyLinks(text, 0);
+      } else {
+        context.read<SearchLinksCubit>().searchLinks(text, 0);
+      }
+    }
   }
 
   Widget buildListBody(
@@ -358,7 +360,7 @@ class _SearchViewState extends State<SearchView> {
     );
   }
 
-  Widget buildSearchBar() {
+  Widget buildSearchBar(List<Link> totalLinks, bool isMine, BuildContext context) {
     return Center(
       child: Container(
         margin: EdgeInsets.only(left: 10.w),
@@ -379,6 +381,10 @@ class _SearchViewState extends State<SearchView> {
                 fontSize: 14.sp,
                 fontWeight: FontWeight.w400,
               ),
+              textInputAction: TextInputAction.search,
+              onSubmitted: (value) {
+                onTapSearch(totalLinks, isMine, context);
+              },
               decoration: InputDecoration(
                 border: InputBorder.none,
                 focusedBorder: InputBorder.none,

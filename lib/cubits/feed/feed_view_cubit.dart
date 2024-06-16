@@ -36,6 +36,7 @@ class FeedViewCubit extends Cubit<List<Link>> {
     result.when(
       success: (data) {
         final links = _setScrollState(data);
+        totalLinks.addAll(links);
         emit(links);
       },
       error: (msg) {

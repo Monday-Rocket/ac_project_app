@@ -14,6 +14,7 @@ import 'package:ac_project_app/provider/upload_state_variable.dart';
 import 'package:ac_project_app/ui/widget/add_folder/folder_add_title.dart';
 import 'package:ac_project_app/ui/widget/add_folder/horizontal_folder_list.dart';
 import 'package:ac_project_app/ui/widget/add_folder/subtitle.dart';
+import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/buttons/bottom_sheet_button.dart';
 import 'package:ac_project_app/ui/widget/dialog/center_dialog.dart';
 import 'package:ac_project_app/ui/widget/loading.dart';
@@ -400,6 +401,11 @@ class _UploadViewState extends State<UploadView> {
         )
         .then((result) {
       if (result == UploadResultState.success) {
+        showBottomToast(
+          context: context,
+          '링크 등록 완료',
+          duration: 1000,
+        );
         Navigator.pop(context, NavigatorPopType.saveLink);
       } else if (result == UploadResultState.duplicated) {
         showPopUp(

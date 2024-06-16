@@ -37,4 +37,22 @@ class Folder extends Equatable {
   List<Object?> get props => [id, thumbnail, visible, name, links];
 
 
+  Folder copyWith({
+    int? id,
+    String? thumbnail,
+    bool? visible,
+    String? name,
+    int? links,
+    String? time,
+    bool? isClassified,
+  }) {
+    return Folder(
+      id: id ?? this.id,
+      thumbnail: thumbnail ?? this.thumbnail,
+      visible: visible ?? this.visible,
+      name: name ?? this.name,
+      links: links ?? this.links,
+      time: time ?? this.time,
+    );
+  }
 }
