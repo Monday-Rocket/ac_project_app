@@ -1,4 +1,3 @@
-import 'package:ac_project_app/util/logger.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -13,8 +12,7 @@ class ScrollCubit extends Cubit<bool> {
   late ScrollController scrollController;
 
   void scrollListener() {
-    Log.i('offset: ${scrollController.offset}');
-    if (scrollController.offset > 10) {
+    if (scrollController.offset > 5) {
       emit(true);
     } else {
       emit(false);

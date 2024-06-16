@@ -15,7 +15,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-Future<String?> showRenameFolderDialog(
+Future<bool?> showRenameFolderDialog(
   BuildContext parentContext, {
   required List<Folder> folders,
   required Folder currFolder,
@@ -24,7 +24,7 @@ Future<String?> showRenameFolderDialog(
 }) async {
   final formKey = GlobalKey<FormState>();
 
-  return showModalBottomSheet<String?>(
+  return showModalBottomSheet<bool>(
     backgroundColor: Colors.transparent,
     context: parentContext,
     isScrollControlled: true,
@@ -94,9 +94,13 @@ Padding _buildDialogBody(
                       child: InkWell(
                         onTap: () {
                           final cubit = context.read<GetFoldersCubit>();
-                          final name = context.read<FolderNameCubit>().state;
-                          cubit.changeName(currFolder, name).then((result) {
-                            Navigator.pop(context, name);
+                          cubit
+                              .changeName(
+                            currFolder,
+                            context.read<FolderNameCubit>().state,
+                          )
+                              .then((result) {
+                            Navigator.pop(context, true);
                             cubit.getFolders();
                             if (result) {
                               showBottomToast(
@@ -222,9 +226,13 @@ Padding _buildDialogBody(
                     ),
                     onPressed: () {
                       final cubit = context.read<GetFoldersCubit>();
-                      final name = context.read<FolderNameCubit>().state;
-                      cubit.changeName(currFolder, name).then((result) {
-                        Navigator.pop(context, name);
+                      cubit
+                          .changeName(
+                        currFolder,
+                        context.read<FolderNameCubit>().state,
+                      )
+                          .then((result) {
+                        Navigator.pop(context, true);
                         cubit.getFolders();
                         if (result) {
                           showBottomToast(
@@ -239,14 +247,13 @@ Padding _buildDialogBody(
                       style: TextStyle(
                         fontSize: 17.sp,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
                       ),
                       textWidthBasis: TextWidthBasis.parent,
                     ),
                   ),
                 );
               },
-            ),
+            )
           ],
         );
       },

@@ -53,14 +53,11 @@ class MyApp extends StatelessWidget {
                 brightness: Brightness.light,
                 textButtonTheme: TextButtonThemeData(
                   style: ButtonStyle(
-                    foregroundColor: WidgetStateProperty.all(Colors.white),
+                    foregroundColor: MaterialStateProperty.all(Colors.white),
                   ),
                 ),
                 progressIndicatorTheme: const ProgressIndicatorThemeData(
                   color: primary600,
-                ),
-                appBarTheme: const AppBarTheme(
-                  backgroundColor: Colors.transparent,
                 ),
                 bottomSheetTheme: const BottomSheetThemeData(
                   backgroundColor: Colors.white,
@@ -68,7 +65,7 @@ class MyApp extends StatelessWidget {
                 ),
                 elevatedButtonTheme: ElevatedButtonThemeData(
                   style: ButtonStyle(
-                    shadowColor: WidgetStateProperty.all(primary700),
+                    shadowColor: MaterialStateProperty.all(primary700),
                   ),
                 ),
               ),

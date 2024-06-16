@@ -16,7 +16,6 @@ import 'package:ac_project_app/provider/tool_tip_check.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/buttons/upload_button.dart';
-import 'package:ac_project_app/ui/widget/dialog/bottom_dialog.dart';
 import 'package:ac_project_app/ui/widget/link_hero.dart';
 import 'package:ac_project_app/ui/widget/scaffold_with_stack_widget.dart';
 import 'package:ac_project_app/ui/widget/shape/reverse_triangle_painter.dart';
@@ -69,15 +68,78 @@ class MyLinkView extends StatelessWidget {
             child: BlocBuilder<GetSelectedFolderCubit, Folder>(
               builder: (context, folder) {
                 return ScaffoldWithStackWidget(
-                  scaffold: LinkView(
-                    context,
-                    folders,
-                    folder,
-                    links,
-                    tabIndex,
-                    width,
-                    folderState,
-                    foldersContext,
+                  scaffold: Scaffold(
+                    backgroundColor: Colors.white,
+                    body: SafeArea(
+                      child: BlocBuilder<LinksFromSelectedFolderCubit,
+                          LinkListState>(
+                        builder: (cubitContext, state) {
+                          return Stack(
+                            children: [
+                              NotificationListener<ScrollEndNotification>(
+                                onNotification: (scrollEnd) {
+                                  final metrics = scrollEnd.metrics;
+                                  if (metrics.atEdge && metrics.pixels != 0) {
+                                    context
+                                        .read<LinksFromSelectedFolderCubit>()
+                                        .loadMore();
+                                  }
+                                  return true;
+                                },
+                                child: CustomScrollView(
+                                  //crossAxisAlignment: CrossAxisAlignment.start,
+                                  slivers: [
+                                    buildTopAppBar(context),
+                                    buildTitleBar(folder),
+                                    buildContentsCountText(cubitContext),
+                                    buildSearchBar(context, links),
+                                    buildTabBar(
+                                      folders,
+                                      tabIndex,
+                                      folder,
+                                      links,
+                                      onChangeIndex: (int index) {
+                                        // tabIndex = index;
+                                      },
+                                    ),
+                                    buildBodyList(
+                                      folder: folder,
+                                      width: width,
+                                      context: cubitContext,
+                                      totalLinks: links,
+                                      state: state,
+                                      folderState: folderState,
+                                      foldersContext: foldersContext,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              FloatingUploadButton(
+                                context,
+                                callback: () {
+                                  links.clear();
+                                  context
+                                      .read<LinksFromSelectedFolderCubit>()
+                                      .refresh();
+                                },
+                              ),
+                              if (state is LinkListLoadingState ||
+                                  state is LinkListInitialState)
+                                Center(
+                                  child: Container(
+                                    margin: EdgeInsets.only(bottom: 30.h),
+                                    child: const CircularProgressIndicator(
+                                      color: primary600,
+                                    ),
+                                  ),
+                                )
+                              else
+                                const SizedBox.shrink(),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
                   ),
                   widget: BlocBuilder<MyLinkUploadToolTipCubit, WidgetOffset?>(
                     builder: (ctx, widgetOffset) {
@@ -153,90 +215,8 @@ class MyLinkView extends StatelessWidget {
     );
   }
 
-  Scaffold LinkView(
-    BuildContext context,
-    List<Folder> folders,
-    Folder folder,
-    List<Link> links,
-    int tabIndex,
-    double width,
-    FoldersState folderState,
-    BuildContext foldersContext,
-  ) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: BlocBuilder<LinksFromSelectedFolderCubit, LinkListState>(
-          builder: (cubitContext, state) {
-            return Stack(
-              children: [
-                NotificationListener<ScrollEndNotification>(
-                  onNotification: (scrollEnd) {
-                    final metrics = scrollEnd.metrics;
-                    if (metrics.atEdge && metrics.pixels != 0) {
-                      context.read<LinksFromSelectedFolderCubit>().loadMore();
-                    }
-                    return true;
-                  },
-                  child: CustomScrollView(
-                    //crossAxisAlignment: CrossAxisAlignment.start,
-                    slivers: [
-                      buildTopAppBar(context, folders, folder),
-                      buildTitleBar(folder),
-                      buildContentsCountText(cubitContext),
-                      buildSearchBar(context, links),
-                      buildTabBar(
-                        folders,
-                        tabIndex,
-                        folder,
-                        links,
-                        onChangeIndex: (int index) {
-                          // tabIndex = index;
-                        },
-                      ),
-                      buildBodyList(
-                        folder: folder,
-                        width: width,
-                        context: cubitContext,
-                        totalLinks: links,
-                        state: state,
-                        folderState: folderState,
-                        foldersContext: foldersContext,
-                      ),
-                    ],
-                  ),
-                ),
-                FloatingUploadButton(
-                  context,
-                  callback: () {
-                    links.clear();
-                    context.read<LinksFromSelectedFolderCubit>().refresh();
-                  },
-                ),
-                if (state is LinkListLoadingState ||
-                    state is LinkListInitialState)
-                  Center(
-                    child: Container(
-                      margin: EdgeInsets.only(bottom: 30.h),
-                      child: const CircularProgressIndicator(
-                        color: primary600,
-                      ),
-                    ),
-                  )
-                else
-                  const SizedBox.shrink(),
-              ],
-            );
-          },
-        ),
-      ),
-    );
-  }
-
   Widget buildTopAppBar(
     BuildContext context,
-    List<Folder> folders,
-    Folder folder,
   ) {
     return SliverAppBar(
       pinned: true,
@@ -248,31 +228,7 @@ class MyLinkView extends StatelessWidget {
         color: grey900,
         padding: EdgeInsets.only(left: 20.w, right: 8.w),
       ),
-      actions: [
-        InkWell(
-          onTap: () {
-            showFolderOptionsDialog(
-              folders,
-              folder,
-              context,
-              fromLinkView: true,
-            );
-          },
-          child: Container(
-            margin: EdgeInsets.only(right: 24.w),
-            child: SvgPicture.asset(
-              Assets.images.more,
-              width: 25.w,
-              height: 25.h,
-            ),
-          ),
-        ),
-      ],
-      flexibleSpace: FlexibleSpaceBar(
-        background: Container(
-          color: Colors.white,
-        ),
-      ),
+      backgroundColor: Colors.white,
       elevation: 0,
       systemOverlayStyle: SystemUiOverlayStyle.dark,
     );
@@ -312,7 +268,7 @@ class MyLinkView extends StatelessWidget {
       child: Container(
         margin: EdgeInsets.only(left: 24.w, top: 3.h),
         child: Text(
-          '링크 ${addCommasFrom(count)}개',
+          '콘텐츠 ${addCommasFrom(count)}개',
           style: TextStyle(
             color: greyText,
             fontWeight: FontWeight.w500,

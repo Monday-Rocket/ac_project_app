@@ -235,7 +235,7 @@ void showEmailPopUp({
 }
 
 
-void deleteFolderDialog(BuildContext context, Folder folder, {void Function()? callback}) {
+void deleteFolderDialog(BuildContext context, Folder folder) {
   final width = MediaQuery.of(context).size.width;
   showDialog<bool?>(
     context: context,
@@ -325,7 +325,10 @@ void deleteFolderDialog(BuildContext context, Folder folder, {void Function()? c
     },
   ).then((bool? value) {
     Navigator.pop(context);
-    callback?.call();
+    if (value ?? false) {
+      // 삭제 토스트가 두번뜨는 이슈 수정
+      //showBottomToast(context:context,'폴더가 삭제되었어요!');
+    }
   });
 }
 
@@ -500,7 +503,6 @@ void showPausePopup({
       return Dialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         insetPadding: EdgeInsets.zero,
-        backgroundColor: Colors.white,
         child: SizedBox(
           width: width - (45.w * 2),
           child: Stack(
