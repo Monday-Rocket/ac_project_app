@@ -14,7 +14,6 @@ import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/dialog/bottom_dialog.dart';
 import 'package:ac_project_app/ui/widget/link_hero.dart';
 import 'package:ac_project_app/ui/widget/user/user_info.dart';
-import 'package:ac_project_app/util/logger.dart';
 import 'package:ac_project_app/util/string_utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -344,17 +343,6 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  List<Link> _setTotalLinks(BuildContext context, List<Link> links) {
-    final totalLinks =
-        context.watch<GetLinksCubit>().totalLinks;
-    if (context.read<GetLinksCubit>().hasRefresh) {
-      totalLinks.clear();
-      context.read<GetLinksCubit>().hasRefresh = false;
-    }
-    totalLinks.addAll(links);
-    return totalLinks;
-  }
-
   void addLinks(BuildContext context, List<Link> totalLinks, List<Link> links) {
     if (context.read<GetLinksCubit>().hasRefresh) {
       totalLinks.clear();
@@ -368,7 +356,6 @@ class HomePage extends StatelessWidget {
   }
 
   Widget LinkpoolPickMenu(BuildContext context, LinkpoolPickResultState state) {
-    Log.i('state: $state');
     if (state is! LinkpoolPickResultLoadedState) {
       return const SliverToBoxAdapter(child: SizedBox.shrink());
     }

@@ -120,6 +120,7 @@ class _ProfileSelectorState extends State<ProfileSelector> {
                   style: TextStyle(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
                   textWidthBasis: TextWidthBasis.parent,
                 ),

@@ -596,22 +596,12 @@ void showPausePopup({
                   ],
                 ),
               ),
-              Positioned(
-                right: 0,
-                top: 0,
-                child: IconButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  icon: const Icon(
-                    Icons.close,
-                  ),
-                ),
-              ),
             ],
           ),
         ),
       );
     },
-  );
+  ).then((_) {
+    callback?.call();
+  });
 }
