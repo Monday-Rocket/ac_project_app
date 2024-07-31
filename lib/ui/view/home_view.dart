@@ -12,6 +12,7 @@ import 'package:ac_project_app/cubits/links/upload_link_cubit.dart';
 import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/provider/api/folders/folder_api.dart';
+import 'package:ac_project_app/provider/check_clipboard_link.dart';
 import 'package:ac_project_app/provider/kakao/kakao.dart';
 import 'package:ac_project_app/provider/manager/app_pause_manager.dart';
 import 'package:ac_project_app/provider/upload_state_variable.dart';
@@ -86,12 +87,14 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
       Clipboard.getData(Clipboard.kTextPlain).then((value) {
         isValidUrl(value?.text ?? '').then((isValid) {
           if (isValid) {
+            final url = value!.text;
+            if (isClipboardLink(url)) return;
             Clipboard.setData(const ClipboardData(text: ''));
             Navigator.pushNamed(
               context,
               Routes.upload,
               arguments: {
-                'url': value?.text,
+                'url': url,
               },
             );
           }

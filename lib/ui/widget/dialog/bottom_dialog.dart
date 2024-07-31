@@ -14,6 +14,7 @@ import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/models/report/report_type.dart';
 import 'package:ac_project_app/models/user/detail_user.dart';
 import 'package:ac_project_app/provider/api/folders/link_api.dart';
+import 'package:ac_project_app/provider/check_clipboard_link.dart';
 import 'package:ac_project_app/provider/kakao/kakao.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/page/my_folder/folder_visible_state.dart';
@@ -24,7 +25,6 @@ import 'package:ac_project_app/ui/widget/dialog/center_dialog.dart';
 import 'package:ac_project_app/ui/widget/move_to_my_folder_dialog.dart';
 import 'package:ac_project_app/ui/widget/rename_folder/show_rename_folder_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:share_plus/share_plus.dart';
@@ -67,17 +67,10 @@ Future<bool?> showMyLinkOptionsDialog(
                         BottomListItem(
                           '공유',
                           callback: () {
+                            setClipboardLink(link.url);
                             Share.share(
                               link.url ?? '',
                               subject: link.title,
-                            );
-                            Clipboard.setData(
-                              ClipboardData(text: link.url ?? ''),
-                            ).then(
-                              (value) => showBottomToast(
-                                context: context,
-                                '링크 주소가 복사 되었어요!',
-                              ),
                             );
                           },
                         ),
@@ -259,10 +252,13 @@ Future<bool?> showLinkOptionsDialog(
                       children: [
                         BottomListItem(
                           '공유',
-                          callback: () => Share.share(
-                            link.url ?? '',
-                            subject: link.title,
-                          ),
+                          callback: () {
+                            setClipboardLink(link.url);
+                            Share.share(
+                              link.url ?? '',
+                              subject: link.title,
+                            );
+                          },
                         ),
                         BottomListItem(
                           '카카오톡 공유',

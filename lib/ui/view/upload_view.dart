@@ -189,7 +189,7 @@ class _UploadViewState extends State<UploadView> {
       margin: EdgeInsets.only(
         right: 24.w,
       ),
-      height: 78.h,
+
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(8.r)),
         color: grey50,
@@ -199,7 +199,10 @@ class _UploadViewState extends State<UploadView> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SvgPicture.asset(Assets.images.warningMark),
+            Padding(
+              padding: EdgeInsets.only(top: 3.h),
+              child: SvgPicture.asset(Assets.images.warningMark),
+            ),
             SizedBox(width: 4.w),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -215,12 +218,18 @@ class _UploadViewState extends State<UploadView> {
                 SizedBox(
                   height: 6.h,
                 ),
-                Text(
-                  warningMsgContent,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    color: grey400,
-                    fontSize: 11.sp,
+                SizedBox(
+                  width: 280.h,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Text(
+                      warningMsgContent,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        color: grey400,
+                        fontSize: 11.sp,
+                      ),
+                    ),
                   ),
                 ),
               ],
