@@ -62,7 +62,7 @@ dependencies:
   extended_text: ^13.0.0
   carousel_slider: ^4.2.1
   lottie:
-  flutter_slidable: ^3.0.1
+  flutter_slidable: ^3.1.1
   firebase_storage: ^11.7.5
 
   ## lint

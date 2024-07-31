@@ -30,6 +30,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class MyLinkView extends StatelessWidget {
@@ -501,39 +502,41 @@ class MyLinkView extends StatelessWidget {
         final links = state.links;
         totalLinks.addAll(links);
       }
-      return SliverList(
-        delegate: SliverChildBuilderDelegate(
-          (BuildContext context, int index) {
-            final link = totalLinks[index];
-            return Column(
-              children: [
-                buildLinkItem(
-                  context,
-                  link,
-                  totalLinks,
-                  foldersContext,
-                  folder,
-                  index,
-                  width,
-                ),
-                if (index != totalLinks.length - 1)
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24.w),
-                    child: Padding(
+      return SlidableAutoCloseBehavior(
+        child: SliverList(
+          delegate: SliverChildBuilderDelegate(
+            (BuildContext context, int index) {
+              final link = totalLinks[index];
+              return Column(
+                children: [
+                  buildLinkItem(
+                    context,
+                    link,
+                    totalLinks,
+                    foldersContext,
+                    folder,
+                    index,
+                    width,
+                  ),
+                  if (index != totalLinks.length - 1)
+                    Padding(
                       padding: EdgeInsets.symmetric(horizontal: 24.w),
-                      child: Divider(
-                        height: 1.h,
-                        thickness: 1.h,
-                        color: greyTab,
-                        indent: 24.w,
-                        endIndent: 24.w,
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 24.w),
+                        child: Divider(
+                          height: 1.h,
+                          thickness: 1.h,
+                          color: greyTab,
+                          indent: 24.w,
+                          endIndent: 24.w,
+                        ),
                       ),
                     ),
-                  ),
-              ],
-            );
-          },
-          childCount: totalLinks.length,
+                ],
+              );
+            },
+            childCount: totalLinks.length,
+          ),
         ),
       );
     }

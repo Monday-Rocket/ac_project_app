@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class DetailEditCubit extends Cubit<EditState> {
-  DetailEditCubit(Object? argument) : super(EditState.view) {
+  DetailEditCubit(Object? argument) : super(EditState(EditStateType.view)) {
     if (argument is Map) {
       final link = (argument['link'] ?? const Link()) as Link;
       textController.text = link.describe ?? '';
@@ -17,15 +17,23 @@ class DetailEditCubit extends Cubit<EditState> {
   final textController = TextEditingController();
 
   void toggle() {
-    if (state == EditState.view) {
-      emit(EditState.edit);
+    if (state.type == EditStateType.view) {
+      emit(state.copyWith(type: EditStateType.edit));
     } else {
-      emit(EditState.view);
+      emit(state.copyWith(type: EditStateType.view));
     }
   }
 
-  Future<bool> saveComment(Link link) async {
+  void toggleEdit(Link link) {
+    emit(state.copyWith(type: EditStateType.editedView, link: link));
+  }
+
+  Future<Link> saveComment(Link link) async {
     final newLink = link.copyWith(describe: textController.text);
-    return linkApi.patchLink(newLink);
+    if (await linkApi.patchLink(newLink)) {
+      return newLink;
+    } else {
+      return link;
+    }
   }
 }
