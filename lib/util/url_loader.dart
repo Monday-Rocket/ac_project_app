@@ -55,4 +55,8 @@ class UrlLoader {
       return null;
     }
   }
+
+  static bool isValidateUrl(String url) {
+    return Uri.parse(url).isAbsolute;
+  }
 }

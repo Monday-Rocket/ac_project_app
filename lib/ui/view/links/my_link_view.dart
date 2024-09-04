@@ -286,12 +286,16 @@ class MyLinkView extends StatelessWidget {
         margin: EdgeInsets.only(left: 24.w, right: 12.w, top: 10.h),
         child: Row(
           children: [
-            Text(
-              classified ? folder.name! : '미분류',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 30.sp,
-                height: (36 / 30).h,
+            SizedBox(
+              width: 250.w,
+              child: Text(
+                classified ? folder.name! : '미분류',
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 30.sp,
+                  height: (36 / 30).h,
+                ),
               ),
             ),
             if (!(folder.visible ?? false))
@@ -428,12 +432,16 @@ class MyLinkView extends StatelessWidget {
                       final tabs = <Widget>[];
                       for (final folder in folders) {
                         tabs.add(
-                          Padding(
+                          Container(
+                            constraints: BoxConstraints(
+                              maxWidth: 100.w,
+                            ),
                             padding: EdgeInsets.symmetric(
                               vertical: 7.h,
                             ),
                             child: Text(
                               folder.name ?? '',
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         );
