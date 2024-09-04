@@ -3,7 +3,7 @@ import 'package:ac_project_app/const/strings.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/buttons/bottom_sheet_button.dart';
 import 'package:ac_project_app/ui/widget/text/custom_font.dart';
-import 'package:carousel_slider/carousel_slider.dart';
+import 'package:carousel_slider/carousel_slider.dart' as cs;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -16,14 +16,14 @@ class TutorialView extends StatefulWidget {
 
 class _TutorialViewState extends State<TutorialView> {
   int _current = 0;
-  final CarouselController _controller = CarouselController();
+  final cs.CarouselSliderController _controller = cs.CarouselSliderController();
 
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.white,
-      body: CarouselSlider(
+      body: cs.CarouselSlider(
         items: tutorials
             .map(
               (tutorial) => Column(
@@ -80,7 +80,7 @@ class _TutorialViewState extends State<TutorialView> {
             )
             .toList(),
         carouselController: _controller,
-        options: CarouselOptions(
+        options: cs.CarouselOptions(
           height: (height * 4) / 5,
           viewportFraction: 1,
           enableInfiniteScroll: false,
