@@ -70,7 +70,7 @@ class _LinkDetailViewState extends State<LinkDetailView> {
                 final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
                 if (editState.type == EditStateType.edit) {
                   return PopScope(
-                    onPopInvoked: (bool didPop) {
+                    onPopInvokedWithResult: (bool didPop, _) {
                       Log.d('onPopInvoked edit: $didPop');
                       if (didPop) return;
                       goBackPage(editState, context, globalLink!.id);
@@ -89,7 +89,7 @@ class _LinkDetailViewState extends State<LinkDetailView> {
                   );
                 } else {
                   return PopScope(
-                    onPopInvoked: (bool didPop) {
+                    onPopInvokedWithResult: (bool didPop, _) {
                       Log.d('onPopInvoked ${editState.type}: $didPop');
                       if (didPop) return;
                       changePreviousViewIfEdited(editState, context);
@@ -140,8 +140,9 @@ class _LinkDetailViewState extends State<LinkDetailView> {
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white,
         elevation: 0,
+        scrolledUnderElevation: 0,
         leading: IconButton(
           onPressed: () {
             goBackPage(editState, context, link.id);
@@ -250,6 +251,7 @@ class _LinkDetailViewState extends State<LinkDetailView> {
       reverse: state.type == EditStateType.edit,
       child: Container(
         margin: EdgeInsets.only(left: 24.w, right: 24.w, top: 14.h),
+        color: Colors.white,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

@@ -169,6 +169,7 @@ class UserFeedView extends StatelessWidget {
   ) {
     return SliverAppBar(
       pinned: true,
+      scrolledUnderElevation: 0,
       leading: IconButton(
         onPressed: () {
           Navigator.pop(context);
@@ -251,12 +252,16 @@ class UserFeedView extends StatelessWidget {
                       final tabs = <Widget>[];
                       for (final folder in folders) {
                         tabs.add(
-                          Padding(
+                          Container(
+                            constraints: BoxConstraints(
+                              maxWidth: 100.w,
+                            ),
                             padding: EdgeInsets.symmetric(
                               vertical: 7.h,
                             ),
                             child: Text(
                               folder.name ?? '',
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         );
