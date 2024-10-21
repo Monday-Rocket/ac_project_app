@@ -15,8 +15,8 @@ import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/buttons/apple/apple_login_button.dart';
 import 'package:ac_project_app/ui/widget/text/custom_font.dart';
 import 'package:ac_project_app/util/logger.dart';
+import 'package:app_links/app_links.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -61,17 +61,16 @@ class LoginView extends StatelessWidget {
   }
 
   void retrieveDynamicLinkAndSignIn(BuildContext context) {
-    FirebaseDynamicLinks.instance.onLink.listen((dynamicLinkData) {
+    final appLinks = AppLinks();
+
+    appLinks.uriLinkStream.listen((uri) {
       context.read<LoginCubit>().loading();
-
-      final deepLink = dynamicLinkData.link;
-      final validLink =
-          FirebaseAuth.instance.isSignInWithEmailLink(deepLink.toString());
-
+      final validLink = FirebaseAuth.instance.isSignInWithEmailLink(uri.toString());
       if (validLink) {
-        final continueUrl = deepLink.queryParameters['continueUrl'] ?? '';
+        final link = uri.queryParameters['link'] ?? '';
+        final continueUrl = Uri.parse(link).queryParameters['continueUrl'] ?? '';
         final email = Uri.parse(continueUrl).queryParameters['email'] ?? '';
-        _handleLink(email, deepLink.toString(), context);
+        _handleLink(email, uri.toString(), context);
       } else {
         context.read<LoginCubit>().showError('이메일 로그인/회원가입 실패');
       }
@@ -417,6 +416,7 @@ class LoginView extends StatelessWidget {
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12.r),
                                   ),
+                                  foregroundColor: Colors.white,
                                   disabledBackgroundColor: secondary,
                                   disabledForegroundColor: Colors.white,
                                 ),
@@ -437,6 +437,7 @@ class LoginView extends StatelessWidget {
                                   style: TextStyle(
                                     fontSize: 17.sp,
                                     fontWeight: FontWeight.bold,
+                                    color: Colors.white,
                                   ),
                                   textWidthBasis: TextWidthBasis.parent,
                                 ),

@@ -1,20 +1,29 @@
+import 'dart:async';
+
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/folders/folder_view_type_cubit.dart';
 import 'package:ac_project_app/cubits/folders/get_my_folders_cubit.dart';
 import 'package:ac_project_app/cubits/folders/get_user_folders_cubit.dart';
 import 'package:ac_project_app/cubits/home/get_job_list_cubit.dart';
 import 'package:ac_project_app/cubits/home_view_cubit.dart';
-import 'package:ac_project_app/cubits/links/links_from_selected_job_group_cubit.dart';
+import 'package:ac_project_app/cubits/linkpool_pick/linkpool_pick_cubit.dart';
+import 'package:ac_project_app/cubits/links/get_links_cubit.dart';
 import 'package:ac_project_app/cubits/links/upload_link_cubit.dart';
 import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/provider/api/folders/folder_api.dart';
+import 'package:ac_project_app/provider/check_clipboard_link.dart';
 import 'package:ac_project_app/provider/kakao/kakao.dart';
+import 'package:ac_project_app/provider/manager/app_pause_manager.dart';
+import 'package:ac_project_app/provider/upload_state_variable.dart';
+import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/page/home/home_page.dart';
 import 'package:ac_project_app/ui/page/my_folder/my_folder_page.dart';
 import 'package:ac_project_app/ui/page/my_page/my_page.dart';
 import 'package:ac_project_app/util/get_arguments.dart';
+import 'package:ac_project_app/util/url_valid.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -29,19 +38,28 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
   final uploadToolTipButtonKey = GlobalKey();
+  final appPauseManager = getIt<AppPauseManager>();
 
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
+    saveLinksFromOutside();
+    processAfterGetContext();
+    super.initState();
+  }
+
+  void saveLinksFromOutside() {
     getIt<FolderApi>().bulkSave().then((value) {
       setState(() {});
     });
+  }
+
+  void processAfterGetContext() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       final url = await receiveKakaoScheme();
       if (!mounted) return;
       Kakao.receiveLink(context, url: url);
     });
-    super.initState();
   }
 
   @override
@@ -50,13 +68,46 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
     super.dispose();
   }
 
+  final resumeState = ValueNotifier(true);
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
+      if (!resumeState.value) return;
+      resetResumeState();
+      appPauseManager.showPopupIfPaused(context);
       getIt<FolderApi>().bulkSave();
-
       Kakao.receiveLink(context);
+      navigateToUploadViewIfClipboardIsValid();
     }
+  }
+
+  void navigateToUploadViewIfClipboardIsValid() {
+    if (isNotUploadState) {
+      Clipboard.getData(Clipboard.kTextPlain).then((value) {
+        isValidUrl(value?.text ?? '').then((isValid) {
+          if (isValid) {
+            final url = value!.text;
+            if (isClipboardLink(url)) return;
+            Clipboard.setData(const ClipboardData(text: ''));
+            Navigator.pushNamed(
+              context,
+              Routes.upload,
+              arguments: {
+                'url': url,
+              },
+            );
+          }
+        });
+      });
+    }
+  }
+
+  void resetResumeState() {
+    resumeState.value = false;
+    Future.delayed(const Duration(seconds: 3), () {
+      resumeState.value = true;
+    });
   }
 
   @override
@@ -69,7 +120,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
           create: (_) => HomeViewCubit((args['index'] as int?) ?? 0),
         ),
         BlocProvider(
-          create: (_) => LinksFromSelectedJobGroupCubit(),
+          create: (_) => GetLinksCubit(),
         ),
         BlocProvider<GetFoldersCubit>(
           create: (_) => GetFoldersCubit(),
@@ -134,6 +185,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
               BlocProvider(create: (_) => GetJobListCubit()),
               BlocProvider(create: (_) => GetUserFoldersCubit()),
               BlocProvider(create: (_) => UploadLinkCubit()),
+              BlocProvider(create: (_) => LinkpoolPickCubit()),
             ],
             child: const HomePage(),
           ),
@@ -152,12 +204,13 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
         showUnselectedLabels: true,
         items: bottomItems,
         currentIndex: index,
+        backgroundColor: Colors.white,
         onTap: (index) {
           if (index == 0) {
             context.read<GetFoldersCubit>().getFolders();
             context.read<HomeViewCubit>().moveTo(index);
           } else if (index == 1) {
-            context.read<LinksFromSelectedJobGroupCubit>().refresh();
+            context.read<GetLinksCubit>().refresh();
             context.read<HomeViewCubit>().moveTo(index);
           } else {
             context.read<HomeViewCubit>().moveTo(index);
@@ -190,5 +243,9 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
       }
     }
     return icons;
+  }
+
+  void checkAppPause(BuildContext context) {
+    appPauseManager.showPopupIfPaused(context);
   }
 }

@@ -3,7 +3,7 @@ description: 링크풀 - 체계적인 링크 관리의 시작
 
 publish_to: 'none'
 
-version: 1.0.49+49
+version: 1.0.66+66
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
@@ -15,50 +15,57 @@ dependencies:
   cupertino_icons:
 
   ## Network
-  dio: ^5.2.0+1
+  dio: ^5.4.1
   json_annotation: ^4.8.0
-  http: ^0.13.6
-  cached_network_image: ^3.2.3
+  http: ^1.0.0
+  cached_network_image: ^3.3.1
 
   ## Architecture
-  flutter_bloc: ^8.1.3
+  flutter_bloc: ^8.1.4
   equatable: ^2.0.5
   get_it: ^7.6.0
 
   ## login
   sign_in_with_apple: ^5.0.0
   google_sign_in: ^6.1.5
-  firebase_core: ^2.17.0
-  firebase_auth: ^4.10.1
-  firebase_dynamic_links: ^5.3.7
+  firebase_core: ^3.6.0
+  firebase_auth: ^5.3.1
+  firebase_database: ^11.1.4
+  firebase_crashlytics: ^4.1.3
 
   kakao_flutter_sdk_user: ^1.6.1
   flutter_dotenv: ^5.0.2
-  flutter_naver_login: ^1.8.0
+  flutter_naver_login: ^2.0.0
 
-  firebase_auth_mocks: ^0.11.0
+  firebase_auth_mocks: ^0.14.1
+
+  # app link
+  app_links: ^6.3.2
 
   ## UI Sizer
-  flutter_screenutil: ^5.7.0
+  flutter_screenutil: ^5.9.0
 
   ## kakao_share
   kakao_flutter_sdk_share: ^1.6.1
 
   ## Utils
-  metadata_fetch: ^0.4.1
+  metadata_fetch:
+    git:
+      url: https://github.com/boring-km/metadata_fetch.git
+
   permission_handler: ^10.2.0
   logger: ^1.3.0
   path_provider: ^2.0.15
   intl: ^0.18.1
   path: ^1.8.3
   oktoast:
-  share_plus: ^6.3.1
+  share_plus: ^7.2.2
   flutter_keyboard_visibility: ^5.4.1
-  extended_text: ^11.1.0
-  carousel_slider: ^4.2.1
+  extended_text: ^14.0.1
+  carousel_slider: ^5.0.0
   lottie:
-  flutter_slidable: ^2.0.0
-  firebase_storage: ^11.2.6
+  flutter_slidable: ^3.1.1
+  firebase_storage: ^12.3.3
 
   ## lint
   very_good_analysis: ^4.0.0+1
@@ -75,7 +82,8 @@ dependencies:
   freezed_annotation: ^2.2.0
 
   ## Web
-  url_launcher: ^6.1.10
+  url_launcher: ^6.3.1
+  url_launcher_ios: ^6.3.1
 
   # for mock test
   mockito: ^5.4.0
@@ -91,10 +99,10 @@ dev_dependencies:
   bloc_test: ^9.1.2
 
   # for model class
-  build_runner: ^2.3.3
+  build_runner: ^2.4.8
   json_serializable: ^6.6.1
   analyzer: ^5.10.0
-  freezed: ^2.3.2
+  freezed: ^2.4.7
 
 flutter:
 
@@ -125,3 +133,4 @@ flutter:
           weight: 400
         - asset: assets/fonts/Roboto/Roboto-Bold.ttf
           weight: 700
+

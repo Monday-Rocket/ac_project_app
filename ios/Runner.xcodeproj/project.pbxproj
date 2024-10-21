@@ -14,8 +14,6 @@
 		0F872E4128D875E3002954CC /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0F872E3F28D875E3002954CC /* MainInterface.storyboard */; };
 		0F872E4528D875E3002954CC /* Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 0F872E3B28D875E3002954CC /* Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		0F8AD1C028FC39E30006B1D6 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0F8AD1BF28FC39E30006B1D6 /* Images.xcassets */; };
-		0FB992B12917F2C6005F5D9C /* OpenGraph in Frameworks */ = {isa = PBXBuildFile; productRef = 0FB992B02917F2C6005F5D9C /* OpenGraph */; };
-		0FB992B32917F2F4005F5D9C /* OpenGraph in Frameworks */ = {isa = PBXBuildFile; productRef = 0FB992B22917F2F4005F5D9C /* OpenGraph */; };
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		51F09A2629711B8A00BA053D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 51F09A2529711B8A00BA053D /* GoogleService-Info.plist */; };
@@ -38,6 +36,8 @@
 		AE83E34C291CB70C00A43A2D /* FolderSaveSuccessViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE83E34B291CB70C00A43A2D /* FolderSaveSuccessViewController.swift */; };
 		AE83E34E291CB8FB00A43A2D /* SaveType.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE83E34D291CB8FB00A43A2D /* SaveType.swift */; };
 		AE83E351291CC6AA00A43A2D /* PaddingLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE83E350291CC6AA00A43A2D /* PaddingLabel.swift */; };
+		AE9181C22BEA83D8003E77E3 /* OpenGraph in Frameworks */ = {isa = PBXBuildFile; productRef = AE9181C12BEA83D8003E77E3 /* OpenGraph */; };
+		AE9181C42BEA83E0003E77E3 /* OpenGraph in Frameworks */ = {isa = PBXBuildFile; productRef = AE9181C32BEA83E0003E77E3 /* OpenGraph */; };
 		AEB8CBF52920B0CF00886882 /* TextFieldExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEB8CBF42920B0CF00886882 /* TextFieldExtension.swift */; };
 		AEDF4C8D291D8226000FC3D7 /* CustomeUIButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEDF4C8C291D8226000FC3D7 /* CustomeUIButton.swift */; };
 		AEDF4C91291D9C25000FC3D7 /* FolderSaveCancelDialogViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEDF4C90291D9C25000FC3D7 /* FolderSaveCancelDialogViewController.swift */; };
@@ -49,6 +49,7 @@
 		AEFAAC81291D586A00ED5DDC /* UserDefaultsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEFAAC80291D586A00ED5DDC /* UserDefaultsHelper.swift */; };
 		AEFAAC84291D6E1600ED5DDC /* CommentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEFAAC83291D6E1600ED5DDC /* CommentViewController.swift */; };
 		AEFAAC86291D791700ED5DDC /* PaddingTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEFAAC85291D791700ED5DDC /* PaddingTextField.swift */; };
+		E97025A1799B60AA1DA3EE18 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8AF2D531BDA70F0A6D9C0D90 /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -62,16 +63,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		9705A1C41CF9048500538489 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		AEE2471C28CF82200092F192 /* Embed App Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 12;
@@ -104,6 +95,7 @@
 		74858FAE1ED2DC5600515810 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		77DA2DBBFBCA594F81CC37E1 /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
+		8AF2D531BDA70F0A6D9C0D90 /* GoogleService-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "Runner/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Debug.xcconfig; path = Flutter/Debug.xcconfig; sourceTree = "<group>"; };
 		9740EEB31CF90195004384FC /* Generated.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Generated.xcconfig; path = Flutter/Generated.xcconfig; sourceTree = "<group>"; };
 		97C146EE1CF9000F007C117D /* Runner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Runner.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -127,6 +119,8 @@
 		AE83E34B291CB70C00A43A2D /* FolderSaveSuccessViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderSaveSuccessViewController.swift; sourceTree = "<group>"; };
 		AE83E34D291CB8FB00A43A2D /* SaveType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveType.swift; sourceTree = "<group>"; };
 		AE83E350291CC6AA00A43A2D /* PaddingLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaddingLabel.swift; sourceTree = "<group>"; };
+		AE9181BA2BEA810C003E77E3 /* OpenGraph.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = OpenGraph.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		AE9181BD2BEA813C003E77E3 /* OpenGraph.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = OpenGraph.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		AE92A668298BF72F0086B31F /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
 		AEB8CBF42920B0CF00886882 /* TextFieldExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldExtension.swift; sourceTree = "<group>"; };
 		AEDF4C8C291D8226000FC3D7 /* CustomeUIButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomeUIButton.swift; sourceTree = "<group>"; };
@@ -147,7 +141,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0FB992B32917F2F4005F5D9C /* OpenGraph in Frameworks */,
+				AE9181C42BEA83E0003E77E3 /* OpenGraph in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -156,7 +150,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				917A62576C496F899ED82BAF /* Pods_Runner.framework in Frameworks */,
-				0FB992B12917F2C6005F5D9C /* OpenGraph in Frameworks */,
+				AE9181C22BEA83D8003E77E3 /* OpenGraph in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -187,6 +181,8 @@
 		41380AD61BDA3685827DB58C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				AE9181BD2BEA813C003E77E3 /* OpenGraph.framework */,
+				AE9181BA2BEA810C003E77E3 /* OpenGraph.framework */,
 				511FD4830B180C79ED690783 /* Pods_Runner.framework */,
 			);
 			name = Frameworks;
@@ -213,6 +209,7 @@
 				97C146EF1CF9000F007C117D /* Products */,
 				B0F7507DCC206DB6EBB05ADC /* Pods */,
 				41380AD61BDA3685827DB58C /* Frameworks */,
+				8AF2D531BDA70F0A6D9C0D90 /* GoogleService-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -344,7 +341,7 @@
 			);
 			name = Extension;
 			packageProductDependencies = (
-				0FB992B22917F2F4005F5D9C /* OpenGraph */,
+				AE9181C32BEA83E0003E77E3 /* OpenGraph */,
 			);
 			productName = Extension;
 			productReference = 0F872E3B28D875E3002954CC /* Extension.appex */;
@@ -355,14 +352,17 @@
 			buildConfigurationList = 97C147051CF9000F007C117D /* Build configuration list for PBXNativeTarget "Runner" */;
 			buildPhases = (
 				06D908F3BF919B7EE15A8705 /* [CP] Check Pods Manifest.lock */,
+				242C769F86A7805781E3C954 /* [CP] Embed Pods Frameworks */,
+				AEE2471C28CF82200092F192 /* Embed App Extensions */,
+				AE2358E82BF5C1200045890F /* [Crashlytics] Clear dSYM */,
 				9740EEB61CF901F6004384FC /* Run Script */,
 				97C146EA1CF9000F007C117D /* Sources */,
 				97C146EB1CF9000F007C117D /* Frameworks */,
 				97C146EC1CF9000F007C117D /* Resources */,
-				9705A1C41CF9048500538489 /* Embed Frameworks */,
 				3B06AD1E1E4923F5004D2608 /* Thin Binary */,
-				242C769F86A7805781E3C954 /* [CP] Embed Pods Frameworks */,
-				AEE2471C28CF82200092F192 /* Embed App Extensions */,
+				04407A3D77A27457A3AE6C17 /* [CP] Copy Pods Resources */,
+				E8FF0151F034C36084045D9B /* [firebase_crashlytics] Crashlytics Upload Symbols */,
+				AE2358E92BF5C1B30045890F /* [Crashlytics] Upload dSYM */,
 			);
 			buildRules = (
 			);
@@ -371,7 +371,7 @@
 			);
 			name = Runner;
 			packageProductDependencies = (
-				0FB992B02917F2C6005F5D9C /* OpenGraph */,
+				AE9181C12BEA83D8003E77E3 /* OpenGraph */,
 			);
 			productName = Runner;
 			productReference = 97C146EE1CF9000F007C117D /* Runner.app */;
@@ -384,7 +384,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1340;
-				LastUpgradeCheck = 1300;
+				LastUpgradeCheck = 1510;
 				ORGANIZATIONNAME = "";
 				TargetAttributes = {
 					0F872E3A28D875E3002954CC = {
@@ -443,12 +443,30 @@
 				51F09A2629711B8A00BA053D /* GoogleService-Info.plist in Resources */,
 				97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */,
 				97C146FC1CF9000F007C117D /* Main.storyboard in Resources */,
+				E97025A1799B60AA1DA3EE18 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		04407A3D77A27457A3AE6C17 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		06D908F3BF919B7EE15A8705 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -517,7 +535,66 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" build";
+			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" build\n";
+		};
+		AE2358E82BF5C1200045890F /* [Crashlytics] Clear dSYM */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "[Crashlytics] Clear dSYM";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "rm -rf $DWARF_DSYM_FOLDER_PATH/$DWARF_DSYM_FILE_NAME\n";
+		};
+		AE2358E92BF5C1B30045890F /* [Crashlytics] Upload dSYM */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "[Crashlytics] Upload dSYM";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "sleep 1 # Without this, there seems a chance that the script runs before dSYM generation is finished \n$PODS_ROOT/FirebaseCrashlytics/upload-symbols -gsp $PROJECT_DIR/Runner/GoogleService-Info.plist -p ios $DWARF_DSYM_FOLDER_PATH/$DWARF_DSYM_FILE_NAME\n";
+		};
+		E8FF0151F034C36084045D9B /* [firebase_crashlytics] Crashlytics Upload Symbols */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"\"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}\"",
+				"\"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/\"",
+				"\"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Info.plist\"",
+				"\"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)\"",
+				"\"$(PROJECT_DIR)/firebase_app_id_file.json\"",
+			);
+			name = "[firebase_crashlytics] Crashlytics Upload Symbols";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"$PODS_ROOT/FirebaseCrashlytics/upload-symbols\" --flutter-project \"$PROJECT_DIR/firebase_app_id_file.json\" ";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -612,6 +689,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 18;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = T583WJWNAK;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -1035,12 +1113,12 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		0FB992B02917F2C6005F5D9C /* OpenGraph */ = {
+		AE9181C12BEA83D8003E77E3 /* OpenGraph */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 0FB992AF2917F2C6005F5D9C /* XCRemoteSwiftPackageReference "OpenGraph" */;
 			productName = OpenGraph;
 		};
-		0FB992B22917F2F4005F5D9C /* OpenGraph */ = {
+		AE9181C32BEA83E0003E77E3 /* OpenGraph */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 0FB992AF2917F2C6005F5D9C /* XCRemoteSwiftPackageReference "OpenGraph" */;
 			productName = OpenGraph;

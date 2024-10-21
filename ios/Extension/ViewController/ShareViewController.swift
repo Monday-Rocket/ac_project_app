@@ -128,7 +128,7 @@ class ShareViewController: UIViewController {
     let safeTitle = String(htmlEncodedString: rawTitle) ?? ""
     
     self.titleText = Data(safeTitle.utf8).base64EncodedString()
-    self.linkImageUrl = (og[.image] ?? "")
+    self.linkImageUrl = URL(string: link)?.resolve(og[.image])
     UserDefaultsHelper.saveLinkWithoutFolder(link, self.linkImageUrl, self.titleText)
   }
   

@@ -4,36 +4,39 @@ import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/const/strings.dart';
 import 'package:ac_project_app/cubits/folders/folders_state.dart';
 import 'package:ac_project_app/cubits/folders/get_my_folders_cubit.dart';
-import 'package:ac_project_app/cubits/home_view_cubit.dart';
 import 'package:ac_project_app/cubits/links/upload_link_cubit.dart';
 import 'package:ac_project_app/cubits/links/upload_result_state.dart';
 import 'package:ac_project_app/cubits/sign_up/button_state_cubit.dart';
 import 'package:ac_project_app/enums/navigator_pop_type.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/link/upload_type.dart';
+import 'package:ac_project_app/provider/upload_state_variable.dart';
 import 'package:ac_project_app/ui/widget/add_folder/folder_add_title.dart';
 import 'package:ac_project_app/ui/widget/add_folder/horizontal_folder_list.dart';
 import 'package:ac_project_app/ui/widget/add_folder/subtitle.dart';
+import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/buttons/bottom_sheet_button.dart';
 import 'package:ac_project_app/ui/widget/dialog/center_dialog.dart';
 import 'package:ac_project_app/ui/widget/loading.dart';
-import 'package:ac_project_app/util/get_arguments.dart';
-import 'package:ac_project_app/util/url_valid.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:metadata_fetch/metadata_fetch.dart';
 
 class UploadView extends StatefulWidget {
-  const UploadView({super.key});
+  const UploadView({super.key, this.args});
+
+  final Map<String, dynamic>? args;
 
   @override
   State<UploadView> createState() => _UploadViewState();
 }
 
-class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
+class _UploadViewState extends State<UploadView> {
   final linkTextController = TextEditingController();
   final commentTextController = TextEditingController();
 
@@ -41,60 +44,33 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
   final firstScrollController = ScrollController();
   final secondScrollController = ScrollController();
   ButtonState buttonState = ButtonState.disabled;
-  int selectedIndex = -1;
+  int selectedIndex = 0;
   int? selectedFolderId;
   bool isSavedNewFolder = false;
   bool isLoading = false;
 
   @override
   void initState() {
-    WidgetsBinding.instance.addObserver(this);
-    setClipboardUrl();
+    if (widget.args != null) {
+      linkTextController.text = widget.args!['url'] as String;
+      buttonState = ButtonState.enabled;
+    }
+    isNotUploadState = false;
     super.initState();
   }
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
+    isNotUploadState = true;
     super.dispose();
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      setClipboardUrl();
-    }
-  }
-
-  // 클립보드에 링크 있으면 불러오기
-  void setClipboardUrl() {
-    Clipboard.getData(Clipboard.kTextPlain).then((value) {
-      isValidUrl(value?.text ?? '').then((result) {
-        if (result) {
-          setState(() {
-            linkTextController.text = value?.text ?? '';
-            buttonState = ButtonState.enabled;
-          });
-        }
-      });
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final args = getArguments(context);
-    final url = args['url'] as String? ?? '';
-    if (url.isNotEmpty) {
-      linkTextController.text = url;
-    }
-
     return MultiBlocProvider(
       providers: [
-        BlocProvider(
-          create: (_) => HomeViewCubit((args['index'] as int?) ?? 0),
-        ),
         BlocProvider<GetFoldersCubit>(
-          create: (_) => GetFoldersCubit(excludeUnclassified: true),
+          create: (_) => GetFoldersCubit(),
         ),
         BlocProvider<UploadLinkCubit>(
           create: (_) => UploadLinkCubit(),
@@ -117,6 +93,7 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
                 ),
                 backgroundColor: Colors.transparent,
                 elevation: 0,
+                scrolledUnderElevation: 0,
                 systemOverlayStyle: SystemUiOverlayStyle.dark,
                 title: Text(
                   '업로드',
@@ -215,7 +192,7 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
       margin: EdgeInsets.only(
         right: 24.w,
       ),
-      height: 78.h,
+
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(8.r)),
         color: grey50,
@@ -225,7 +202,10 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SvgPicture.asset(Assets.images.warningMark),
+            Padding(
+              padding: EdgeInsets.only(top: 3.h),
+              child: SvgPicture.asset(Assets.images.warningMark),
+            ),
             SizedBox(width: 4.w),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -241,12 +221,18 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
                 SizedBox(
                   height: 6.h,
                 ),
-                Text(
-                  warningMsgContent,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    color: grey400,
-                    fontSize: 11.sp,
+                SizedBox(
+                  width: 280.h,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Text(
+                      warningMsgContent,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        color: grey400,
+                        fontSize: 11.sp,
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -338,80 +324,185 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
   }
 
   Widget buildLinkTextField() {
-    return BlocBuilder<UploadLinkCubit, UploadResultState>(
-      builder: (context, state) {
-        final linkError = state == UploadResultState.error;
-        return Container(
-          margin: EdgeInsets.only(
-            top: 14.h,
-            right: 24.w,
-            bottom: 15.h,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              DecoratedBox(
-                decoration: BoxDecoration(
-                  border: Border.all(color: linkError ? redError2 : grey100),
-                  borderRadius: BorderRadius.all(Radius.circular(12.r)),
-                  color: grey100,
-                ),
-                child: SingleChildScrollView(
-                  padding: EdgeInsets.zero,
-                  controller: firstScrollController,
-                  child: SizedBox(
-                    height: 80.h,
-                    child: TextField(
-                      controller: linkTextController,
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        height: (16.7 / 14).h,
-                        color: grey600,
-                        letterSpacing: -0.3.w,
-                      ),
-                      cursorColor: primary600,
-                      keyboardType: TextInputType.multiline,
-                      maxLines: null,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                        isDense: true,
-                        contentPadding: EdgeInsets.symmetric(
-                          vertical: 15.h,
-                          horizontal: 16.w,
+    return BlocBuilder<UploadLinkCubit, UploadResult>(
+      builder: (context, uploadResult) {
+        final linkError = uploadResult.state == UploadResultState.error;
+        return Column(
+          children: [
+            buildBodyListItem(uploadResult),
+            Container(
+              margin: EdgeInsets.only(
+                top: 14.h,
+                right: 24.w,
+                bottom: 15.h,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  DecoratedBox(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: linkError ? redError2 : grey100),
+                      borderRadius: BorderRadius.all(Radius.circular(12.r)),
+                      color: grey100,
+                    ),
+                    child: SingleChildScrollView(
+                      padding: EdgeInsets.zero,
+                      controller: firstScrollController,
+                      child: SizedBox(
+                        height: 80.h,
+                        child: TextField(
+                          controller: linkTextController,
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            height: (16.7 / 14).h,
+                            color: grey600,
+                            letterSpacing: -0.3.w,
+                          ),
+                          cursorColor: primary600,
+                          keyboardType: TextInputType.multiline,
+                          maxLines: null,
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            isDense: true,
+                            contentPadding: EdgeInsets.symmetric(
+                              vertical: 15.h,
+                              horizontal: 16.w,
+                            ),
+                            hintText: '링크를 여기에 불러주세요',
+                            hintStyle: TextStyle(
+                              color: grey400,
+                              fontSize: 14.sp,
+                              letterSpacing: -0.3.w,
+                            ),
+                          ),
+                          onChanged: (url) => setState(() {
+                            if (url.isNotEmpty) {
+                              buttonState = ButtonState.enabled;
+                            }
+                            context.read<UploadLinkCubit>().validateMetadata(url);
+                          }),
                         ),
-                        hintText: '링크를 여기에 불러주세요',
-                        hintStyle: TextStyle(
-                          color: grey400,
-                          fontSize: 14.sp,
-                          letterSpacing: -0.3.w,
-                        ),
                       ),
-                      onChanged: (value) => setState(() {
-                        if (value.isNotEmpty) {
-                          buttonState = ButtonState.enabled;
-                        }
-                      }),
                     ),
                   ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: 6.h),
-                child: Text(
-                  '링크 형식으로 입력해 주세요',
-                  style: TextStyle(
-                    color: linkError ? redError2 : Colors.white,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 12.sp,
-                    height: (14.3 / 12).h,
+                  Padding(
+                    padding: EdgeInsets.only(top: 6.h),
+                    child: Text(
+                      '링크 형식으로 입력해 주세요',
+                      style: TextStyle(
+                        color: linkError ? redError2 : Colors.white,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 12.sp,
+                        height: (14.3 / 12).h,
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         );
       },
+    );
+  }
+
+  Widget buildBodyListItem(UploadResult result) {
+    if (result.isNotValidAndSuccess()) {
+      return const SizedBox.shrink();
+    }
+    final metadata = result.metadata!;
+    return Container(
+      margin: EdgeInsets.only(
+        top: 18.h,
+        left: 6.w,
+        right: 24.w,
+        bottom: 18.h,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            height: 115.h,
+            child: Container(
+              margin: EdgeInsets.symmetric(vertical: 5.h),
+              width: 130.w,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          metadata.title ?? '',
+                          maxLines: 1,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16.sp,
+                            color: blackBold,
+                            overflow: TextOverflow.ellipsis,
+                            height: (19 / 16).h,
+                            letterSpacing: -0.2,
+                          ),
+                        ),
+                        SizedBox(height: 7.h),
+                        Text(
+                          metadata.description ?? '\n\n',
+                          maxLines: 2,
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            color: greyText,
+                            overflow: TextOverflow.ellipsis,
+                            letterSpacing: -0.1,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(right: 4.w),
+            child: ClipRRect(
+              borderRadius: BorderRadius.all(
+                Radius.circular(7.r),
+              ),
+              child: ColoredBox(
+                color: grey100,
+                child: metadata.image != null && metadata.image!.isNotEmpty
+                    ? CachedNetworkImage(
+                  imageUrl: metadata.image ?? '',
+                  imageBuilder: (context, imageProvider) => Container(
+                    width: 159.w,
+                    height: 116.h,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: imageProvider,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  errorWidget: (_, __, ___) {
+                    return SizedBox(
+                      width: 159.w,
+                      height: 116.h,
+                    );
+                  },
+                )
+                    : SizedBox(
+                  width: 159.w,
+                  height: 116.h,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -426,7 +517,12 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
           UploadType.create,
         )
         .then((result) {
-      if (result == UploadResultState.success) {
+      if (result.state == UploadResultState.success) {
+        showBottomToast(
+          context: context,
+          '링크 등록 완료',
+          duration: 1000,
+        );
         Navigator.pop(context, NavigatorPopType.saveLink);
       } else if (result == UploadResultState.duplicated) {
         showPopUp(

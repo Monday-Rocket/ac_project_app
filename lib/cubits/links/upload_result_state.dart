@@ -1,3 +1,17 @@
+import 'package:metadata_fetch/metadata_fetch.dart';
+
+class UploadResult {
+
+  UploadResult({required this.state, required this.metadata});
+
+  final UploadResultState state;
+  final Metadata? metadata;
+
+  bool isNotValidAndSuccess() {
+    return state != UploadResultState.isValid && state != UploadResultState.success;
+  }
+}
+
 enum UploadResultState {
-  success, duplicated, apiError, error
+  none, isValid, success, duplicated, apiError, error
 }

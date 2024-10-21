@@ -41,3 +41,4 @@ fastlane/README.md
 Runner.ipa
 Runner.app.*
 Secrets.xcconfig
+/Runner.xcworkspace/xcshareddata/swiftpm/Package.resolved

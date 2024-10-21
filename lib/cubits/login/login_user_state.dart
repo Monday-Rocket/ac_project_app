@@ -22,6 +22,17 @@ class LoginLoadedState extends LoginUserState {
   List<Object> get props => [user];
 }
 
+class InspectionState extends LoginUserState {
+  InspectionState(this.title, this.description, this.timeText);
+  
+  final String title;
+  final String description;
+  final String timeText;
+  
+  @override
+  List<Object> get props => [title, description, timeText];
+}
+
 class LoginErrorState extends LoginUserState {
   LoginErrorState(this.message);
 

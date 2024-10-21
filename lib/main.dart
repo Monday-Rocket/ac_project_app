@@ -25,7 +25,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //Setting SystemUIOverlay
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
@@ -51,15 +50,24 @@ class MyApp extends StatelessWidget {
               theme: ThemeData(
                 fontFamily: FontFamily.pretendard,
                 brightness: Brightness.light,
+                textButtonTheme: TextButtonThemeData(
+                  style: ButtonStyle(
+                    foregroundColor: WidgetStateProperty.all(Colors.white),
+                  ),
+                ),
                 progressIndicatorTheme: const ProgressIndicatorThemeData(
                   color: primary600,
                 ),
+                appBarTheme: const AppBarTheme(
+                  backgroundColor: Colors.transparent,
+                ),
                 bottomSheetTheme: const BottomSheetThemeData(
                   backgroundColor: Colors.white,
+                  elevation: 0,
                 ),
                 elevatedButtonTheme: ElevatedButtonThemeData(
                   style: ButtonStyle(
-                    shadowColor: MaterialStateProperty.all(primary700),
+                    shadowColor: WidgetStateProperty.all(primary700),
                   ),
                 ),
               ),

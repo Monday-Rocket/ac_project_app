@@ -26,21 +26,31 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class LinkDetailView extends StatelessWidget {
+class LinkDetailView extends StatefulWidget {
   const LinkDetailView({super.key});
 
   @override
+  State<LinkDetailView> createState() => _LinkDetailViewState();
+}
+
+class _LinkDetailViewState extends State<LinkDetailView> {
+
+  final scrollController = ScrollController();
+  late Link? globalLink;
+  late bool? isMine;
+  late bool linkVisible;
+  
+  @override
   Widget build(BuildContext context) {
     final args = getArguments(context);
-    final link = args['link'] as Link;
-    final isMine = args['isMine'] as bool?;
-    final linkVisible = args['visible'] as bool? ?? true;
-    final scrollController = ScrollController();
+    globalLink = args['link'] as Link;
+    isMine = args['isMine'] as bool?;
+    linkVisible = args['visible'] as bool? ?? true;
 
     final profileState = context.watch<GetProfileInfoCubit>().state;
     var isMyLink = false;
     if (profileState is ProfileLoadedState) {
-      isMyLink = profileState.profile.id == link.user?.id;
+      isMyLink = profileState.profile.id == globalLink!.user?.id;
     }
     if (isMine ?? false) {
       isMyLink = true;
@@ -48,7 +58,7 @@ class LinkDetailView extends StatelessWidget {
 
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_) => DetailEditCubit(link)),
+        BlocProvider(create: (_) => DetailEditCubit(globalLink)),
         BlocProvider(create: (_) => GetUserFoldersCubit()),
         BlocProvider(create: (_) => UploadLinkCubit()),
       ],
@@ -58,17 +68,18 @@ class LinkDetailView extends StatelessWidget {
             return BlocBuilder<DetailEditCubit, EditState>(
               builder: (cubitContext, editState) {
                 final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
-                if (editState == EditState.edit) {
-                  return WillPopScope(
-                    onWillPop: () async {
-                      goBackPage(editState, context, link.id);
-                      return true;
+                if (editState.type == EditStateType.edit) {
+                  return PopScope(
+                    onPopInvokedWithResult: (bool didPop, _) {
+                      Log.d('onPopInvoked edit: $didPop');
+                      if (didPop) return;
+                      goBackPage(editState, context, globalLink!.id);
                     },
                     child: buildMainScreen(
                       editState,
                       context,
                       isMyLink,
-                      link,
+                      globalLink!,
                       scrollController,
                       cubitContext,
                       keyboardHeight,
@@ -77,16 +88,24 @@ class LinkDetailView extends StatelessWidget {
                     ),
                   );
                 } else {
-                  return buildMainScreen(
-                    editState,
-                    context,
-                    isMyLink,
-                    link,
-                    scrollController,
-                    cubitContext,
-                    keyboardHeight,
-                    visible,
-                    linkVisible,
+                  return PopScope(
+                    onPopInvokedWithResult: (bool didPop, _) {
+                      Log.d('onPopInvoked ${editState.type}: $didPop');
+                      if (didPop) return;
+                      changePreviousViewIfEdited(editState, context);
+                    },
+                    canPop: false,
+                    child: buildMainScreen(
+                      editState,
+                      context,
+                      isMyLink,
+                      editState.link ?? globalLink!,
+                      scrollController,
+                      cubitContext,
+                      keyboardHeight,
+                      visible,
+                      linkVisible,
+                    ),
                   );
                 }
               },
@@ -95,6 +114,15 @@ class LinkDetailView extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void changePreviousViewIfEdited(EditState editState, BuildContext context) {
+    Log.d('changePreviousViewIfEdited: ${editState.type}');
+    if (editState.type == EditStateType.editedView) {
+      Navigator.pop(context, 'changed');
+    } else {
+      Navigator.pop(context);
+    }
   }
 
   Scaffold buildMainScreen(
@@ -110,9 +138,11 @@ class LinkDetailView extends StatelessWidget {
   ) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white,
         elevation: 0,
+        scrolledUnderElevation: 0,
         leading: IconButton(
           onPressed: () {
             goBackPage(editState, context, link.id);
@@ -155,16 +185,19 @@ class LinkDetailView extends StatelessWidget {
       ),
       bottomSheet: Builder(
         builder: (_) {
-          if (editState == EditState.edit) {
+          if (editState.type == EditStateType.edit) {
             return buildBottomSheetButton(
               context: context,
               text: '확인',
               keyboardVisible: visible,
-              onPressed: () =>
-                  cubitContext.read<DetailEditCubit>().saveComment(link).then(
-                        (value) =>
-                            value ? Navigator.pop(context, 'changed') : null,
-                      ),
+              onPressed: () {
+                cubitContext.read<DetailEditCubit>().saveComment(link).then((newLink) {
+                  cubitContext.read<DetailEditCubit>().toggleEdit(newLink);
+                  setState(() {
+                    globalLink = newLink;
+                  });
+                });
+              },
             );
           } else {
             return const SizedBox.shrink();
@@ -175,7 +208,7 @@ class LinkDetailView extends StatelessWidget {
   }
 
   void goBackPage(EditState editState, BuildContext context, int? linkId) {
-    if (editState == EditState.edit) {
+    if (editState.type == EditStateType.edit) {
       showWaitDialog(
         context,
         callback: () {
@@ -186,6 +219,8 @@ class LinkDetailView extends StatelessWidget {
           });
         },
       );
+    } else if (editState.type == EditStateType.editedView) {
+      Navigator.pop(context, 'changed');
     } else {
       Navigator.pop(context);
     }
@@ -213,9 +248,10 @@ class LinkDetailView extends StatelessWidget {
   ) {
     return SingleChildScrollView(
       controller: scrollController,
-      reverse: state == EditState.edit,
+      reverse: state.type == EditStateType.edit,
       child: Container(
         margin: EdgeInsets.only(left: 24.w, right: 24.w, top: 14.h),
+        color: Colors.white,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -356,10 +392,10 @@ class LinkDetailView extends StatelessWidget {
                   visible: isMyLink,
                   child: GestureDetector(
                     onTap: () {
-                      toggleEditorWithDialog(state, cubitContext, link.id);
+                      toggleEditorWithDialog(state, cubitContext, link);
                     },
                     onDoubleTap: () {
-                      toggleEditorWithDialog(state, cubitContext, link.id);
+                      toggleEditorWithDialog(state, cubitContext, link);
                     },
                     child: Padding(
                       padding: EdgeInsets.all(12.r),
@@ -379,7 +415,7 @@ class LinkDetailView extends StatelessWidget {
             ),
             Builder(
               builder: (_) {
-                if (state == EditState.view) {
+                if (state.type == EditStateType.view || state.type == EditStateType.editedView) {
                   return Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -456,9 +492,10 @@ class LinkDetailView extends StatelessWidget {
   void toggleEditorWithDialog(
     EditState state,
     BuildContext cubitContext,
-    int? linkId,
+    Link link,
   ) {
-    if (state == EditState.edit) {
+    final linkId = link.id;
+    if (state.type == EditStateType.edit) {
       showWaitDialog(
         cubitContext,
         callback: () {
@@ -475,6 +512,11 @@ class LinkDetailView extends StatelessWidget {
       getValueFromKey(linkId!.toString()).then((temp) {
         if (temp.isNotEmpty) {
           cubitContext.read<DetailEditCubit>().textController.text = temp;
+        } else {
+          cubitContext
+              .read<DetailEditCubit>()
+              .textController
+              .text = link.describe ?? '';
         }
         toggleEditor(cubitContext);
       });

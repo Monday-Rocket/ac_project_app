@@ -42,7 +42,6 @@ class _SearchViewState extends State<SearchView> {
   Widget build(BuildContext context) {
     final args = getArguments(context);
     final isMine = args['isMine'] as bool;
-    final totalLinks = <Link>[];
 
     return MultiBlocProvider(
       providers: [
@@ -68,8 +67,8 @@ class _SearchViewState extends State<SearchView> {
           builder: (context, visible) {
             return Scaffold(
               backgroundColor: Colors.white,
-              appBar: _buildAppBar(context, totalLinks, isMine),
-              body: buildListBody(context, totalLinks, isMine),
+              appBar: _buildAppBar(context, isMine),
+              body: buildListBody(context, isMine),
             );
           },
         ),
@@ -79,7 +78,6 @@ class _SearchViewState extends State<SearchView> {
 
   AppBar _buildAppBar(
     BuildContext context,
-    List<Link> totalLinks,
     bool isMine,
   ) {
     return AppBar(
@@ -95,22 +93,17 @@ class _SearchViewState extends State<SearchView> {
         color: grey900,
         padding: EdgeInsets.only(left: 20.w, right: 8.w),
       ),
-      title: searchState ? buildSearchBar() : buildEmptySearchBar(),
+      flexibleSpace: FlexibleSpaceBar(
+        background: Container(
+          color: Colors.white,
+        ),
+      ),
+      title: searchState ? buildSearchBar(isMine, context) : buildEmptySearchBar(),
       titleSpacing: 0,
       actions: [
         Center(
           child: InkWell(
-            onTap: buttonState
-                ? () {
-                    totalLinks.clear();
-                    final text = textController.text;
-                    if (isMine) {
-                      context.read<SearchLinksCubit>().searchMyLinks(text, 0);
-                    } else {
-                      context.read<SearchLinksCubit>().searchLinks(text, 0);
-                    }
-                  }
-                : null,
+            onTap: () => onTapSearch(isMine, context),
             child: Padding(
               padding: EdgeInsets.only(
                 left: 16.w,
@@ -133,20 +126,27 @@ class _SearchViewState extends State<SearchView> {
     );
   }
 
+  void onTapSearch(bool isMine, BuildContext context) {
+    if (buttonState) {
+      context.read<SearchLinksCubit>().clear();
+      final text = textController.text;
+      if (isMine) {
+        context.read<SearchLinksCubit>().searchMyLinks(text, 0);
+      } else {
+        context.read<SearchLinksCubit>().searchLinks(text, 0);
+      }
+    }
+  }
+
   Widget buildListBody(
     BuildContext parentContext,
-    List<Link> totalLinks,
     bool isMine,
   ) {
     final width = MediaQuery.of(parentContext).size.width;
 
     return BlocBuilder<SearchLinksCubit, LinkListState>(
       builder: (context, state) {
-        if (state is LinkListLoadedState) {
-          final links = state.links;
-          totalLinks.addAll(links);
-        }
-
+        final totalLinks = context.read<SearchLinksCubit>().totalLinks;
         if (totalLinks.isEmpty) {
           return Center(
             child: Text(
@@ -214,6 +214,7 @@ class _SearchViewState extends State<SearchView> {
                                       fontSize: 16.sp,
                                       color: grey800,
                                       height: (26 / 16).h,
+                                      letterSpacing: -0.1,
                                     ),
                                   ),
                                 ],
@@ -284,6 +285,7 @@ class _SearchViewState extends State<SearchView> {
                                             color: blackBold,
                                             fontWeight: FontWeight.bold,
                                             fontSize: 16.sp,
+                                            letterSpacing: -0.2,
                                           ),
                                         ),
                                       ),
@@ -330,6 +332,7 @@ class _SearchViewState extends State<SearchView> {
                                       style: TextStyle(
                                         color: grey500,
                                         fontSize: 12.sp,
+                                        letterSpacing: -0.1,
                                       ),
                                     ),
                                   ),
@@ -355,60 +358,68 @@ class _SearchViewState extends State<SearchView> {
     );
   }
 
-  Widget buildSearchBar() {
+  Widget buildSearchBar(bool isMine, BuildContext context) {
     return Center(
       child: Container(
         margin: EdgeInsets.only(left: 10.w),
-        child: Container(
-          decoration: BoxDecoration(
-            color: grey100,
-            borderRadius: BorderRadius.all(Radius.circular(7.r)),
-          ),
-          height: 36.h,
-          child: Center(
-            child: TextField(
-              textAlignVertical: TextAlignVertical.center,
-              controller: textController,
-              cursorColor: grey800,
-              autofocus: true,
-              style: TextStyle(
-                color: grey800,
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w400,
+        child: BlocBuilder<SearchLinksCubit, LinkListState>(
+          builder: (context, state) {
+            return Container(
+              decoration: BoxDecoration(
+                color: grey100,
+                borderRadius: BorderRadius.all(Radius.circular(7.r)),
               ),
-              decoration: InputDecoration(
-                border: InputBorder.none,
-                focusedBorder: InputBorder.none,
-                isDense: true,
-                hintText: '검색어를 입력해주세요',
-                hintStyle: TextStyle(
-                  fontSize: 14.sp,
-                  letterSpacing: -0.1.w,
-                  height: (18 / 14).h,
-                  color: lightGrey700,
-                ),
-                contentPadding: EdgeInsets.symmetric(
-                  horizontal: 10.w,
-                  vertical: 9.h,
-                ),
-                suffixIcon: InkWell(
-                  onTap: () {
-                    textController.text = '';
-                  },
-                  child: Icon(
-                    CupertinoIcons.clear_circled_solid,
-                    color: grey400,
-                    size: 20.r,
+              height: 36.h,
+              child: Center(
+                child: TextField(
+                  textAlignVertical: TextAlignVertical.center,
+                  controller: textController,
+                  cursorColor: grey800,
+                  autofocus: true,
+                  style: TextStyle(
+                    color: grey800,
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w400,
                   ),
+                  textInputAction: TextInputAction.search,
+                  onSubmitted: (value) {
+                    onTapSearch(isMine, context);
+                  },
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    isDense: true,
+                    hintText: '검색어를 입력해주세요',
+                    hintStyle: TextStyle(
+                      fontSize: 14.sp,
+                      letterSpacing: -0.1.w,
+                      height: (18 / 14).h,
+                      color: lightGrey700,
+                    ),
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 10.w,
+                      vertical: 9.h,
+                    ),
+                    suffixIcon: InkWell(
+                      onTap: () {
+                        textController.text = '';
+                      },
+                      child: Icon(
+                        CupertinoIcons.clear_circled_solid,
+                        color: grey400,
+                        size: 20.r,
+                      ),
+                    ),
+                  ),
+                  onChanged: (value) {
+                    setState(() {
+                      buttonState = value.isNotEmpty;
+                    });
+                  },
                 ),
               ),
-              onChanged: (value) {
-                setState(() {
-                  buttonState = value.isNotEmpty;
-                });
-              },
-            ),
-          ),
+            );
+          },
         ),
       ),
     );
@@ -458,9 +469,6 @@ class _SearchViewState extends State<SearchView> {
   }
 
   Future<void> refresh(BuildContext context, List<Link> totalLinks) async {
-    if (totalLinks.isNotEmpty) {
-      totalLinks.clear();
-      unawaited(context.read<SearchLinksCubit>().refresh());
-    }
+    context.read<SearchLinksCubit>().refresh();
   }
 }

@@ -12,13 +12,12 @@ class SignUpCubit extends Cubit<String?> {
 
   final UserApi _userApi = getIt();
 
-  Future<Result<String>> signUp({User? user, String? nickname, JobGroup? job}) async {
+  Future<Result<String>> signUp({User? user, String? nickname}) async {
     Log.i(user?.toJson());
-    Log.i('nickname: $nickname, job: ${job?.toJson()}');
+    Log.i('nickname: $nickname');
 
     final result = await _userApi.patchUsers(
       nickname: nickname,
-      jobGroupId: job?.id,
     );
     return result.when(
       success: (data) {

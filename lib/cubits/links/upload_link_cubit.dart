@@ -7,14 +7,16 @@ import 'package:ac_project_app/util/logger.dart';
 import 'package:ac_project_app/util/string_utils.dart';
 import 'package:ac_project_app/util/url_loader.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:metadata_fetch/src/parsers/base_parser.dart';
 
-class UploadLinkCubit extends Cubit<UploadResultState> {
-  UploadLinkCubit() : super(UploadResultState.success);
+class UploadLinkCubit extends Cubit<UploadResult> {
+  UploadLinkCubit()
+      : super(UploadResult(state: UploadResultState.none, metadata: null));
 
   final LinkApi linkApi = getIt();
 
   // ignore: avoid_positional_boolean_parameters
-  Future<UploadResultState> completeRegister(
+  Future<UploadResult> completeRegister(
     String url,
     String describe,
     int? folderId,
@@ -23,24 +25,42 @@ class UploadLinkCubit extends Cubit<UploadResultState> {
     try {
       final metadata = await UrlLoader.loadData(url);
       final rawTitle = metadata.title ?? '';
-      final result = await linkApi.postLink(
-        Link(
-          url: url,
-          image: metadata.image,
-          title: getShortTitle(rawTitle),
-          describe: describe,
-          folderId: folderId,
-          time: getCurrentTime(),
-          inflowType: uploadType.name,
-        ),
-      );
 
+      final result = UploadResult(
+        state: await linkApi.postLink(
+          Link(
+            url: url,
+            image: metadata.image,
+            title: getShortTitle(rawTitle),
+            describe: describe,
+            folderId: folderId,
+            time: getCurrentTime(),
+            inflowType: uploadType.name,
+          ),
+        ),
+        metadata: metadata,
+      );
       emit(result);
       return result;
     } catch (e) {
       Log.e(e);
-      emit(UploadResultState.error);
-      return UploadResultState.error;
+      final errorResult = UploadResult(state: UploadResultState.error, metadata: null);
+      emit(errorResult);
+      return errorResult;
+    }
+  }
+
+  bool isValidateUrl(String url) {
+    return UrlLoader.isValidateUrl(url);
+  }
+
+  Future<void> getMetadata(String validUrl) async {
+    emit(UploadResult(state: UploadResultState.isValid, metadata: await UrlLoader.loadData(validUrl)));
+  }
+
+  void validateMetadata(String url) {
+    if (isValidateUrl(url)) {
+      getMetadata(url);
     }
   }
 }

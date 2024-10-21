@@ -26,3 +26,17 @@ extension Date {
     return dateFormatter.date(from: string)
   }
 }
+
+extension URL {
+  func resolve(_ relativePath: String?) -> String {
+    if let path = relativePath {
+      if path.starts(with: "http://") || path.starts(with: "https://") {
+        return path
+      }
+      if path.starts(with: "//") {
+        return (self.scheme ?? "http") + ":" + path
+      }
+    }
+    return ""
+  }
+}

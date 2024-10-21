@@ -7,6 +7,7 @@ const grey100 = Color(0xFFF5F7FA);
 const ccGrey100 = Color(0x99F5F7FA);
 
 const grey200 = Color(0xFFE6EAF1);
+const grey200_9a = Color(0x9AE6EAF1);
 const ccGrey200 = Color(0xCCE6EAF1);
 
 const grey300 = Color(0xFFCFD4DE);

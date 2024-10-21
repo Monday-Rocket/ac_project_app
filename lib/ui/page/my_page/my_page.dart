@@ -19,13 +19,23 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class MyPage extends StatelessWidget {
+class MyPage extends StatefulWidget {
   const MyPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    context.read<GetProfileInfoCubit>().loadProfileData();
+  State<MyPage> createState() => _MyPageState();
+}
 
+class _MyPageState extends State<MyPage> {
+
+  @override
+  void initState() {
+    context.read<GetProfileInfoCubit>().loadProfileData();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Column(
       children: [
         BlocBuilder<GetProfileInfoCubit, ProfileState>(

@@ -24,8 +24,7 @@ class GetFoldersCubit extends Cubit<FoldersState> {
     try {
       emit(FolderLoadingState());
 
-      final result = await folderApi.getMyFolders();
-      result.when(
+      (await folderApi.getMyFolders()).when(
         success: (list) {
           folders = list;
           emit(FolderLoadedState(folders));
@@ -41,8 +40,7 @@ class GetFoldersCubit extends Cubit<FoldersState> {
     try {
       emit(FolderLoadingState());
 
-      final result = await folderApi.getMyFoldersWithoutUnclassified();
-      result.when(
+      (await folderApi.getMyFoldersWithoutUnclassified()).when(
         success: (list) {
           folders = list;
           emit(FolderLoadedState(folders));
@@ -78,7 +76,6 @@ class GetFoldersCubit extends Cubit<FoldersState> {
   void filter(String name) {
     if (name.isEmpty) {
       emit(FolderLoadedState(folders));
-      return;
     } else {
       final filtered = <Folder>[];
 

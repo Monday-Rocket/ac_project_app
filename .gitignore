@@ -54,3 +54,7 @@ lib/firebase_options.dart
 
 # test coverage
 coverage
+
+# FVM Version Cache
+.fvm/
+.fvmrc

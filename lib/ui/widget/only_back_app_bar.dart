@@ -21,6 +21,7 @@ AppBar buildBackAppBar(BuildContext context, {void Function()? callback}) {
     ),
     backgroundColor: Colors.transparent,
     elevation: 0,
+    scrolledUnderElevation: 0,
     systemOverlayStyle: SystemUiOverlayStyle.dark,
   );
 }

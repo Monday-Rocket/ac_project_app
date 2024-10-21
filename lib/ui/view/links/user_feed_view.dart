@@ -63,9 +63,6 @@ class UserFeedView extends StatelessWidget {
               feedContext.read<FeedViewCubit>().hasRefresh = false;
             }
 
-            Log.i('links ${links.length}');
-
-            totalLinks.addAll(links);
             return BlocProvider(
               create: (_) => ScrollCubit(
                 feedContext.read<FeedViewCubit>().scrollController,
@@ -147,7 +144,7 @@ class UserFeedView extends StatelessWidget {
                       ],
                     ),
                   ),
-                  FolderNameListView(context, folders),
+                  FolderNameListView(context, folders, feedContext.read<FeedViewCubit>().scrollController),
                   buildListBody(
                     context,
                     totalLinks,
@@ -172,6 +169,7 @@ class UserFeedView extends StatelessWidget {
   ) {
     return SliverAppBar(
       pinned: true,
+      scrolledUnderElevation: 0,
       leading: IconButton(
         onPressed: () {
           Navigator.pop(context);
@@ -202,15 +200,20 @@ class UserFeedView extends StatelessWidget {
         else
           const SizedBox.shrink(),
       ],
-      backgroundColor: !isMove ? Colors.transparent : Colors.white,
-      systemOverlayStyle: SystemUiOverlayStyle.dark,
+      flexibleSpace: FlexibleSpaceBar(
+        background: Container(
+          color: !isMove ? Colors.transparent : Colors.white,
+        ),
+      ),
       elevation: 0,
+      systemOverlayStyle: SystemUiOverlayStyle.dark,
     );
   }
 
   Widget FolderNameListView(
     BuildContext parentContext,
     List<Folder> folders,
+    ScrollController scrollController,
   ) {
     return SliverToBoxAdapter(
       child: Container(
@@ -249,18 +252,24 @@ class UserFeedView extends StatelessWidget {
                       final tabs = <Widget>[];
                       for (final folder in folders) {
                         tabs.add(
-                          Padding(
+                          Container(
+                            constraints: BoxConstraints(
+                              maxWidth: 100.w,
+                            ),
                             padding: EdgeInsets.symmetric(
                               vertical: 7.h,
                             ),
                             child: Text(
                               folder.name ?? '',
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         );
                       }
                       return TabBar(
+                        padding: EdgeInsets.zero,
                         isScrollable: true,
+                        tabAlignment: TabAlignment.start,
                         unselectedLabelColor: lightGrey700,
                         labelColor: primaryTab,
                         labelStyle: TextStyle(
@@ -280,17 +289,13 @@ class UserFeedView extends StatelessWidget {
                             color: primaryTab,
                             width: 2.5.w,
                           ),
-                          insets: EdgeInsets.only(
-                            left: 15.w,
-                            right: 15.w,
-                          ),
                         ),
                         tabs: tabs,
                         onTap: (index) {
                           final cubit = context.read<FeedViewCubit>();
                           cubit.totalLinks.clear();
                           cubit.selectFolder(index).then(
-                                (value) => cubit.scrollController.jumpTo(0),
+                                (value) => scrollController.jumpTo(0),
                               );
                         },
                       );

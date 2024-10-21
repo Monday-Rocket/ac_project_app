@@ -15,7 +15,6 @@ void main() {
           profile: Profile(
             nickname: '오키',
             profileImage: '02',
-            jobGroup: null,
           ),
         );
       },

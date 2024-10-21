@@ -16,6 +16,7 @@ import 'package:ac_project_app/provider/tool_tip_check.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/buttons/upload_button.dart';
+import 'package:ac_project_app/ui/widget/dialog/bottom_dialog.dart';
 import 'package:ac_project_app/ui/widget/link_hero.dart';
 import 'package:ac_project_app/ui/widget/scaffold_with_stack_widget.dart';
 import 'package:ac_project_app/ui/widget/shape/reverse_triangle_painter.dart';
@@ -29,6 +30,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class MyLinkView extends StatelessWidget {
@@ -68,78 +70,15 @@ class MyLinkView extends StatelessWidget {
             child: BlocBuilder<GetSelectedFolderCubit, Folder>(
               builder: (context, folder) {
                 return ScaffoldWithStackWidget(
-                  scaffold: Scaffold(
-                    backgroundColor: Colors.white,
-                    body: SafeArea(
-                      child: BlocBuilder<LinksFromSelectedFolderCubit,
-                          LinkListState>(
-                        builder: (cubitContext, state) {
-                          return Stack(
-                            children: [
-                              NotificationListener<ScrollEndNotification>(
-                                onNotification: (scrollEnd) {
-                                  final metrics = scrollEnd.metrics;
-                                  if (metrics.atEdge && metrics.pixels != 0) {
-                                    context
-                                        .read<LinksFromSelectedFolderCubit>()
-                                        .loadMore();
-                                  }
-                                  return true;
-                                },
-                                child: CustomScrollView(
-                                  //crossAxisAlignment: CrossAxisAlignment.start,
-                                  slivers: [
-                                    buildTopAppBar(context),
-                                    buildTitleBar(folder),
-                                    buildContentsCountText(cubitContext),
-                                    buildSearchBar(context, links),
-                                    buildTabBar(
-                                      folders,
-                                      tabIndex,
-                                      folder,
-                                      links,
-                                      onChangeIndex: (int index) {
-                                        // tabIndex = index;
-                                      },
-                                    ),
-                                    buildBodyList(
-                                      folder: folder,
-                                      width: width,
-                                      context: cubitContext,
-                                      totalLinks: links,
-                                      state: state,
-                                      folderState: folderState,
-                                      foldersContext: foldersContext,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              FloatingUploadButton(
-                                context,
-                                callback: () {
-                                  links.clear();
-                                  context
-                                      .read<LinksFromSelectedFolderCubit>()
-                                      .refresh();
-                                },
-                              ),
-                              if (state is LinkListLoadingState ||
-                                  state is LinkListInitialState)
-                                Center(
-                                  child: Container(
-                                    margin: EdgeInsets.only(bottom: 30.h),
-                                    child: const CircularProgressIndicator(
-                                      color: primary600,
-                                    ),
-                                  ),
-                                )
-                              else
-                                const SizedBox.shrink(),
-                            ],
-                          );
-                        },
-                      ),
-                    ),
+                  scaffold: LinkView(
+                    context,
+                    folders,
+                    folder,
+                    links,
+                    tabIndex,
+                    width,
+                    folderState,
+                    foldersContext,
                   ),
                   widget: BlocBuilder<MyLinkUploadToolTipCubit, WidgetOffset?>(
                     builder: (ctx, widgetOffset) {
@@ -215,8 +154,90 @@ class MyLinkView extends StatelessWidget {
     );
   }
 
+  Scaffold LinkView(
+    BuildContext context,
+    List<Folder> folders,
+    Folder folder,
+    List<Link> links,
+    int tabIndex,
+    double width,
+    FoldersState folderState,
+    BuildContext foldersContext,
+  ) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: BlocBuilder<LinksFromSelectedFolderCubit, LinkListState>(
+          builder: (cubitContext, state) {
+            return Stack(
+              children: [
+                NotificationListener<ScrollEndNotification>(
+                  onNotification: (scrollEnd) {
+                    final metrics = scrollEnd.metrics;
+                    if (metrics.atEdge && metrics.pixels != 0) {
+                      context.read<LinksFromSelectedFolderCubit>().loadMore();
+                    }
+                    return true;
+                  },
+                  child: CustomScrollView(
+                    //crossAxisAlignment: CrossAxisAlignment.start,
+                    slivers: [
+                      buildTopAppBar(context, folders, folder),
+                      buildTitleBar(folder),
+                      buildContentsCountText(cubitContext),
+                      buildSearchBar(context, links),
+                      buildTabBar(
+                        folders,
+                        tabIndex,
+                        folder,
+                        links,
+                        onChangeIndex: (int index) {
+                          // tabIndex = index;
+                        },
+                      ),
+                      buildBodyList(
+                        folder: folder,
+                        width: width,
+                        context: cubitContext,
+                        totalLinks: links,
+                        state: state,
+                        folderState: folderState,
+                        foldersContext: foldersContext,
+                      ),
+                    ],
+                  ),
+                ),
+                FloatingUploadButton(
+                  context,
+                  callback: () {
+                    links.clear();
+                    context.read<LinksFromSelectedFolderCubit>().refresh();
+                  },
+                ),
+                if (state is LinkListLoadingState ||
+                    state is LinkListInitialState)
+                  Center(
+                    child: Container(
+                      margin: EdgeInsets.only(bottom: 30.h),
+                      child: const CircularProgressIndicator(
+                        color: primary600,
+                      ),
+                    ),
+                  )
+                else
+                  const SizedBox.shrink(),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+
   Widget buildTopAppBar(
     BuildContext context,
+    List<Folder> folders,
+    Folder folder,
   ) {
     return SliverAppBar(
       pinned: true,
@@ -228,7 +249,31 @@ class MyLinkView extends StatelessWidget {
         color: grey900,
         padding: EdgeInsets.only(left: 20.w, right: 8.w),
       ),
-      backgroundColor: Colors.white,
+      actions: [
+        InkWell(
+          onTap: () {
+            showFolderOptionsDialog(
+              folders,
+              folder,
+              context,
+              fromLinkView: true,
+            );
+          },
+          child: Container(
+            margin: EdgeInsets.only(right: 24.w),
+            child: SvgPicture.asset(
+              Assets.images.more,
+              width: 25.w,
+              height: 25.h,
+            ),
+          ),
+        ),
+      ],
+      flexibleSpace: FlexibleSpaceBar(
+        background: Container(
+          color: Colors.white,
+        ),
+      ),
       elevation: 0,
       systemOverlayStyle: SystemUiOverlayStyle.dark,
     );
@@ -241,12 +286,16 @@ class MyLinkView extends StatelessWidget {
         margin: EdgeInsets.only(left: 24.w, right: 12.w, top: 10.h),
         child: Row(
           children: [
-            Text(
-              classified ? folder.name! : '미분류',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 30.sp,
-                height: (36 / 30).h,
+            SizedBox(
+              width: 250.w,
+              child: Text(
+                classified ? folder.name! : '미분류',
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 30.sp,
+                  height: (36 / 30).h,
+                ),
               ),
             ),
             if (!(folder.visible ?? false))
@@ -268,7 +317,7 @@ class MyLinkView extends StatelessWidget {
       child: Container(
         margin: EdgeInsets.only(left: 24.w, top: 3.h),
         child: Text(
-          '콘텐츠 ${addCommasFrom(count)}개',
+          '링크 ${addCommasFrom(count)}개',
           style: TextStyle(
             color: greyText,
             fontWeight: FontWeight.w500,
@@ -383,12 +432,16 @@ class MyLinkView extends StatelessWidget {
                       final tabs = <Widget>[];
                       for (final folder in folders) {
                         tabs.add(
-                          Padding(
+                          Container(
+                            constraints: BoxConstraints(
+                              maxWidth: 100.w,
+                            ),
                             padding: EdgeInsets.symmetric(
                               vertical: 7.h,
                             ),
                             child: Text(
                               folder.name ?? '',
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         );
@@ -396,6 +449,7 @@ class MyLinkView extends StatelessWidget {
                       return TabBar(
                         isScrollable: true,
                         physics: const ClampingScrollPhysics(),
+                        tabAlignment: TabAlignment.start,
                         unselectedLabelColor: grey700,
                         labelColor: primaryTab,
                         labelStyle: TextStyle(
@@ -414,10 +468,6 @@ class MyLinkView extends StatelessWidget {
                           borderSide: BorderSide(
                             color: primaryTab,
                             width: 2.5.w,
-                          ),
-                          insets: EdgeInsets.only(
-                            left: 15.w,
-                            right: 15.w,
                           ),
                         ),
                         labelPadding: EdgeInsets.symmetric(horizontal: 13.w),
@@ -460,39 +510,41 @@ class MyLinkView extends StatelessWidget {
         final links = state.links;
         totalLinks.addAll(links);
       }
-      return SliverList(
-        delegate: SliverChildBuilderDelegate(
-          (BuildContext context, int index) {
-            final link = totalLinks[index];
-            return Column(
-              children: [
-                buildLinkItem(
-                  context,
-                  link,
-                  totalLinks,
-                  foldersContext,
-                  folder,
-                  index,
-                  width,
-                ),
-                if (index != totalLinks.length - 1)
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24.w),
-                    child: Padding(
+      return SlidableAutoCloseBehavior(
+        child: SliverList(
+          delegate: SliverChildBuilderDelegate(
+            (BuildContext context, int index) {
+              final link = totalLinks[index];
+              return Column(
+                children: [
+                  buildLinkItem(
+                    context,
+                    link,
+                    totalLinks,
+                    foldersContext,
+                    folder,
+                    index,
+                    width,
+                  ),
+                  if (index != totalLinks.length - 1)
+                    Padding(
                       padding: EdgeInsets.symmetric(horizontal: 24.w),
-                      child: Divider(
-                        height: 1.h,
-                        thickness: 1.h,
-                        color: greyTab,
-                        indent: 24.w,
-                        endIndent: 24.w,
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 24.w),
+                        child: Divider(
+                          height: 1.h,
+                          thickness: 1.h,
+                          color: greyTab,
+                          indent: 24.w,
+                          endIndent: 24.w,
+                        ),
                       ),
                     ),
-                  ),
-              ],
-            );
-          },
-          childCount: totalLinks.length,
+                ],
+              );
+            },
+            childCount: totalLinks.length,
+          ),
         ),
       );
     }
@@ -589,6 +641,7 @@ class MyLinkView extends StatelessWidget {
                             color: blackBold,
                             overflow: TextOverflow.ellipsis,
                             height: (19 / 16).h,
+                            letterSpacing: -0.2,
                           ),
                         ),
                         SizedBox(height: 7.h),
@@ -599,6 +652,7 @@ class MyLinkView extends StatelessWidget {
                             fontSize: 12.sp,
                             color: greyText,
                             overflow: TextOverflow.ellipsis,
+                            letterSpacing: -0.1,
                           ),
                         ),
                       ],
@@ -613,6 +667,7 @@ class MyLinkView extends StatelessWidget {
                         fontSize: 12.sp,
                         color: const Color(0xFFC0C2C4),
                         overflow: TextOverflow.ellipsis,
+                        letterSpacing: -0.1,
                       ),
                     ),
                   ),

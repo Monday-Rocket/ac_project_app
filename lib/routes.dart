@@ -12,7 +12,6 @@ import 'package:ac_project_app/ui/view/tutorial_view.dart';
 import 'package:ac_project_app/ui/view/upload_view.dart';
 import 'package:ac_project_app/ui/view/user/email_login_view.dart';
 import 'package:ac_project_app/ui/view/user/login_view.dart';
-import 'package:ac_project_app/ui/view/user/sign_up_job_view.dart';
 import 'package:ac_project_app/ui/view/user/sign_up_nickname_view.dart';
 import 'package:flutter/material.dart';
 
@@ -28,7 +27,6 @@ class Routes {
   static const profile = '/profile';
   static const emailLogin = '/emailLogin';
   static const login = '/login';
-  static const singUpJob = '/signUpJob';
   static const signUpNickname = '/signUpNickname';
 
   // etc
@@ -63,8 +61,6 @@ class Pages {
         return router.create(child: const UserFeedView());
       case Routes.signUpNickname:
         return router.create(child: const SignUpNicknameView());
-      case Routes.singUpJob:
-        return router.create(child: const SignUpJobView());
       case Routes.myPage:
         return router.create(child: const MyPage());
       case Routes.profile:
@@ -74,7 +70,7 @@ class Pages {
       case Routes.report:
         return router.create(child: const ReportView());
       case Routes.upload:
-        return router.create(child: const UploadView());
+        return router.create(child: UploadView(args: arguments as Map<String, dynamic>?));
       case Routes.tutorial:
         return router.create(child: const TutorialView());
       default:

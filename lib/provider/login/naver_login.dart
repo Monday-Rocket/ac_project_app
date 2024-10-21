@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:ac_project_app/cubits/login/login_type.dart';
 import 'package:ac_project_app/provider/login/firebase_auth_remote_data_source.dart';
+import 'package:ac_project_app/util/logger.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_naver_login/flutter_naver_login.dart';
 import 'package:shared_preferences/shared_preferences.dart';

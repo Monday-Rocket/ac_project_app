@@ -46,7 +46,7 @@ class LinkSlidAbleWidget extends StatelessWidget {
                 ),
               ),
             ),
-          )
+          ),
         ],
       ),
       child: child,
