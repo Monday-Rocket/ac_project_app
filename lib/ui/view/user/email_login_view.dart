@@ -12,8 +12,8 @@ import 'package:ac_project_app/ui/widget/buttons/bottom_sheet_button.dart';
 import 'package:ac_project_app/ui/widget/dialog/center_dialog.dart';
 import 'package:ac_project_app/ui/widget/only_back_app_bar.dart';
 import 'package:ac_project_app/util/logger.dart';
+import 'package:app_links/app_links.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -243,15 +243,15 @@ class _EmailLoginViewState extends State<EmailLoginView>
   }
 
   void retrieveDynamicLinkAndSignIn() {
-    FirebaseDynamicLinks.instance.onLink.listen((dynamicLinkData) {
-      final deepLink = dynamicLinkData.link;
+    final appLinks = AppLinks();
+    appLinks.uriLinkStream.listen((uri) {
       final validLink =
-          FirebaseAuth.instance.isSignInWithEmailLink(deepLink.toString());
+      FirebaseAuth.instance.isSignInWithEmailLink(uri.toString());
 
       if (validLink) {
-        final continueUrl = deepLink.queryParameters['continueUrl'] ?? '';
+        final continueUrl = uri.queryParameters['continueUrl'] ?? '';
         final email = Uri.parse(continueUrl).queryParameters['email'] ?? '';
-        _handleLink(email, deepLink.toString());
+        _handleLink(email, uri.toString());
       }
     });
   }
