@@ -2,7 +2,7 @@ import 'package:metadata_fetch/metadata_fetch.dart';
 
 class UploadResult {
 
-  UploadResult({required this.state, required this.metadata});
+  UploadResult({required this.state, this.metadata});
 
   final UploadResultState state;
   final Metadata? metadata;

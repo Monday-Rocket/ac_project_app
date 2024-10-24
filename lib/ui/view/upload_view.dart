@@ -25,7 +25,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:metadata_fetch/metadata_fetch.dart';
 
 class UploadView extends StatefulWidget {
   const UploadView({super.key, this.args});
@@ -389,7 +388,7 @@ class _UploadViewState extends State<UploadView> {
                   Padding(
                     padding: EdgeInsets.only(top: 6.h),
                     child: Text(
-                      '링크 형식으로 입력해 주세요',
+                      '올바른 링크 형식으로 입력해 주세요',
                       style: TextStyle(
                         color: linkError ? redError2 : Colors.white,
                         fontWeight: FontWeight.w500,
@@ -524,7 +523,7 @@ class _UploadViewState extends State<UploadView> {
           duration: 1000,
         );
         Navigator.pop(context, NavigatorPopType.saveLink);
-      } else if (result == UploadResultState.duplicated) {
+      } else if (result.state == UploadResultState.duplicated) {
         showPopUp(
           title: '업로드 실패',
           content: '입력하신 링크는 이미 업로드한 링크에요\n링크를 다시 한번 확인해 주세요',
@@ -533,7 +532,7 @@ class _UploadViewState extends State<UploadView> {
             Navigator.pop(context);
           },
         );
-      } else if (result == UploadResultState.apiError) {
+      } else if (result.state == UploadResultState.apiError) {
         showError(context);
       }
       setLoadingEnd();

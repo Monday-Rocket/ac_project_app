@@ -7,11 +7,10 @@ import 'package:ac_project_app/util/logger.dart';
 import 'package:ac_project_app/util/string_utils.dart';
 import 'package:ac_project_app/util/url_loader.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:metadata_fetch/src/parsers/base_parser.dart';
 
 class UploadLinkCubit extends Cubit<UploadResult> {
   UploadLinkCubit()
-      : super(UploadResult(state: UploadResultState.none, metadata: null));
+      : super(UploadResult(state: UploadResultState.none));
 
   final LinkApi linkApi = getIt();
 
@@ -44,7 +43,7 @@ class UploadLinkCubit extends Cubit<UploadResult> {
       return result;
     } catch (e) {
       Log.e(e);
-      final errorResult = UploadResult(state: UploadResultState.error, metadata: null);
+      final errorResult = UploadResult(state: UploadResultState.error);
       emit(errorResult);
       return errorResult;
     }
@@ -55,12 +54,19 @@ class UploadLinkCubit extends Cubit<UploadResult> {
   }
 
   Future<void> getMetadata(String validUrl) async {
-    emit(UploadResult(state: UploadResultState.isValid, metadata: await UrlLoader.loadData(validUrl)));
+    try {
+      emit(UploadResult(state: UploadResultState.isValid, metadata: await UrlLoader.loadData(validUrl)));
+    } catch (e) {
+      Log.e(e);
+      emit(UploadResult(state: UploadResultState.error));
+    }
   }
 
   void validateMetadata(String url) {
     if (isValidateUrl(url)) {
       getMetadata(url);
+    } else {
+      emit(UploadResult(state: UploadResultState.none));
     }
   }
 }
