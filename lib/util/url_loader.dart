@@ -10,25 +10,28 @@ class UrlLoader {
         responseType: ResponseType.plain,
       ),
     );
-    final tempResponse = await dio.get<dynamic>(
-      url,
-      options: Options(
-        headers: {'User-Agent': 'facebookexternalhit/1.1'},
-      ),
-    );
+    try {
+      final tempResponse = await dio.get<dynamic>(
+        url,
+        options: Options(
+          headers: {'User-Agent': 'facebookexternalhit/1.1'},
+        ),
+      );
+      if (tempResponse.redirects.isNotEmpty) {
+        final redirectPath = tempResponse.redirects.last.location.toString();
 
-    if (tempResponse.redirects.isNotEmpty) {
-      final redirectPath = tempResponse.redirects.last.location.toString();
-
-      final queryMap = Uri.parse(redirectPath).queryParametersAll;
-      if (queryMap.containsKey('url')) {
-        final redirectUrls = queryMap['url'];
-        if (redirectUrls != null) {
-          return _getMetadata(redirectUrls[0], url);
+        final queryMap = Uri.parse(redirectPath).queryParametersAll;
+        if (queryMap.containsKey('url')) {
+          final redirectUrls = queryMap['url'];
+          if (redirectUrls != null) {
+            return _getMetadata(redirectUrls[0], url);
+          }
         }
       }
+      return _getMetadata(url, url);
+    } catch (e) {
+      rethrow;
     }
-    return _getMetadata(url, url);
   }
 
   static Future<Metadata> _getMetadata(String url, String realUrl) async {

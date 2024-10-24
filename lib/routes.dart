@@ -4,6 +4,7 @@ import 'package:ac_project_app/ui/view/links/link_detail_view.dart';
 import 'package:ac_project_app/ui/view/links/my_link_view.dart';
 import 'package:ac_project_app/ui/view/links/search_view.dart';
 import 'package:ac_project_app/ui/view/links/user_feed_view.dart';
+import 'package:ac_project_app/ui/view/oss_licenses_view.dart';
 import 'package:ac_project_app/ui/view/profile/change_profile_view.dart';
 import 'package:ac_project_app/ui/view/report_view.dart';
 import 'package:ac_project_app/ui/view/splash_view.dart';
@@ -36,6 +37,7 @@ class Routes {
   static const report = '/report';
   static const upload = '/upload';
   static const tutorial = '/tutorial';
+  static const ossLicenses = '/ossLicenses';
 }
 
 class Pages {
@@ -73,6 +75,8 @@ class Pages {
         return router.create(child: UploadView(args: arguments as Map<String, dynamic>?));
       case Routes.tutorial:
         return router.create(child: const TutorialView());
+        case Routes.ossLicenses:
+        return router.create(child: const OssLicensesView());
       default:
         return null;
     }

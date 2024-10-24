@@ -161,6 +161,11 @@ class _MyPageState extends State<MyPage> {
                 );
                 break;
               }
+            case '오픈소스 라이센스':
+              {
+                Navigator.pushNamed(context, Routes.ossLicenses);
+                break;
+              }
             case '로그아웃':
               {
                 showMyPageDialog(
@@ -235,6 +240,8 @@ class _MyPageState extends State<MyPage> {
         MenuItem('개인정보 처리방침'),
         DivisionLine(size: 1.r),
         MenuItem('도움말'),
+        DivisionLine(size: 1.r),
+        MenuItem('오픈소스 라이센스'),
         DivisionLine(),
         MenuItem('로그아웃', arrow: false),
         DivisionLine(size: 1.r),
