@@ -268,7 +268,7 @@ class HomePage extends StatelessWidget {
                     LinkHero(
                       tag: 'linkTitle${link.id}',
                       child: SizedBox(
-                        width: width - (24 * 2 + 30),
+                        width: width - (24 * 2 + 30).w,
                         child: Text(
                           link.title ?? '',
                           overflow: TextOverflow.ellipsis,
@@ -423,7 +423,7 @@ class HomePage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: EdgeInsets.only(top: 12.h, left: 10.w, bottom: 12.h),
+              padding: EdgeInsets.only(top: 12.w, left: 10.w, bottom: 12.w),
               child: Stack(
                 children: [
                   Align(
@@ -440,18 +440,18 @@ class HomePage extends StatelessWidget {
                       borderRadius: BorderRadius.all(Radius.circular(4.r)),
                       child: CachedNetworkImage(
                         imageUrl: pick.image,
-                        width: 86.h,
-                        height: 86.h,
+                        width: 86.w,
+                        height: 86.w,
                         fit: BoxFit.cover,
                       ),
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.only(top: 4.h),
+                    padding: EdgeInsets.only(top: 4.w),
                     child: Container(
                       padding: EdgeInsets.only(
-                        top: 3.h,
-                        bottom: 2.h,
+                        top: 3.w,
+                        bottom: 2.w,
                         left: 6.w,
                         right: 6.w,
                       ),

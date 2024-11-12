@@ -508,12 +508,13 @@ class LoginView extends StatelessWidget {
   }
 
   Expanded buildAppImage() {
+    final screenWidth = ScreenUtil().screenWidth;
     return Expanded(
       child: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Assets.images.loginLogo.image(),
+            Assets.images.loginLogo.image(width: 102.h, height: 130.h, fit: BoxFit.cover),
             SizedBox(
               height: 14.h,
             ),

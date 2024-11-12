@@ -274,7 +274,7 @@ class _MyFolderPageState extends State<MyFolderPage>
                         Row(
                           children: [
                             Container(
-                              width: 69.w,
+                              width: 69.h,
                               height: 63.h,
                               margin: EdgeInsets.only(right: 30.w),
                               child: Stack(
@@ -290,7 +290,7 @@ class _MyFolderPageState extends State<MyFolderPage>
                                                   false)
                                           ? Image.network(
                                               folder.thumbnail!,
-                                              width: 63.w,
+                                              width: 63.h,
                                               height: 63.h,
                                               fit: BoxFit.cover,
                                               errorBuilder: (_, __, ___) =>

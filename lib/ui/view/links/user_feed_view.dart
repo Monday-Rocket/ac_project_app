@@ -128,7 +128,7 @@ class UserFeedView extends StatelessWidget {
                       children: [
                         Image.asset(
                           ProfileImage.makeImagePath(user.profile_img),
-                          width: 105.w,
+                          width: 105.h,
                           height: 105.h,
                         ),
                         SizedBox(height: 6.h),
@@ -460,7 +460,7 @@ class UserFeedView extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     SizedBox(
-                      width: (width - (24 * 2 + 25 + 18)).w,
+                      width: width - (24 * 2 + 25 + 18).w,
                       child: Text(
                         link.title ?? '',
                         overflow: TextOverflow.ellipsis,

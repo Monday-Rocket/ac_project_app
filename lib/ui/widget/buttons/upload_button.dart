@@ -38,7 +38,12 @@ Widget FloatingUploadButton(
         child: Row(
           children: [
             12.horizontalSpace,
-            SvgPicture.asset(Assets.images.uploadPlus),
+            SvgPicture.asset(
+              Assets.images.uploadPlus,
+              width: 20.w,
+              height: 20.w,
+              fit: BoxFit.cover,
+            ),
             2.horizontalSpace,
             Text(
               '업로드',
@@ -57,7 +62,8 @@ Widget FloatingUploadButton(
 
 void pushUploadView(
   BuildContext context, {
-  void Function(VoidCallback fn)? setState, void Function()? callback,
+  void Function(VoidCallback fn)? setState,
+  void Function()? callback,
 }) {
   Navigator.pushNamed(context, Routes.upload).then(
     (value) => setState != null

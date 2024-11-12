@@ -31,7 +31,7 @@ class _TutorialViewState extends State<TutorialView> {
                 children: [
                   Image.asset(
                     tutorial.image,
-                    height: (height * 0.6).h,
+                    height: (height * 0.45).h,
                     fit: BoxFit.cover,
                   ),
                   Row(

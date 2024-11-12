@@ -36,74 +36,76 @@ class _MyPageState extends State<MyPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        BlocBuilder<GetProfileInfoCubit, ProfileState>(
-          builder: (profileContext, state) {
-            if (state is ProfileLoadedState) {
-              final profile = state.profile;
-              return Column(
-                children: [
-                  GestureDetector(
-                    onTap: () => moveToProfileImageView(context),
-                    child: Container(
-                      alignment: Alignment.center,
-                      margin: EdgeInsets.only(top: 90.h, bottom: 6.h),
-                      width: 105.w,
-                      height: 105.h,
-                      child: Stack(
-                        alignment: Alignment.bottomRight,
-                        children: [
-                          Image.asset(
-                            ProfileImage.makeImagePath(profile.profileImage),
-                            errorBuilder: (_, __, ___) {
-                              return Assets.images.profile.img01On.image();
-                            },
-                          ),
-                          Container(
-                            padding: EdgeInsets.all(4.r),
-                            width: 24.w,
-                            height: 24.h,
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.white,
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          BlocBuilder<GetProfileInfoCubit, ProfileState>(
+            builder: (profileContext, state) {
+              if (state is ProfileLoadedState) {
+                final profile = state.profile;
+                return Column(
+                  children: [
+                    GestureDetector(
+                      onTap: () => moveToProfileImageView(context),
+                      child: Container(
+                        alignment: Alignment.center,
+                        margin: EdgeInsets.only(top: 90.h, bottom: 6.h),
+                        width: 105.w,
+                        height: 105.h,
+                        child: Stack(
+                          alignment: Alignment.bottomRight,
+                          children: [
+                            Image.asset(
+                              ProfileImage.makeImagePath(profile.profileImage),
+                              errorBuilder: (_, __, ___) {
+                                return Assets.images.profile.img01On.image();
+                              },
                             ),
-                            child: SvgPicture.asset(
-                              Assets.images.icChange,
+                            Container(
+                              padding: EdgeInsets.all(4.r),
+                              width: 24.w,
+                              height: 24.h,
+                              decoration: const BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white,
+                              ),
+                              child: SvgPicture.asset(
+                                Assets.images.icChange,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  Text(
-                    profile.nickname,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 28.sp,
-                      color: const Color(0xff0e0e0e),
+                    Text(
+                      profile.nickname,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 28.sp,
+                        color: const Color(0xff0e0e0e),
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              );
-            } else {
-              return Column(
-                children: [
-                  SizedBox(
-                    height: 195.h,
-                  ),
-                  Text('', style: TextStyle(fontSize: 28.sp)),
-                ],
-              );
-            }
-          },
-        ),
-        SizedBox(
-          height: 47.h,
-        ),
-        MenuList(context),
-      ],
+                  ],
+                );
+              } else {
+                return Column(
+                  children: [
+                    SizedBox(
+                      height: 195.h,
+                    ),
+                    Text('', style: TextStyle(fontSize: 28.sp)),
+                  ],
+                );
+              }
+            },
+          ),
+          SizedBox(
+            height: 47.h,
+          ),
+          MenuList(context),
+        ],
+      ),
     );
   }
 
