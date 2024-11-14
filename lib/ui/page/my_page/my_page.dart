@@ -27,7 +27,6 @@ class MyPage extends StatefulWidget {
 }
 
 class _MyPageState extends State<MyPage> {
-
   @override
   void initState() {
     context.read<GetProfileInfoCubit>().loadProfileData();
@@ -49,22 +48,28 @@ class _MyPageState extends State<MyPage> {
                       onTap: () => moveToProfileImageView(context),
                       child: Container(
                         alignment: Alignment.center,
-                        margin: EdgeInsets.only(top: 90.h, bottom: 6.h),
+                        margin: EdgeInsets.only(top: 90.w, bottom: 6.w),
                         width: 105.w,
-                        height: 105.h,
+                        height: 105.w,
                         child: Stack(
                           alignment: Alignment.bottomRight,
                           children: [
                             Image.asset(
                               ProfileImage.makeImagePath(profile.profileImage),
+                              width: 96.w,
+                              height: 96.w,
+                              fit: BoxFit.cover,
                               errorBuilder: (_, __, ___) {
-                                return Assets.images.profile.img01On.image();
+                                return Assets.images.profile.img01On.image(
+                                    width: 96.w,
+                                    height: 96.w,
+                                    fit: BoxFit.cover);
                               },
                             ),
                             Container(
-                              padding: EdgeInsets.all(4.r),
+                              padding: EdgeInsets.all(4.w),
                               width: 24.w,
-                              height: 24.h,
+                              height: 24.w,
                               decoration: const BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: Colors.white,
@@ -92,7 +97,7 @@ class _MyPageState extends State<MyPage> {
                 return Column(
                   children: [
                     SizedBox(
-                      height: 195.h,
+                      height: 195.w,
                     ),
                     Text('', style: TextStyle(fontSize: 28.sp)),
                   ],
@@ -101,7 +106,7 @@ class _MyPageState extends State<MyPage> {
             },
           ),
           SizedBox(
-            height: 47.h,
+            height: 47.w,
           ),
           MenuList(context),
         ],
@@ -212,7 +217,7 @@ class _MyPageState extends State<MyPage> {
         },
         child: Container(
           padding: EdgeInsets.symmetric(
-            vertical: 20.h,
+            vertical: 20.w,
             horizontal: 24.w,
           ),
           child: Row(
@@ -227,7 +232,7 @@ class _MyPageState extends State<MyPage> {
                   letterSpacing: -0.2,
                 ),
               ),
-              if (arrow) Icon(Icons.arrow_forward_ios_rounded, size: 16.r),
+              if (arrow) Icon(Icons.arrow_forward_ios_rounded, size: 16.w),
             ],
           ),
         ),
@@ -238,17 +243,17 @@ class _MyPageState extends State<MyPage> {
       children: [
         DivisionLine(),
         MenuItem('이용 약관'),
-        DivisionLine(size: 1.r),
+        DivisionLine(size: 1.w),
         MenuItem('개인정보 처리방침'),
-        DivisionLine(size: 1.r),
+        DivisionLine(size: 1.w),
         MenuItem('도움말'),
-        DivisionLine(size: 1.r),
+        DivisionLine(size: 1.w),
         MenuItem('오픈소스 라이센스'),
         DivisionLine(),
         MenuItem('로그아웃', arrow: false),
-        DivisionLine(size: 1.r),
+        DivisionLine(size: 1.w),
         MenuItem('회원탈퇴', arrow: false, color: redError),
-        DivisionLine(size: 1.r),
+        DivisionLine(size: 1.w),
       ],
     );
   }

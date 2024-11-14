@@ -46,20 +46,20 @@ Future<bool?> showMyLinkOptionsDialog(
             decoration: DialogDecoration(),
             child: Padding(
               padding: EdgeInsets.only(
-                top: 29.h,
+                top: 29.w,
                 bottom: Platform.isAndroid
                     ? MediaQuery.of(context).padding.bottom
-                    : 16.h,
+                    : 16.w,
               ),
               child: Column(
                 children: [
                   buildTitle(context, '링크 옵션'),
                   Container(
                     margin: EdgeInsets.only(
-                      top: 17.h,
+                      top: 17.w,
                       left: 6.w,
                       right: 6.w,
-                      bottom: 20.h,
+                      bottom: 20.w,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -149,21 +149,21 @@ Future<bool?> showChangeFolderDialog(Link link, BuildContext parentContext) {
                   decoration: DialogDecoration(),
                   child: Padding(
                     padding: EdgeInsets.only(
-                      top: 29.h,
+                      top: 29.w,
                       bottom: (Platform.isAndroid
                               ? MediaQuery.of(context).padding.bottom
-                              : 16.h) +
-                          30.h,
+                              : 16.w) +
+                          30.w,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         buildTitle(context, '이동할 폴더를 선택해주세요', titleLeft: 24.w),
                         Container(
-                          margin: EdgeInsets.only(top: 17.h, bottom: 20.h),
+                          margin: EdgeInsets.only(top: 17.w, bottom: 20.w),
                           child: Divider(
-                            height: 1.h,
-                            thickness: 1.h,
+                            height: 1.w,
+                            thickness: 1.w,
                             color: grey100,
                           ),
                         ),
@@ -232,20 +232,20 @@ Future<bool?> showLinkOptionsDialog(
             decoration: DialogDecoration(),
             child: Padding(
               padding: EdgeInsets.only(
-                top: 29.h,
+                top: 29.w,
                 bottom: Platform.isAndroid
                     ? MediaQuery.of(context).viewInsets.bottom
-                    : 4.h,
+                    : 4.w,
               ),
               child: Column(
                 children: [
                   buildTitle(context, '링크 옵션'),
                   Container(
                     margin: EdgeInsets.only(
-                      top: 17.h,
+                      top: 17.w,
                       left: 6.w,
                       right: 6.w,
-                      bottom: 20.h,
+                      bottom: 20.w,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -318,20 +318,20 @@ Future<bool?> showUserOptionDialog(
             decoration: DialogDecoration(),
             child: Padding(
               padding: EdgeInsets.only(
-                top: 29.h,
+                top: 29.w,
                 bottom: Platform.isAndroid
                     ? MediaQuery.of(context).padding.bottom
-                    : 16.h,
+                    : 16.w,
               ),
               child: Column(
                 children: [
                   buildTitle(context, '사용자 옵션'),
                   Container(
                     margin: EdgeInsets.only(
-                      top: 17.h,
+                      top: 17.w,
                       left: 6.w,
                       right: 6.w,
-                      bottom: 20.h,
+                      bottom: 20.w,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -386,7 +386,7 @@ Container buildTitle(BuildContext context, String title, {double? titleLeft}) {
           onTap: () => Navigator.pop(context),
           child: Icon(
             Icons.close_rounded,
-            size: 24.r,
+            size: 24.w,
           ),
         ),
       ],
@@ -401,13 +401,13 @@ Widget BottomListItem(String text, {required void Function() callback}) {
     child: Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(
-          Radius.circular(10.r),
+          Radius.circular(10.w),
         ),
         color: Colors.transparent,
       ),
       padding: EdgeInsets.only(
-        top: 14.h,
-        bottom: 14.h,
+        top: 14.w,
+        bottom: 14.w,
         left: 24.w,
       ),
       child: Align(
@@ -429,8 +429,8 @@ BoxDecoration DialogDecoration() {
   return BoxDecoration(
     color: Colors.white,
     borderRadius: BorderRadius.only(
-      topLeft: Radius.circular(20.r),
-      topRight: Radius.circular(20.r),
+      topLeft: Radius.circular(20.w),
+      topRight: Radius.circular(20.w),
     ),
   );
 }
@@ -514,13 +514,13 @@ Future<bool?> showFolderOptionsDialog(
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20.r),
-                topRight: Radius.circular(20.r),
+                topLeft: Radius.circular(20.w),
+                topRight: Radius.circular(20.w),
               ),
             ),
             child: Padding(
               padding: EdgeInsets.only(
-                top: 29.h,
+                top: 29.w,
                 bottom: Platform.isAndroid
                     ? MediaQuery.of(context).padding.bottom
                     : 0,
@@ -544,7 +544,7 @@ Future<bool?> showFolderOptionsDialog(
                           onTap: () => Navigator.pop(context),
                           child: Icon(
                             Icons.close_rounded,
-                            size: 24.r,
+                            size: 24.w,
                           ),
                         ),
                       ],
@@ -552,10 +552,10 @@ Future<bool?> showFolderOptionsDialog(
                   ),
                   Container(
                     margin: EdgeInsets.only(
-                      top: 17.h,
+                      top: 17.w,
                       left: 6.w,
                       right: 6.w,
-                      bottom: 20.h,
+                      bottom: 20.w,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

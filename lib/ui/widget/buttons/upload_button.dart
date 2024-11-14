@@ -26,12 +26,12 @@ Widget FloatingUploadButton(
         height: 42.w,
         decoration: BoxDecoration(
           color: primary600,
-          borderRadius: BorderRadius.circular(40.r),
+          borderRadius: BorderRadius.circular(40.w),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.1),
               offset: const Offset(6, 6),
-              blurRadius: 40.r,
+              blurRadius: 40.w,
             ),
           ],
         ),

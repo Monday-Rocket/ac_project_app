@@ -18,8 +18,8 @@ void showBottomToast(
       margin: EdgeInsets.only(
         left: 21.w,
         right: 21.w,
-        bottom: bottomPadding?.h ?? 11.h,
-        top: bottomPadding?.h ?? 11.h,
+        bottom: bottomPadding?.h ?? 11.w,
+        top: bottomPadding?.h ?? 11.w,
       ),
       content: subMsg == null
           ? Row(
@@ -40,11 +40,11 @@ void showBottomToast(
                   textAlign: TextAlign.start,
                   style: TextStyle(
                     fontSize: 13.sp,
-                    height: (16 / 13).h,
+                    height: (16 / 13),
                     letterSpacing: -0.1.w,
                   ),
                 ),
-                SizedBox(height: 6.h),
+                SizedBox(height: 6.w),
                 Text(
                   subMsg,
                   textAlign: TextAlign.start,
@@ -52,7 +52,7 @@ void showBottomToast(
                     color: grey400,
                     fontSize: 13.sp,
                     letterSpacing: -0.1.w,
-                    height: (16 / 13).h,
+                    height: (16 / 13),
                   ),
                 ),
               ],
@@ -68,7 +68,7 @@ void showBottomToast(
               onPressed: callback,
             ),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(6.r),
+        borderRadius: BorderRadius.circular(6.w),
       ),
     ),
   );

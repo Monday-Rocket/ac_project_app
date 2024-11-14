@@ -147,9 +147,11 @@ class _LinkDetailViewState extends State<LinkDetailView> {
           onPressed: () {
             goBackPage(editState, context, link.id);
           },
-          icon: SvgPicture.asset(Assets.images.icBack),
+          icon: SvgPicture.asset(Assets.images.icBack, width: 24.w, height: 24.w, fit: BoxFit.cover),
           padding: EdgeInsets.only(left: 20.w, right: 8.w),
         ),
+        leadingWidth: 44.w,
+        toolbarHeight: 48.w,
         actions: [
           InkWell(
             onTap: () => isMyLink
@@ -168,7 +170,7 @@ class _LinkDetailViewState extends State<LinkDetailView> {
               child: SvgPicture.asset(
                 Assets.images.more,
                 width: 25.w,
-                height: 25.h,
+                height: 25.w,
               ),
             ),
           ),
@@ -250,7 +252,7 @@ class _LinkDetailViewState extends State<LinkDetailView> {
       controller: scrollController,
       reverse: state.type == EditStateType.edit,
       child: Container(
-        margin: EdgeInsets.only(left: 24.w, right: 24.w, top: 14.h),
+        margin: EdgeInsets.only(left: 24.w, right: 24.w, top: 14.w),
         color: Colors.white,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -264,7 +266,7 @@ class _LinkDetailViewState extends State<LinkDetailView> {
                 );
               },
             ),
-            SizedBox(height: 20.h),
+            SizedBox(height: 20.w),
             InkWell(
               onTap: () async {
                 await launchUrl(
@@ -274,13 +276,13 @@ class _LinkDetailViewState extends State<LinkDetailView> {
               },
               child: DecoratedBox(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.r),
+                  borderRadius: BorderRadius.circular(10.w),
                   boxShadow: [
                     BoxShadow(
                       color: const Color(0x0F444C94),
-                      spreadRadius: 10.r,
-                      blurRadius: 10.r,
-                      offset: Offset(12.w, 15.h),
+                      spreadRadius: 10.w,
+                      blurRadius: 10.w,
+                      offset: Offset(12.w, 15.w),
                     ),
                   ],
                 ),
@@ -291,26 +293,26 @@ class _LinkDetailViewState extends State<LinkDetailView> {
                       tag: 'linkImage${link.id}',
                       child: ClipRRect(
                         borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(10.r),
-                          topRight: Radius.circular(10.r),
+                          topLeft: Radius.circular(10.w),
+                          topRight: Radius.circular(10.w),
                         ),
                         child: Image.network(
                           link.image ?? '',
                           fit: BoxFit.cover,
                           width: MediaQuery.of(cubitContext).size.width - 48.w,
-                          height: 193.h,
+                          height: 193.w,
                           errorBuilder: (_, __, ___) {
                             return Container(
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(10.r),
-                                  topRight: Radius.circular(10.r),
+                                  topLeft: Radius.circular(10.w),
+                                  topRight: Radius.circular(10.w),
                                 ),
                               ),
                               width:
                                   MediaQuery.of(cubitContext).size.width - 48.w,
-                              height: 10.h,
+                              height: 10.w,
                             );
                           },
                         ),
@@ -320,12 +322,12 @@ class _LinkDetailViewState extends State<LinkDetailView> {
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(10.r),
-                          bottomRight: Radius.circular(10.r),
+                          bottomLeft: Radius.circular(10.w),
+                          bottomRight: Radius.circular(10.w),
                         ),
                       ),
                       child: Padding(
-                        padding: EdgeInsets.fromLTRB(19.w, 23.h, 47.w, 33.h),
+                        padding: EdgeInsets.fromLTRB(19.w, 23.w, 47.w, 33.w),
                         child: SizedBox(
                           width: double.infinity,
                           child: Column(
@@ -348,7 +350,7 @@ class _LinkDetailViewState extends State<LinkDetailView> {
                               LinkHero(
                                 tag: 'linkUrl${link.id}',
                                 child: Container(
-                                  margin: EdgeInsets.only(top: 7.h),
+                                  margin: EdgeInsets.only(top: 7.w),
                                   child: Text(
                                     link.url ?? '',
                                     maxLines: 1,
@@ -371,14 +373,14 @@ class _LinkDetailViewState extends State<LinkDetailView> {
               ),
             ),
             SizedBox(
-              height: 44.h,
+              height: 44.w,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Padding(
-                  padding: EdgeInsets.only(bottom: 12.h),
+                  padding: EdgeInsets.only(bottom: 12.w),
                   child: Text(
                     getMonthDayYear(link.time ?? ''),
                     style: TextStyle(
@@ -398,7 +400,7 @@ class _LinkDetailViewState extends State<LinkDetailView> {
                       toggleEditorWithDialog(state, cubitContext, link);
                     },
                     child: Padding(
-                      padding: EdgeInsets.all(12.r),
+                      padding: EdgeInsets.all(12.w),
                       child: SvgPicture.asset(
                         Assets.images.icWriteComment,
                       ),
@@ -408,9 +410,9 @@ class _LinkDetailViewState extends State<LinkDetailView> {
               ],
             ),
             Container(
-              margin: EdgeInsets.only(bottom: 22.h),
+              margin: EdgeInsets.only(bottom: 22.w),
               color: const Color(0xffecedee),
-              height: 1.h,
+              height: 1.w,
               width: double.infinity,
             ),
             Builder(
@@ -422,7 +424,7 @@ class _LinkDetailViewState extends State<LinkDetailView> {
                     children: [
                       Container(
                         constraints: BoxConstraints(
-                          minHeight: 240.h,
+                          minHeight: 240.w,
                         ),
                         child: Text(
                           link.describe ?? '',
@@ -430,30 +432,30 @@ class _LinkDetailViewState extends State<LinkDetailView> {
                             fontSize: 16.sp,
                             color: e6Grey700,
                             letterSpacing: -0.1.w,
-                            height: (26 / 16).h,
+                            height: (26 / 16),
                           ),
                         ),
                       ),
                       Container(
-                        margin: EdgeInsets.only(top: 22.h, bottom: 47.h),
+                        margin: EdgeInsets.only(top: 22.w, bottom: 47.w),
                         color: const Color(0xffecedee),
-                        height: 1.h,
+                        height: 1.w,
                         width: double.infinity,
                       ),
                     ],
                   );
                 } else {
                   return Container(
-                    margin: EdgeInsets.only(bottom: 80.h),
+                    margin: EdgeInsets.only(bottom: 80.w),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(12.r)),
+                      borderRadius: BorderRadius.all(Radius.circular(12.w)),
                       color: grey100,
                     ),
                     child: SingleChildScrollView(
                       padding: EdgeInsets.zero,
                       child: Container(
                         constraints: BoxConstraints(
-                          minHeight: 120.h,
+                          minHeight: 120.w,
                         ),
                         child: TextField(
                           controller: cubitContext
@@ -462,7 +464,7 @@ class _LinkDetailViewState extends State<LinkDetailView> {
                           style: TextStyle(
                             fontSize: 14.sp,
                             color: grey700,
-                            height: (19.6 / 14).h,
+                            height: (19.6 / 14),
                             letterSpacing: -0.1.w,
                           ),
                           cursorColor: primary600,
@@ -473,7 +475,7 @@ class _LinkDetailViewState extends State<LinkDetailView> {
                             border: InputBorder.none,
                             focusedBorder: InputBorder.none,
                             isDense: true,
-                            contentPadding: EdgeInsets.all(17.r),
+                            contentPadding: EdgeInsets.all(17.w),
                           ),
                         ),
                       ),

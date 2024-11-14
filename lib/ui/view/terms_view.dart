@@ -45,18 +45,18 @@ class _TermsViewState extends State<TermsView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 16.h),
+                SizedBox(height: 16.w),
                 Text(
                   '링풀 서비스\n이용약관에 동의해주세요.',
                   style: TextStyle(
                     fontSize: 24.sp,
                     color: grey900,
                     fontWeight: FontWeight.bold,
-                    height: (34 / 24).h,
+                    height: (34 / 24),
                     letterSpacing: -0.3.w,
                   ),
                 ),
-                SizedBox(height: 40.h),
+                SizedBox(height: 40.w),
                 GestureDetector(
                   onTap: () {
                     setState(() {
@@ -78,7 +78,7 @@ class _TermsViewState extends State<TermsView> {
                           decoration: BoxDecoration(
                             color: firstCheck ? primary800 : grey100,
                             borderRadius: BorderRadius.all(
-                              Radius.circular(8.r),
+                              Radius.circular(8.w),
                             ),
                             border: Border.all(
                               width: 0,
@@ -86,16 +86,16 @@ class _TermsViewState extends State<TermsView> {
                             ),
                           ),
                           child: Padding(
-                            padding: EdgeInsets.all(2.r),
+                            padding: EdgeInsets.all(2.w),
                             child: firstCheck
                                 ? Icon(
                                     Icons.check,
-                                    size: 18.r,
+                                    size: 18.w,
                                     color: Colors.white,
                                   )
                                 : Icon(
                                     Icons.check,
-                                    size: 18.r,
+                                    size: 18.w,
                                     color: grey300,
                                   ),
                           ),
@@ -109,9 +109,9 @@ class _TermsViewState extends State<TermsView> {
                   ),
                 ),
                 Container(
-                  margin: EdgeInsets.only(top: 21.h),
+                  margin: EdgeInsets.only(top: 21.w),
                   child: Divider(
-                    height: 1.h,
+                    height: 1.w,
                     color: greyTab,
                   ),
                 ),
@@ -125,7 +125,7 @@ class _TermsViewState extends State<TermsView> {
                   child: ColoredBox(
                     color: Colors.white,
                     child: Padding(
-                      padding: EdgeInsets.only(top: 19.h, bottom: 9.h),
+                      padding: EdgeInsets.only(top: 19.w, bottom: 9.w),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -137,16 +137,16 @@ class _TermsViewState extends State<TermsView> {
                                   milliseconds: 200,
                                 ),
                                 child: Padding(
-                                  padding: EdgeInsets.all(2.r),
+                                  padding: EdgeInsets.all(2.w),
                                   child: secondCheck
                                       ? Icon(
                                           Icons.check,
-                                          size: 18.r,
+                                          size: 18.w,
                                           color: primary800,
                                         )
                                       : Icon(
                                           Icons.check,
-                                          size: 18.r,
+                                          size: 18.w,
                                           color: grey300,
                                         ),
                                 ),
@@ -188,7 +188,7 @@ class _TermsViewState extends State<TermsView> {
                   child: ColoredBox(
                     color: Colors.white,
                     child: Padding(
-                      padding: EdgeInsets.only(top: 9.h),
+                      padding: EdgeInsets.only(top: 9.w),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -200,16 +200,16 @@ class _TermsViewState extends State<TermsView> {
                                   milliseconds: 200,
                                 ),
                                 child: Padding(
-                                  padding: EdgeInsets.all(2.r),
+                                  padding: EdgeInsets.all(2.w),
                                   child: thirdCheck
                                       ? Icon(
                                           Icons.check,
-                                          size: 18.r,
+                                          size: 18.w,
                                           color: primary800,
                                         )
                                       : Icon(
                                           Icons.check,
-                                          size: 18.r,
+                                          size: 18.w,
                                           color: grey300,
                                         ),
                                 ),

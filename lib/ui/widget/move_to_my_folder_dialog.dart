@@ -32,18 +32,18 @@ Future<bool?> moveToMyFolderDialog(BuildContext parentContext, Link link) {
                   decoration: DialogDecoration(),
                   child: Padding(
                     padding: EdgeInsets.only(
-                      top: 32.h,
-                      bottom: 30.h,
+                      top: 32.w,
+                      bottom: 30.w,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         buildTitle(context, '폴더 선택', titleLeft: 24.w),
                         Container(
-                          margin: EdgeInsets.only(top: 17.h, bottom: 20.h),
+                          margin: EdgeInsets.only(top: 17.w, bottom: 20.w),
                           child: Divider(
-                            height: 1.h,
-                            thickness: 1.h,
+                            height: 1.w,
+                            thickness: 1.w,
                             color: grey100,
                           ),
                         ),

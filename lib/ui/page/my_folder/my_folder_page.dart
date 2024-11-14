@@ -84,15 +84,18 @@ class _MyFolderPageState extends State<MyFolderPage>
                               children: [
                                 Container(
                                   width: 105.w,
-                                  height: 105.h,
+                                  height: 105.w,
                                   margin: EdgeInsetsDirectional.only(
-                                    top: 90.h,
-                                    bottom: 6.h,
+                                    top: 90.w,
+                                    bottom: 6.w,
                                   ),
                                   child: Image.asset(
                                     ProfileImage.makeImagePath(
                                       profile.profileImage,
                                     ),
+                                    width: 96.w,
+                                    height: 96.w,
+                                    fit: BoxFit.cover,
                                   ),
                                 ),
                                 Text(
@@ -112,10 +115,10 @@ class _MyFolderPageState extends State<MyFolderPage>
                       ),
                       Container(
                         margin: EdgeInsetsDirectional.only(
-                          top: 50.h,
+                          top: 50.w,
                           start: 20,
                           end: 20,
-                          bottom: 6.h,
+                          bottom: 6.w,
                         ),
                         child: Row(
                           children: [
@@ -124,7 +127,7 @@ class _MyFolderPageState extends State<MyFolderPage>
                                 decoration: BoxDecoration(
                                   color: grey100,
                                   borderRadius:
-                                      BorderRadius.all(Radius.circular(7.r)),
+                                      BorderRadius.all(Radius.circular(7.w)),
                                 ),
                                 margin: EdgeInsets.only(right: 6.w),
                                 child: TextField(
@@ -161,7 +164,7 @@ class _MyFolderPageState extends State<MyFolderPage>
                                   folders: folderState.folders,
                                 ),
                                 child: Padding(
-                                  padding: EdgeInsets.all(6.r),
+                                  padding: EdgeInsets.all(6.w),
                                   child: SvgPicture.asset(
                                     Assets.images.btnAdd,
                                   ),
@@ -249,8 +252,8 @@ class _MyFolderPageState extends State<MyFolderPage>
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             itemCount: folders.length,
             separatorBuilder: (ctx, index) => Divider(
-              thickness: 1.h,
-              height: 1.h,
+              thickness: 1.w,
+              height: 1.w,
               color: greyTab,
             ),
             itemBuilder: (ctx, index) {
@@ -267,21 +270,21 @@ class _MyFolderPageState extends State<MyFolderPage>
                   },
                   child: Container(
                     margin:
-                        EdgeInsets.symmetric(vertical: 20.h, horizontal: 4.w),
+                        EdgeInsets.symmetric(vertical: 20.w, horizontal: 4.w),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Row(
                           children: [
                             Container(
-                              width: 69.h,
-                              height: 63.h,
+                              width: 69.w,
+                              height: 63.w,
                               margin: EdgeInsets.only(right: 30.w),
                               child: Stack(
                                 children: [
                                   ClipRRect(
                                     borderRadius: BorderRadius.all(
-                                      Radius.circular(20.r),
+                                      Radius.circular(20.w),
                                     ),
                                     child: ColoredBox(
                                       color: grey100,
@@ -290,8 +293,8 @@ class _MyFolderPageState extends State<MyFolderPage>
                                                   false)
                                           ? Image.network(
                                               folder.thumbnail!,
-                                              width: 63.h,
-                                              height: 63.h,
+                                              width: 63.w,
+                                              height: 63.w,
                                               fit: BoxFit.cover,
                                               errorBuilder: (_, __, ___) =>
                                                   emptyFolderView(),
@@ -303,8 +306,8 @@ class _MyFolderPageState extends State<MyFolderPage>
                                     Align(
                                       alignment: Alignment.bottomRight,
                                       child: Padding(
-                                        padding: EdgeInsets.only(bottom: 3.h),
-                                        child: Assets.images.icLockPng.image(),
+                                        padding: EdgeInsets.only(bottom: 3.w),
+                                        child: Assets.images.icLockPng.image(width: 24.w, height: 24.w, fit: BoxFit.cover),
                                       ),
                                     )
                                   else
@@ -330,7 +333,7 @@ class _MyFolderPageState extends State<MyFolderPage>
                                   ),
                                 ),
                                 SizedBox(
-                                  height: 6.h,
+                                  height: 6.w,
                                 ),
                                 Text(
                                   '링크 ${addCommasFrom(folder.links)}개',
@@ -355,7 +358,7 @@ class _MyFolderPageState extends State<MyFolderPage>
                               context,
                             ),
                             child: Padding(
-                              padding: EdgeInsets.all(8.r),
+                              padding: EdgeInsets.all(8.w),
                               child: SvgPicture.asset(Assets.images.more),
                             ),
                           ),
@@ -379,13 +382,13 @@ class _MyFolderPageState extends State<MyFolderPage>
   Container emptyFolderView() {
     return Container(
       width: 63.w,
-      height: 63.h,
+      height: 63.w,
       color: primary100,
       child: Center(
         child: SvgPicture.asset(
           Assets.images.folder,
           width: 24.w,
-          height: 24.h,
+          height: 24.w,
         ),
       ),
     );

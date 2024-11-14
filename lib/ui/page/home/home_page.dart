@@ -76,7 +76,7 @@ class HomePage extends StatelessWidget {
         margin: EdgeInsets.only(
           left: 24.w,
           right: 24.w,
-          top: 20.h,
+          top: 20.w,
         ),
         child: GestureDetector(
           onTap: () => Navigator.pushNamed(
@@ -89,18 +89,19 @@ class HomePage extends StatelessWidget {
           child: Container(
             decoration: BoxDecoration(
               color: ccGrey100,
-              borderRadius: BorderRadius.all(Radius.circular(7.r)),
+              borderRadius: BorderRadius.all(Radius.circular(7.w)),
             ),
             width: double.infinity,
-            height: 36.h,
+            height: 36.w,
             margin: EdgeInsets.only(right: 6.w),
             child: Align(
               alignment: Alignment.centerLeft,
               child: Padding(
                 padding: EdgeInsets.only(left: 10.w),
                 child: Assets.images.folderSearchIcon.image(
-                  width: 24.w,
-                  height: 24.h,
+                  width: 18.w,
+                  height: 18.w,
+                  fit: BoxFit.cover,
                 ), // Image.asset(
               ),
             ),
@@ -135,7 +136,7 @@ class HomePage extends StatelessWidget {
                       color: grey300,
                       fontWeight: FontWeight.w500,
                       fontSize: 16.sp,
-                      height: (19 / 16).h,
+                      height: (19 / 16),
                     ),
                   ),
                 ),
@@ -167,7 +168,7 @@ class HomePage extends StatelessWidget {
       return Padding(
         padding: EdgeInsets.symmetric(horizontal: 24.w),
         child: Divider(
-          height: 1.h,
+          height: 1.w,
           thickness: 1.w,
           color: ccGrey200,
         ),
@@ -189,7 +190,7 @@ class HomePage extends StatelessWidget {
       },
       child: Container(
         margin: EdgeInsets.symmetric(
-          vertical: 20.h,
+          vertical: 20.w,
           horizontal: 24.w,
         ),
         color: Colors.white,
@@ -204,14 +205,14 @@ class HomePage extends StatelessWidget {
               Column(
                 children: [
                   SizedBox(
-                    height: 17.h,
+                    height: 17.w,
                   ),
                   Text(
                     link.describe ?? '',
                     style: TextStyle(
                       fontSize: 16.sp,
                       color: grey800,
-                      height: (26 / 16).h,
+                      height: (26 / 16),
                       letterSpacing: -0.1,
                     ),
                   ),
@@ -221,14 +222,14 @@ class HomePage extends StatelessWidget {
               const SizedBox.shrink(),
             Container(
               margin: EdgeInsets.only(
-                top: 16.h,
-                bottom: 18.h,
+                top: 16.w,
+                bottom: 18.w,
               ),
               child: LinkHero(
                 tag: 'linkImage${link.id}',
                 child: ClipRRect(
                   borderRadius: BorderRadius.all(
-                    Radius.circular(7.r),
+                    Radius.circular(7.w),
                   ),
                   child: hasHttpImageUrl(link)
                       ? Container(
@@ -241,7 +242,7 @@ class HomePage extends StatelessWidget {
                             fadeInDuration: const Duration(milliseconds: 300),
                             fadeOutDuration: const Duration(milliseconds: 300),
                             imageBuilder: (context, imageProvider) => Container(
-                              height: 160.h,
+                              height: 160.w,
                               decoration: BoxDecoration(
                                 image: DecorationImage(
                                   image: imageProvider,
@@ -304,11 +305,14 @@ class HomePage extends StatelessWidget {
                       },
                       child: SvgPicture.asset(
                         Assets.images.moreVert,
+                        width: 25.w,
+                        height: 25.w,
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ],
                 ),
-                SizedBox(height: 6.h),
+                SizedBox(height: 6.w),
                 Padding(
                   padding: EdgeInsets.only(right: 25.w),
                   child: LinkHero(
@@ -362,12 +366,12 @@ class HomePage extends StatelessWidget {
     final linkpoolPicks = state.linkpoolPicks;
     return SliverToBoxAdapter(
       child: Padding(
-        padding: EdgeInsets.only(top: 30.h, left: 12.w, bottom: 12.h),
+        padding: EdgeInsets.only(top: 30.w, left: 12.w, bottom: 12.w),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: EdgeInsets.only(left: 13.w, bottom: 16.h),
+              padding: EdgeInsets.only(left: 13.w, bottom: 16.w),
               child: Text(
                 'LINKPOOL PICK',
                 style: TextStyle(
@@ -417,7 +421,7 @@ class HomePage extends StatelessWidget {
         width: width - 60.w,
         decoration: BoxDecoration(
           color: color,
-          borderRadius: BorderRadius.all(Radius.circular(6.r)),
+          borderRadius: BorderRadius.all(Radius.circular(6.w)),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -437,7 +441,7 @@ class HomePage extends StatelessWidget {
                   Padding(
                     padding: EdgeInsets.only(left: 6.w),
                     child: ClipRRect(
-                      borderRadius: BorderRadius.all(Radius.circular(4.r)),
+                      borderRadius: BorderRadius.all(Radius.circular(4.w)),
                       child: CachedNetworkImage(
                         imageUrl: pick.image,
                         width: 86.w,
@@ -457,7 +461,7 @@ class HomePage extends StatelessWidget {
                       ),
                       decoration: BoxDecoration(
                         color: grey900,
-                        borderRadius: BorderRadius.all(Radius.circular(3.r)),
+                        borderRadius: BorderRadius.all(Radius.circular(3.w)),
                       ),
                       child: Text(
                         'PICK',
@@ -475,7 +479,7 @@ class HomePage extends StatelessWidget {
             ),
             10.horizontalSpace,
             Padding(
-              padding: EdgeInsets.only(top: 24.h),
+              padding: EdgeInsets.only(top: 24.w),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

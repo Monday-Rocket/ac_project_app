@@ -70,7 +70,7 @@ Widget UserInfoWidget({
               ),
             ),
             Container(
-              margin: EdgeInsets.only(top: 4.h),
+              margin: EdgeInsets.only(top: 4.w),
               child: Text(
                 makeLinkTimeString(link.time ?? ''),
                 style: TextStyle(

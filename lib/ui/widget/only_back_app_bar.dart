@@ -15,10 +15,17 @@ AppBar buildBackAppBar(BuildContext context, {void Function()? callback}) {
           Navigator.pop(context);
         }
       },
-      icon: SvgPicture.asset(Assets.images.icBack),
+      icon: SvgPicture.asset(
+        Assets.images.icBack,
+        width: 24.w,
+        height: 24.w,
+        fit: BoxFit.cover,
+      ),
       color: grey900,
       padding: EdgeInsets.only(left: 20.w, right: 8.w),
     ),
+    leadingWidth: 44.w,
+    toolbarHeight: 48.w,
     backgroundColor: Colors.transparent,
     elevation: 0,
     scrolledUnderElevation: 0,

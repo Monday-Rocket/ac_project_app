@@ -47,10 +47,12 @@ class _ReportViewState extends State<ReportView> {
             onPressed: () {
               Navigator.pop(context);
             },
-            icon: SvgPicture.asset(Assets.images.icBack),
+            icon: SvgPicture.asset(Assets.images.icBack, width: 24.w, height: 24.w, fit: BoxFit.cover),
             color: grey900,
             padding: EdgeInsets.only(left: 20.w, right: 8.w),
           ),
+          leadingWidth: 44.w,
+          toolbarHeight: 48.w,
           backgroundColor: Colors.transparent,
           elevation: 0,
           systemOverlayStyle: SystemUiOverlayStyle.dark,
@@ -60,7 +62,7 @@ class _ReportViewState extends State<ReportView> {
               color: grey900,
               fontWeight: FontWeight.bold,
               fontSize: 19.sp,
-              height: (22 / 19).h,
+              height: (22 / 19),
               letterSpacing: -0.3.w,
             ),
           ),
@@ -82,7 +84,7 @@ class _ReportViewState extends State<ReportView> {
         body: SingleChildScrollView(
           child: SafeArea(
             child: Container(
-              margin: EdgeInsets.symmetric(horizontal: 24.w, vertical: 26.h),
+              margin: EdgeInsets.symmetric(horizontal: 24.w, vertical: 26.w),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -91,7 +93,7 @@ class _ReportViewState extends State<ReportView> {
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 20.sp,
-                      height: (28 / 20).h,
+                      height: (28 / 20),
                       letterSpacing: -0.2.w,
                       color: grey900,
                     ),
@@ -103,7 +105,7 @@ class _ReportViewState extends State<ReportView> {
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 20.sp,
-                          height: (28 / 20).h,
+                          height: (28 / 20),
                           letterSpacing: -0.2.w,
                           color: grey900,
                         ),
@@ -115,22 +117,22 @@ class _ReportViewState extends State<ReportView> {
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 20.sp,
-                      height: (28 / 20).h,
+                      height: (28 / 20),
                       letterSpacing: -0.2.w,
                       color: grey900,
                     ),
                   ),
-                  SizedBox(height: 9.h),
+                  SizedBox(height: 9.w),
                   Text(
                     '신고 누적 횟수가 3회 이상인 사용자는 서비스 이용이 정지되며,\n허위신고일 경우, 신고자의 서비스 활동이 제한될 수 있습니다.',
                     style: TextStyle(
                       fontSize: 12.sp,
-                      height: (18 / 12).h,
+                      height: (18 / 12),
                       color: greyText,
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.only(top: 22.h, bottom: 15.h),
+                    margin: EdgeInsets.only(top: 22.w, bottom: 15.w),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -140,11 +142,11 @@ class _ReportViewState extends State<ReportView> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             buildOptionItem(0, '홍보/영리목적'),
-                            SizedBox(height: 8.h),
+                            SizedBox(height: 8.w),
                             buildOptionItem(2, '음란/청소년 유해'),
-                            SizedBox(height: 8.h),
+                            SizedBox(height: 8.w),
                             buildOptionItem(4, '도배/스팸'),
-                            SizedBox(height: 8.h),
+                            SizedBox(height: 8.w),
                             buildOptionItem(6, '기타'),
                           ],
                         ),
@@ -155,9 +157,9 @@ class _ReportViewState extends State<ReportView> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               buildOptionItem(1, '불법정보'),
-                              SizedBox(height: 8.h),
+                              SizedBox(height: 8.w),
                               buildOptionItem(3, '욕설/비방/차별/혐오'),
-                              SizedBox(height: 8.h),
+                              SizedBox(height: 8.w),
                               buildOptionItem(5, '개인정보노출/거래'),
                             ],
                           ),
@@ -167,14 +169,14 @@ class _ReportViewState extends State<ReportView> {
                   ),
                   DecoratedBox(
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(12.r)),
+                      borderRadius: BorderRadius.all(Radius.circular(12.w)),
                       color: grey100,
                     ),
                     child: SingleChildScrollView(
                       padding: EdgeInsets.zero,
                       child: Container(
-                        height: 98.h,
-                        margin: EdgeInsets.only(bottom: 14.h),
+                        height: 98.w,
+                        margin: EdgeInsets.only(bottom: 14.w),
                         child: Stack(
                           children: [
                             TextField(
@@ -182,7 +184,7 @@ class _ReportViewState extends State<ReportView> {
                               enabled: radioValue == 6,
                               style: TextStyle(
                                 fontSize: 14.sp,
-                                height: (16.7 / 14).h,
+                                height: (16.7 / 14),
                                 color: grey600,
                               ),
                               cursorColor: primary600,
@@ -195,9 +197,9 @@ class _ReportViewState extends State<ReportView> {
                                 isDense: true,
                                 contentPadding: EdgeInsets.only(
                                   left: 16.w,
-                                  top: 16.h,
+                                  top: 16.w,
                                   right: 14.w,
-                                  bottom: 24.h,
+                                  bottom: 24.w,
                                 ),
                                 hintText: '기타 사유를 입력해주세요.',
                                 hintStyle: TextStyle(
@@ -219,7 +221,7 @@ class _ReportViewState extends State<ReportView> {
                                     fontWeight: FontWeight.w400,
                                     fontSize: 14.sp,
                                     letterSpacing: -0.3.w,
-                                    height: (16.7 / 14).h,
+                                    height: (16.7 / 14),
                                   ),
                                 ),
                               ),
@@ -290,14 +292,14 @@ class _ReportViewState extends State<ReportView> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Padding(
-            padding: EdgeInsets.only(top: 7.h, bottom: 7.h, right: 7.w),
+            padding: EdgeInsets.only(top: 7.w, bottom: 7.w, right: 7.w),
             child: Builder(
               builder: (_) {
                 if (selected) {
                   return AnimatedContainer(
                     duration: const Duration(milliseconds: 100),
                     width: 18.w,
-                    height: 18.h,
+                    height: 18.w,
                     decoration: const BoxDecoration(
                       shape: BoxShape.circle,
                       color: primary700,
@@ -305,7 +307,7 @@ class _ReportViewState extends State<ReportView> {
                     child: Center(
                       child: Container(
                         width: 8.w,
-                        height: 8.h,
+                        height: 8.w,
                         decoration: const BoxDecoration(
                           shape: BoxShape.circle,
                           color: Colors.white,
@@ -317,7 +319,7 @@ class _ReportViewState extends State<ReportView> {
                   return AnimatedContainer(
                     duration: const Duration(milliseconds: 100),
                     width: 18.w,
-                    height: 18.h,
+                    height: 18.w,
                     decoration: const BoxDecoration(
                       shape: BoxShape.circle,
                       color: grey100,

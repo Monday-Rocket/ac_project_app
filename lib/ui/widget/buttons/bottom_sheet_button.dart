@@ -22,10 +22,10 @@ Widget buildBottomSheetButton({
     child: ElevatedButton(
       key: key,
       style: ElevatedButton.styleFrom(
-        minimumSize: Size.fromHeight(55.h),
+        minimumSize: Size.fromHeight(55.w),
         backgroundColor: backgroundColor ?? primary800,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12.r),
+          borderRadius: BorderRadius.circular(12.w),
         ),
         foregroundColor: Colors.white,
         disabledBackgroundColor: secondary,

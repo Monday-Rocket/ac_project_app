@@ -31,7 +31,7 @@ class _TutorialViewState extends State<TutorialView> {
                 children: [
                   Image.asset(
                     tutorial.image,
-                    height: (height * 0.45).h,
+                    height: (height * 0.45).w,
                     fit: BoxFit.cover,
                   ),
                   Row(
@@ -41,7 +41,7 @@ class _TutorialViewState extends State<TutorialView> {
                         onTap: () => _controller.animateToPage(entry.key),
                         child: Container(
                           width: 7.w,
-                          height: 7.h,
+                          height: 7.w,
                           margin: EdgeInsets.symmetric(
                             horizontal: 3.w,
                           ),
@@ -55,7 +55,7 @@ class _TutorialViewState extends State<TutorialView> {
                       );
                     }).toList(),
                   ),
-                  SizedBox(height: 22.h),
+                  SizedBox(height: 22.w),
                   Text(
                     tutorial.title,
                     style: TextStyle(
@@ -64,7 +64,7 @@ class _TutorialViewState extends State<TutorialView> {
                       color: blackTutorial,
                     ),
                   ).bold(),
-                  SizedBox(height: 10.h),
+                  SizedBox(height: 10.w),
                   Text(
                     tutorial.subTitle,
                     textAlign: TextAlign.center,

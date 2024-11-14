@@ -59,10 +59,11 @@ class _ProfileSelectorState extends State<ProfileSelector> {
         color: grey100,
         child: Column(
           children: [
+            21.verticalSpace,
             Expanded(
               child: GridView.builder(
                 shrinkWrap: true,
-                padding: EdgeInsets.zero,
+                padding: EdgeInsets.symmetric(horizontal: 13.w),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 3,
                 ),
@@ -77,20 +78,23 @@ class _ProfileSelectorState extends State<ProfileSelector> {
                         selectedImageIndex = index;
                       });
                     },
-                    child: Builder(
-                      builder: (context) {
-                        final profile = imageList[index];
-                        if (profile.visible ?? false) {
-                          return _SelectableProfileImage(profile);
-                        }
-                        return ColorFiltered(
-                          colorFilter: const ColorFilter.mode(
-                            Color(0x60FFFFFF),
-                            BlendMode.modulate,
-                          ),
-                          child: _SelectableProfileImage(profile),
-                        );
-                      },
+                    child: Padding(
+                      padding: EdgeInsets.all(11.w),
+                      child: Builder(
+                        builder: (context) {
+                          final profile = imageList[index];
+                          if (profile.visible ?? false) {
+                            return _SelectableProfileImage(profile);
+                          }
+                          return ColorFiltered(
+                            colorFilter: const ColorFilter.mode(
+                              Color(0x60FFFFFF),
+                              BlendMode.modulate,
+                            ),
+                            child: _SelectableProfileImage(profile),
+                          );
+                        },
+                      ),
                     ),
                   );
                 },
@@ -100,14 +104,14 @@ class _ProfileSelectorState extends State<ProfileSelector> {
               margin: EdgeInsets.only(
                 left: 24.w,
                 right: 24.w,
-                bottom: 8.h,
+                bottom: 8.w,
               ),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  minimumSize: Size.fromHeight(55.h),
+                  minimumSize: Size.fromHeight(55.w),
                   backgroundColor: primary600,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.r),
+                    borderRadius: BorderRadius.circular(12.w),
                   ),
                   disabledBackgroundColor: secondary,
                   disabledForegroundColor: Colors.white,
@@ -135,7 +139,7 @@ class _ProfileSelectorState extends State<ProfileSelector> {
   Center SelectedProfileImage() {
     return Center(
       child: Container(
-        margin: EdgeInsets.symmetric(vertical: 30.h),
+        margin: EdgeInsets.symmetric(vertical: 30.w),
         child: Builder(
           builder: (_) {
             if (profile.nickname.isEmpty) {
@@ -146,11 +150,12 @@ class _ProfileSelectorState extends State<ProfileSelector> {
                 Image.asset(
                   key: const Key('selectedImage'),
                   ProfileImage.makeImagePath(_getImageNumberString()),
-                  width: 99.w,
-                  height: 99.h,
+                  width: 105.w,
+                  height: 105.w,
+                  fit: BoxFit.cover,
                 ),
                 SizedBox(
-                  height: 11.h,
+                  height: 11.w,
                 ),
                 Text(
                   profile.nickname,
@@ -161,7 +166,7 @@ class _ProfileSelectorState extends State<ProfileSelector> {
                   ),
                 ),
                 SizedBox(
-                  height: 8.h,
+                  height: 8.w,
                 ),
                 Text(
                   '변경할 프로필 이미지를 선택해 주세요',
@@ -186,10 +191,12 @@ class _ProfileSelectorState extends State<ProfileSelector> {
       shadowColor: grey100,
       systemOverlayStyle: SystemUiOverlayStyle.dark,
       leading: IconButton(
-        icon: SvgPicture.asset(Assets.images.icBack),
+        icon: SvgPicture.asset(Assets.images.icBack, width: 24.w, height: 24.w, fit: BoxFit.cover,),
         onPressed: () => Navigator.pop(context),
         padding: EdgeInsets.only(left: 20.w, right: 8.w),
       ),
+      leadingWidth: 44.w,
+      toolbarHeight: 48.w,
       title: Text(
         '프로필 변경',
         style: TextStyle(
@@ -221,10 +228,13 @@ class _ProfileSelectorState extends State<ProfileSelector> {
 
   String _getImageNumberString() => '${selectedImageIndex + 1}'.padLeft(2, '0');
 
-  Image _SelectableProfileImage(ProfileImage profile) {
+  Widget _SelectableProfileImage(ProfileImage profile) {
     return Image.asset(
       key: Key('select:${profile.filePath}'),
       profile.filePath,
+      fit: BoxFit.cover,
     );
   }
 }
+
+
