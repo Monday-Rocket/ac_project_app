@@ -42,11 +42,11 @@ Widget UserInfoWidget({
         Image.asset(
           ProfileImage.makeImagePath(link.user?.profile_img ?? '01'),
           width: 32.w,
-          height: 32.h,
+          height: 32.w,
           errorBuilder: (_, __, ___) {
             return Container(
               width: 32.w,
-              height: 32.h,
+              height: 32.w,
               decoration: const BoxDecoration(
                 color: grey300,
                 shape: BoxShape.circle,
@@ -62,14 +62,15 @@ Widget UserInfoWidget({
           children: [
             Text(
               link.user?.nickname ?? '',
-              style: const TextStyle(
+              style: TextStyle(
                 color: grey900,
+                fontSize: 14.sp,
                 fontWeight: FontWeight.w500,
                 letterSpacing: -0.2,
               ),
             ),
             Container(
-              margin: EdgeInsets.only(top: 4.h),
+              margin: EdgeInsets.only(top: 4.w),
               child: Text(
                 makeLinkTimeString(link.time ?? ''),
                 style: TextStyle(

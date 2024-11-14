@@ -22,9 +22,11 @@ class OssLicensesView extends StatelessWidget {
         scrolledUnderElevation: 0,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
-          icon: SvgPicture.asset(Assets.images.icBack),
+          icon: SvgPicture.asset(Assets.images.icBack, width: 24.w, height: 24.w, fit: BoxFit.cover,),
           padding: EdgeInsets.only(left: 20.w, right: 8.w),
         ),
+        leadingWidth: 44.w,
+        toolbarHeight: 48.w,
       ),
       body: ListView.builder(
         itemCount: allDependencies.length,
@@ -76,11 +78,14 @@ class MiscOssLicenseSingle extends StatelessWidget {
         ),
         elevation: 0,
         scrolledUnderElevation: 0,
+        backgroundColor: Colors.white,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
-          icon: SvgPicture.asset(Assets.images.icBack),
+          icon: SvgPicture.asset(Assets.images.icBack, width: 24.w, height: 24.w, fit: BoxFit.cover,),
           padding: EdgeInsets.only(left: 20.w, right: 8.w),
         ),
+        leadingWidth: 44.w,
+        toolbarHeight: 48.w,
       ),
       backgroundColor: Colors.white,
       body: ColoredBox(

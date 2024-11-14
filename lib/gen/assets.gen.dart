@@ -36,6 +36,9 @@ class $AssetsImagesGen {
   /// File path: assets/images/btn_add.svg
   String get btnAdd => 'assets/images/btn_add.svg';
 
+  /// File path: assets/images/btn_x_primary.svg
+  String get btnXPrimary => 'assets/images/btn_x_primary.svg';
+
   /// File path: assets/images/check_icon.svg
   String get checkIcon => 'assets/images/check_icon.svg';
 
@@ -153,6 +156,7 @@ class $AssetsImagesGen {
         appWhiteIcon,
         appleIcon,
         btnAdd,
+        btnXPrimary,
         checkIcon,
         emailNotice,
         folder,

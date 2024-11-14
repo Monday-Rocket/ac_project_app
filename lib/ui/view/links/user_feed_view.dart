@@ -129,9 +129,9 @@ class UserFeedView extends StatelessWidget {
                         Image.asset(
                           ProfileImage.makeImagePath(user.profile_img),
                           width: 105.w,
-                          height: 105.h,
+                          height: 105.w,
                         ),
-                        SizedBox(height: 6.h),
+                        SizedBox(height: 6.w),
                         Text(
                           user.nickname,
                           style: TextStyle(
@@ -174,10 +174,12 @@ class UserFeedView extends StatelessWidget {
         onPressed: () {
           Navigator.pop(context);
         },
-        icon: SvgPicture.asset(Assets.images.icBack),
+        icon: SvgPicture.asset(Assets.images.icBack, width: 24.w, height: 24.w, fit: BoxFit.cover,),
         color: grey900,
         padding: EdgeInsets.only(left: 20.w, right: 8.w),
       ),
+      leadingWidth: 44.w,
+      toolbarHeight: 48.w,
       actions: [
         if (!isMine)
           InkWell(
@@ -193,7 +195,7 @@ class UserFeedView extends StatelessWidget {
               child: SvgPicture.asset(
                 Assets.images.more,
                 width: 25.w,
-                height: 25.h,
+                height: 25.w,
               ),
             ),
           )
@@ -218,11 +220,11 @@ class UserFeedView extends StatelessWidget {
     return SliverToBoxAdapter(
       child: Container(
         color: Colors.white,
-        margin: EdgeInsets.only(top: 23.h, left: 12.w, right: 20.w),
+        margin: EdgeInsets.only(top: 23.w, left: 12.w, right: 20.w),
         child: DefaultTabController(
           length: folders.length,
           child: SizedBox(
-            height: 36.h,
+            height: 36.w,
             child: Stack(
               children: [
                 Align(
@@ -231,14 +233,14 @@ class UserFeedView extends StatelessWidget {
                     padding: EdgeInsets.only(
                       left: 15.w,
                       right: 11.w,
-                      bottom: 1.h,
+                      bottom: 1.w,
                     ),
                     child: Row(
                       children: [
                         Expanded(
                           child: Container(
                             color: greyTab,
-                            height: 1.h,
+                            height: 1.w,
                           ),
                         ),
                       ],
@@ -257,7 +259,7 @@ class UserFeedView extends StatelessWidget {
                               maxWidth: 100.w,
                             ),
                             padding: EdgeInsets.symmetric(
-                              vertical: 7.h,
+                              vertical: 7.w,
                             ),
                             child: Text(
                               folder.name ?? '',
@@ -275,13 +277,13 @@ class UserFeedView extends StatelessWidget {
                         labelStyle: TextStyle(
                           fontFamily: FontFamily.pretendard,
                           fontSize: 16.sp,
-                          height: (19 / 16).h,
+                          height: (19 / 16),
                           fontWeight: FontWeight.w800,
                         ),
                         unselectedLabelStyle: TextStyle(
                           fontFamily: FontFamily.pretendard,
                           fontSize: 16.sp,
-                          height: (19 / 16).h,
+                          height: (19 / 16),
                           fontWeight: FontWeight.bold,
                         ),
                         indicator: UnderlineTabIndicator(
@@ -332,7 +334,7 @@ class UserFeedView extends StatelessWidget {
                       color: grey300,
                       fontWeight: FontWeight.w500,
                       fontSize: 16.sp,
-                      height: (19 / 16).h,
+                      height: (19 / 16),
                     ),
                   ),
                 ),
@@ -358,8 +360,8 @@ class UserFeedView extends StatelessWidget {
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 24.w),
                         child: Divider(
-                          height: 1.h,
-                          thickness: 1.h,
+                          height: 1.w,
+                          thickness: 1.w,
                           color: greyTab,
                         ),
                       ),
@@ -393,7 +395,7 @@ class UserFeedView extends StatelessWidget {
       },
       child: Container(
         margin: EdgeInsets.symmetric(
-          vertical: 20.h,
+          vertical: 20.w,
           horizontal: 24.w,
         ),
         color: Colors.white,
@@ -405,14 +407,14 @@ class UserFeedView extends StatelessWidget {
               Column(
                 children: [
                   SizedBox(
-                    height: 17.h,
+                    height: 17.w,
                   ),
                   Text(
                     link.describe ?? '',
                     style: TextStyle(
                       fontSize: 16.sp,
                       color: grey800,
-                      height: (26 / 16).h,
+                      height: (26 / 16),
                     ),
                   ),
                 ],
@@ -421,12 +423,12 @@ class UserFeedView extends StatelessWidget {
               const SizedBox.shrink(),
             Container(
               margin: EdgeInsets.only(
-                top: 16.h,
-                bottom: 18.h,
+                top: 16.w,
+                bottom: 18.w,
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.all(
-                  Radius.circular(7.r),
+                  Radius.circular(7.w),
                 ),
                 child: hasHttpImageUrl(link)
                     ? Container(
@@ -437,7 +439,7 @@ class UserFeedView extends StatelessWidget {
                         child: CachedNetworkImage(
                           imageUrl: link.image ?? '',
                           imageBuilder: (context, imageProvider) => Container(
-                            height: 160.h,
+                            height: 160.w,
                             decoration: BoxDecoration(
                               image: DecorationImage(
                                 image: imageProvider,
@@ -460,7 +462,7 @@ class UserFeedView extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     SizedBox(
-                      width: (width - (24 * 2 + 25 + 18)).w,
+                      width: width - (24 * 2 + 25 + 18).w,
                       child: Text(
                         link.title ?? '',
                         overflow: TextOverflow.ellipsis,
@@ -488,6 +490,9 @@ class UserFeedView extends StatelessWidget {
                             ),
                       child: SvgPicture.asset(
                         Assets.images.moreVert,
+                        width: 25.w,
+                        height: 25.w,
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ],

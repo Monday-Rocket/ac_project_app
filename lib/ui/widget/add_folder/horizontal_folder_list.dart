@@ -32,8 +32,8 @@ Widget buildFolderList({
     if (isLast ?? false) Future.microtask(gotoLastIndex);
     return Container(
       constraints: BoxConstraints(
-        minHeight: 115.h,
-        maxHeight: 130.h,
+        minHeight: 115.w,
+        maxHeight: 130.w,
       ),
       child: ListView.builder(
         controller: scrollController,
@@ -45,7 +45,7 @@ Widget buildFolderList({
       ),
     );
   } else {
-    return SizedBox(height: 115.h);
+    return SizedBox(height: 115.w);
   }
 }
 
@@ -70,14 +70,14 @@ GestureDetector FolderItem(int i, List<Folder> folders,
             children: [
               Container(
                 width: 95.w,
-                height: 95.h,
+                height: 95.w,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(32.r)),
+                  borderRadius: BorderRadius.all(Radius.circular(32.w)),
                   color: grey100,
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.all(
-                    Radius.circular(32.r),
+                    Radius.circular(32.w),
                   ),
                   child: ColoredBox(
                     color: grey100,
@@ -86,7 +86,7 @@ GestureDetector FolderItem(int i, List<Folder> folders,
                         ? Image.network(
                             folder.thumbnail!,
                             width: 95.w,
-                            height: 95.h,
+                            height: 95.w,
                             fit: BoxFit.cover,
                             errorBuilder: (_, __, ___) => emptyFolderView(),
                           )
@@ -98,9 +98,9 @@ GestureDetector FolderItem(int i, List<Folder> folders,
                 visible: selectedIndex == i,
                 child: Container(
                   width: 95.w,
-                  height: 95.h,
+                  height: 95.w,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(32.r)),
+                    borderRadius: BorderRadius.all(Radius.circular(32.w)),
                     color: secondary400,
                   ),
                 ),
@@ -108,11 +108,11 @@ GestureDetector FolderItem(int i, List<Folder> folders,
               if (!visible)
                 SizedBox(
                   width: 95.w,
-                  height: 95.h,
+                  height: 95.w,
                   child: Align(
                     alignment: Alignment.bottomRight,
                     child: Padding(
-                      padding: EdgeInsets.only(bottom: 3.h),
+                      padding: EdgeInsets.only(bottom: 3.w),
                       child: Assets.images.icLockPng.image(),
                     ),
                   ),
@@ -121,7 +121,7 @@ GestureDetector FolderItem(int i, List<Folder> folders,
                 const SizedBox.shrink(),
             ],
           ),
-          SizedBox(height: 6.h),
+          SizedBox(height: 6.w),
           SizedBox(
             width: 95.w,
             child: Text(
@@ -133,7 +133,7 @@ GestureDetector FolderItem(int i, List<Folder> folders,
                 fontWeight: FontWeight.w500,
                 fontSize: 12.sp,
                 letterSpacing: -0.3.w,
-                height: (14.3 / 12).h,
+                height: (14.3 / 12),
               ),
             ),
           ),
@@ -155,15 +155,15 @@ Widget UnclassifiedItem(int? selectedIndex, void Function() callback) {
           children: [
             Container(
               width: 95.w,
-              height: 95.h,
+              height: 95.w,
               margin: EdgeInsets.only(right: 12.w),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(32.r)),
+                borderRadius: BorderRadius.all(Radius.circular(32.w)),
                 color: grey100,
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.all(
-                  Radius.circular(32.r),
+                  Radius.circular(32.w),
                 ),
                 child: ColoredBox(
                   color: grey100,
@@ -175,27 +175,27 @@ Widget UnclassifiedItem(int? selectedIndex, void Function() callback) {
               visible: selectedIndex == 0,
               child: Container(
                 width: 95.w,
-                height: 95.h,
+                height: 95.w,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(32.r)),
+                  borderRadius: BorderRadius.all(Radius.circular(32.w)),
                   color: secondary400,
                 ),
               ),
             ),
             SizedBox(
               width: 95.w,
-              height: 95.h,
+              height: 95.w,
               child: Align(
                 alignment: Alignment.bottomRight,
                 child: Padding(
-                  padding: EdgeInsets.only(bottom: 3.h),
+                  padding: EdgeInsets.only(bottom: 3.w),
                   child: Assets.images.icLockPng.image(),
                 ),
               ),
             ),
           ],
         ),
-        SizedBox(height: 6.h),
+        SizedBox(height: 6.w),
         SizedBox(
           width: 95.w,
           child: Text(
@@ -207,7 +207,7 @@ Widget UnclassifiedItem(int? selectedIndex, void Function() callback) {
               fontWeight: FontWeight.w500,
               fontSize: 12.sp,
               letterSpacing: -0.3.w,
-              height: (14.3 / 12).h,
+              height: (14.3 / 12),
             ),
           ),
         ),
@@ -219,13 +219,13 @@ Widget UnclassifiedItem(int? selectedIndex, void Function() callback) {
 Container emptyFolderView() {
   return Container(
     width: 95.w,
-    height: 95.h,
+    height: 95.w,
     color: primary100,
     child: Center(
       child: SvgPicture.asset(
         Assets.images.folder,
         width: 36.w,
-        height: 36.h,
+        height: 36.w,
       ),
     ),
   );

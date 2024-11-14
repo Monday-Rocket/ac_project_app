@@ -89,7 +89,8 @@ class _SearchViewState extends State<SearchView> {
         onPressed: () {
           Navigator.pop(context);
         },
-        icon: SvgPicture.asset(Assets.images.icBack),
+        icon: SvgPicture.asset(Assets.images.icBack,
+            width: 24.w, height: 24.w, fit: BoxFit.cover),
         color: grey900,
         padding: EdgeInsets.only(left: 20.w, right: 8.w),
       ),
@@ -98,7 +99,10 @@ class _SearchViewState extends State<SearchView> {
           color: Colors.white,
         ),
       ),
-      title: searchState ? buildSearchBar(isMine, context) : buildEmptySearchBar(),
+      leadingWidth: 44.w,
+      toolbarHeight: 48.w,
+      title:
+          searchState ? buildSearchBar(isMine, context) : buildEmptySearchBar(),
       titleSpacing: 0,
       actions: [
         Center(
@@ -108,8 +112,8 @@ class _SearchViewState extends State<SearchView> {
               padding: EdgeInsets.only(
                 left: 16.w,
                 right: 22.w,
-                top: 8.h,
-                bottom: 8.h,
+                top: 8.w,
+                bottom: 8.w,
               ),
               child: Text(
                 '검색',
@@ -155,7 +159,7 @@ class _SearchViewState extends State<SearchView> {
                 color: grey300,
                 fontWeight: FontWeight.w500,
                 fontSize: 16.sp,
-                height: (19 / 16).h,
+                height: 19 / 16,
               ),
             ),
           );
@@ -193,7 +197,7 @@ class _SearchViewState extends State<SearchView> {
                       },
                       child: Container(
                         margin: EdgeInsets.symmetric(
-                          vertical: 20.h,
+                          vertical: 20.w,
                           horizontal: 24.w,
                         ),
                         color: Colors.white,
@@ -206,14 +210,14 @@ class _SearchViewState extends State<SearchView> {
                               Column(
                                 children: [
                                   SizedBox(
-                                    height: 17.h,
+                                    height: 17.w,
                                   ),
                                   Text(
                                     link.describe ?? '',
                                     style: TextStyle(
                                       fontSize: 16.sp,
                                       color: grey800,
-                                      height: (26 / 16).h,
+                                      height: 26 / 16,
                                       letterSpacing: -0.1,
                                     ),
                                   ),
@@ -223,14 +227,14 @@ class _SearchViewState extends State<SearchView> {
                               const SizedBox.shrink(),
                             Container(
                               margin: EdgeInsets.only(
-                                top: 16.h,
-                                bottom: 18.h,
+                                top: 16.w,
+                                bottom: 18.w,
                               ),
                               child: LinkHero(
                                 tag: 'linkImage${link.id}',
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.all(
-                                    Radius.circular(7.r),
+                                    Radius.circular(7.w),
                                   ),
                                   child: hasHttpImageUrl(link)
                                       ? Container(
@@ -249,7 +253,7 @@ class _SearchViewState extends State<SearchView> {
                                             imageBuilder:
                                                 (context, imageProvider) =>
                                                     Container(
-                                              height: 160.h,
+                                              height: 160.w,
                                               decoration: BoxDecoration(
                                                 image: DecorationImage(
                                                   image: imageProvider,
@@ -275,7 +279,7 @@ class _SearchViewState extends State<SearchView> {
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
                                     SizedBox(
-                                      width: (width - (24 * 2 + 25)).w,
+                                      width: width - (24 * 2 + 25).w,
                                       child: LinkHero(
                                         tag: 'linkTitle${link.id}',
                                         child: Text(
@@ -316,11 +320,14 @@ class _SearchViewState extends State<SearchView> {
                                       },
                                       child: SvgPicture.asset(
                                         Assets.images.moreVert,
+                                        width: 25.w,
+                                        height: 25.w,
+                                        fit: BoxFit.cover,
                                       ),
                                     ),
                                   ],
                                 ),
-                                SizedBox(height: 6.h),
+                                SizedBox(height: 6.w),
                                 Padding(
                                   padding: EdgeInsets.only(right: 25.w),
                                   child: LinkHero(
@@ -347,7 +354,7 @@ class _SearchViewState extends State<SearchView> {
                   separatorBuilder: (_, __) => Padding(
                     padding: EdgeInsets.symmetric(horizontal: 24.w),
                     child:
-                        Divider(height: 1.h, thickness: 1.w, color: ccGrey200),
+                        Divider(height: 1.w, thickness: 1.w, color: ccGrey200),
                   ),
                 ),
               ),
@@ -367,9 +374,9 @@ class _SearchViewState extends State<SearchView> {
             return Container(
               decoration: BoxDecoration(
                 color: grey100,
-                borderRadius: BorderRadius.all(Radius.circular(7.r)),
+                borderRadius: BorderRadius.all(Radius.circular(7.w)),
               ),
-              height: 36.h,
+              height: 36.w,
               child: Center(
                 child: TextField(
                   textAlignVertical: TextAlignVertical.center,
@@ -393,12 +400,12 @@ class _SearchViewState extends State<SearchView> {
                     hintStyle: TextStyle(
                       fontSize: 14.sp,
                       letterSpacing: -0.1.w,
-                      height: (18 / 14).h,
+                      height: 18 / 14,
                       color: lightGrey700,
                     ),
                     contentPadding: EdgeInsets.symmetric(
                       horizontal: 10.w,
-                      vertical: 9.h,
+                      vertical: 9.w,
                     ),
                     suffixIcon: InkWell(
                       onTap: () {
@@ -407,7 +414,7 @@ class _SearchViewState extends State<SearchView> {
                       child: Icon(
                         CupertinoIcons.clear_circled_solid,
                         color: grey400,
-                        size: 20.r,
+                        size: 20.w,
                       ),
                     ),
                   ),
@@ -438,16 +445,20 @@ class _SearchViewState extends State<SearchView> {
           child: Container(
             decoration: BoxDecoration(
               color: grey100,
-              borderRadius: BorderRadius.all(Radius.circular(7.r)),
+              borderRadius: BorderRadius.all(Radius.circular(7.w)),
             ),
-            height: 36.h,
+            height: 36.w,
             margin: EdgeInsets.only(right: 6.w),
             child: Center(
               child: Row(
                 children: [
                   Container(
                     margin: EdgeInsets.only(left: 10.w, right: 10.w),
-                    child: Assets.images.folderSearchIcon.image(),
+                    child: Assets.images.folderSearchIcon.image(
+                      width: 18.w,
+                      height: 18.w,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                   Text(
                     '검색어를 입력해주세요',
@@ -455,7 +466,7 @@ class _SearchViewState extends State<SearchView> {
                       fontWeight: FontWeight.w400,
                       fontSize: 14.sp,
                       letterSpacing: -0.1.w,
-                      height: (18 / 14).h,
+                      height: 18 / 14,
                       color: lightGrey700,
                     ),
                   ),

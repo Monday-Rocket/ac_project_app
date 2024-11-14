@@ -98,7 +98,7 @@ class MyLinkView extends StatelessWidget {
                             children: [
                               Positioned(
                                 left: widgetOffset.getTopMid().dx - 6.w,
-                                top: widgetOffset.rightBottom.dy + 4.h,
+                                top: widgetOffset.rightBottom.dy + 4.w,
                                 child: CustomPaint(
                                   painter: ReverseTrianglePainter(
                                     strokeColor: grey900,
@@ -107,22 +107,22 @@ class MyLinkView extends StatelessWidget {
                                   ),
                                   child: SizedBox(
                                     width: 12.w,
-                                    height: 8.h,
+                                    height: 8.w,
                                   ),
                                 ),
                               ),
                               Positioned(
                                 right: 14.w,
-                                top: widgetOffset.rightBottom.dy + 12.h,
+                                top: widgetOffset.rightBottom.dy + 12.w,
                                 child: Container(
                                   decoration: BoxDecoration(
                                     borderRadius:
-                                        BorderRadius.all(Radius.circular(4.r)),
+                                        BorderRadius.all(Radius.circular(4.w)),
                                     color: grey900,
                                   ),
                                   padding: EdgeInsets.symmetric(
                                     horizontal: 12.w,
-                                    vertical: 10.h,
+                                    vertical: 10.w,
                                   ),
                                   child: Center(
                                     child: DefaultTextStyle(
@@ -218,7 +218,7 @@ class MyLinkView extends StatelessWidget {
                     state is LinkListInitialState)
                   Center(
                     child: Container(
-                      margin: EdgeInsets.only(bottom: 30.h),
+                      margin: EdgeInsets.only(bottom: 30.w),
                       child: const CircularProgressIndicator(
                         color: primary600,
                       ),
@@ -245,10 +245,12 @@ class MyLinkView extends StatelessWidget {
         onPressed: () {
           Navigator.pop(context);
         },
-        icon: SvgPicture.asset(Assets.images.icBack),
+        icon: SvgPicture.asset(Assets.images.icBack, width: 24.w, height: 24.w, fit: BoxFit.cover,),
         color: grey900,
         padding: EdgeInsets.only(left: 20.w, right: 8.w),
       ),
+      leadingWidth: 44.w,
+      toolbarHeight: 48.w,
       actions: [
         InkWell(
           onTap: () {
@@ -264,7 +266,7 @@ class MyLinkView extends StatelessWidget {
             child: SvgPicture.asset(
               Assets.images.more,
               width: 25.w,
-              height: 25.h,
+              height: 25.w,
             ),
           ),
         ),
@@ -283,25 +285,28 @@ class MyLinkView extends StatelessWidget {
     final classified = folder.isClassified ?? true;
     return SliverToBoxAdapter(
       child: Container(
-        margin: EdgeInsets.only(left: 24.w, right: 12.w, top: 10.h),
+        margin: EdgeInsets.only(left: 24.w, right: 12.w, top: 10.w),
         child: Row(
           children: [
-            SizedBox(
-              width: 250.w,
+            Container(
+              constraints: BoxConstraints(
+                maxWidth: 250.w,
+              ),
               child: Text(
                 classified ? folder.name! : '미분류',
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 30.sp,
-                  height: (36 / 30).h,
+                  height: 36 / 30,
                 ),
               ),
             ),
             if (!(folder.visible ?? false))
               Container(
                 margin: EdgeInsets.only(left: 8.w),
-                child: Assets.images.icLockPng.image(),
+                child: Assets.images.icLockPng
+                    .image(width: 24.w, height: 24.w, fit: BoxFit.cover),
               )
             else
               const SizedBox.shrink(),
@@ -315,7 +320,7 @@ class MyLinkView extends StatelessWidget {
     final count = context.read<LinksFromSelectedFolderCubit>().totalCount;
     return SliverToBoxAdapter(
       child: Container(
-        margin: EdgeInsets.only(left: 24.w, top: 3.h),
+        margin: EdgeInsets.only(left: 24.w, top: 3.w),
         child: Text(
           '링크 ${addCommasFrom(count)}개',
           style: TextStyle(
@@ -331,7 +336,7 @@ class MyLinkView extends StatelessWidget {
   Widget buildSearchBar(BuildContext context, List<Link> totalLinks) {
     return SliverToBoxAdapter(
       child: Container(
-        margin: EdgeInsets.only(top: 23.h, left: 23.w, right: 23.w),
+        margin: EdgeInsets.only(top: 23.w, left: 23.w, right: 23.w),
         child: Row(
           children: [
             Flexible(
@@ -346,16 +351,20 @@ class MyLinkView extends StatelessWidget {
                 child: Container(
                   decoration: BoxDecoration(
                     color: ccGrey100,
-                    borderRadius: BorderRadius.all(Radius.circular(7.r)),
+                    borderRadius: BorderRadius.all(Radius.circular(7.w)),
                   ),
                   width: double.infinity,
-                  height: 36.h,
+                  height: 36.w,
                   margin: EdgeInsets.only(right: 6.w),
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Padding(
                       padding: EdgeInsets.only(left: 10.w),
-                      child: Assets.images.folderSearchIcon.image(),
+                      child: Assets.images.folderSearchIcon.image(
+                        width: 18.w,
+                        height: 18.w,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                 ),
@@ -370,7 +379,7 @@ class MyLinkView extends StatelessWidget {
                 context.read<GetFoldersCubit>().getFolders();
               }),
               child: Padding(
-                padding: EdgeInsets.all(6.r),
+                padding: EdgeInsets.all(6.w),
                 child: SizedBox(
                   key: toolTipKey,
                   width: 24,
@@ -396,13 +405,13 @@ class MyLinkView extends StatelessWidget {
   }) {
     return SliverToBoxAdapter(
       child: Container(
-        margin: EdgeInsets.only(top: 30.h, left: 12.w, right: 20.w),
-        padding: EdgeInsets.only(bottom: 18.h),
+        margin: EdgeInsets.only(top: 30.w, left: 12.w, right: 20.w),
+        padding: EdgeInsets.only(bottom: 18.w),
         child: DefaultTabController(
           length: folders.length,
           initialIndex: tabIndex,
           child: SizedBox(
-            height: 36.h,
+            height: 36.w,
             child: Stack(
               children: [
                 Align(
@@ -411,14 +420,14 @@ class MyLinkView extends StatelessWidget {
                     padding: EdgeInsets.only(
                       left: 15.w,
                       right: 11.w,
-                      bottom: 1.h,
+                      bottom: 1.w,
                     ),
                     child: Row(
                       children: [
                         Expanded(
                           child: Container(
                             color: greyTab,
-                            height: 1.h,
+                            height: 1.w,
                           ),
                         ),
                       ],
@@ -437,7 +446,7 @@ class MyLinkView extends StatelessWidget {
                               maxWidth: 100.w,
                             ),
                             padding: EdgeInsets.symmetric(
-                              vertical: 7.h,
+                              vertical: 7.w,
                             ),
                             child: Text(
                               folder.name ?? '',
@@ -455,13 +464,13 @@ class MyLinkView extends StatelessWidget {
                         labelStyle: TextStyle(
                           fontFamily: FontFamily.pretendard,
                           fontSize: 16.sp,
-                          height: (19 / 16).h,
+                          height: (19 / 16),
                           fontWeight: FontWeight.w800,
                         ),
                         unselectedLabelStyle: TextStyle(
                           fontFamily: FontFamily.pretendard,
                           fontSize: 16.sp,
-                          height: (19 / 16).h,
+                          height: (19 / 16),
                           fontWeight: FontWeight.bold,
                         ),
                         indicator: UnderlineTabIndicator(
@@ -532,8 +541,8 @@ class MyLinkView extends StatelessWidget {
                       child: Padding(
                         padding: EdgeInsets.symmetric(horizontal: 24.w),
                         child: Divider(
-                          height: 1.h,
-                          thickness: 1.h,
+                          height: 1.w,
+                          thickness: 1.w,
                           color: greyTab,
                           indent: 24.w,
                           endIndent: 24.w,
@@ -612,7 +621,7 @@ class MyLinkView extends StatelessWidget {
   Container buildBodyListItem(double width, Link link) {
     return Container(
       margin: EdgeInsets.symmetric(
-        vertical: 18.h,
+        vertical: 18.w,
         horizontal: 24.w,
       ),
       child: Row(
@@ -620,9 +629,9 @@ class MyLinkView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            height: 115.h,
+            height: 115.w,
             child: Container(
-              margin: EdgeInsets.symmetric(vertical: 5.h),
+              margin: EdgeInsets.symmetric(vertical: 5.w),
               width: width * (130 / 375),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -640,11 +649,11 @@ class MyLinkView extends StatelessWidget {
                             fontSize: 16.sp,
                             color: blackBold,
                             overflow: TextOverflow.ellipsis,
-                            height: (19 / 16).h,
+                            height: (19 / 16),
                             letterSpacing: -0.2,
                           ),
                         ),
-                        SizedBox(height: 7.h),
+                        SizedBox(height: 7.w),
                         Text(
                           link.describe ?? '\n\n',
                           maxLines: 2,
@@ -681,7 +690,7 @@ class MyLinkView extends StatelessWidget {
               tag: 'linkImage${link.id}',
               child: ClipRRect(
                 borderRadius: BorderRadius.all(
-                  Radius.circular(7.r),
+                  Radius.circular(7.w),
                 ),
                 child: ColoredBox(
                   color: grey100,
@@ -690,7 +699,7 @@ class MyLinkView extends StatelessWidget {
                           imageUrl: link.image ?? '',
                           imageBuilder: (context, imageProvider) => Container(
                             width: 159.w,
-                            height: 116.h,
+                            height: 116.w,
                             decoration: BoxDecoration(
                               image: DecorationImage(
                                 image: imageProvider,
@@ -701,13 +710,13 @@ class MyLinkView extends StatelessWidget {
                           errorWidget: (_, __, ___) {
                             return SizedBox(
                               width: 159.w,
-                              height: 116.h,
+                              height: 116.w,
                             );
                           },
                         )
                       : SizedBox(
                           width: 159.w,
-                          height: 116.h,
+                          height: 116.w,
                         ),
                 ),
               ),

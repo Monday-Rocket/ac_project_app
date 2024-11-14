@@ -27,7 +27,6 @@ class MyPage extends StatefulWidget {
 }
 
 class _MyPageState extends State<MyPage> {
-
   @override
   void initState() {
     context.read<GetProfileInfoCubit>().loadProfileData();
@@ -36,74 +35,82 @@ class _MyPageState extends State<MyPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        BlocBuilder<GetProfileInfoCubit, ProfileState>(
-          builder: (profileContext, state) {
-            if (state is ProfileLoadedState) {
-              final profile = state.profile;
-              return Column(
-                children: [
-                  GestureDetector(
-                    onTap: () => moveToProfileImageView(context),
-                    child: Container(
-                      alignment: Alignment.center,
-                      margin: EdgeInsets.only(top: 90.h, bottom: 6.h),
-                      width: 105.w,
-                      height: 105.h,
-                      child: Stack(
-                        alignment: Alignment.bottomRight,
-                        children: [
-                          Image.asset(
-                            ProfileImage.makeImagePath(profile.profileImage),
-                            errorBuilder: (_, __, ___) {
-                              return Assets.images.profile.img01On.image();
-                            },
-                          ),
-                          Container(
-                            padding: EdgeInsets.all(4.r),
-                            width: 24.w,
-                            height: 24.h,
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.white,
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          BlocBuilder<GetProfileInfoCubit, ProfileState>(
+            builder: (profileContext, state) {
+              if (state is ProfileLoadedState) {
+                final profile = state.profile;
+                return Column(
+                  children: [
+                    GestureDetector(
+                      onTap: () => moveToProfileImageView(context),
+                      child: Container(
+                        alignment: Alignment.center,
+                        margin: EdgeInsets.only(top: 90.w, bottom: 6.w),
+                        width: 105.w,
+                        height: 105.w,
+                        child: Stack(
+                          alignment: Alignment.bottomRight,
+                          children: [
+                            Image.asset(
+                              ProfileImage.makeImagePath(profile.profileImage),
+                              width: 96.w,
+                              height: 96.w,
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, __, ___) {
+                                return Assets.images.profile.img01On.image(
+                                    width: 96.w,
+                                    height: 96.w,
+                                    fit: BoxFit.cover);
+                              },
                             ),
-                            child: SvgPicture.asset(
-                              Assets.images.icChange,
+                            Container(
+                              padding: EdgeInsets.all(4.w),
+                              width: 24.w,
+                              height: 24.w,
+                              decoration: const BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white,
+                              ),
+                              child: SvgPicture.asset(
+                                Assets.images.icChange,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  Text(
-                    profile.nickname,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 28.sp,
-                      color: const Color(0xff0e0e0e),
+                    Text(
+                      profile.nickname,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 28.sp,
+                        color: const Color(0xff0e0e0e),
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              );
-            } else {
-              return Column(
-                children: [
-                  SizedBox(
-                    height: 195.h,
-                  ),
-                  Text('', style: TextStyle(fontSize: 28.sp)),
-                ],
-              );
-            }
-          },
-        ),
-        SizedBox(
-          height: 47.h,
-        ),
-        MenuList(context),
-      ],
+                  ],
+                );
+              } else {
+                return Column(
+                  children: [
+                    SizedBox(
+                      height: 195.w,
+                    ),
+                    Text('', style: TextStyle(fontSize: 28.sp)),
+                  ],
+                );
+              }
+            },
+          ),
+          SizedBox(
+            height: 47.w,
+          ),
+          MenuList(context),
+        ],
+      ),
     );
   }
 
@@ -210,7 +217,7 @@ class _MyPageState extends State<MyPage> {
         },
         child: Container(
           padding: EdgeInsets.symmetric(
-            vertical: 20.h,
+            vertical: 20.w,
             horizontal: 24.w,
           ),
           child: Row(
@@ -225,7 +232,7 @@ class _MyPageState extends State<MyPage> {
                   letterSpacing: -0.2,
                 ),
               ),
-              if (arrow) Icon(Icons.arrow_forward_ios_rounded, size: 16.r),
+              if (arrow) Icon(Icons.arrow_forward_ios_rounded, size: 16.w),
             ],
           ),
         ),
@@ -236,17 +243,17 @@ class _MyPageState extends State<MyPage> {
       children: [
         DivisionLine(),
         MenuItem('이용 약관'),
-        DivisionLine(size: 1.r),
+        DivisionLine(size: 1.w),
         MenuItem('개인정보 처리방침'),
-        DivisionLine(size: 1.r),
+        DivisionLine(size: 1.w),
         MenuItem('도움말'),
-        DivisionLine(size: 1.r),
+        DivisionLine(size: 1.w),
         MenuItem('오픈소스 라이센스'),
         DivisionLine(),
         MenuItem('로그아웃', arrow: false),
-        DivisionLine(size: 1.r),
+        DivisionLine(size: 1.w),
         MenuItem('회원탈퇴', arrow: false, color: redError),
-        DivisionLine(size: 1.r),
+        DivisionLine(size: 1.w),
       ],
     );
   }

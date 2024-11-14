@@ -134,7 +134,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
             BottomNavigationBarItem(
               icon: SizedBox(
                 width: 24.w,
-                height: 24.h,
+                height: 24.w,
                 child: icons[0],
               ),
               label: '마이폴더',
@@ -142,7 +142,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
             BottomNavigationBarItem(
               icon: SizedBox(
                 width: 24.w,
-                height: 24.h,
+                height: 24.w,
                 child: icons[1],
               ),
               label: '탐색',
@@ -150,7 +150,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
             BottomNavigationBarItem(
               icon: SizedBox(
                 width: 24.w,
-                height: 24.h,
+                height: 24.w,
                 child: icons[2],
               ),
               label: '마이페이지',

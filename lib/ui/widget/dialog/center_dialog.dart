@@ -1,5 +1,6 @@
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/folders/get_my_folders_cubit.dart';
+import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/gen/fonts.gen.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
@@ -7,6 +8,7 @@ import 'package:ac_project_app/ui/widget/text/custom_font.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 void showPopUp({
   required String title,
@@ -27,29 +29,31 @@ void showPopUp({
     context: parentContext,
     builder: (BuildContext context) {
       return Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.w)),
+        backgroundColor: Colors.white,
         child: SizedBox(
           width: width - (45.w * 2),
           child: Stack(
             children: [
               Padding(
-                padding: EdgeInsets.all(16.r),
+                padding: EdgeInsets.all(16.w),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     SizedBox(
-                      height: icon ? 10.h : 16.h,
+                      height: icon ? 10.h : 16.w,
                     ),
                     if (icon) iconImage,
                     Container(
-                      margin: EdgeInsets.only(top: icon ? 14.h : 0, bottom: 10.h),
+                      margin:
+                          EdgeInsets.only(top: icon ? 14.h : 0, bottom: 10.w),
                       child: Text(
                         title,
                         style: TextStyle(
                           fontSize: 20.sp,
                           fontWeight: FontWeight.w700,
                           letterSpacing: -0.2.w,
-                          height: (23.8 / 20).h,
+                          height: (23.8 / 20),
                         ),
                       ),
                     ),
@@ -61,25 +65,25 @@ void showPopUp({
                         fontSize: 14.sp,
                         letterSpacing: -0.1.w,
                         fontWeight: FontWeight.w500,
-                        height: (18.9 / 14).h,
+                        height: (18.9 / 14),
                       ),
                     ),
                     Container(
                       margin: EdgeInsets.only(
                         left: 4.w,
                         right: 4.w,
-                        bottom: 4.h,
-                        top: 32.h,
+                        bottom: 4.w,
+                        top: 32.w,
                       ),
                       child: SizedBox(
                         width: double.infinity,
-                        height: 48.h,
+                        height: 48.w,
                         child: ElevatedButton(
                           onPressed: callback,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: primary600,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(8.w),
                             ),
                             shadowColor: Colors.transparent,
                           ),
@@ -101,13 +105,16 @@ void showPopUp({
               if (hasClose)
                 Positioned(
                   right: 5.w,
-                  top: 5.h,
+                  top: 5.w,
                   child: IconButton(
                     onPressed: () {
                       Navigator.pop(context);
                     },
-                    icon: const Icon(
-                      Icons.close,
+                    icon: SvgPicture.asset(
+                      Assets.images.btnXPrimary,
+                      width: 24.w,
+                      height: 24.w,
+                      fit: BoxFit.cover,
                     ),
                   ),
                 )
@@ -140,22 +147,24 @@ void showEmailPopUp({
     context: parentContext,
     builder: (BuildContext context) {
       return Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.w)),
+        backgroundColor: Colors.white,
         child: SizedBox(
           width: width - (45.w * 2),
           child: Stack(
             children: [
               Padding(
-                padding: EdgeInsets.all(16.r),
+                padding: EdgeInsets.all(16.w),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     SizedBox(
-                      height: icon ? 26.h : 16.h,
+                      height: icon ? 26.h : 16.w,
                     ),
                     if (icon) iconImage,
                     Container(
-                      margin: EdgeInsets.only(top: icon ? 14.h : 0, bottom: 10.h.h),
+                      margin:
+                          EdgeInsets.only(top: icon ? 14.h : 0, bottom: 10.h.w),
                       child: Text(
                         title,
                         style: TextStyle(
@@ -163,7 +172,7 @@ void showEmailPopUp({
                           fontSize: 20.sp,
                           fontWeight: FontWeight.w700,
                           letterSpacing: -0.2.w,
-                          height: (23.8 / 20).h,
+                          height: (23.8 / 20),
                         ),
                       ),
                     ),
@@ -175,25 +184,25 @@ void showEmailPopUp({
                         fontSize: 14.sp,
                         letterSpacing: -0.1.w,
                         fontWeight: FontWeight.w500,
-                        height: (18.9 / 14).h,
+                        height: (18.9 / 14),
                       ),
                     ),
                     Container(
                       margin: EdgeInsets.only(
                         left: 4.w,
                         right: 4.w,
-                        bottom: 4.h,
-                        top: 32.h,
+                        bottom: 4.w,
+                        top: 32.w,
                       ),
                       child: SizedBox(
                         width: double.infinity,
-                        height: 48.h,
+                        height: 48.w,
                         child: ElevatedButton(
                           onPressed: callback,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: primary600,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(8.w),
                             ),
                             shadowColor: Colors.transparent,
                           ),
@@ -214,13 +223,16 @@ void showEmailPopUp({
               if (hasClose)
                 Positioned(
                   right: 5.w,
-                  top: 5.h,
+                  top: 5.w,
                   child: IconButton(
                     onPressed: () {
                       Navigator.pop(context);
                     },
-                    icon: const Icon(
-                      Icons.close,
+                    icon: SvgPicture.asset(
+                      Assets.images.btnXPrimary,
+                      width: 24.w,
+                      height: 24,
+                      fit: BoxFit.cover,
                     ),
                   ),
                 )
@@ -234,8 +246,8 @@ void showEmailPopUp({
   );
 }
 
-
-void deleteFolderDialog(BuildContext context, Folder folder, {void Function()? callback}) {
+void deleteFolderDialog(BuildContext context, Folder folder,
+    {void Function()? callback}) {
   final width = MediaQuery.of(context).size.width;
   showDialog<bool?>(
     context: context,
@@ -247,11 +259,11 @@ void deleteFolderDialog(BuildContext context, Folder folder, {void Function()? c
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.all(
-              Radius.circular(16.r),
+              Radius.circular(16.w),
             ),
           ),
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
+            padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.w),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -261,12 +273,12 @@ void deleteFolderDialog(BuildContext context, Folder folder, {void Function()? c
                     onTap: () => Navigator.pop(context),
                     child: Icon(
                       Icons.close_rounded,
-                      size: 24.r,
+                      size: 24.w,
                     ),
                   ),
                 ),
                 Container(
-                  margin: EdgeInsets.only(top: 2.h, bottom: 10.h),
+                  margin: EdgeInsets.only(top: 2.w, bottom: 10.w),
                   child: Text(
                     '폴더를 삭제하시겠어요?',
                     style: TextStyle(
@@ -288,17 +300,17 @@ void deleteFolderDialog(BuildContext context, Folder folder, {void Function()? c
                 ),
                 Container(
                   margin: EdgeInsets.only(
-                    top: 33.h,
+                    top: 33.w,
                     left: 6.w,
                     right: 6.w,
-                    bottom: 6.h,
+                    bottom: 6.w,
                   ),
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      minimumSize: Size.fromHeight(48.h),
+                      minimumSize: Size.fromHeight(48.w),
                       backgroundColor: primary600,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(8.w),
                       ),
                     ),
                     onPressed: () {
@@ -338,22 +350,22 @@ void showMyPageDialog({
   required void Function()? leftCallback,
   required void Function()? rightCallback,
   bool icon = false,
-
 }) {
   final width = MediaQuery.of(parentContext).size.width;
   showDialog<dynamic>(
     context: parentContext,
     builder: (BuildContext context) {
       return Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.w)),
         insetPadding: EdgeInsets.zero,
         alignment: Alignment.center,
+        backgroundColor: Colors.white,
         child: SizedBox(
           width: width - (45.w * 2),
           child: Stack(
             children: [
               Padding(
-                padding: EdgeInsets.all(16.r),
+                padding: EdgeInsets.all(16.w),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -361,13 +373,13 @@ void showMyPageDialog({
                       height: icon ? 14 : 16,
                     ),
                     if (icon)
-                      const Icon(
+                      Icon(
                         Icons.error,
                         color: grey800,
-                        size: 27,
+                        size: 27.w,
                       ),
                     Container(
-                      margin: EdgeInsets.only(top: icon ? 7 : 0, bottom: 10.h),
+                      margin: EdgeInsets.only(top: icon ? 7 : 0, bottom: 10.w),
                       child: Text(
                         title,
                         style: TextStyle(
@@ -385,29 +397,29 @@ void showMyPageDialog({
                         fontSize: 14.sp,
                         letterSpacing: -0.1.w,
                         fontWeight: FontWeight.w500,
-                        height: (16.7 / 14).h,
+                        height: (16.7 / 14),
                       ),
                     ),
                     Container(
                       margin: EdgeInsets.only(
                         left: 4.w,
                         right: 4.w,
-                        bottom: 4.h,
-                        top: 32.h,
+                        bottom: 4.w,
+                        top: 32.w,
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Expanded(
                             child: SizedBox(
-                              height: 48.h,
+                              height: 48.w,
                               child: ElevatedButton(
                                 key: const Key('MyPageDialogLeftButtonKey'),
                                 onPressed: leftCallback,
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: grey200,
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
+                                    borderRadius: BorderRadius.circular(8.w),
                                   ),
                                   shadowColor: Colors.transparent,
                                 ),
@@ -425,14 +437,14 @@ void showMyPageDialog({
                           SizedBox(width: 7.w),
                           Expanded(
                             child: SizedBox(
-                              height: 48.h,
+                              height: 48.w,
                               child: ElevatedButton(
                                 key: const Key('MyPageDialogRightButtonKey'),
                                 onPressed: rightCallback,
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: grey800,
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
+                                    borderRadius: BorderRadius.circular(8.w),
                                   ),
                                   shadowColor: Colors.transparent,
                                 ),
@@ -455,13 +467,16 @@ void showMyPageDialog({
               ),
               Positioned(
                 right: 5.w,
-                top: 5.h,
+                top: 5.w,
                 child: IconButton(
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  icon: const Icon(
-                    Icons.close,
+                  icon: SvgPicture.asset(
+                    Assets.images.btnXPrimary,
+                    width: 24.w,
+                    height: 24.w,
+                    fit: BoxFit.cover,
                   ),
                 ),
               ),
@@ -498,7 +513,7 @@ void showPausePopup({
     context: parentContext,
     builder: (BuildContext context) {
       return Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.w)),
         insetPadding: EdgeInsets.zero,
         backgroundColor: Colors.white,
         child: SizedBox(
@@ -511,17 +526,18 @@ void showPausePopup({
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     SizedBox(
-                      height: icon ? 10.h : 16.h,
+                      height: icon ? 10.h : 16.w,
                     ),
                     Container(
-                      margin: EdgeInsets.only(top: icon ? 14.h : 0, bottom: 10.h),
+                      margin:
+                          EdgeInsets.only(top: icon ? 14.h : 0, bottom: 10.w),
                       child: Text(
                         title,
                         style: TextStyle(
                           fontSize: 20.sp,
                           fontWeight: FontWeight.w700,
                           letterSpacing: -0.2.w,
-                          height: (23.8 / 20).h,
+                          height: (23.8 / 20),
                         ),
                       ),
                     ),
@@ -535,14 +551,14 @@ void showPausePopup({
                           fontSize: 14.sp,
                           letterSpacing: -0.1.w,
                           fontWeight: FontWeight.w500,
-                          height: (18.9 / 14).h,
+                          height: (18.9 / 14),
                         ),
                       ),
                     ),
                     12.verticalSpace,
                     DecoratedBox(
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(8.w),
                         color: grey200_9a,
                       ),
                       child: Center(
@@ -556,7 +572,7 @@ void showPausePopup({
                               fontSize: 14.sp,
                               letterSpacing: -0.1.w,
                               fontWeight: FontWeight.w600,
-                              height: (20 / 14).h,
+                              height: (20 / 14),
                             ),
                           ),
                         ),
@@ -566,18 +582,18 @@ void showPausePopup({
                       margin: EdgeInsets.only(
                         left: 4.w,
                         right: 4.w,
-                        bottom: 4.h,
-                        top: 24.h,
+                        bottom: 4.w,
+                        top: 24.w,
                       ),
                       child: SizedBox(
                         width: double.infinity,
-                        height: 48.h,
+                        height: 48.w,
                         child: ElevatedButton(
                           onPressed: callback,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: primary600,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(8.w),
                             ),
                             shadowColor: Colors.transparent,
                           ),

@@ -50,8 +50,8 @@ Future<bool?> showAddFolderDialog(
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20.r),
-                    topRight: Radius.circular(20.r),
+                    topLeft: Radius.circular(20.w),
+                    topRight: Radius.circular(20.w),
                   ),
                 ),
                 child: _buildDialogBody(
@@ -84,10 +84,10 @@ Padding _buildDialogBody(
 ) {
   return Padding(
     padding: EdgeInsets.only(
-      top: 30.h,
+      top: 30.w,
       left: 24.w,
       right: 24.w,
-      bottom: MediaQuery.of(context).viewInsets.bottom + 16.h,
+      bottom: MediaQuery.of(context).viewInsets.bottom + 16.w,
     ),
     child: BlocBuilder<FolderVisibleCubit, FolderVisibleState>(
       builder: (context, visibleState) {
@@ -127,7 +127,7 @@ Padding _buildDialogBody(
                   },
                 ),
                 Container(
-                  margin: EdgeInsets.only(top: 60.h),
+                  margin: EdgeInsets.only(top: 60.w),
                   child: Form(
                     key: formKey,
                     child: TextFormField(
@@ -169,7 +169,7 @@ Padding _buildDialogBody(
                                 },
                                 child: Icon(
                                   Icons.close_rounded,
-                                  size: 19.r,
+                                  size: 19.w,
                                 ),
                               ),
                         hintStyle: TextStyle(
@@ -216,7 +216,7 @@ Padding _buildDialogBody(
               ],
             ),
             Container(
-              margin: EdgeInsets.only(top: 16.h),
+              margin: EdgeInsets.only(top: 16.w),
               child: Row(
                 children: [
                   Text(
@@ -247,19 +247,19 @@ Padding _buildDialogBody(
               builder: (context, state) {
                 return Container(
                   margin: EdgeInsets.only(
-                    top: 50.h,
+                    top: 50.w,
                     bottom: Platform.isAndroid
                         ? MediaQuery.of(context).padding.bottom
-                        : 16.h,
+                        : 16.w,
                   ),
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      minimumSize: Size.fromHeight(55.h),
+                      minimumSize: Size.fromHeight(55.w),
                       backgroundColor: state == ButtonState.disabled
                           ? secondary
                           : primary600,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.r),
+                        borderRadius: BorderRadius.circular(12.w),
                       ),
                       shadowColor: Colors.transparent,
                     ),

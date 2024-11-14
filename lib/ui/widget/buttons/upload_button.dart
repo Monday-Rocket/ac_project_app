@@ -26,19 +26,24 @@ Widget FloatingUploadButton(
         height: 42.w,
         decoration: BoxDecoration(
           color: primary600,
-          borderRadius: BorderRadius.circular(40.r),
+          borderRadius: BorderRadius.circular(40.w),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.1),
               offset: const Offset(6, 6),
-              blurRadius: 40.r,
+              blurRadius: 40.w,
             ),
           ],
         ),
         child: Row(
           children: [
             12.horizontalSpace,
-            SvgPicture.asset(Assets.images.uploadPlus),
+            SvgPicture.asset(
+              Assets.images.uploadPlus,
+              width: 20.w,
+              height: 20.w,
+              fit: BoxFit.cover,
+            ),
             2.horizontalSpace,
             Text(
               '업로드',
@@ -57,7 +62,8 @@ Widget FloatingUploadButton(
 
 void pushUploadView(
   BuildContext context, {
-  void Function(VoidCallback fn)? setState, void Function()? callback,
+  void Function(VoidCallback fn)? setState,
+  void Function()? callback,
 }) {
   Navigator.pushNamed(context, Routes.upload).then(
     (value) => setState != null

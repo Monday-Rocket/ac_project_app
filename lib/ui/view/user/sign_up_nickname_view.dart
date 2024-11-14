@@ -87,7 +87,7 @@ class SignUpNicknameView extends StatelessWidget {
   ) {
     return SafeArea(
       child: Container(
-        margin: EdgeInsets.fromLTRB(24.w, 16.h, 24.w, 16.h),
+        margin: EdgeInsets.fromLTRB(24.w, 16.w, 24.w, 16.w),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -99,13 +99,13 @@ class SignUpNicknameView extends StatelessWidget {
                 if (state == ButtonState.enabled)
                   Padding(
                     padding: EdgeInsets.only(
-                      top: 40.h,
+                      top: 40.w,
                       right: 8.w,
                     ),
                     child: Icon(
                       Icons.check_rounded,
                       color: primaryTab,
-                      size: 20.r,
+                      size: 20.w,
                     ),
                   )
                 else
@@ -135,7 +135,7 @@ class SignUpNicknameView extends StatelessWidget {
     GlobalKey<FormState> formKey,
   ) {
     return Container(
-      margin: EdgeInsets.only(top: 30.h),
+      margin: EdgeInsets.only(top: 30.w),
       child: Form(
         key: formKey,
         child: TextFormField(

@@ -49,19 +49,19 @@ class _EmailLoginViewState extends State<EmailLoginView>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(height: 16.h),
+                    SizedBox(height: 16.w),
                     Text(
                       '로그인에 필요한\n정보를 입력해주세요.',
                       style: TextStyle(
                         fontSize: 24.sp,
                         color: grey900,
                         fontWeight: FontWeight.bold,
-                        height: (34 / 24).h,
+                        height: (34 / 24),
                         letterSpacing: -0.3.w,
                       ),
                     ),
                     Container(
-                      margin: EdgeInsets.only(top: 30.h, bottom: 23.h),
+                      margin: EdgeInsets.only(top: 30.w, bottom: 23.w),
                       child: Form(
                         key: formKey,
                         child: TextFormField(
@@ -97,7 +97,7 @@ class _EmailLoginViewState extends State<EmailLoginView>
                                 ? Icon(
                                     Icons.check,
                                     color: primary700,
-                                    size: 16.r,
+                                    size: 16.w,
                                   )
                                 : null,
                           ),
@@ -128,19 +128,19 @@ class _EmailLoginViewState extends State<EmailLoginView>
                         ),
                       ),
                     ),
-                    SizedBox(height: 20.h),
+                    SizedBox(height: 20.w),
                     DecoratedBox(
                       decoration: BoxDecoration(
                         color: grey100,
                         borderRadius: BorderRadius.all(
-                          Radius.circular(8.r),
+                          Radius.circular(8.w),
                         ),
                       ),
                       child: Center(
                         child: Column(
                           children: [
                             Padding(
-                              padding: EdgeInsets.only(top: 14.h, bottom: 12.h),
+                              padding: EdgeInsets.only(top: 14.w, bottom: 12.w),
                               child: SvgPicture.asset(
                                 Assets.images.emailNotice,
                               ),
@@ -153,20 +153,20 @@ class _EmailLoginViewState extends State<EmailLoginView>
                                 letterSpacing: -0.1.w,
                                 fontWeight: FontWeight.w400,
                                 color: grey500,
-                                height: (17.5 / 13).h,
+                                height: (17.5 / 13),
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsets.symmetric(vertical: 20.h),
+                              padding: EdgeInsets.symmetric(vertical: 20.w),
                               child: GestureDetector(
                                 onTap: () => Navigator.pop(context),
                                 child: Container(
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(6.r),
+                                    borderRadius: BorderRadius.circular(6.w),
                                     color: grey400,
                                   ),
                                   constraints: BoxConstraints(
-                                    minHeight: 34.h,
+                                    minHeight: 34.w,
                                     maxWidth: 156.w,
                                   ),
                                   child: Center(

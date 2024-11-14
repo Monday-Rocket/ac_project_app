@@ -175,22 +175,22 @@ class LoginView extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(20.r),
-                      topRight: Radius.circular(20.r),
+                      topLeft: Radius.circular(20.w),
+                      topRight: Radius.circular(20.w),
                     ),
                   ),
                   child: Padding(
                     padding: EdgeInsets.only(
-                      top: 33.h,
+                      top: 33.w,
                       left: 24.w,
                       right: 24.w,
-                      bottom: 20.h,
+                      bottom: 20.w,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
-                          padding: EdgeInsets.only(bottom: 37.h),
+                          padding: EdgeInsets.only(bottom: 37.w),
                           child: Stack(
                             children: [
                               Center(
@@ -204,7 +204,7 @@ class LoginView extends StatelessWidget {
                                   onTap: () => Navigator.pop(context),
                                   child: Icon(
                                     Icons.close_rounded,
-                                    size: 24.r,
+                                    size: 24.w,
                                   ),
                                 ),
                               ),
@@ -227,7 +227,7 @@ class LoginView extends StatelessWidget {
                           child: ColoredBox(
                             color: Colors.white,
                             child: Padding(
-                              padding: EdgeInsets.only(bottom: 28.h),
+                              padding: EdgeInsets.only(bottom: 28.w),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
@@ -239,7 +239,7 @@ class LoginView extends StatelessWidget {
                                         color:
                                             firstCheck ? primary800 : grey100,
                                         borderRadius: BorderRadius.all(
-                                          Radius.circular(8.r),
+                                          Radius.circular(8.w),
                                         ),
                                         border: Border.all(
                                           width: 0.w,
@@ -247,16 +247,16 @@ class LoginView extends StatelessWidget {
                                         ),
                                       ),
                                       child: Padding(
-                                        padding: EdgeInsets.all(2.r),
+                                        padding: EdgeInsets.all(2.w),
                                         child: firstCheck
                                             ? Icon(
                                                 Icons.check,
-                                                size: 18.r,
+                                                size: 18.w,
                                                 color: Colors.white,
                                               )
                                             : Icon(
                                                 Icons.check,
-                                                size: 18.r,
+                                                size: 18.w,
                                                 color: grey300,
                                               ),
                                       ),
@@ -286,7 +286,7 @@ class LoginView extends StatelessWidget {
                               child: ColoredBox(
                                 color: Colors.white,
                                 child: Padding(
-                                  padding: EdgeInsets.only(bottom: 15.h),
+                                  padding: EdgeInsets.only(bottom: 15.w),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
@@ -294,16 +294,16 @@ class LoginView extends StatelessWidget {
                                         duration:
                                             const Duration(milliseconds: 200),
                                         child: Padding(
-                                          padding: EdgeInsets.all(2.r),
+                                          padding: EdgeInsets.all(2.w),
                                           child: secondCheck
                                               ? Icon(
                                                   Icons.check,
-                                                  size: 18.r,
+                                                  size: 18.w,
                                                   color: primary800,
                                                 )
                                               : Icon(
                                                   Icons.check,
-                                                  size: 18.r,
+                                                  size: 18.w,
                                                   color: grey300,
                                                 ),
                                         ),
@@ -350,7 +350,7 @@ class LoginView extends StatelessWidget {
                               child: ColoredBox(
                                 color: Colors.white,
                                 child: Padding(
-                                  padding: EdgeInsets.only(bottom: 28.h),
+                                  padding: EdgeInsets.only(bottom: 28.w),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
@@ -358,16 +358,16 @@ class LoginView extends StatelessWidget {
                                         duration:
                                             const Duration(milliseconds: 200),
                                         child: Padding(
-                                          padding: EdgeInsets.all(2.r),
+                                          padding: EdgeInsets.all(2.w),
                                           child: thirdCheck
                                               ? Icon(
                                                   Icons.check,
-                                                  size: 18.r,
+                                                  size: 18.w,
                                                   color: primary800,
                                                 )
                                               : Icon(
                                                   Icons.check,
-                                                  size: 18.r,
+                                                  size: 18.w,
                                                   color: grey300,
                                                 ),
                                         ),
@@ -403,18 +403,18 @@ class LoginView extends StatelessWidget {
                           ],
                         ),
                         Padding(
-                          padding: EdgeInsets.only(bottom: 54.h),
+                          padding: EdgeInsets.only(bottom: 54.w),
                           child: Builder(
                             builder: (context) {
                               final allChecked =
                                   firstCheck && secondCheck && thirdCheck;
                               return ElevatedButton(
                                 style: ElevatedButton.styleFrom(
-                                  minimumSize: Size.fromHeight(55.h),
+                                  minimumSize: Size.fromHeight(55.w),
                                   backgroundColor:
                                       allChecked ? primary800 : secondary,
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12.r),
+                                    borderRadius: BorderRadius.circular(12.w),
                                   ),
                                   foregroundColor: Colors.white,
                                   disabledBackgroundColor: secondary,
@@ -464,7 +464,7 @@ class LoginView extends StatelessWidget {
         children: [
           buildGoogleLoginButton(context),
           buildAppleLoginButton(context),
-          SizedBox(height: 26.h),
+          SizedBox(height: 26.w),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -481,7 +481,7 @@ class LoginView extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 53.h),
+          SizedBox(height: 53.w),
           InkWell(
             key: const Key('EmailLoginButton'),
             onTap: () => Navigator.pushNamed(context, Routes.emailLogin),
@@ -495,7 +495,7 @@ class LoginView extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(height: 12.h),
+          SizedBox(height: 12.w),
           InkWell(
             key: const Key('SignedUserLoginButton'),
             onTap: () =>
@@ -513,9 +513,9 @@ class LoginView extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Assets.images.loginLogo.image(),
+            Assets.images.loginLogo.image(width: 102.w, height: 130.w, fit: BoxFit.cover),
             SizedBox(
-              height: 14.h,
+              height: 14.w,
             ),
             SvgPicture.asset(Assets.images.loginLogoText),
           ],
@@ -533,11 +533,11 @@ class LoginView extends StatelessWidget {
         child: DecoratedBox(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(8.r)),
+            borderRadius: BorderRadius.all(Radius.circular(8.w)),
             border: Border.all(color: const Color(0xffd9dee0)),
           ),
           child: Padding(
-            padding: EdgeInsets.symmetric(vertical: 10.h),
+            padding: EdgeInsets.symmetric(vertical: 10.w),
             child: Center(
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -577,7 +577,7 @@ class LoginView extends StatelessWidget {
     }
     return Column(
       children: [
-        SizedBox(height: 12.h),
+        SizedBox(height: 12.w),
         Container(
           margin: EdgeInsets.symmetric(horizontal: 24.w),
           child: SignInWithAppleButton(

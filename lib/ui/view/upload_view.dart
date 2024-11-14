@@ -100,7 +100,7 @@ class _UploadViewState extends State<UploadView> {
                     color: grey900,
                     fontWeight: FontWeight.bold,
                     fontSize: 19.sp,
-                    height: (22 / 19).h,
+                    height: (22 / 19),
                     letterSpacing: -0.3.w,
                   ),
                 ),
@@ -113,7 +113,7 @@ class _UploadViewState extends State<UploadView> {
                     physics: const ClampingScrollPhysics(),
                     child: SafeArea(
                       child: Container(
-                        margin: EdgeInsets.only(left: 24.w, top: 20.h),
+                        margin: EdgeInsets.only(left: 24.w, top: 20.w),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -149,13 +149,13 @@ class _UploadViewState extends State<UploadView> {
                                 );
                               },
                             ),
-                            SizedBox(height: 35.h),
+                            SizedBox(height: 35.w),
                             buildSubTitle('링크 코멘트'),
                             buildCommentTextField(visible),
-                            SizedBox(height: 13.h),
+                            SizedBox(height: 13.w),
                             buildUploadWarning(true),
                             SizedBox(
-                              height: keyboardHeight.h,
+                              height: keyboardHeight.w,
                             ),
                           ],
                         ),
@@ -193,16 +193,16 @@ class _UploadViewState extends State<UploadView> {
       ),
 
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(8.r)),
+        borderRadius: BorderRadius.all(Radius.circular(8.w)),
         color: grey50,
       ),
       child: Padding(
-        padding: EdgeInsets.only(left: 12.w, top: 12.h, bottom: 12.h),
+        padding: EdgeInsets.only(left: 12.w, top: 12.w, bottom: 12.w),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: EdgeInsets.only(top: 3.h),
+              padding: EdgeInsets.only(top: 3.w),
               child: SvgPicture.asset(Assets.images.warningMark),
             ),
             SizedBox(width: 4.w),
@@ -218,10 +218,10 @@ class _UploadViewState extends State<UploadView> {
                   ),
                 ),
                 SizedBox(
-                  height: 6.h,
+                  height: 6.w,
                 ),
                 SizedBox(
-                  width: 280.h,
+                  width: 280.w,
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Text(
@@ -245,12 +245,12 @@ class _UploadViewState extends State<UploadView> {
   Container buildCommentTextField(bool visible) {
     return Container(
       margin: EdgeInsets.only(
-        top: 14.h,
+        top: 14.w,
         right: 24.w,
       ),
-      height: 110.h,
+      height: 110.w,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(12.r)),
+        borderRadius: BorderRadius.all(Radius.circular(12.w)),
         color: grey100,
       ),
       child: Column(
@@ -259,12 +259,12 @@ class _UploadViewState extends State<UploadView> {
             controller: secondScrollController,
             padding: EdgeInsets.zero,
             child: SizedBox(
-              height: 80.h,
+              height: 80.w,
               child: TextField(
                 controller: commentTextController,
                 style: TextStyle(
                   fontSize: 14.sp,
-                  height: (19.6 / 14).h,
+                  height: (19.6 / 14),
                   color: grey600,
                   letterSpacing: -0.3.w,
                 ),
@@ -277,7 +277,7 @@ class _UploadViewState extends State<UploadView> {
                   focusedBorder: InputBorder.none,
                   isDense: true,
                   contentPadding: EdgeInsets.symmetric(
-                    vertical: 15.h,
+                    vertical: 15.w,
                     horizontal: 16.w,
                   ),
                   hintText: '저장한 링크에 대해 간단하게 메모해보세요',
@@ -311,7 +311,7 @@ class _UploadViewState extends State<UploadView> {
                   color: grey400,
                   fontSize: 14.sp,
                   letterSpacing: -0.3,
-                  height: (16.7 / 14).h,
+                  height: (16.7 / 14),
                   fontWeight: FontWeight.w400,
                 ),
               ),
@@ -331,9 +331,9 @@ class _UploadViewState extends State<UploadView> {
             buildBodyListItem(uploadResult),
             Container(
               margin: EdgeInsets.only(
-                top: 14.h,
+                top: 14.w,
                 right: 24.w,
-                bottom: 15.h,
+                bottom: 15.w,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -341,19 +341,19 @@ class _UploadViewState extends State<UploadView> {
                   DecoratedBox(
                     decoration: BoxDecoration(
                       border: Border.all(color: linkError ? redError2 : grey100),
-                      borderRadius: BorderRadius.all(Radius.circular(12.r)),
+                      borderRadius: BorderRadius.all(Radius.circular(12.w)),
                       color: grey100,
                     ),
                     child: SingleChildScrollView(
                       padding: EdgeInsets.zero,
                       controller: firstScrollController,
                       child: SizedBox(
-                        height: 80.h,
+                        height: 80.w,
                         child: TextField(
                           controller: linkTextController,
                           style: TextStyle(
                             fontSize: 14.sp,
-                            height: (16.7 / 14).h,
+                            height: (16.7 / 14),
                             color: grey600,
                             letterSpacing: -0.3.w,
                           ),
@@ -365,7 +365,7 @@ class _UploadViewState extends State<UploadView> {
                             focusedBorder: InputBorder.none,
                             isDense: true,
                             contentPadding: EdgeInsets.symmetric(
-                              vertical: 15.h,
+                              vertical: 15.w,
                               horizontal: 16.w,
                             ),
                             hintText: '링크를 여기에 불러주세요',
@@ -386,14 +386,14 @@ class _UploadViewState extends State<UploadView> {
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.only(top: 6.h),
+                    padding: EdgeInsets.only(top: 6.w),
                     child: Text(
                       '올바른 링크 형식으로 입력해 주세요',
                       style: TextStyle(
                         color: linkError ? redError2 : Colors.white,
                         fontWeight: FontWeight.w500,
                         fontSize: 12.sp,
-                        height: (14.3 / 12).h,
+                        height: (14.3 / 12),
                       ),
                     ),
                   ),
@@ -413,19 +413,19 @@ class _UploadViewState extends State<UploadView> {
     final metadata = result.metadata!;
     return Container(
       margin: EdgeInsets.only(
-        top: 18.h,
+        top: 18.w,
         left: 6.w,
         right: 24.w,
-        bottom: 18.h,
+        bottom: 18.w,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            height: 115.h,
+            height: 115.w,
             child: Container(
-              margin: EdgeInsets.symmetric(vertical: 5.h),
+              margin: EdgeInsets.symmetric(vertical: 5.w),
               width: 130.w,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -443,11 +443,11 @@ class _UploadViewState extends State<UploadView> {
                             fontSize: 16.sp,
                             color: blackBold,
                             overflow: TextOverflow.ellipsis,
-                            height: (19 / 16).h,
+                            height: (19 / 16),
                             letterSpacing: -0.2,
                           ),
                         ),
-                        SizedBox(height: 7.h),
+                        SizedBox(height: 7.w),
                         Text(
                           metadata.description ?? '\n\n',
                           maxLines: 2,
@@ -469,7 +469,7 @@ class _UploadViewState extends State<UploadView> {
             padding: EdgeInsets.only(right: 4.w),
             child: ClipRRect(
               borderRadius: BorderRadius.all(
-                Radius.circular(7.r),
+                Radius.circular(7.w),
               ),
               child: ColoredBox(
                 color: grey100,
@@ -478,7 +478,7 @@ class _UploadViewState extends State<UploadView> {
                   imageUrl: metadata.image ?? '',
                   imageBuilder: (context, imageProvider) => Container(
                     width: 159.w,
-                    height: 116.h,
+                    height: 116.w,
                     decoration: BoxDecoration(
                       image: DecorationImage(
                         image: imageProvider,
@@ -489,13 +489,13 @@ class _UploadViewState extends State<UploadView> {
                   errorWidget: (_, __, ___) {
                     return SizedBox(
                       width: 159.w,
-                      height: 116.h,
+                      height: 116.w,
                     );
                   },
                 )
                     : SizedBox(
                   width: 159.w,
-                  height: 116.h,
+                  height: 116.w,
                 ),
               ),
             ),
