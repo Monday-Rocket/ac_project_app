@@ -8,7 +8,7 @@ Text buildSubTitle(String text) {
     style: TextStyle(
       fontWeight: FontWeight.w500,
       fontSize: 16.sp,
-      height: (19 / 16),
+      height: 19 / 16,
       letterSpacing: -0.3.w,
       color: grey800,
     ),

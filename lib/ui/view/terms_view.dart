@@ -52,7 +52,7 @@ class _TermsViewState extends State<TermsView> {
                     fontSize: 24.sp,
                     color: grey900,
                     fontWeight: FontWeight.bold,
-                    height: (34 / 24),
+                    height: 34 / 24,
                     letterSpacing: -0.3.w,
                   ),
                 ),

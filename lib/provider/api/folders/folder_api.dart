@@ -16,14 +16,10 @@ class FolderApi {
     return result.when(
       success: (folders) {
         final list = <Folder>[];
-
         for (final data in folders as List<dynamic>) {
-          final folder =
-              Folder.fromJson(data as LinkedHashMap<String, dynamic>);
+          var folder = Folder.fromJson(data as LinkedHashMap<String, dynamic>);
           if (folder.name == 'unclassified') {
-            folder
-              ..name = '미분류'
-              ..isClassified = false;
+            folder = folder.copyWith(name: '미분류', isClassified: false);
           }
           list.add(folder);
         }
@@ -62,12 +58,10 @@ class FolderApi {
         final list = <Folder>[];
 
         for (final data in folders as List<dynamic>) {
-          final folder =
+          var folder =
               Folder.fromJson(data as LinkedHashMap<String, dynamic>);
           if (folder.name == 'unclassified') {
-            folder
-              ..name = '미분류'
-              ..isClassified = false;
+            folder = folder.copyWith(name: '미분류', isClassified: false);
           }
           list.add(folder);
         }

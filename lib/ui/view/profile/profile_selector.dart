@@ -236,5 +236,3 @@ class _ProfileSelectorState extends State<ProfileSelector> {
     );
   }
 }
-
-

@@ -43,7 +43,7 @@ void main() {
       ),
     );
 
-    final folder = Folder(
+    const folder = Folder(
       id: 1,
       thumbnail: '01',
       visible: true,

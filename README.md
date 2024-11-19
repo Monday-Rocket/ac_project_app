@@ -18,6 +18,10 @@
 
 ![CI/CD](cicd.png)
 
+## Built-in Command
+- build_runner: dart run build_runner build --delete-conflicting-outputs
+- flutter_gen: fluttergen -c pubspec.yaml
+
 ## Platform Specification
 
 ### Android OS

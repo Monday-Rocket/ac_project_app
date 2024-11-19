@@ -17,12 +17,12 @@ void main() {
     final apiExpected = ApiResult(
       status: 0,
       data: [
-        Folder(
+        const Folder(
           visible: false,
           name: 'unclassified',
           links: 2,
         ),
-        Folder(
+        const Folder(
           id: 2,
           thumbnail: '01',
           visible: true,
@@ -40,12 +40,12 @@ void main() {
       final result = await api.getMyFolders();
 
       final expected = [
-        Folder(
+        const Folder(
           visible: false,
           name: '미분류',
           links: 2,
         ),
-        Folder(
+        const Folder(
           id: 2,
           thumbnail: '01',
           visible: true,
@@ -68,7 +68,7 @@ void main() {
       final result = await api.getMyFoldersWithoutUnclassified();
 
       final expected = [
-        Folder(
+        const Folder(
           id: 2,
           thumbnail: '01',
           visible: true,
@@ -91,7 +91,7 @@ void main() {
     final apiExpected = ApiResult(
       status: 0,
       data: [
-        Folder(
+        const Folder(
           id: 1,
           thumbnail: '01',
           visible: true,
@@ -99,7 +99,7 @@ void main() {
           links: 2,
           time: '2023-05-15T10:30:00.861975',
         ),
-        Folder(
+        const Folder(
           id: 2,
           thumbnail: '01',
           visible: true,
@@ -127,7 +127,7 @@ void main() {
     final mockClient = getMockClient(apiExpected, '/folders');
     final api = getFolderApi(mockClient);
 
-    final result = await api.add(Folder(name: 'test'));
+    final result = await api.add(const Folder(name: 'test'));
 
     expect(result, true);
   });
@@ -163,7 +163,7 @@ void main() {
   test('delete folder success test', () async {
     final apiExpected = ApiResult(status: 0);
 
-    final folder = Folder(
+    const folder = Folder(
       id: 1,
       thumbnail: '01',
       visible: true,
@@ -182,7 +182,7 @@ void main() {
   test('patch folder name success test', () async {
     final apiExpected = ApiResult(status: 0);
 
-    final folder = Folder(
+    const folder = Folder(
       id: 1,
       thumbnail: '01',
       visible: true,
@@ -201,7 +201,7 @@ void main() {
   test('change folder visibility success test', () async {
     final apiExpected = ApiResult(status: 0);
 
-    final folder = Folder(
+    const folder = Folder(
       id: 1,
       thumbnail: '01',
       visible: true,

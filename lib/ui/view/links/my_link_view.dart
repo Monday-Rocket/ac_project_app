@@ -464,13 +464,13 @@ class MyLinkView extends StatelessWidget {
                         labelStyle: TextStyle(
                           fontFamily: FontFamily.pretendard,
                           fontSize: 16.sp,
-                          height: (19 / 16),
+                          height: 19 / 16,
                           fontWeight: FontWeight.w800,
                         ),
                         unselectedLabelStyle: TextStyle(
                           fontFamily: FontFamily.pretendard,
                           fontSize: 16.sp,
-                          height: (19 / 16),
+                          height: 19 / 16,
                           fontWeight: FontWeight.bold,
                         ),
                         indicator: UnderlineTabIndicator(
@@ -649,7 +649,7 @@ class MyLinkView extends StatelessWidget {
                             fontSize: 16.sp,
                             color: blackBold,
                             overflow: TextOverflow.ellipsis,
-                            height: (19 / 16),
+                            height: 19 / 16,
                             letterSpacing: -0.2,
                           ),
                         ),

@@ -7,7 +7,7 @@ part of 'api_result.dart';
 // **************************************************************************
 
 ApiResult _$ApiResultFromJson(Map<String, dynamic> json) => ApiResult(
-      status: json['status'] as int?,
+      status: (json['status'] as num?)?.toInt(),
       data: json['data'],
       message: json['message'] as String?,
       error: json['error'] == null

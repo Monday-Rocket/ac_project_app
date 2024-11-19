@@ -10,8 +10,7 @@ const _appleIconSizeScale = 28 / 44;
 /// https://developer.apple.com/design/human-interface-guidelines/sign-in-with-apple/overview/buttons/
 class SignInWithAppleButton extends StatelessWidget {
   const SignInWithAppleButton({
-    super.key,
-    required this.onPressed,
+    required this.onPressed, super.key,
     this.text = 'Apple로 로그인',
     this.height = 44,
     this.style = SignInWithAppleButtonStyle.black,
@@ -84,7 +83,7 @@ class SignInWithAppleButton extends StatelessWidget {
 
       case SignInWithAppleButtonStyle.whiteOutlined:
         return BoxDecoration(
-          border: Border.all(width: 1, color: _contrastColor),
+          border: Border.all(color: _contrastColor),
           borderRadius: borderRadius,
         );
     }
@@ -168,8 +167,8 @@ class SignInWithAppleButton extends StatelessWidget {
             ),
             height: height,
             child: Row(
-              children: children,
               mainAxisAlignment: MainAxisAlignment.center,
+              children: children,
             ),
           ),
         ),

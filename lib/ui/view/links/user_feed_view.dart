@@ -277,13 +277,13 @@ class UserFeedView extends StatelessWidget {
                         labelStyle: TextStyle(
                           fontFamily: FontFamily.pretendard,
                           fontSize: 16.sp,
-                          height: (19 / 16),
+                          height: 19 / 16,
                           fontWeight: FontWeight.w800,
                         ),
                         unselectedLabelStyle: TextStyle(
                           fontFamily: FontFamily.pretendard,
                           fontSize: 16.sp,
-                          height: (19 / 16),
+                          height: 19 / 16,
                           fontWeight: FontWeight.bold,
                         ),
                         indicator: UnderlineTabIndicator(
@@ -334,7 +334,7 @@ class UserFeedView extends StatelessWidget {
                       color: grey300,
                       fontWeight: FontWeight.w500,
                       fontSize: 16.sp,
-                      height: (19 / 16),
+                      height: 19 / 16,
                     ),
                   ),
                 ),
@@ -414,7 +414,7 @@ class UserFeedView extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 16.sp,
                       color: grey800,
-                      height: (26 / 16),
+                      height: 26 / 16,
                     ),
                   ),
                 ],

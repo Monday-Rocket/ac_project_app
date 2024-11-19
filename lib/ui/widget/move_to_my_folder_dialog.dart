@@ -101,7 +101,7 @@ void onSelectFolder(
         UploadType.bring,
       )
       .then((result) {
-    if (result == UploadResultState.success) {
+    if (result.state == UploadResultState.success) {
       showBottomToast(
         "링크가 '${_getFolderName(folder.name ?? '')}' 폴더에 담겼어요!",
         context: parentContext,

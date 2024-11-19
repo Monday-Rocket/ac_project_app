@@ -50,16 +50,6 @@ class UserApi {
     );
   }
 
-  Future<Result<List<JobGroup>>> getJobGroups() async {
-    final result = await _client.getUri('/job-groups');
-    return result.when(
-      success: (data) => Result.success(
-        JobGroup.fromJsonList(data as List<dynamic>),
-      ),
-      error: Result.error,
-    );
-  }
-
   Future<bool> deleteUser() async {
     // 1. 공유패널 데이터 비우기
     unawaited(ShareDataProvider.clearAllData());

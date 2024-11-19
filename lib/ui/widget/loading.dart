@@ -11,7 +11,7 @@ Widget LoadingWidget({double width = 60, double height = 60}) {
     height: height.w,
     child: Lottie.asset(
       Assets.animations.loading,
-      frameRate: FrameRate(60),
+      frameRate: const FrameRate(60),
     ),
   );
 }

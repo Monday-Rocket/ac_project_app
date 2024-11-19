@@ -7,13 +7,14 @@ part of 'folder.dart';
 // **************************************************************************
 
 Folder _$FolderFromJson(Map<String, dynamic> json) => Folder(
-      id: json['id'] as int?,
+      id: (json['id'] as num?)?.toInt(),
       thumbnail: json['thumbnail'] as String?,
       visible: json['visible'] as bool?,
       name: json['name'] as String?,
-      links: json['links'] as int?,
+      links: (json['links'] as num?)?.toInt(),
       time: json['created_date_time'] as String?,
-    )..isClassified = json['isClassified'] as bool?;
+      isClassified: json['isClassified'] as bool?,
+    );
 
 Map<String, dynamic> _$FolderToJson(Folder instance) => <String, dynamic>{
       'id': instance.id,

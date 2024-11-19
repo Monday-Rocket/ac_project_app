@@ -40,7 +40,7 @@ void showBottomToast(
                   textAlign: TextAlign.start,
                   style: TextStyle(
                     fontSize: 13.sp,
-                    height: (16 / 13),
+                    height: 16 / 13,
                     letterSpacing: -0.1.w,
                   ),
                 ),
@@ -52,7 +52,7 @@ void showBottomToast(
                     color: grey400,
                     fontSize: 13.sp,
                     letterSpacing: -0.1.w,
-                    height: (16 / 13),
+                    height: 16 / 13,
                   ),
                 ),
               ],

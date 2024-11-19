@@ -136,7 +136,7 @@ class HomePage extends StatelessWidget {
                       color: grey300,
                       fontWeight: FontWeight.w500,
                       fontSize: 16.sp,
-                      height: (19 / 16),
+                      height: 19 / 16,
                     ),
                   ),
                 ),
@@ -212,7 +212,7 @@ class HomePage extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 16.sp,
                       color: grey800,
-                      height: (26 / 16),
+                      height: 26 / 16,
                       letterSpacing: -0.1,
                     ),
                   ),

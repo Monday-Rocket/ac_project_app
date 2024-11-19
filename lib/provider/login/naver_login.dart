@@ -28,9 +28,9 @@ class Naver {
   static Future<void> logout() async {
     final result = await FlutterNaverLogin.logOutAndDeleteToken();
     if (result.status == NaverLoginStatus.cancelledByUser) {
-      print('logout');
+      Log.d('logout');
     } else {
-      print(result.status.name);
+      Log.d(result.status.name);
     }
   }
 }

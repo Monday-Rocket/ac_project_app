@@ -432,7 +432,7 @@ class _LinkDetailViewState extends State<LinkDetailView> {
                             fontSize: 16.sp,
                             color: e6Grey700,
                             letterSpacing: -0.1.w,
-                            height: (26 / 16),
+                            height: 26 / 16,
                           ),
                         ),
                       ),
@@ -464,7 +464,7 @@ class _LinkDetailViewState extends State<LinkDetailView> {
                           style: TextStyle(
                             fontSize: 14.sp,
                             color: grey700,
-                            height: (19.6 / 14),
+                            height: 19.6 / 14,
                             letterSpacing: -0.1.w,
                           ),
                           cursorColor: primary600,

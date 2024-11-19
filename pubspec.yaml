@@ -6,7 +6,7 @@ publish_to: 'none'
 version: 1.0.69+69
 
 environment:
-  sdk: ">=3.0.0 <4.0.0"
+  sdk: ">=3.5.0 <4.0.0"
 
 dependencies:
   flutter:
@@ -87,7 +87,8 @@ dependencies:
   url_launcher_ios: ^6.3.1
 
   # for mock test
-  mockito: ^5.4.0
+  mockito: ^5.4.4
+  build_runner: ^2.4.13
 
 dev_dependencies:
   flutter_test:
@@ -100,10 +101,9 @@ dev_dependencies:
   bloc_test: ^9.1.2
 
   # for model class
-  build_runner: ^2.4.8
-  json_serializable: ^6.6.1
-  analyzer: ^5.10.0
-  freezed: ^2.4.7
+  json_serializable: ^6.8.0
+  analyzer: ^6.7.0
+  freezed: ^2.5.7
   flutter_oss_licenses: ^3.0.2
 
 flutter:

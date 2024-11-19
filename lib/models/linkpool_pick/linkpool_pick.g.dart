@@ -7,12 +7,12 @@ part of 'linkpool_pick.dart';
 // **************************************************************************
 
 LinkpoolPick _$LinkpoolPickFromJson(Map<String, dynamic> json) => LinkpoolPick(
-      id: json['id'] as int,
+      id: (json['id'] as num).toInt(),
       backgroundColor: json['backgroundColor'] as String,
       title: json['title'] as String,
       image: json['image'] as String,
       describe: json['describe'] as String,
-      linkId: json['linkId'] as int,
+      linkId: (json['linkId'] as num).toInt(),
     );
 
 Map<String, dynamic> _$LinkpoolPickToJson(LinkpoolPick instance) =>

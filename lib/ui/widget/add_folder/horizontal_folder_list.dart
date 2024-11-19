@@ -8,10 +8,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 Widget buildFolderList({
-  void Function(int index, Folder folder)? callback,
-  int? selectedIndex,
   required BuildContext folderContext,
   required FoldersState state,
+  void Function(int index, Folder folder)? callback,
+  int? selectedIndex,
   bool? isLast,
 }) {
   final scrollController = ScrollController();
@@ -133,7 +133,7 @@ GestureDetector FolderItem(int i, List<Folder> folders,
                 fontWeight: FontWeight.w500,
                 fontSize: 12.sp,
                 letterSpacing: -0.3.w,
-                height: (14.3 / 12),
+                height: 14.3 / 12,
               ),
             ),
           ),
@@ -207,7 +207,7 @@ Widget UnclassifiedItem(int? selectedIndex, void Function() callback) {
               fontWeight: FontWeight.w500,
               fontSize: 12.sp,
               letterSpacing: -0.3.w,
-              height: (14.3 / 12),
+              height: 14.3 / 12,
             ),
           ),
         ),

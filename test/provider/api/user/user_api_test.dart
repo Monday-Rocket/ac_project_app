@@ -96,40 +96,6 @@ void main() {
     );
   });
 
-  test('직업 그룹 조회 API', () async {
-    final expected = ApiResult(
-      status: 0,
-      data: [
-        JobGroup(
-          id: 1,
-          name: '디자인',
-        ),
-        JobGroup(
-          id: 2,
-          name: '기획',
-        ),
-        JobGroup(
-          id: 3,
-          name: 'IT개발',
-        ),
-        JobGroup(
-          id: 4,
-          name: '마케팅',
-        ),
-      ],
-    );
-
-    final mockClient = getMockClient(expected, '/job-groups');
-    final api = getUserApi(mockClient);
-
-    final result = await api.getJobGroups();
-
-    result.when(
-      success: (actual) => expect(actual, expected.data),
-      error: fail,
-    );
-  });
-
   test('회원 탈퇴 API 성공 테스트', () async {
     SharedPreferences.setMockInitialValues({});
 

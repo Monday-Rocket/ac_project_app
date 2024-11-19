@@ -6,11 +6,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 
 class LinkSlidAbleWidget extends StatelessWidget {
   const LinkSlidAbleWidget({
-    super.key,
-    required this.index,
-    required this.link,
-    required this.child,
-    required this.callback,
+    required this.index, required this.link, required this.child, required this.callback, super.key,
   });
 
   final int index;
