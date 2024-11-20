@@ -34,8 +34,11 @@ class MyApp extends StatelessWidget {
       ),
     );
 
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
+
     return ScreenUtilInit(
-      designSize: const Size(393, 852),
+      designSize: Size(width, height),
       minTextAdapt: true,
       useInheritedMediaQuery: true,
       builder: (context, child) {
