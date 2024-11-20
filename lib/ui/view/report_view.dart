@@ -62,7 +62,7 @@ class _ReportViewState extends State<ReportView> {
               color: grey900,
               fontWeight: FontWeight.bold,
               fontSize: 19.sp,
-              height: (22 / 19),
+              height: 22 / 19,
               letterSpacing: -0.3.w,
             ),
           ),
@@ -93,7 +93,7 @@ class _ReportViewState extends State<ReportView> {
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 20.sp,
-                      height: (28 / 20),
+                      height: 28 / 20,
                       letterSpacing: -0.2.w,
                       color: grey900,
                     ),
@@ -105,7 +105,7 @@ class _ReportViewState extends State<ReportView> {
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 20.sp,
-                          height: (28 / 20),
+                          height: 28 / 20,
                           letterSpacing: -0.2.w,
                           color: grey900,
                         ),
@@ -117,7 +117,7 @@ class _ReportViewState extends State<ReportView> {
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 20.sp,
-                      height: (28 / 20),
+                      height: 28 / 20,
                       letterSpacing: -0.2.w,
                       color: grey900,
                     ),
@@ -127,7 +127,7 @@ class _ReportViewState extends State<ReportView> {
                     '신고 누적 횟수가 3회 이상인 사용자는 서비스 이용이 정지되며,\n허위신고일 경우, 신고자의 서비스 활동이 제한될 수 있습니다.',
                     style: TextStyle(
                       fontSize: 12.sp,
-                      height: (18 / 12),
+                      height: 18 / 12,
                       color: greyText,
                     ),
                   ),
@@ -184,7 +184,7 @@ class _ReportViewState extends State<ReportView> {
                               enabled: radioValue == 6,
                               style: TextStyle(
                                 fontSize: 14.sp,
-                                height: (16.7 / 14),
+                                height: 16.7 / 14,
                                 color: grey600,
                               ),
                               cursorColor: primary600,
@@ -221,7 +221,7 @@ class _ReportViewState extends State<ReportView> {
                                     fontWeight: FontWeight.w400,
                                     fontSize: 14.sp,
                                     letterSpacing: -0.3.w,
-                                    height: (16.7 / 14),
+                                    height: 16.7 / 14,
                                   ),
                                 ),
                               ),

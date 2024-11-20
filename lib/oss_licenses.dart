@@ -12133,5 +12133,4 @@ SOFTWARE.''',
     isMarkdown: false,
     isSdk: false,
     dependencies: [PackageRef('collection'), PackageRef('source_span'), PackageRef('string_scanner')]
-  );
-
+);

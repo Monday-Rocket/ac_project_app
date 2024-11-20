@@ -84,6 +84,7 @@ android {
             shrinkResources true
             minifyEnabled true
             signingConfig signingConfigs.release
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     namespace 'com.mr.ac_project_app'

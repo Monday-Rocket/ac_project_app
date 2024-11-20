@@ -8,7 +8,7 @@ part of 'report.dart';
 
 Report _$ReportFromJson(Map<String, dynamic> json) => Report(
       targetType: json['targetType'] as String,
-      targetId: json['targetId'] as int,
+      targetId: (json['targetId'] as num).toInt(),
       reasonType: json['reasonType'] as String,
       otherReason: json['otherReason'] as String?,
     );

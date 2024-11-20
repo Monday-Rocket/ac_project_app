@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_dynamic_calls, test_types_in_equals
+// ignore_for_file: avoid_dynamic_calls, test_types_in_equals, hash_and_equals
 
 import 'package:equatable/equatable.dart';
 
@@ -56,69 +56,8 @@ class DetailUser extends Equatable {
         input.profile_img == profile_img;
   }
 
-  @override
-  int get hashCode => super.hashCode;
-
   bool isNotEmpty() => _id != null;
 
   @override
   List<Object?> get props => [_id, _nickname, _profile_img];
-}
-
-/// id : 1
-/// name : "소프트웨어 엔지니어"
-
-class JobGroup {
-  JobGroup({
-    int? id,
-    String? name,
-  }) {
-    _id = id;
-    _name = name;
-  }
-
-  JobGroup.fromJson(dynamic json) {
-    _id = json['id'] as int?;
-    _name = json['name'] as String?;
-  }
-
-  static List<JobGroup> fromJsonList(List<dynamic> jsonList) {
-    final result = <JobGroup>[];
-    for (final json in jsonList) {
-      result.add(JobGroup.fromJson(json));
-    }
-    return result;
-  }
-
-  int? _id;
-  String? _name;
-
-  JobGroup copyWith({
-    int? id,
-    String? name,
-  }) =>
-      JobGroup(
-        id: id ?? _id,
-        name: name ?? _name,
-      );
-
-  int? get id => _id;
-
-  String? get name => _name;
-
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    map['id'] = _id;
-    map['name'] = _name;
-    return map;
-  }
-
-  @override
-  bool operator ==(Object other) {
-    final input = other as JobGroup;
-    return input.id == id && input.name == name;
-  }
-
-  @override
-  int get hashCode => super.hashCode;
 }

@@ -1,6 +1,5 @@
 import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/models/result.dart';
-import 'package:ac_project_app/models/user/detail_user.dart';
 import 'package:ac_project_app/models/user/user.dart';
 import 'package:ac_project_app/provider/api/user/user_api.dart';
 import 'package:ac_project_app/routes.dart';

@@ -7,7 +7,7 @@ import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/link/link.dart' as my_link;
-import 'package:ac_project_app/models/profile/profile.dart' as Profile;
+import 'package:ac_project_app/models/profile/profile.dart' as app_profile;
 import 'package:ac_project_app/models/profile/profile_image.dart';
 import 'package:ac_project_app/provider/api/folders/link_api.dart';
 import 'package:ac_project_app/provider/api/user/user_api.dart' as my_user_api;
@@ -53,10 +53,10 @@ class Kakao {
     if (await isKakaoTalkInstalled()) {
       try {
         await UserApi.instance.loginWithKakaoTalk();
-        print('카카오톡으로 로그인 성공');
+        Log.d('카카오톡으로 로그인 성공');
         return true;
       } catch (error) {
-        print('카카오톡으로 로그인 실패 $error');
+        Log.d('카카오톡으로 로그인 실패 $error');
 
         // 사용자가 카카오톡 설치 후 디바이스 권한 요청 화면에서 로그인을 취소한 경우,
         // 의도적인 로그인 취소로 보고 카카오계정으로 로그인 시도 없이 로그인 취소로 처리 (예: 뒤로 가기)
@@ -66,20 +66,20 @@ class Kakao {
         // 카카오톡에 연결된 카카오계정이 없는 경우, 카카오계정으로 로그인
         try {
           await UserApi.instance.loginWithKakaoAccount();
-          print('카카오계정으로 로그인 성공');
+          Log.d('카카오계정으로 로그인 성공');
           return true;
         } catch (error) {
-          print('카카오계정으로 로그인 실패 $error');
+          Log.d('카카오계정으로 로그인 실패 $error');
           return false;
         }
       }
     } else {
       try {
         await UserApi.instance.loginWithKakaoAccount();
-        print('카카오계정으로 로그인 성공');
+        Log.d('카카오계정으로 로그인 성공');
         return true;
       } catch (error) {
-        print('카카오계정으로 로그인 실패 $error');
+        Log.d('카카오계정으로 로그인 실패 $error');
         return false;
       }
     }
@@ -88,9 +88,9 @@ class Kakao {
   static Future<void> logout() async {
     try {
       await UserApi.instance.logout();
-      print('로그아웃 성공, SDK에서 토큰 삭제');
+      Log.d('로그아웃 성공, SDK에서 토큰 삭제');
     } catch (error) {
-      print('로그아웃 실패, SDK에서 토큰 삭제 $error');
+      Log.d('로그아웃 실패, SDK에서 토큰 삭제 $error');
     }
   }
 
@@ -125,9 +125,9 @@ class Kakao {
         final uri =
             await ShareClient.instance.shareDefault(template: defaultFeed);
         await ShareClient.instance.launchKakaoTalk(uri);
-        print('카카오톡 공유 완료');
+        Log.d('카카오톡 공유 완료');
       } catch (error) {
-        print('카카오톡 공유 실패 $error');
+        Log.d('카카오톡 공유 실패 $error');
       }
     } else {
       try {
@@ -135,19 +135,21 @@ class Kakao {
             .makeDefaultUrl(template: defaultFeed);
         await launchBrowserTab(shareUrl, popupOpen: true);
       } catch (error) {
-        print('카카오톡 공유 실패 $error');
+        Log.d('카카오톡 공유 실패 $error');
       }
     }
   }
 
   static Future<void> sendFolderKakaoShare(
-      Folder folder, Profile.Profile profile) async {
+      Folder folder, app_profile.Profile profile) async {
     final profileImageUrl =
         await ProfileImage(profile.profileImage).makeImageUrl();
 
     // isValidUrl(url)
     final isValid = await isValidUrl(folder.thumbnail ?? '');
-    final imageUrl = await getFolderImageUrl(isValid, folder);
+    final imageUrl = isValid
+        ? getValidFolderImageUrl(folder)
+        : await getNotValidFolderImageUrl(folder);
 
     final params = {'folderId': '${folder.id}', 'userId': '${profile.id}'};
     final defaultFeed = FeedTemplate(
@@ -184,9 +186,9 @@ class Kakao {
         final uri =
             await ShareClient.instance.shareDefault(template: defaultFeed);
         await ShareClient.instance.launchKakaoTalk(uri);
-        print('카카오톡 공유 완료');
+        Log.d('카카오톡 공유 완료');
       } catch (error) {
-        print('카카오톡 공유 실패 $error');
+        Log.d('카카오톡 공유 실패 $error');
       }
     } else {
       try {
@@ -194,16 +196,20 @@ class Kakao {
             .makeDefaultUrl(template: defaultFeed);
         await launchBrowserTab(shareUrl, popupOpen: true);
       } catch (error) {
-        print('카카오톡 공유 실패 $error');
+        Log.d('카카오톡 공유 실패 $error');
       }
     }
   }
 
-  static Future<String> getFolderImageUrl(bool isValid, Folder folder) async {
-    final imageUrl = isValid ? folder.thumbnail : await FirebaseStorage.instance
+  static String getValidFolderImageUrl(Folder folder) {
+    return folder.thumbnail ?? '';
+  }
+
+  static Future<String> getNotValidFolderImageUrl(Folder folder) async {
+    final imageUrl = await FirebaseStorage.instance
         .refFromURL('gs://ac-project-d04ee.appspot.com/empty_folder.png')
         .getDownloadURL();
-    return imageUrl ?? '';
+    return imageUrl;
   }
 
   static void receiveLink(BuildContext context, {String? url}) {

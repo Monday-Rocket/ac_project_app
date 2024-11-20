@@ -56,7 +56,7 @@ class _EmailLoginViewState extends State<EmailLoginView>
                         fontSize: 24.sp,
                         color: grey900,
                         fontWeight: FontWeight.bold,
-                        height: (34 / 24),
+                        height: 34 / 24,
                         letterSpacing: -0.3.w,
                       ),
                     ),
@@ -153,7 +153,7 @@ class _EmailLoginViewState extends State<EmailLoginView>
                                 letterSpacing: -0.1.w,
                                 fontWeight: FontWeight.w400,
                                 color: grey500,
-                                height: (17.5 / 13),
+                                height: 17.5 / 13,
                               ),
                             ),
                             Padding(

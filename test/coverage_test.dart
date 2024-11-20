@@ -1,6 +1,3 @@
-/// *** GENERATED FILE - ANY CHANGES WOULD BE OBSOLETE ON NEXT GENERATION *** ///
-
-/// Helper to test coverage for all project files
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/const/consts.dart';
 import 'package:ac_project_app/const/strings.dart';
@@ -12,18 +9,16 @@ import 'package:ac_project_app/cubits/folders/folders_state.dart';
 import 'package:ac_project_app/cubits/folders/get_my_folders_cubit.dart';
 import 'package:ac_project_app/cubits/folders/get_selected_folder_cubit.dart';
 import 'package:ac_project_app/cubits/folders/get_user_folders_cubit.dart';
-import 'package:ac_project_app/cubits/home/get_job_list_cubit.dart';
 import 'package:ac_project_app/cubits/home/search_links_cubit.dart';
-import 'package:ac_project_app/cubits/home/topic_list_state.dart';
 import 'package:ac_project_app/cubits/home_second_view_cubit.dart';
 import 'package:ac_project_app/cubits/home_view_cubit.dart';
 import 'package:ac_project_app/cubits/links/detail_edit_cubit.dart';
 import 'package:ac_project_app/cubits/links/edit_state.dart';
 import 'package:ac_project_app/cubits/links/feed_data_state.dart';
+import 'package:ac_project_app/cubits/links/get_links_cubit.dart';
 import 'package:ac_project_app/cubits/links/has_more_cubit.dart';
 import 'package:ac_project_app/cubits/links/link_list_state.dart';
 import 'package:ac_project_app/cubits/links/links_from_selected_folder_cubit.dart';
-import 'package:ac_project_app/cubits/links/get_links_cubit.dart';
 import 'package:ac_project_app/cubits/links/upload_link_cubit.dart';
 import 'package:ac_project_app/cubits/links/upload_result_state.dart';
 import 'package:ac_project_app/cubits/login/login_cubit.dart';
@@ -35,7 +30,6 @@ import 'package:ac_project_app/cubits/profile/selected_image_cubit.dart';
 import 'package:ac_project_app/cubits/report/report_cubit.dart';
 import 'package:ac_project_app/cubits/scroll/scroll_cubit.dart';
 import 'package:ac_project_app/cubits/sign_up/button_state_cubit.dart';
-import 'package:ac_project_app/cubits/sign_up/job_list_cubit.dart';
 import 'package:ac_project_app/cubits/sign_up/nickname_check_cubit.dart';
 import 'package:ac_project_app/cubits/sign_up/nickname_cubit.dart';
 import 'package:ac_project_app/cubits/sign_up/sign_up_cubit.dart';
@@ -48,7 +42,6 @@ import 'package:ac_project_app/initial_settings.dart';
 import 'package:ac_project_app/main.dart';
 import 'package:ac_project_app/models/feed/feed_data.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
-import 'package:ac_project_app/models/job/topic.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/models/link/searched_links.dart';
 import 'package:ac_project_app/models/link/upload_type.dart';

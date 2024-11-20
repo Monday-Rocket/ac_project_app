@@ -7,12 +7,12 @@ part of 'link.dart';
 // **************************************************************************
 
 Link _$LinkFromJson(Map<String, dynamic> json) => Link(
-      id: json['id'] as int?,
+      id: (json['id'] as num?)?.toInt(),
       url: json['url'] as String?,
       title: json['title'] as String?,
       image: json['image'] as String?,
       describe: json['describe'] as String?,
-      folderId: json['folderId'] as int?,
+      folderId: (json['folderId'] as num?)?.toInt(),
       time: json['created_date_time'] as String?,
       user: json['user'] == null ? null : DetailUser.fromJson(json['user']),
       inflowType: json['inflow_type'] as String?,
