@@ -129,9 +129,7 @@ class _UploadViewState extends State<UploadView> {
                                         '폴더 선택',
                                         state.folders,
                                         callback: () {
-                                          setState(() {
-                                            isSavedNewFolder = true;
-                                          });
+                                          folderContext.read<GetFoldersCubit>().getFolders();
                                         },
                                       ),
                                     buildFolderList(

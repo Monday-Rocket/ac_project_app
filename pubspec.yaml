@@ -28,10 +28,10 @@ dependencies:
   ## login
   sign_in_with_apple: ^5.0.0
   google_sign_in: ^6.2.2
-  firebase_core: ^3.7.0
-  firebase_auth: ^5.3.2
-  firebase_database: ^11.1.5
-  firebase_crashlytics: ^4.1.4
+  firebase_core: ^3.11.0
+  firebase_auth: ^5.4.2
+  firebase_database: ^11.3.2
+  firebase_crashlytics: ^4.3.2
 
   kakao_flutter_sdk_user: ^1.6.1
   flutter_dotenv: ^5.0.2
@@ -65,7 +65,7 @@ dependencies:
   carousel_slider: ^5.0.0
   lottie:
   flutter_slidable: ^3.1.1
-  firebase_storage: ^12.3.5
+  firebase_storage: ^12.4.2
 
   ## lint
   very_good_analysis: ^4.0.0+1
