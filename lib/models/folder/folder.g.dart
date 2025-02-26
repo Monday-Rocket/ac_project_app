@@ -14,6 +14,7 @@ Folder _$FolderFromJson(Map<String, dynamic> json) => Folder(
       links: (json['links'] as num?)?.toInt(),
       time: json['created_date_time'] as String?,
       isClassified: json['isClassified'] as bool?,
+      membersCount: (json['membersCount'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$FolderToJson(Folder instance) => <String, dynamic>{
@@ -24,4 +25,5 @@ Map<String, dynamic> _$FolderToJson(Folder instance) => <String, dynamic>{
       'links': instance.links,
       'created_date_time': instance.time,
       'isClassified': instance.isClassified,
+      'membersCount': instance.membersCount,
     };
