@@ -61,7 +61,7 @@ dependencies:
   oktoast:
   share_plus: ^7.2.2
   flutter_keyboard_visibility: ^6.0.0
-  extended_text: ^14.0.1
+  extended_text: ^15.0.0
   carousel_slider: ^5.0.0
   lottie:
   flutter_slidable: ^3.1.1

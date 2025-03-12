@@ -9,7 +9,7 @@ import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/link/link.dart';
-import 'package:ac_project_app/provider/comment_temp_data_provider.dart';
+import 'package:ac_project_app/provider/shared_pref_provider.dart';
 import 'package:ac_project_app/ui/widget/buttons/bottom_sheet_button.dart';
 import 'package:ac_project_app/ui/widget/dialog/bottom_dialog.dart';
 import 'package:ac_project_app/ui/widget/dialog/center_dialog.dart';
@@ -215,7 +215,7 @@ class _LinkDetailViewState extends State<LinkDetailView> {
         context,
         callback: () {
           final value = context.read<DetailEditCubit>().textController.text;
-          saveKeyValue(linkId!.toString(), value).then((value) {
+          SharedPrefHelper.saveKeyValue(linkId!.toString(), value).then((value) {
             Navigator.pop(context); // 창 닫기
             Navigator.pop(context); // 뒤로 가기
           });
@@ -504,14 +504,14 @@ class _LinkDetailViewState extends State<LinkDetailView> {
           final value =
               cubitContext.read<DetailEditCubit>().textController.text;
           Log.i('value: $value');
-          saveKeyValue(linkId!.toString(), value).then(
+          SharedPrefHelper.saveKeyValue(linkId!.toString(), value).then(
             (_) => toggleEditor(cubitContext)
                 .then((_) => Navigator.pop(cubitContext)),
           );
         },
       );
     } else {
-      getValueFromKey(linkId!.toString()).then((temp) {
+      SharedPrefHelper.getValueFromKey<String>(linkId!.toString(), removeKey: true).then((temp) {
         if (temp.isNotEmpty) {
           cubitContext.read<DetailEditCubit>().textController.text = temp;
         } else {

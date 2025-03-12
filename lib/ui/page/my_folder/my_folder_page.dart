@@ -75,104 +75,8 @@ class _MyFolderPageState extends State<MyFolderPage>
                   return Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      BlocBuilder<GetProfileInfoCubit, ProfileState>(
-                        builder: (context, state) {
-                          if (state is ProfileLoadedState) {
-                            final profile = state.profile;
-                            return Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Container(
-                                  width: 105.w,
-                                  height: 105.w,
-                                  margin: EdgeInsetsDirectional.only(
-                                    top: 90.w,
-                                    bottom: 6.w,
-                                  ),
-                                  child: Image.asset(
-                                    ProfileImage.makeImagePath(
-                                      profile.profileImage,
-                                    ),
-                                    width: 96.w,
-                                    height: 96.w,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                Text(
-                                  profile.nickname,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 28.sp,
-                                    color: const Color(0xff0e0e0e),
-                                  ),
-                                ),
-                              ],
-                            );
-                          } else {
-                            return const SizedBox.shrink();
-                          }
-                        },
-                      ),
-                      Container(
-                        margin: EdgeInsetsDirectional.only(
-                          top: 50.w,
-                          start: 20,
-                          end: 20,
-                          bottom: 6.w,
-                        ),
-                        child: Row(
-                          children: [
-                            Flexible(
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: grey100,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(7.w)),
-                                ),
-                                margin: EdgeInsets.only(right: 6.w),
-                                child: TextField(
-                                  textAlignVertical: TextAlignVertical.center,
-                                  cursorColor: grey800,
-                                  style: TextStyle(
-                                    color: grey800,
-                                    fontSize: 14.sp,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                  decoration: InputDecoration(
-                                    border: InputBorder.none,
-                                    focusedBorder: InputBorder.none,
-                                    isDense: true,
-                                    contentPadding: EdgeInsets.symmetric(
-                                      horizontal: 10.w,
-                                    ),
-                                    prefixIcon:
-                                        Assets.images.folderSearchIcon.image(),
-                                  ),
-                                  onChanged: (value) {
-                                    context
-                                        .read<GetFoldersCubit>()
-                                        .filter(value);
-                                  },
-                                ),
-                              ),
-                            ),
-                            if (folderState is FolderLoadedState)
-                              InkWell(
-                                onTap: () => showAddFolderDialog(
-                                  context,
-                                  moveToMyLinksView: moveToMyLinksView,
-                                  folders: folderState.folders,
-                                ),
-                                child: Padding(
-                                  padding: EdgeInsets.all(6.w),
-                                  child: SvgPicture.asset(
-                                    Assets.images.btnAdd,
-                                  ),
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
+                      ProfileView(folderState),
+                      SearchView(context, folderState),
                       Builder(
                         builder: (context) {
                           if (folderState is FolderLoadingState) {
@@ -217,6 +121,160 @@ class _MyFolderPageState extends State<MyFolderPage>
             ],
           ),
         );
+      },
+    );
+  }
+
+  Container SearchView(BuildContext context, FoldersState folderState) {
+    return Container(
+      margin: EdgeInsetsDirectional.only(
+        top: 50.w,
+        start: 20,
+        end: 20,
+        bottom: 6.w,
+      ),
+      child: Row(
+        children: [
+          Flexible(
+            child: Container(
+              decoration: BoxDecoration(
+                color: grey100,
+                borderRadius: BorderRadius.all(Radius.circular(7.w)),
+              ),
+              margin: EdgeInsets.only(right: 6.w),
+              child: TextField(
+                textAlignVertical: TextAlignVertical.center,
+                cursorColor: grey800,
+                style: TextStyle(
+                  color: grey800,
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w400,
+                ),
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  isDense: true,
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 10.w,
+                  ),
+                  prefixIcon: Assets.images.folderSearchIcon.image(),
+                ),
+                onChanged: (value) {
+                  context.read<GetFoldersCubit>().filter(value);
+                },
+              ),
+            ),
+          ),
+          if (folderState is FolderLoadedState)
+            InkWell(
+              onTap: () => showAddFolderDialog(
+                context,
+                moveToMyLinksView: moveToMyLinksView,
+                folders: folderState.folders,
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(6.w),
+                child: SvgPicture.asset(
+                  Assets.images.btnAdd,
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  BlocBuilder<GetProfileInfoCubit, ProfileState> ProfileView(
+      FoldersState folderState) {
+    var linksText = '';
+    var addedLinksCount = 0;
+    if (folderState is FolderLoadedState) {
+      linksText = folderState.totalLinksText;
+      addedLinksCount = folderState.addedLinksCount;
+    }
+
+    return BlocBuilder<GetProfileInfoCubit, ProfileState>(
+      builder: (context, state) {
+        if (state is ProfileLoadedState) {
+          final profile = state.profile;
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 105.w,
+                height: 105.w,
+                margin: EdgeInsetsDirectional.only(
+                  top: 90.w,
+                  bottom: 24.w,
+                ),
+                child: Image.asset(
+                  ProfileImage.makeImagePath(
+                    profile.profileImage,
+                  ),
+                  width: 96.w,
+                  height: 96.w,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              Text(
+                profile.nickname,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 28.sp,
+                  color: const Color(0xff0e0e0e),
+                ),
+              ),
+              10.verticalSpace,
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    '총 링크',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 12.sp,
+                      color: grey600,
+                    ),
+                  ),
+                  6.horizontalSpace,
+                  Text(
+                    linksText,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 12.sp,
+                      color: grey800,
+                    ),
+                  ),
+                  Container(
+                    width: 1.w,
+                    height: 9.w,
+                    color: greyD9,
+                    margin: const EdgeInsets.symmetric(horizontal: 14),
+                  ),
+                  Text(
+                    '추가된 링크',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 12.sp,
+                      color: grey600,
+                    ),
+                  ),
+                  6.horizontalSpace,
+                  Text(
+                    addCommasFrom(addedLinksCount),
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 12.sp,
+                      color: grey800,
+                    ),
+                  ),
+                ],
+              )
+            ],
+          );
+        } else {
+          return const SizedBox.shrink();
+        }
       },
     );
   }
@@ -307,7 +365,10 @@ class _MyFolderPageState extends State<MyFolderPage>
                                       alignment: Alignment.bottomRight,
                                       child: Padding(
                                         padding: EdgeInsets.only(bottom: 3.w),
-                                        child: Assets.images.icLockPng.image(width: 24.w, height: 24.w, fit: BoxFit.cover),
+                                        child: Assets.images.icLockWebp.image(
+                                            width: 24.w,
+                                            height: 24.w,
+                                            fit: BoxFit.cover),
                                       ),
                                     )
                                   else

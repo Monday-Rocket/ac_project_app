@@ -7,7 +7,7 @@ class ProfileImage {
   bool? visible;
 
   static String makeImagePath(String image) =>
-      'assets/images/profile/img_${image}_on.png';
+      'assets/images/profile/img_${image}_on.webp';
 
   Future<String> makeImageUrl() async =>
       FirebaseStorage.instance

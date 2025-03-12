@@ -6,11 +6,11 @@ import 'dart:io';
 import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/provider/api/folders/folder_api.dart';
 import 'package:ac_project_app/provider/share_db.dart';
+import 'package:ac_project_app/provider/shared_pref_provider.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:ac_project_app/util/string_utils.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart' as path;
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
 class ShareDataProvider {
@@ -122,11 +122,10 @@ class ShareDataProvider {
   }
 
   static void loadServerDataAtFirst() {
-    SharedPreferences.getInstance().then((SharedPreferences prefs) {
-      final isFirst = prefs.getBool('isFirst') ?? false;
+    SharedPrefHelper.getValueFromKey<bool>('isFirst', defaultValue: false).then((isFirst) {
       if (isFirst) {
         loadServerData();
-        prefs.setBool('isFirst', false);
+        SharedPrefHelper.saveKeyValue('isFirst', false);
       }
     });
   }

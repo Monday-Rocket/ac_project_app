@@ -17,6 +17,7 @@ import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/buttons/upload_button.dart';
 import 'package:ac_project_app/ui/widget/dialog/bottom_dialog.dart';
+import 'package:ac_project_app/ui/widget/dialog/center_dialog.dart';
 import 'package:ac_project_app/ui/widget/link_hero.dart';
 import 'package:ac_project_app/ui/widget/scaffold_with_stack_widget.dart';
 import 'package:ac_project_app/ui/widget/shape/reverse_triangle_painter.dart';
@@ -254,6 +255,19 @@ class MyLinkView extends StatelessWidget {
       actions: [
         InkWell(
           onTap: () {
+            showInviteDialog(context);
+          },
+          child: Container(
+            padding: EdgeInsets.all(4.w),
+            child: SvgPicture.asset(
+              Assets.images.inviteUser,
+              width: 24.w,
+              height: 24.w,
+            ),
+          ),
+        ),
+        InkWell(
+          onTap: () {
             showFolderOptionsDialog(
               folders,
               folder,
@@ -262,7 +276,8 @@ class MyLinkView extends StatelessWidget {
             );
           },
           child: Container(
-            margin: EdgeInsets.only(right: 24.w),
+            margin: EdgeInsets.only(right: 20.w),
+            padding: EdgeInsets.all(4.w),
             child: SvgPicture.asset(
               Assets.images.more,
               width: 25.w,
@@ -305,7 +320,7 @@ class MyLinkView extends StatelessWidget {
             if (!(folder.visible ?? false))
               Container(
                 margin: EdgeInsets.only(left: 8.w),
-                child: Assets.images.icLockPng
+                child: Assets.images.icLockWebp
                     .image(width: 24.w, height: 24.w, fit: BoxFit.cover),
               )
             else
