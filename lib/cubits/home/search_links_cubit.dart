@@ -28,7 +28,7 @@ class SearchLinksCubit extends Cubit<LinkListState> {
       success: (data) {
         final links = _setScrollState(data);
         totalLinks.addAll(links);
-        emit(LinkListLoadedState(links));
+        emit(LinkListLoadedState(links, data.totalCount ?? 0));
       },
       error: (msg) {
         emit(LinkListErrorState(msg));
@@ -46,7 +46,7 @@ class SearchLinksCubit extends Cubit<LinkListState> {
       success: (data) {
         final links = _setScrollState(data);
         totalLinks.addAll(links);
-        emit(LinkListLoadedState(links));
+        emit(LinkListLoadedState(links, data.totalCount ?? 0));
       },
       error: (msg) {
         emit(LinkListErrorState(msg));

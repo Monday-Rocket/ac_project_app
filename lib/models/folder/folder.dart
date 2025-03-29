@@ -15,6 +15,8 @@ class Folder {
     this.links,
     this.time,
     this.isClassified,
+    this.isAdmin,
+    this.shared,
     this.membersCount,
   });
 
@@ -29,6 +31,8 @@ class Folder {
   final int? links;
   @JsonKey(name: 'created_date_time') final String? time;
   final bool? isClassified;
+  final bool? isAdmin;
+  final bool? shared;
   final int? membersCount;
 
   static bool containsNameFromFolderList(List<Folder> folders, String? value) {

@@ -496,14 +496,14 @@ void runCallback(
   callback?.call();
 }
 
-Future<bool?> showFolderOptionsDialog(
+void showFolderOptionsDialog(
   List<Folder> folders,
   Folder currFolder,
   BuildContext parentContext, {
   bool fromLinkView = false,
-}) async {
+}) {
   final visible = currFolder.visible ?? false;
-  return showModalBottomSheet<bool?>(
+  showModalBottomSheet<void>(
     backgroundColor: Colors.transparent,
     context: parentContext,
     isScrollControlled: true,
@@ -634,6 +634,117 @@ Future<bool?> showFolderOptionsDialog(
     },
   );
 }
+
+void showSharedFolderOptionsDialog(
+  BuildContext parentContext, {
+  bool isAdmin = false,
+}) {
+  Column SharedFolderMenu() {
+    if (isAdmin) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          BottomListItem(
+            '공유하기',
+            callback: () {
+              // TODO
+            },
+          ),
+          BottomListItem(
+            '폴더 설정',
+            callback: () {},
+          ),
+          BottomListItem(
+            '멤버 관리',
+            callback: () {},
+          ),
+        ],
+      );
+    } else {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          BottomListItem(
+            '공유하기',
+            callback: () {
+              // TODO
+            },
+          ),
+          BottomListItem(
+            '폴더 나가기',
+            callback: () {},
+          ),
+        ],
+      );
+    }
+  }
+
+  showModalBottomSheet<void>(
+    backgroundColor: Colors.transparent,
+    context: parentContext,
+    isScrollControlled: true,
+    builder: (BuildContext context) {
+      return Wrap(
+        children: [
+          DecoratedBox(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20.w),
+                topRight: Radius.circular(20.w),
+              ),
+            ),
+            child: Padding(
+              padding: EdgeInsets.only(
+                top: 29.w,
+                bottom: Platform.isAndroid
+                    ? MediaQuery.of(context).padding.bottom
+                    : 0,
+              ),
+              child: Column(
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(left: 30.w, right: 20.w),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '공유 폴더',
+                          style: TextStyle(
+                            color: grey800,
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () => Navigator.pop(context),
+                          child: Icon(
+                            Icons.close_rounded,
+                            size: 24.w,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(
+                      top: 17.w,
+                      left: 6.w,
+                      right: 6.w,
+                      bottom: 20.w,
+                    ),
+                    child: SharedFolderMenu(),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      );
+    },
+  );
+}
+
 
 void changeFolderVisible(BuildContext context, Folder folder) {
   context.read<GetFoldersCubit>().transferVisible(folder).then((value) {

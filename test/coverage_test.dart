@@ -3,7 +3,6 @@ import 'package:ac_project_app/const/consts.dart';
 import 'package:ac_project_app/const/strings.dart';
 import 'package:ac_project_app/cubits/feed/feed_view_cubit.dart';
 import 'package:ac_project_app/cubits/folders/folder_name_cubit.dart';
-import 'package:ac_project_app/cubits/folders/folder_view_type_cubit.dart';
 import 'package:ac_project_app/cubits/folders/folder_visible_cubit.dart';
 import 'package:ac_project_app/cubits/folders/folders_state.dart';
 import 'package:ac_project_app/cubits/folders/get_my_folders_cubit.dart';

@@ -9,9 +9,11 @@ import 'package:ac_project_app/provider/shared_pref_provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class GetFoldersCubit extends Cubit<FoldersState> {
-  GetFoldersCubit({bool? excludeUnclassified}) : super(FolderInitialState()) {
+  GetFoldersCubit({bool? excludeUnclassified, bool? excludeSharedLinks}) : super(FolderInitialState()) {
     if (excludeUnclassified ?? false) {
       getFoldersWithoutUnclassified();
+    } else if (excludeSharedLinks ?? false) {
+
     } else {
       getFolders(isFirst: true);
     }

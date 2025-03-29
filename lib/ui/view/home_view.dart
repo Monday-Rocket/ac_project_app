@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:ac_project_app/const/colors.dart';
-import 'package:ac_project_app/cubits/folders/folder_view_type_cubit.dart';
 import 'package:ac_project_app/cubits/folders/get_my_folders_cubit.dart';
 import 'package:ac_project_app/cubits/folders/get_user_folders_cubit.dart';
 import 'package:ac_project_app/cubits/home_view_cubit.dart';
@@ -171,14 +170,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
       body: IndexedStack(
         index: index,
         children: <Widget>[
-          MultiBlocProvider(
-            providers: [
-              BlocProvider<FolderViewTypeCubit>(
-                create: (_) => FolderViewTypeCubit(),
-              ),
-            ],
-            child: const MyFolderPage(),
-          ),
+          const MyFolderPage(),
           MultiBlocProvider(
             providers: [
               BlocProvider(create: (_) => GetUserFoldersCubit()),

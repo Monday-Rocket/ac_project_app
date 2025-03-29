@@ -38,31 +38,33 @@ class MyLinkView extends StatelessWidget {
   MyLinkView({super.key});
 
   final toolTipKey = GlobalKey();
+  final folders = <Folder>[];
 
   @override
   Widget build(BuildContext context) {
     final arguments = getArguments(context);
     final tabIndex = arguments['tabIndex'] as int;
-    var folders = arguments['folders'] as List<Folder>;
+    final selectedFolder = arguments['selectedFolder'] as Folder;
     final width = MediaQuery.of(context).size.width;
     final links = <Link>[];
 
     return BlocProvider(
-      create: (_) => GetFoldersCubit(),
+      create: (_) => GetFoldersCubit(excludeSharedLinks: true),
       child: BlocBuilder<GetFoldersCubit, FoldersState>(
         builder: (foldersContext, folderState) {
           if (folderState is FolderLoadedState) {
-            folders = folderState.folders;
+            folders
+              ..clear()
+              ..addAll(folderState.folders);
           }
 
           return MultiBlocProvider(
             providers: [
               BlocProvider(
-                create: (_) => GetSelectedFolderCubit(folders[tabIndex]),
+                create: (_) => GetSelectedFolderCubit(selectedFolder),
               ),
               BlocProvider(
-                create: (_) =>
-                    LinksFromSelectedFolderCubit(folders[tabIndex], 0),
+                create: (_) => LinksFromSelectedFolderCubit(selectedFolder, 0),
               ),
               BlocProvider(
                 create: (_) => MyLinkUploadToolTipCubit(toolTipKey),
@@ -117,8 +119,7 @@ class MyLinkView extends StatelessWidget {
                                 top: widgetOffset.rightBottom.dy + 12.w,
                                 child: Container(
                                   decoration: BoxDecoration(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(4.w)),
+                                    borderRadius: BorderRadius.all(Radius.circular(4.w)),
                                     color: grey900,
                                   ),
                                   padding: EdgeInsets.symmetric(
@@ -185,7 +186,7 @@ class MyLinkView extends StatelessWidget {
                     slivers: [
                       buildTopAppBar(context, folders, folder),
                       buildTitleBar(folder),
-                      buildContentsCountText(cubitContext),
+                      buildContentsCountText(state),
                       buildSearchBar(context, links),
                       buildTabBar(
                         folders,
@@ -215,8 +216,7 @@ class MyLinkView extends StatelessWidget {
                     context.read<LinksFromSelectedFolderCubit>().refresh();
                   },
                 ),
-                if (state is LinkListLoadingState ||
-                    state is LinkListInitialState)
+                if (state is LinkListLoadingState || state is LinkListInitialState)
                   Center(
                     child: Container(
                       margin: EdgeInsets.only(bottom: 30.w),
@@ -246,7 +246,12 @@ class MyLinkView extends StatelessWidget {
         onPressed: () {
           Navigator.pop(context);
         },
-        icon: SvgPicture.asset(Assets.images.icBack, width: 24.w, height: 24.w, fit: BoxFit.cover,),
+        icon: SvgPicture.asset(
+          Assets.images.icBack,
+          width: 24.w,
+          height: 24.w,
+          fit: BoxFit.cover,
+        ),
         color: grey900,
         padding: EdgeInsets.only(left: 20.w, right: 8.w),
       ),
@@ -320,8 +325,7 @@ class MyLinkView extends StatelessWidget {
             if (!(folder.visible ?? false))
               Container(
                 margin: EdgeInsets.only(left: 8.w),
-                child: Assets.images.icLockWebp
-                    .image(width: 24.w, height: 24.w, fit: BoxFit.cover),
+                child: Assets.images.icLockWebp.image(width: 24.w, height: 24.w, fit: BoxFit.cover),
               )
             else
               const SizedBox.shrink(),
@@ -331,8 +335,8 @@ class MyLinkView extends StatelessWidget {
     );
   }
 
-  Widget buildContentsCountText(BuildContext context) {
-    final count = context.read<LinksFromSelectedFolderCubit>().totalCount;
+  Widget buildContentsCountText(LinkListState state) {
+    final count = (state is LinkListLoadedState) ? state.totalCount : 0;
     return SliverToBoxAdapter(
       child: Container(
         margin: EdgeInsets.only(left: 24.w, top: 3.w),
@@ -386,8 +390,7 @@ class MyLinkView extends StatelessWidget {
               ),
             ),
             InkWell(
-              onTap: () =>
-                  Navigator.pushNamed(context, Routes.upload).then((_) {
+              onTap: () => Navigator.pushNamed(context, Routes.upload).then((_) {
                 // update
                 totalLinks.clear();
                 ToolTipCheck.setMyLinkUploaded();
@@ -499,12 +502,8 @@ class MyLinkView extends StatelessWidget {
                         onTap: (index) {
                           onChangeIndex.call(index);
                           totalLinks.clear();
-                          context
-                              .read<GetSelectedFolderCubit>()
-                              .update(folders[index]);
-                          context
-                              .read<LinksFromSelectedFolderCubit>()
-                              .getSelectedLinks(folders[index], 0);
+                          context.read<GetSelectedFolderCubit>().update(folders[index]);
+                          context.read<LinksFromSelectedFolderCubit>().getSelectedLinks(folders[index], 0);
                         },
                       );
                     },
@@ -600,9 +599,7 @@ class MyLinkView extends StatelessWidget {
             totalLinks.clear();
 
             foldersContext.read<GetFoldersCubit>().getFolders();
-            context
-                .read<LinksFromSelectedFolderCubit>()
-                .getSelectedLinks(folder, 0);
+            context.read<LinksFromSelectedFolderCubit>().getSelectedLinks(folder, 0);
           } else if (result == 'deleted') {
             Navigator.pop(context);
           }
@@ -623,9 +620,7 @@ class MyLinkView extends StatelessWidget {
               }
               totalLinks.clear();
               foldersContext.read<GetFoldersCubit>().getFolders();
-              context
-                  .read<LinksFromSelectedFolderCubit>()
-                  .getSelectedLinks(folder, 0);
+              context.read<LinksFromSelectedFolderCubit>().getSelectedLinks(folder, 0);
             },
           );
         },
