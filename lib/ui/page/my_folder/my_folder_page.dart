@@ -281,7 +281,7 @@ class _MyFolderPageState extends State<MyFolderPage> with WidgetsBindingObserver
     int index,
   ) {
     final folder = folders[index];
-    final isShared = folder.shared!;
+    final isShared = folder.shared ?? false;
 
     if (isShared) {
       Navigator.pushNamed(context, Routes.sharedLinks, arguments: {
@@ -293,9 +293,8 @@ class _MyFolderPageState extends State<MyFolderPage> with WidgetsBindingObserver
       return;
     }
 
-    final notSharedFolders = folders.where((folder) => folder.shared == false).toList();
+    final notSharedFolders = folders.where((folder) => folder.shared != true).toList();
     final changedIndex = notSharedFolders.indexWhere((folder) => folder.name == folders[index].name);
-
     Navigator.pushNamed(
       context,
       Routes.myLinks,
@@ -364,9 +363,9 @@ class _MyFolderPageState extends State<MyFolderPage> with WidgetsBindingObserver
                                               width: 63.w,
                                               height: 63.w,
                                               fit: BoxFit.cover,
-                                              errorBuilder: (_, __, ___) => emptyFolderView(),
+                                              errorBuilder: (_, __, ___) => emptyFolderView(folder.shared),
                                             )
-                                          : emptyFolderView(),
+                                          : emptyFolderView(folder.shared),
                                     ),
                                   ),
                                   if (!visible)
@@ -448,7 +447,11 @@ class _MyFolderPageState extends State<MyFolderPage> with WidgetsBindingObserver
     );
   }
 
-  Container emptyFolderView() {
+  Container emptyFolderView(bool? shared) {
+    var color = const Color(0xFFA07EFF);
+    if (shared ?? false) {
+      color = const Color(0xFF7EA5FF);
+    }
     return Container(
       width: 63.w,
       height: 63.w,
@@ -456,6 +459,8 @@ class _MyFolderPageState extends State<MyFolderPage> with WidgetsBindingObserver
       child: Center(
         child: SvgPicture.asset(
           Assets.images.folder,
+          // color: color,
+          colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
           width: 24.w,
           height: 24.w,
         ),

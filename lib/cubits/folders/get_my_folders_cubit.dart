@@ -13,7 +13,7 @@ class GetFoldersCubit extends Cubit<FoldersState> {
     if (excludeUnclassified ?? false) {
       getFoldersWithoutUnclassified();
     } else if (excludeSharedLinks ?? false) {
-
+      getFoldersWithoutSharedLinks();
     } else {
       getFolders(isFirst: true);
     }
@@ -104,4 +104,24 @@ class GetFoldersCubit extends Cubit<FoldersState> {
   }
 
   Future<int> getAddedLinksCount() async => getTotalLinksCount() - await SharedPrefHelper.getValueFromKey<int>('savedLinksCount', defaultValue: 0);
+
+  Future<void> getFoldersWithoutSharedLinks() async {
+    try {
+      emit(FolderLoadingState());
+
+      (await folderApi.getMyFoldersWithoutShared()).when(
+        success: (list) async {
+          folders = list;
+
+          final totalLinksText = '${getTotalLinksCount()}';
+          final addedLinksCount = await getAddedLinksCount();
+
+          emit(FolderLoadedState(folders, totalLinksText, addedLinksCount));
+        },
+        error: (msg) => emit(FolderErrorState(msg)),
+      );
+    } catch (e) {
+      emit(FolderErrorState(e.toString()));
+    }
+  }
 }

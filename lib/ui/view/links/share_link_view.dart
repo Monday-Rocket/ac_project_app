@@ -3,21 +3,20 @@ import 'package:ac_project_app/const/strings.dart';
 import 'package:ac_project_app/cubits/folders/get_my_folders_cubit.dart';
 import 'package:ac_project_app/cubits/links/link_list_state.dart';
 import 'package:ac_project_app/cubits/links/links_from_selected_folder_cubit.dart';
-import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/link/link.dart';
-import 'package:ac_project_app/provider/api/folders/link_api.dart';
 import 'package:ac_project_app/routes.dart';
-import 'package:ac_project_app/ui/widget/bottom_toast.dart';
+import 'package:ac_project_app/ui/widget/buttons/upload_button.dart';
 import 'package:ac_project_app/ui/widget/dialog/bottom_dialog.dart';
 import 'package:ac_project_app/ui/widget/dialog/center_dialog.dart';
 import 'package:ac_project_app/ui/widget/link_hero.dart';
-import 'package:ac_project_app/ui/widget/slidable/link_slidable_widget.dart';
 import 'package:ac_project_app/util/get_arguments.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:ac_project_app/util/number_commas.dart';
+import 'package:ac_project_app/util/string_utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,14 +24,22 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_svg/svg.dart';
 
-class ShareLinkView extends StatelessWidget {
+class ShareLinkView extends StatefulWidget {
   const ShareLinkView({super.key});
+
+  @override
+  State<ShareLinkView> createState() => _ShareLinkViewState();
+}
+
+class _ShareLinkViewState extends State<ShareLinkView> {
+  final textController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     final arguments = getArguments(context);
     final folder = arguments['folder'] as Folder;
     final isAdmin = arguments['isAdmin'] as bool;
+    final links = <Link>[];
 
     return BlocProvider(
       create: (_) => LinksFromSelectedFolderCubit(folder, 0),
@@ -56,18 +63,25 @@ class ShareLinkView extends StatelessWidget {
                         buildTopAppBar(context, folder, isAdmin),
                         buildTitleBar(folder),
                         buildContentsCountText(state, folder.membersCount),
-                        // buildSearchBar(),
-                        buildBodyList(
+                        SearchBar(),
+                        BodyList(
                           folder: folder,
                           width: MediaQuery.of(context).size.width,
                           context: context,
-                          totalLinks: [],
+                          totalLinks: links,
                           state: state,
                           foldersContext: context,
                         )
                       ],
                     ),
-                  )
+                  ),
+                  FloatingUploadButton(
+                    context,
+                    callback: () {
+                      links.clear();
+                      context.read<LinksFromSelectedFolderCubit>().refresh();
+                    },
+                  ),
                 ],
               );
             },
@@ -77,7 +91,7 @@ class ShareLinkView extends StatelessWidget {
     );
   }
 
-  Widget buildBodyList({
+  Widget BodyList({
     required Folder folder,
     required double width,
     required BuildContext context,
@@ -92,47 +106,29 @@ class ShareLinkView extends StatelessWidget {
         final links = state.links;
         totalLinks.addAll(links);
       }
+
       return SlidableAutoCloseBehavior(
-        child: SliverList(
-          delegate: SliverChildBuilderDelegate(
-            (BuildContext context, int index) {
-              final link = totalLinks[index];
-              return Column(
-                children: [
-                  buildLinkItem(
-                    context,
-                    link,
-                    totalLinks,
-                    foldersContext,
-                    folder,
-                    index,
-                    width,
-                  ),
-                  if (index != totalLinks.length - 1)
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 24.w),
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 24.w),
-                        child: Divider(
-                          height: 1.w,
-                          thickness: 1.w,
-                          color: greyTab,
-                          indent: 24.w,
-                          endIndent: 24.w,
-                        ),
-                      ),
-                    ),
-                ],
-              );
-            },
-            childCount: totalLinks.length,
+        child: SliverGrid(
+          delegate: SliverChildBuilderDelegate((context, index) {
+            return LinkItem(
+              context,
+              totalLinks[index],
+              totalLinks,
+              foldersContext,
+              folder,
+              index,
+              width,
+            );
+          }, childCount: totalLinks.length),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
           ),
         ),
       );
     }
   }
 
-  InkWell buildLinkItem(
+  Widget LinkItem(
     BuildContext context,
     Link link,
     List<Link> totalLinks,
@@ -141,156 +137,104 @@ class ShareLinkView extends StatelessWidget {
     int index,
     double width,
   ) {
-    return InkWell(
-      onTap: () {
-        Navigator.pushNamed(
-          context,
-          Routes.linkDetail,
-          arguments: {
-            'link': link,
-            'isMine': true,
-            'visible': folder.visible,
-          },
-        ).then((result) {
-          Log.i(result);
-          if (result == 'changed') {
-            // update
-            totalLinks.clear();
+    final isOdd = index.isOdd;
+    return Padding(
+      padding: EdgeInsets.only(left: isOdd ? 0 : 24.w, right: isOdd ? 24.w : 0),
+      child: InkWell(
+        onTap: () {
+          Navigator.pushNamed(
+            context,
+            Routes.linkDetail,
+            arguments: {
+              'link': link,
+              'isMine': true,
+              'visible': folder.visible,
+            },
+          ).then((result) {
+            Log.i(result);
+            if (result == 'changed') {
+              // update
+              totalLinks.clear();
 
-            foldersContext.read<GetFoldersCubit>().getFolders();
-            context.read<LinksFromSelectedFolderCubit>().getSelectedLinks(folder, 0);
-          } else if (result == 'deleted') {
-            Navigator.pop(context);
-          }
-        });
-      },
-      child: LinkSlidAbleWidget(
-        index: index,
-        link: link,
-        child: buildBodyListItem(width, link),
-        callback: () {
-          getIt<LinkApi>().deleteLink(link).then((result) {
-            if (result) {
-              showBottomToast(
-                context: context,
-                '링크가 삭제되었어요!',
-              );
+              foldersContext.read<GetFoldersCubit>().getFolders();
+              context.read<LinksFromSelectedFolderCubit>().getSelectedLinks(folder, 0);
+            } else if (result == 'deleted') {
+              Navigator.pop(context);
             }
-            totalLinks.clear();
-            foldersContext.read<GetFoldersCubit>().getFolders();
-            context.read<LinksFromSelectedFolderCubit>().getSelectedLinks(folder, 0);
           });
         },
+        child: buildBodyListItem(width, link, isOdd),
       ),
     );
   }
 
-  Container buildBodyListItem(double width, Link link) {
-    return Container(
-      margin: EdgeInsets.symmetric(
-        vertical: 18.w,
-        horizontal: 24.w,
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            height: 115.w,
-            child: Container(
-              margin: EdgeInsets.symmetric(vertical: 5.w),
-              width: width * (130 / 375),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          link.title ?? '',
-                          maxLines: 1,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16.sp,
-                            color: blackBold,
-                            overflow: TextOverflow.ellipsis,
-                            height: 19 / 16,
-                            letterSpacing: -0.2,
+  Widget buildBodyListItem(double width, Link link, bool isOdd) {
+    return Column(
+      crossAxisAlignment: isOdd ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      children: [
+        LinkHero(
+          tag: 'linkImage${link.id}',
+          child: ClipRRect(
+            borderRadius: BorderRadius.all(
+              Radius.circular(7.w),
+            ),
+            child: ColoredBox(
+              color: grey100,
+              child: link.image != null && link.image!.isNotEmpty
+                  ? CachedNetworkImage(
+                      imageUrl: link.image ?? '',
+                      imageBuilder: (context, imageProvider) => Container(
+                        width: width * (152 / 375),
+                        height: width * (101 / 375),
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: imageProvider,
+                            fit: BoxFit.cover,
                           ),
                         ),
-                        SizedBox(height: 7.w),
-                        Text(
-                          link.describe ?? '\n\n',
-                          maxLines: 2,
-                          style: TextStyle(
-                            fontSize: 12.sp,
-                            color: greyText,
-                            overflow: TextOverflow.ellipsis,
-                            letterSpacing: -0.1,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.bottomLeft,
-                    child: Text(
-                      link.url ?? '',
-                      maxLines: 1,
-                      style: TextStyle(
-                        fontSize: 12.sp,
-                        color: const Color(0xFFC0C2C4),
-                        overflow: TextOverflow.ellipsis,
-                        letterSpacing: -0.1,
                       ),
-                    ),
-                  ),
-                ],
-              ),
+                      errorWidget: (_, __, ___) {
+                        return SizedBox(
+                          width: width * (152 / 375),
+                          height: width * (101 / 375),
+                        );
+                      },
+                    )
+                  : SizedBox(width: width * (152 / 375), height: width * (101 / 375)),
             ),
           ),
-          Padding(
-            padding: EdgeInsets.only(right: 4.w),
-            child: LinkHero(
-              tag: 'linkImage${link.id}',
-              child: ClipRRect(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(7.w),
-                ),
-                child: ColoredBox(
-                  color: grey100,
-                  child: link.image != null && link.image!.isNotEmpty
-                      ? CachedNetworkImage(
-                          imageUrl: link.image ?? '',
-                          imageBuilder: (context, imageProvider) => Container(
-                            width: 159.w,
-                            height: 116.w,
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                image: imageProvider,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                          errorWidget: (_, __, ___) {
-                            return SizedBox(
-                              width: 159.w,
-                              height: 116.w,
-                            );
-                          },
-                        )
-                      : SizedBox(
-                          width: 159.w,
-                          height: 116.w,
-                        ),
-                ),
+        ),
+        16.verticalSpace,
+        const Row(),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            152.horizontalSpace,
+            Text(
+              link.title ?? '',
+              maxLines: 1,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16.sp,
+                color: blackBold,
+                overflow: TextOverflow.ellipsis,
+                height: 19 / 16,
+                letterSpacing: -0.2,
               ),
             ),
-          ),
-        ],
-      ),
+            5.verticalSpace,
+            Text(
+              makeLinkTimeString(link.time ?? ''),
+              style: TextStyle(
+                color: grey400,
+                fontSize: 12.sp,
+                letterSpacing: -0.2.w,
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 
@@ -444,7 +388,72 @@ class ShareLinkView extends StatelessWidget {
     );
   }
 
-  Widget buildSearchBar() {
-    return Container();
+  Widget SearchBar() {
+    return SliverToBoxAdapter(
+      child: Container(
+        decoration: BoxDecoration(
+          color: grey100,
+          borderRadius: BorderRadius.all(Radius.circular(7.w)),
+        ),
+        margin: const EdgeInsets.only(
+          left: 24,
+          right: 24,
+          top: 24,
+          bottom: 30,
+        ),
+        height: 36,
+        child: Center(
+          child: TextField(
+            textAlignVertical: TextAlignVertical.center,
+            controller: textController,
+            cursorColor: grey800,
+            autofocus: true,
+            style: TextStyle(
+              color: grey800,
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w400,
+            ),
+            textInputAction: TextInputAction.search,
+            onSubmitted: (value) {
+              // onTapSearch(isMine, context);
+            },
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              focusedBorder: InputBorder.none,
+              isDense: true,
+              icon: Container(
+                margin: const EdgeInsets.only(left: 10),
+                child: Assets.images.folderSearchIcon.image(
+                  width: 18.w,
+                  height: 18.w,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              hintStyle: TextStyle(
+                fontSize: 14.sp,
+                letterSpacing: -0.1.w,
+                height: 18 / 14,
+                color: lightGrey700,
+              ),
+              contentPadding: EdgeInsets.only(
+                right: 10.w,
+                top: 9.w,
+                bottom: 9.w,
+              ),
+              suffixIcon: InkWell(
+                onTap: () {
+                  textController.text = '';
+                },
+                child: Icon(
+                  CupertinoIcons.clear_circled_solid,
+                  color: grey400,
+                  size: 20.w,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

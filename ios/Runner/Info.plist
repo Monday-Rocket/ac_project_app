@@ -161,5 +161,7 @@
 	<string>${NAVER_CLIENT_NAME}</string>
 	<key>naverServiceAppUrlScheme</key>
 	<string>linkpool</string>
+	<key>FlutterDeepLinkingEnabled</key>
+	<true/>
 </dict>
 </plist>

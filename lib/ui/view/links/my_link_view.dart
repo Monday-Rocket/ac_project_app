@@ -38,11 +38,11 @@ class MyLinkView extends StatelessWidget {
   MyLinkView({super.key});
 
   final toolTipKey = GlobalKey();
-  final folders = <Folder>[];
 
   @override
   Widget build(BuildContext context) {
     final arguments = getArguments(context);
+    final folders = arguments['folders'] as List<Folder>;
     final tabIndex = arguments['tabIndex'] as int;
     final selectedFolder = arguments['selectedFolder'] as Folder;
     final width = MediaQuery.of(context).size.width;
@@ -529,14 +529,16 @@ class MyLinkView extends StatelessWidget {
     if (folder.links == 0) {
       return buildEmptyList(context);
     } else {
+      Log.i(state);
+      Log.i(folderState);
       if (state is LinkListLoadedState && folderState is FolderLoadedState) {
         final links = state.links;
         totalLinks.addAll(links);
       }
+      Log.i(totalLinks);
       return SlidableAutoCloseBehavior(
         child: SliverList(
-          delegate: SliverChildBuilderDelegate(
-            (BuildContext context, int index) {
+          delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
               final link = totalLinks[index];
               return Column(
                 children: [
@@ -582,6 +584,7 @@ class MyLinkView extends StatelessWidget {
     int index,
     double width,
   ) {
+    Log.i('build Link Item');
     return InkWell(
       onTap: () {
         Navigator.pushNamed(

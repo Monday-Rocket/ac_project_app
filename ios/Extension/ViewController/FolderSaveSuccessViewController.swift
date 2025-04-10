@@ -85,7 +85,7 @@ class FolderSaveSuccessViewController: UIViewController {
   
   @IBAction func goToApp(_ sender: Any) {
     self.hideExtensionWithCompletionHandler()
-    let urlString = "linkpool://com.mr.acProjectApp"
+    let urlString = "linkpool://boring-km.dev"
     
     let url = URL(string: urlString)
     _ = openURL(url!)
