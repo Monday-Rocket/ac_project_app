@@ -636,7 +636,7 @@ void showFolderOptionsDialog(
 }
 
 void showSharedFolderOptionsDialog(
-  BuildContext parentContext, {
+  BuildContext parentContext, Folder folder, {
   bool isAdmin = false,
 }) {
   Column SharedFolderMenu() {
@@ -652,11 +652,15 @@ void showSharedFolderOptionsDialog(
           ),
           BottomListItem(
             '폴더 설정',
-            callback: () {},
-          ),
-          BottomListItem(
-            '멤버 관리',
-            callback: () {},
+            callback: () {
+              Navigator.pushNamed(parentContext, Routes.sharedLinkSetting, arguments: {
+                'folder': folder,
+              }).then((result) {
+                if (result == true) {
+                  parentContext.read<GetFoldersCubit>().getFolders();
+                }
+              });
+            },
           ),
         ],
       );
@@ -679,7 +683,7 @@ void showSharedFolderOptionsDialog(
     }
   }
 
-  showModalBottomSheet<void>(
+  showModalBottomSheet<bool?>(
     backgroundColor: Colors.transparent,
     context: parentContext,
     isScrollControlled: true,
@@ -742,7 +746,11 @@ void showSharedFolderOptionsDialog(
         ],
       );
     },
-  );
+  ).then((result) {
+    if (result ?? false) {
+      parentContext.read<GetFoldersCubit>().getFolders();
+    }
+  });
 }
 
 

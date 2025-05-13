@@ -420,7 +420,7 @@ class _MyFolderPageState extends State<MyFolderPage> with WidgetsBindingObserver
                           InkWell(
                             onTap: () {
                               if (isSharedFolder) {
-                                showSharedFolderOptionsDialog(context, isAdmin: isAdmin);
+                                showSharedFolderOptionsDialog(context, folder, isAdmin: isAdmin);
                               } else {
                                 showFolderOptionsDialog(folders, folder, context);
                               }

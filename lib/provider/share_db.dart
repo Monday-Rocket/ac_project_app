@@ -52,6 +52,7 @@ class ShareDB {
       where: 'name = ?',
       whereArgs: [folder.name],
     );
+    Log.i('rows: $rows');
     final seq = rows[0]['seq'];
     await db.update(
       'folder',
@@ -68,6 +69,20 @@ class ShareDB {
     await db.rawUpdate(
       'UPDATE folder set visible = ? where name = ?',
       [if (folder.visible!) 0 else 1, folder.name],
+    );
+    await db.close();
+  }
+
+  static Future<void> changeFolder(Folder folder) async {
+    final db = await _getDB();
+    await db.update(
+      'folder',
+      {
+        'name': folder.name,
+        'visible': folder.visible! ? 1 : 0,
+      },
+      where: 'name = ?',
+      whereArgs: [folder.name],
     );
     await db.close();
   }

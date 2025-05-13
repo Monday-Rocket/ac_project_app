@@ -365,7 +365,7 @@ class _ShareLinkViewState extends State<ShareLinkView> {
         ),
         InkWell(
           onTap: () {
-            showSharedFolderOptionsDialog(context, isAdmin: isAdmin);
+            showSharedFolderOptionsDialog(context, folder, isAdmin: isAdmin);
           },
           child: Container(
             margin: EdgeInsets.only(right: 20.w),
