@@ -5,6 +5,7 @@ import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/provider/api/custom_client.dart';
 import 'package:ac_project_app/provider/api/folders/folder_api.dart';
 import 'package:ac_project_app/provider/api/folders/link_api.dart';
+import 'package:ac_project_app/provider/api/folders/share_folder_api.dart';
 import 'package:ac_project_app/provider/api/linkpool_pick/linkpool_pick_api.dart';
 import 'package:ac_project_app/provider/api/report/report_api.dart';
 import 'package:ac_project_app/provider/api/user/profile_api.dart';
@@ -27,6 +28,7 @@ void locator() {
     ..registerLazySingleton(() => ProfileApi(httpClient))
     ..registerLazySingleton(() => UserApi(httpClient))
     ..registerLazySingleton(() => LinkpoolPickApi(httpClient))
+    ..registerLazySingleton(() => ShareFolderApi(httpClient))
 
     // Cubits
     ..registerLazySingleton(GetUserFoldersCubit.new)

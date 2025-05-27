@@ -82,7 +82,7 @@ class _SharedLinkSettingViewState extends State<SharedLinkSettingView> {
                     ),
                   ),
                   body: Container(
-                    margin: EdgeInsets.only(left: 24, right: 24, top: 24),
+                    margin: const EdgeInsets.only(left: 24, right: 24, top: 24),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [

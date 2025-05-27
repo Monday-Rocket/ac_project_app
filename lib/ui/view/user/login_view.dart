@@ -64,6 +64,11 @@ class LoginView extends StatelessWidget {
     final appLinks = AppLinks();
 
     appLinks.uriLinkStream.listen((uri) {
+      if (uri.queryParameters.isNotEmpty && uri.queryParameters['token'] != null) {
+        showBottomToast('로그인 후 다시 참여해주세요.', context: context);
+        return;
+      }
+
       context.read<LoginCubit>().loading();
       final validLink = FirebaseAuth.instance.isSignInWithEmailLink(uri.toString());
       if (validLink) {

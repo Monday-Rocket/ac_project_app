@@ -20,6 +20,7 @@ import 'package:ac_project_app/ui/page/my_folder/my_folder_page.dart';
 import 'package:ac_project_app/ui/page/my_page/my_page.dart';
 import 'package:ac_project_app/util/get_arguments.dart';
 import 'package:ac_project_app/util/url_valid.dart';
+import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -72,6 +73,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       if (!resumeState.value) return;
+      receiveInviteLink();
       resetResumeState();
       appPauseManager.showPopupIfPaused(context);
       getIt<FolderApi>().bulkSave();
@@ -237,5 +239,15 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
 
   void checkAppPause(BuildContext context) {
     appPauseManager.showPopupIfPaused(context);
+  }
+
+  void receiveInviteLink() {
+    final appLinks = AppLinks();
+
+    appLinks.uriLinkStream.listen((uri) {
+      if (uri.queryParameters.containsKey('token')) {
+        // TODO : Handle the invite link token
+      }
+    });
   }
 }

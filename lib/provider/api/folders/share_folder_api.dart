@@ -4,12 +4,12 @@ import 'package:ac_project_app/models/share/invite_link.dart';
 import 'package:ac_project_app/models/user/detail_user.dart';
 import 'package:ac_project_app/provider/api/custom_client.dart';
 
-class FolderApi {
-  FolderApi(this._client);
+class ShareFolderApi {
+  ShareFolderApi(this._client);
 
   final CustomClient _client;
 
-  Future<Result<InviteLink>> generateInviteLink(String folderId) async {
+  Future<Result<InviteLink>> generateInviteLink(int? folderId) async {
     final result = await _client.postUri('/folders/$folderId/invite-link');
     return result.when(
       success: (inviteLink) {

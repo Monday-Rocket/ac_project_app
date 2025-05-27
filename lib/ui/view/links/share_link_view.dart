@@ -7,6 +7,7 @@ import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/routes.dart';
+import 'package:ac_project_app/ui/view/links/share_invite_dialog.dart';
 import 'package:ac_project_app/ui/widget/buttons/upload_button.dart';
 import 'package:ac_project_app/ui/widget/dialog/bottom_dialog.dart';
 import 'package:ac_project_app/ui/widget/dialog/center_dialog.dart';
@@ -352,7 +353,7 @@ class _ShareLinkViewState extends State<ShareLinkView> {
       actions: [
         InkWell(
           onTap: () {
-            showInviteDialog(context);
+            showInviteDialog(context, folder.id);
           },
           child: Container(
             padding: EdgeInsets.all(4.w),

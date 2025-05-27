@@ -14,6 +14,7 @@ import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/provider/api/folders/link_api.dart';
 import 'package:ac_project_app/provider/tool_tip_check.dart';
 import 'package:ac_project_app/routes.dart';
+import 'package:ac_project_app/ui/view/links/share_invite_dialog.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/buttons/upload_button.dart';
 import 'package:ac_project_app/ui/widget/dialog/bottom_dialog.dart';
@@ -260,7 +261,7 @@ class MyLinkView extends StatelessWidget {
       actions: [
         InkWell(
           onTap: () {
-            showInviteDialog(context);
+            showInviteDialog(context, folder.id);
           },
           child: Container(
             padding: EdgeInsets.all(4.w),

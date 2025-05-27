@@ -38,7 +38,7 @@ def _storePassword = signingProperties.getProperty('store.password')
 def kakaoApiKey = signingProperties.getProperty('kakao.api.key')
 
 android {
-    compileSdkVersion 34
+    compileSdkVersion 35
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -59,7 +59,7 @@ android {
     defaultConfig {
         applicationId "com.mr.ac_project_app"
         minSdkVersion 24
-        targetSdkVersion 34
+        targetSdkVersion 35
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         ndk.debugSymbolLevel 'FULL'
