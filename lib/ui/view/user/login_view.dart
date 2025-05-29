@@ -23,8 +23,47 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class LoginView extends StatelessWidget {
+class LoginView extends StatefulWidget {
   const LoginView({super.key});
+
+  @override
+  State<LoginView> createState() => _LoginViewState();
+}
+
+class _LoginViewState extends State<LoginView> with WidgetsBindingObserver{
+  StreamSubscription<Uri>? receiveStreamSubscription;
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      Log.i('App resumed');
+      // Handle app resumed state if needed
+
+      Future.microtask(() async {
+        final initialLink = await AppLinks().getInitialLink();
+        Log.i('Initial dynamic link: $initialLink');
+        AppLinks().uriLinkStream.listen((uri) {
+          Log.i('Received dynamic link: $uri');
+        });
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    super.initState();
+    receiveStreamSubscription = AppLinks().uriLinkStream.listen((uri) {
+      Log.i('Received dynamic link: $uri');
+    });
+  }
+
+  @override
+  void dispose() {
+    receiveStreamSubscription?.cancel();
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,9 +100,8 @@ class LoginView extends StatelessWidget {
   }
 
   void retrieveDynamicLinkAndSignIn(BuildContext context) {
-    final appLinks = AppLinks();
-
-    appLinks.uriLinkStream.listen((uri) {
+    receiveStreamSubscription = AppLinks().uriLinkStream.listen((uri) {
+      Log.i('Received dynamic link: $uri');
       if (uri.queryParameters.isNotEmpty && uri.queryParameters['token'] != null) {
         showBottomToast('로그인 후 다시 참여해주세요.', context: context);
         return;

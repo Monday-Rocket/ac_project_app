@@ -9,7 +9,7 @@ class ShareFolderApi {
 
   final CustomClient _client;
 
-  Future<Result<InviteLink>> generateInviteLink(int? folderId) async {
+  Future<Result<InviteLink>> generateInviteToken(int? folderId) async {
     final result = await _client.postUri('/folders/$folderId/invite-link');
     return result.when(
       success: (inviteLink) {

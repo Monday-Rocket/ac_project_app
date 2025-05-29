@@ -1,4 +1,6 @@
 import 'package:ac_project_app/const/colors.dart';
+import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
+import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/provider/api/folders/share_folder_api.dart';
@@ -76,10 +78,17 @@ void showInviteDialog(BuildContext context, int? folderId) {
                       ),
                     ),
                     onPressed: () {
-                      getIt<ShareFolderApi>().generateInviteLink(folderId).then((result) {
+                      getIt<ShareFolderApi>().generateInviteToken(folderId).then((result) {
                         result.when(
                           success: (inviteLink) {
-                            Clipboard.setData(ClipboardData(text: '${inviteLink.invite_token}'));
+                            final profileInfoCubit = getIt<GetProfileInfoCubit>();
+                            final state = profileInfoCubit.state;
+                            var nickname = '링크풀';
+                            if (state is ProfileLoadedState) {
+                              nickname = state.profile.nickname;
+                            }
+
+                            Clipboard.setData(ClipboardData(text: 'https://monday-rocket.github.io/linkpool-invite-page?nickname=$nickname&id=$folderId&token=${inviteLink.invite_token}'));
                             showBottomToast(
                               context: context,
                               '링크 복사완료! 링크로 멤버를 초대해보세요',
