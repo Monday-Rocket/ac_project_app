@@ -3,8 +3,6 @@ default_platform(:ios)
 APPLICATION_ID = ENV["APPLICATION_ID"]
 BUNDLE_IDENTIFIER = ENV["BUNDLE_IDENTIFIER"]
 EXTENSION_IDENTIFIER = ENV["EXTENSION_IDENTIFIER"]
-PROVISIONING_PROFILE_SPECIFIER = ENV["PROVISIONING_PROFILE_SPECIFIER"]
-EXTENSION_PROVISIONING_PROFILE_SPECIFIER = ENV["EXTENSION_PROVISIONING_PROFILE_SPECIFIER"]
 TEMP_KEYCHAIN_USER = ENV["TEMP_KEYCHAIN_USER"]
 TEMP_KEYCHAIN_PASSWORD = ENV["TEMP_KEYCHAIN_PASSWORD"]
 def delete_temp_keychain(name)
@@ -45,7 +43,8 @@ platform :ios do
       export_method: "app-store",
       export_options: {
         provisioningProfiles: {
-          APPLICATION_ID => PROVISIONING_PROFILE_SPECIFIER
+          "com.mr.acProjectApp" => "match AppStore com.mr.acProjectApp",
+          "com.mr.acProjectApp.Extension" => "match AppStore com.mr.acProjectApp.Extension"
         }
       }
     )

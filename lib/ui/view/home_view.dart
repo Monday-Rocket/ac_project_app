@@ -12,9 +12,9 @@ import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/provider/api/folders/folder_api.dart';
 import 'package:ac_project_app/provider/api/folders/share_folder_api.dart';
 import 'package:ac_project_app/provider/check_clipboard_link.dart';
+import 'package:ac_project_app/provider/global_variables.dart';
 import 'package:ac_project_app/provider/kakao/kakao.dart';
 import 'package:ac_project_app/provider/manager/app_pause_manager.dart';
-import 'package:ac_project_app/provider/upload_state_variable.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/page/home/home_page.dart';
 import 'package:ac_project_app/ui/page/my_folder/my_folder_page.dart';
@@ -47,6 +47,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     saveLinksFromOutside();
     processAfterGetContext();
+    receiveInviteLink();
     super.initState();
   }
 
@@ -76,7 +77,6 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       if (!resumeState.value) return;
-      receiveInviteLink();
       resetResumeState();
       appPauseManager.showPopupIfPaused(context);
       getIt<FolderApi>().bulkSave();
@@ -87,23 +87,20 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
 
   void navigateToUploadViewIfClipboardIsValid() {
     if (isNotUploadState) {
-      Clipboard.hasStrings().then((hasData) {
-        if (!hasData) return;
-        Clipboard.getData(Clipboard.kTextPlain).then((value) {
-          isValidUrl(value?.text ?? '').then((isValid) {
-            if (isValid) {
-              final url = value!.text;
-              if (isClipboardLink(url)) return;
-              Clipboard.setData(const ClipboardData(text: ''));
-              Navigator.pushNamed(
-                context,
-                Routes.upload,
-                arguments: {
-                  'url': url,
-                },
-              );
-            }
-          });
+      Clipboard.getData(Clipboard.kTextPlain).then((value) {
+        isValidUrl(value?.text ?? '').then((isValid) {
+          if (isValid) {
+            final url = value!.text;
+            if (isClipboardLink(url)) return;
+            Clipboard.setData(const ClipboardData(text: ''));
+            Navigator.pushNamed(
+              context,
+              Routes.upload,
+              arguments: {
+                'url': url,
+              },
+            );
+          }
         });
       });
     }
@@ -248,43 +245,49 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
   }
 
   void receiveInviteLink() {
-    final appLinks = AppLinks();
-
-    appLinks.uriLinkStream.listen((uri) {
+    AppLinks().uriLinkStream.listen((uri) {
       Log.i('Received URI: $uri');
-      if (uri.queryParameters.containsKey('token') && uri.queryParameters.containsKey('id')) {
-        if (!mounted) return;
-        final inviteToken = uri.queryParameters['token'] ?? '';
-        final folderId = uri.queryParameters['id'] ?? '';
-        getIt<ShareFolderApi>().acceptInviteLink(folderId, inviteToken).then((result) {
-          result.map(
-            success: (_) async {
-              (await getIt<FolderApi>().getMyFoldersWithoutUnclassified()).map(
-                success: (data) {
-                  for (final folder in data.data) {
-                    if (folder.id == int.parse(folderId)) {
-                      Navigator.pushNamed(context, Routes.sharedLinks, arguments: {
-                        'folder': folder,
-                        'isAdmin': folder.isAdmin,
-                      }).then((_) {
-                        context.read<GetFoldersCubit>().getFolders();
-                      });
-                      break;
-                    }
-                  }
-                },
-                error: (msg) {},
-              );
-
-              showBottomToast(
-                context: context,
-                '초대 링크를 수락했어요!',
-              );
-            },
-            error: (msg) {},
-          );
-        });
-      }
+      if (!mounted) return;
+      processInviteLink(uri);
     });
+    if (appLinkUrl.isNotEmpty) {
+      processInviteLink(Uri.parse(appLinkUrl));
+      appLinkUrl = '';
+    }
+  }
+
+  void processInviteLink(Uri uri) {
+    if (uri.queryParameters.containsKey('token') && uri.queryParameters.containsKey('id')) {
+      final inviteToken = uri.queryParameters['token'] ?? '';
+      final folderId = uri.queryParameters['id'] ?? '';
+      getIt<ShareFolderApi>().acceptInviteLink(folderId, inviteToken).then((result) {
+        result.map(
+          success: (_) async {
+            (await getIt<FolderApi>().getMyFoldersWithoutUnclassified()).map(
+              success: (data) {
+                for (final folder in data.data) {
+                  if (folder.id == int.parse(folderId)) {
+                    Navigator.pushNamed(context, Routes.sharedLinks, arguments: {
+                      'folder': folder,
+                      'isAdmin': folder.isAdmin,
+                    }).then((_) {
+                      context.read<GetFoldersCubit>().getFolders();
+                    });
+                    break;
+                  }
+                }
+              },
+              error: (msg) {},
+            );
+
+            showBottomToast(
+              context: context,
+              '초대 링크를 수락했어요!',
+            );
+          },
+          error: (msg) {},
+        );
+      });
+    }
   }
 }

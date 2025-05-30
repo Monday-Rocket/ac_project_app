@@ -50,22 +50,12 @@
 			</array>
 		</dict>
 		<dict>
+		    <key>CFBundleURLSchemes</key>
+        	<array>
+        		<string>linkpool</string>
+        	</array>
 			<key>CFBundleURLName</key>
-			<string>com.mr.acProjectApp</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>linkpool</string>
-			</array>
-		</dict>
-		<dict>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-			<key>CFBundleURLName</key>
-			<string>com.mr.acProjectApp</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>linkpool</string>
-			</array>
+			<string>boring-km.dev</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeRole</key>

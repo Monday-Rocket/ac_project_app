@@ -8,6 +8,7 @@ import 'package:ac_project_app/cubits/login/login_type.dart';
 import 'package:ac_project_app/cubits/login/login_user_state.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/user/user.dart' as custom;
+import 'package:ac_project_app/provider/global_variables.dart';
 import 'package:ac_project_app/provider/login/email_login.dart';
 import 'package:ac_project_app/provider/share_data_provider.dart';
 import 'package:ac_project_app/routes.dart';
@@ -30,38 +31,21 @@ class LoginView extends StatefulWidget {
   State<LoginView> createState() => _LoginViewState();
 }
 
-class _LoginViewState extends State<LoginView> with WidgetsBindingObserver{
+class _LoginViewState extends State<LoginView> {
   StreamSubscription<Uri>? receiveStreamSubscription;
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      Log.i('App resumed');
-      // Handle app resumed state if needed
-
-      Future.microtask(() async {
-        final initialLink = await AppLinks().getInitialLink();
-        Log.i('Initial dynamic link: $initialLink');
-        AppLinks().uriLinkStream.listen((uri) {
-          Log.i('Received dynamic link: $uri');
-        });
-      });
-    }
-  }
-
-  @override
   void initState() {
-    WidgetsBinding.instance.addObserver(this);
     super.initState();
     receiveStreamSubscription = AppLinks().uriLinkStream.listen((uri) {
-      Log.i('Received dynamic link: $uri');
+      Log.i('Received in LoginView dynamic link: $uri');
+      appLinkUrl = uri.toString();
     });
   }
 
   @override
   void dispose() {
     receiveStreamSubscription?.cancel();
-    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 

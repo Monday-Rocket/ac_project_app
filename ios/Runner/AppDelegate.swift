@@ -10,15 +10,7 @@ import app_links
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
-    GeneratedPluginRegistrant.register(with: self)
-      
-      // Retrieve the link from parameters
-    if let url = AppLinks.shared.getLink(launchOptions: launchOptions) {
-          // We have a link, propagate it to your Flutter app or not
-        AppLinks.shared.handleLink(url: url)
-        return true // Returning true will stop the propagation to other packages
-    }
-      
+
     let controller : FlutterViewController = window?.rootViewController as! FlutterViewController
     let localPathChannel = FlutterMethodChannel(name: "share_data_provider",
                                                 binaryMessenger: controller.binaryMessenger)
@@ -42,7 +34,8 @@ import app_links
       }
       
     })
-    
+
+    GeneratedPluginRegistrant.register(with: self)
       
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
@@ -54,6 +47,7 @@ import app_links
     } else if (NidOAuth.shared.handleURL(url) == true) { // If the URL was passed from the Naver app
         return true
     } else {
+      AppLinks.shared.handleLink(url: url)
       return true
     }
   }

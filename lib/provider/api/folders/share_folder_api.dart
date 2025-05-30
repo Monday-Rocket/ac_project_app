@@ -37,7 +37,7 @@ class ShareFolderApi {
   ) async {
     final result = await _client.postUri(
       '/folders/$folderId/invite-link/accept',
-      body: {'token': inviteToken},
+      body: {'invite_token': inviteToken},
     );
     return result.when(
       success: (_) => const Result.success(null),
