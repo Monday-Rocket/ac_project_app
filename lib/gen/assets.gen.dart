@@ -109,6 +109,10 @@ class $AssetsImagesGen {
   AssetGenImage get kakaoIcon =>
       const AssetGenImage('assets/images/kakao_icon.webp');
 
+  /// File path: assets/images/lavel_crown.png
+  AssetGenImage get lavelCrown =>
+      const AssetGenImage('assets/images/lavel_crown.png');
+
   /// File path: assets/images/list_icon.svg
   String get listIcon => 'assets/images/list_icon.svg';
 
@@ -140,6 +144,9 @@ class $AssetsImagesGen {
       const AssetGenImage('assets/images/paper_plane.webp');
 
   $AssetsImagesProfileGen get profile => const $AssetsImagesProfileGen();
+
+  /// File path: assets/images/small_right_arrow.svg
+  String get smallRightArrow => 'assets/images/small_right_arrow.svg';
 
   /// File path: assets/images/toggle_off.svg
   String get toggleOff => 'assets/images/toggle_off.svg';
@@ -186,6 +193,7 @@ class $AssetsImagesGen {
         icWriteComment,
         inviteUser,
         kakaoIcon,
+        lavelCrown,
         listIcon,
         loginLogo,
         loginLogoText,
@@ -194,6 +202,7 @@ class $AssetsImagesGen {
         myFolderBack,
         naverIcon,
         paperPlane,
+        smallRightArrow,
         toggleOff,
         toggleOn,
         uploadPlus,

@@ -1,4 +1,5 @@
 import 'package:ac_project_app/ui/page/my_page/my_page.dart';
+import 'package:ac_project_app/ui/view/delegate_admin_view.dart';
 import 'package:ac_project_app/ui/view/home_view.dart';
 import 'package:ac_project_app/ui/view/links/link_detail_view.dart';
 import 'package:ac_project_app/ui/view/links/my_link_view.dart';
@@ -27,6 +28,7 @@ class Routes {
   static const userFeed = '/userFeed';
   static const sharedLinks = '/sharedLinks';
   static const sharedLinkSetting = '/sharedLinkSetting';
+  static const delegateAdmin = '/delegateAdmin';
 
   // user
   static const profile = '/profile';
@@ -85,6 +87,8 @@ class Pages {
         return router.create(child: const ShareLinkView());
       case Routes.sharedLinkSetting:
         return router.create(child: const SharedLinkSettingView());
+      case Routes.delegateAdmin:
+        return router.create(child: const DelegateAdminView());
       default:
         return null;
     }

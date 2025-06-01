@@ -22,6 +22,7 @@ import 'package:ac_project_app/ui/widget/add_folder/folder_add_title.dart';
 import 'package:ac_project_app/ui/widget/add_folder/horizontal_folder_list.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/dialog/center_dialog.dart';
+import 'package:ac_project_app/ui/widget/dialog/share_folder_delete_dialog.dart';
 import 'package:ac_project_app/ui/widget/move_to_my_folder_dialog.dart';
 import 'package:ac_project_app/ui/widget/rename_folder/show_rename_folder_dialog.dart';
 import 'package:flutter/material.dart';
@@ -47,9 +48,7 @@ Future<bool?> showMyLinkOptionsDialog(
             child: Padding(
               padding: EdgeInsets.only(
                 top: 29.w,
-                bottom: Platform.isAndroid
-                    ? MediaQuery.of(context).padding.bottom
-                    : 16.w,
+                bottom: Platform.isAndroid ? MediaQuery.of(context).padding.bottom : 16.w,
               ),
               child: Column(
                 children: [
@@ -86,8 +85,7 @@ Future<bool?> showMyLinkOptionsDialog(
                                 parentContext: parentContext,
                                 callback: () => Navigator.pop(context),
                                 icon: true,
-                                iconImage: Assets.images.icLockColor
-                                    .image(width: 27.w, height: 27.w),
+                                iconImage: Assets.images.icLockColor.image(width: 27.w, height: 27.w),
                               );
                             }
                           },
@@ -150,10 +148,7 @@ Future<bool?> showChangeFolderDialog(Link link, BuildContext parentContext) {
                   child: Padding(
                     padding: EdgeInsets.only(
                       top: 29.w,
-                      bottom: (Platform.isAndroid
-                              ? MediaQuery.of(context).padding.bottom
-                              : 16.w) +
-                          30.w,
+                      bottom: (Platform.isAndroid ? MediaQuery.of(context).padding.bottom : 16.w) + 30.w,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -182,9 +177,7 @@ Future<bool?> showChangeFolderDialog(Link link, BuildContext parentContext) {
                             folderContext: foldersContext,
                             state: state,
                             callback: (_, folder) {
-                              getIt<LinkApi>()
-                                  .changeFolder(link, folder.id!)
-                                  .then((result) {
+                              getIt<LinkApi>().changeFolder(link, folder.id!).then((result) {
                                 Navigator.pop(context);
                                 Navigator.pop(context);
                                 Navigator.pop(context, 'changed');
@@ -233,9 +226,7 @@ Future<bool?> showLinkOptionsDialog(
             child: Padding(
               padding: EdgeInsets.only(
                 top: 29.w,
-                bottom: Platform.isAndroid
-                    ? MediaQuery.of(context).viewInsets.bottom
-                    : 4.w,
+                bottom: Platform.isAndroid ? MediaQuery.of(context).viewInsets.bottom : 4.w,
               ),
               child: Column(
                 children: [
@@ -319,9 +310,7 @@ Future<bool?> showUserOptionDialog(
             child: Padding(
               padding: EdgeInsets.only(
                 top: 29.w,
-                bottom: Platform.isAndroid
-                    ? MediaQuery.of(context).padding.bottom
-                    : 16.w,
+                bottom: Platform.isAndroid ? MediaQuery.of(context).padding.bottom : 16.w,
               ),
               child: Column(
                 children: [
@@ -440,8 +429,7 @@ void saveEmptyFolder(
   BuildContext parentContext,
   String folderName,
   FolderVisibleState visibleState, {
-  void Function(BuildContext context, List<Folder> folders, int index)?
-      moveToMyLinksView,
+  void Function(BuildContext context, List<Folder> folders, int index)? moveToMyLinksView,
   void Function()? callback,
   bool? hasNotUnclassified,
 }) {
@@ -460,10 +448,7 @@ void saveEmptyFolder(
       showBottomToast(context: context, '새로운 폴더가 생성되었어요!');
 
       if (hasNotUnclassified ?? false) {
-        parentContext
-            .read<GetFoldersCubit>()
-            .getFoldersWithoutUnclassified()
-            .then((_) {
+        parentContext.read<GetFoldersCubit>().getFoldersWithoutUnclassified().then((_) {
           runCallback(
             parentContext,
             moveToMyLinksView: moveToMyLinksView,
@@ -487,8 +472,7 @@ void saveEmptyFolder(
 
 void runCallback(
   BuildContext parentContext, {
-  void Function(BuildContext context, List<Folder> folders, int index)?
-      moveToMyLinksView,
+  void Function(BuildContext context, List<Folder> folders, int index)? moveToMyLinksView,
   void Function()? callback,
 }) {
   final folders = parentContext.read<GetFoldersCubit>().folders;
@@ -521,9 +505,7 @@ void showFolderOptionsDialog(
             child: Padding(
               padding: EdgeInsets.only(
                 top: 29.w,
-                bottom: Platform.isAndroid
-                    ? MediaQuery.of(context).padding.bottom
-                    : 0,
+                bottom: Platform.isAndroid ? MediaQuery.of(context).padding.bottom : 0,
               ),
               child: Column(
                 children: [
@@ -596,12 +578,9 @@ void showFolderOptionsDialog(
                         BottomListItem(
                           '카카오톡 폴더 공유',
                           callback: () {
-                            final profileInfoCubit =
-                                getIt<GetProfileInfoCubit>();
+                            final profileInfoCubit = getIt<GetProfileInfoCubit>();
                             if (profileInfoCubit.state is ProfileLoadedState) {
-                              final profile =
-                                  (profileInfoCubit.state as ProfileLoadedState)
-                                      .profile;
+                              final profile = (profileInfoCubit.state as ProfileLoadedState).profile;
 
                               if (currFolder.visible ?? false) {
                                 Kakao.sendFolderKakaoShare(
@@ -615,8 +594,7 @@ void showFolderOptionsDialog(
                                   parentContext: parentContext,
                                   callback: () => Navigator.pop(context),
                                   icon: true,
-                                  iconImage: Assets.images.icLockColor
-                                      .image(width: 27.w, height: 27.w),
+                                  iconImage: Assets.images.icLockColor.image(width: 27.w, height: 27.w),
                                 );
                               }
                             }
@@ -636,7 +614,8 @@ void showFolderOptionsDialog(
 }
 
 void showSharedFolderOptionsDialog(
-  BuildContext parentContext, Folder folder, {
+  BuildContext parentContext,
+  Folder folder, {
   bool isAdmin = false,
 }) {
   Column SharedFolderMenu() {
@@ -644,12 +623,6 @@ void showSharedFolderOptionsDialog(
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          BottomListItem(
-            '공유하기',
-            callback: () {
-              // TODO
-            },
-          ),
           BottomListItem(
             '폴더 설정',
             callback: () {
@@ -661,6 +634,20 @@ void showSharedFolderOptionsDialog(
                 }
               });
             },
+          ),
+          BottomListItem(
+            '폴더 삭제',
+            callback: () {
+              deleteSharedFolderDialog(
+                parentContext,
+                folder,
+                callback: () {},
+              );
+            },
+          ),
+          BottomListItem(
+            '멤버 관리',
+            callback: () {},
           ),
         ],
       );
@@ -701,9 +688,7 @@ void showSharedFolderOptionsDialog(
             child: Padding(
               padding: EdgeInsets.only(
                 top: 29.w,
-                bottom: Platform.isAndroid
-                    ? MediaQuery.of(context).padding.bottom
-                    : 0,
+                bottom: Platform.isAndroid ? MediaQuery.of(context).padding.bottom : 0,
               ),
               child: Column(
                 children: [
@@ -753,14 +738,11 @@ void showSharedFolderOptionsDialog(
   });
 }
 
-
 void changeFolderVisible(BuildContext context, Folder folder) {
   context.read<GetFoldersCubit>().transferVisible(folder).then((value) {
     Navigator.pop(context);
     if (value) {
-      context
-          .read<GetSelectedFolderCubit>()
-          .update(folder.copyWith(visible: !(folder.visible ?? false)));
+      context.read<GetSelectedFolderCubit>().update(folder.copyWith(visible: !(folder.visible ?? false)));
     }
   });
 }
@@ -779,9 +761,7 @@ void changeFolderName(
     if (name.isNotEmpty) {
       Navigator.pop(context, true);
       context.read<GetFoldersCubit>().getFolders();
-      context
-          .read<GetSelectedFolderCubit>()
-          .update(currFolder.copyWith(name: name));
+      context.read<GetSelectedFolderCubit>().update(currFolder.copyWith(name: name));
     }
   });
 }
