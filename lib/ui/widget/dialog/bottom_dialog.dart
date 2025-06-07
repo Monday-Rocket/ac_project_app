@@ -31,12 +31,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:share_plus/share_plus.dart';
 
 Future<bool?> showMyLinkOptionsDialog(
-  Link link,
-  BuildContext parentContext, {
-  bool isShared = false,
-  void Function()? popCallback,
-  bool? linkVisible,
-}) {
+    Link link,
+    BuildContext parentContext, {
+      bool isShared = false,
+      void Function()? popCallback,
+      bool? linkVisible,
+    }) {
   return showModalBottomSheet<bool?>(
     backgroundColor: Colors.transparent,
     context: parentContext,
@@ -213,11 +213,11 @@ Future<bool?> showChangeFolderDialog(Link link, BuildContext parentContext) {
 }
 
 Future<bool?> showLinkOptionsDialog(
-  Link link,
-  BuildContext parentContext, {
-  bool isShared = false,
-  void Function()? callback,
-}) {
+    Link link,
+    BuildContext parentContext, {
+      bool isShared = false,
+      void Function()? callback,
+    }) {
   return showModalBottomSheet<bool?>(
     backgroundColor: Colors.transparent,
     context: parentContext,
@@ -300,10 +300,10 @@ Future<bool?> showLinkOptionsDialog(
 }
 
 Future<bool?> showUserOptionDialog(
-  BuildContext parentContext,
-  DetailUser user, {
-  void Function()? callback,
-}) {
+    BuildContext parentContext,
+    DetailUser user, {
+      void Function()? callback,
+    }) {
   return showModalBottomSheet<bool?>(
     backgroundColor: Colors.transparent,
     context: parentContext,
@@ -431,14 +431,14 @@ BoxDecoration DialogDecoration() {
 }
 
 void saveEmptyFolder(
-  BuildContext context,
-  BuildContext parentContext,
-  String folderName,
-  FolderVisibleState visibleState, {
-  void Function(BuildContext context, List<Folder> folders, int index)? moveToMyLinksView,
-  void Function()? callback,
-  bool? hasNotUnclassified,
-}) {
+    BuildContext context,
+    BuildContext parentContext,
+    String folderName,
+    FolderVisibleState visibleState, {
+      void Function(BuildContext context, List<Folder> folders, int index)? moveToMyLinksView,
+      void Function()? callback,
+      bool? hasNotUnclassified,
+    }) {
   if (folderName.isEmpty) {
     return;
   }
@@ -477,21 +477,21 @@ void saveEmptyFolder(
 }
 
 void runCallback(
-  BuildContext parentContext, {
-  void Function(BuildContext context, List<Folder> folders, int index)? moveToMyLinksView,
-  void Function()? callback,
-}) {
+    BuildContext parentContext, {
+      void Function(BuildContext context, List<Folder> folders, int index)? moveToMyLinksView,
+      void Function()? callback,
+    }) {
   final folders = parentContext.read<GetFoldersCubit>().folders;
   moveToMyLinksView?.call(parentContext, folders, folders.length - 1);
   callback?.call();
 }
 
 void showFolderOptionsDialog(
-  List<Folder> folders,
-  Folder currFolder,
-  BuildContext parentContext, {
-  bool fromLinkView = false,
-}) {
+    List<Folder> folders,
+    Folder currFolder,
+    BuildContext parentContext, {
+      bool fromLinkView = false,
+    }) {
   final visible = currFolder.visible ?? false;
   showModalBottomSheet<void>(
     backgroundColor: Colors.transparent,
@@ -616,11 +616,11 @@ void showFolderOptionsDialog(
 }
 
 void showSharedFolderOptionsDialogFromFolders(
-  BuildContext parentContext,
-  Folder folder, {
-  bool isAdmin = false,
-  void Function()? callback,
-}) {
+    BuildContext parentContext,
+    Folder folder, {
+      bool isAdmin = false,
+      void Function()? callback,
+    }) {
   Column SharedFolderMenu() {
     if (isAdmin) {
       return Column(
@@ -754,11 +754,11 @@ void showSharedFolderOptionsDialogFromFolders(
 }
 
 void showSharedFolderOptionsDialogInShareFolder(
-  BuildContext parentContext,
-  Folder folder, {
-  bool isAdmin = false,
-  void Function()? callback,
-}) {
+    BuildContext parentContext,
+    Folder folder, {
+      bool isAdmin = false,
+      void Function()? callback,
+    }) {
   Column SharedFolderMenu() {
     if (isAdmin) {
       return Column(
@@ -901,10 +901,10 @@ void changeFolderVisible(BuildContext context, Folder folder) {
 }
 
 void changeFolderName(
-  BuildContext context,
-  List<Folder> folders,
-  Folder currFolder,
-) {
+    BuildContext context,
+    List<Folder> folders,
+    Folder currFolder,
+    ) {
   showRenameFolderDialog(
     context,
     currFolder: currFolder,

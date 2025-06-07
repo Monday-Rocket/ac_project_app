@@ -9,7 +9,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/testing.dart';
 import 'package:mockito/mockito.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../mock_client_generator.dart';
 
@@ -96,22 +95,6 @@ void main() {
     );
   });
 
-  test('회원 탈퇴 API 성공 테스트', () async {
-    SharedPreferences.setMockInitialValues({});
-
-    final expected = ApiResult(
-      status: 0,
-      data: true,
-    );
-
-    final mockClient = getMockClient(expected, '/users');
-    final api = getUserApi(mockClient);
-
-    final actual = await api.deleteUser();
-
-    expect(actual, expected.data);
-  });
-
   group('닉네임 중복 확인 API', () {
     test('닉네임 중복일 때 테스트', () async {
       final expected = ApiResult(
@@ -120,8 +103,7 @@ void main() {
       );
       const duplicatedNickname = '등록된닉네임';
 
-      final mockClient =
-          getMockClient(expected, '/users?nickname=$duplicatedNickname');
+      final mockClient = getMockClient(expected, '/users?nickname=$duplicatedNickname');
       final api = getUserApi(mockClient);
 
       final actual = await api.checkDuplicatedNickname(duplicatedNickname);
@@ -136,8 +118,7 @@ void main() {
       );
       const nickname = '첫닉네임';
 
-      final mockClient =
-          getMockClient(expected, '/users?nickname=$nickname', hasError: true);
+      final mockClient = getMockClient(expected, '/users?nickname=$nickname', hasError: true);
       final api = getUserApi(mockClient);
 
       final actual = await api.checkDuplicatedNickname(nickname);

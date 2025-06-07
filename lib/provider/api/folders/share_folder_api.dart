@@ -32,9 +32,9 @@ class ShareFolderApi {
   }
 
   Future<Result<void>> acceptInviteLink(
-    String folderId,
-    String inviteToken,
-  ) async {
+      String folderId,
+      String inviteToken,
+      ) async {
     final result = await _client.postUri(
       '/folders/$folderId/invite-link/accept',
       body: {'invite_token': inviteToken},
@@ -60,9 +60,9 @@ class ShareFolderApi {
   }
 
   Future<Result<void>> delegateFolderAdmin(
-    String folderId,
-    String userId,
-  ) async {
+      String folderId,
+      String userId,
+      ) async {
     final result = await _client.postUri(
       '/folders/$folderId/admin/delegate',
       body: {'memberId': userId},
@@ -74,9 +74,9 @@ class ShareFolderApi {
   }
 
   Future<Result<void>> removeFolderMember(
-    String folderId,
-    String userId,
-  ) async {
+      String folderId,
+      String userId,
+      ) async {
     final result = await _client.postUri('/folders/$folderId/$userId/displace');
     return result.when(
       success: (_) => const Result.success(null),

@@ -46,7 +46,7 @@ void showPopUp({
                     if (icon) iconImage,
                     Container(
                       margin:
-                          EdgeInsets.only(top: icon ? 14.h : 0, bottom: 10.w),
+                      EdgeInsets.only(top: icon ? 14.h : 0, bottom: 10.w),
                       child: Text(
                         title,
                         style: TextStyle(
@@ -164,7 +164,7 @@ void showEmailPopUp({
                     if (icon) iconImage,
                     Container(
                       margin:
-                          EdgeInsets.only(top: icon ? 14.h : 0, bottom: 10.h.w),
+                      EdgeInsets.only(top: icon ? 14.h : 0, bottom: 10.h.w),
                       child: Text(
                         title,
                         style: TextStyle(
@@ -529,7 +529,7 @@ void showPausePopup({
                     ),
                     Container(
                       margin:
-                          EdgeInsets.only(top: icon ? 14.h : 0, bottom: 10.w),
+                      EdgeInsets.only(top: icon ? 14.h : 0, bottom: 10.w),
                       child: Text(
                         title,
                         style: TextStyle(

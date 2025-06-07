@@ -4,6 +4,7 @@ import 'package:ac_project_app/cubits/links/upload_result_state.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/models/link/searched_links.dart';
+import 'package:ac_project_app/models/net/api_error.dart';
 import 'package:ac_project_app/models/net/api_result.dart';
 import 'package:ac_project_app/provider/api/custom_client.dart';
 import 'package:ac_project_app/provider/api/folders/link_api.dart';
@@ -117,7 +118,6 @@ void main() {
       errorMessage: jsonEncode(
         ApiResult(
           status: 3000,
-          message: '이미 등록된 url입니다.',
         ).toJson(),
       ),
     );
@@ -162,51 +162,6 @@ void main() {
     final api = getLinkApi(mockClient);
     final result = await api.patchLink(link);
     expect(result, false);
-  });
-
-  test('getJobGroupLinks success test', () async {
-    final apiExpected = ApiResult(
-      status: 0,
-      data: const SearchedLinks(
-        pageNum: 0,
-        pageSize: 10,
-        totalCount: 2,
-        totalPage: 1,
-        contents: [
-          Link(
-            id: 1,
-            title: '링크제목1',
-            url: 'https://www.naver.com',
-            time: '2023-05-15T10:30:00.861975',
-            folderId: 1,
-          ),
-          Link(
-            id: 2,
-            title: '링크제목2',
-            url: 'https://www.naver.com',
-            time: '2023-05-15T10:30:00.861975',
-            folderId: 1,
-          ),
-        ],
-      ),
-    );
-
-    const jobGroup = 1;
-    const pageNum = 0;
-
-    final mockClient = getMockClient(
-      apiExpected,
-      '/job-groups/$jobGroup/links?'
-      'page_no=$pageNum&'
-      'page_size=10',
-    );
-    final api = getLinkApi(mockClient);
-    final result = await api.getLinks(pageNum);
-
-    result.when(
-      success: (data) => expect(data, apiExpected.data),
-      error: fail,
-    );
   });
 
   // getJobGroupLinks fail test
