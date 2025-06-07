@@ -12,12 +12,12 @@ void main() {
       expect(actual, '1');
     });
 
-    test('-1234를 변환하면 "-1,234"이다', () {
+    test('-1234를 변환하면 음수는 0으로 바꾼다.', () {
       const number = -1234;
 
       final actual = addCommasFrom(number);
 
-      expect(actual, '-1,234');
+      expect(actual, '0');
     });
 
     test('1234567890을 변환하면 "1,234,567,890"이다', () {
