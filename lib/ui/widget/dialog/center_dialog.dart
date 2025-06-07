@@ -1,10 +1,8 @@
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/folders/get_my_folders_cubit.dart';
-import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/gen/fonts.gen.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
-import 'package:ac_project_app/provider/api/folders/share_folder_api.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/text/custom_font.dart';
 import 'package:flutter/material.dart';
@@ -248,8 +246,7 @@ void showEmailPopUp({
   );
 }
 
-void deleteFolderDialog(BuildContext context, Folder folder,
-    {void Function()? callback}) {
+void deleteFolderDialog(BuildContext context, Folder folder, {void Function()? callback}) {
   final width = MediaQuery.of(context).size.width;
   showDialog<bool?>(
     context: context,

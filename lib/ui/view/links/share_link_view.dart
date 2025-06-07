@@ -1,8 +1,9 @@
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/const/strings.dart';
-import 'package:ac_project_app/cubits/folders/get_my_folders_cubit.dart';
 import 'package:ac_project_app/cubits/links/link_list_state.dart';
 import 'package:ac_project_app/cubits/links/links_from_selected_folder_cubit.dart';
+import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
+import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/link/link.dart';
@@ -10,8 +11,8 @@ import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/view/links/share_invite_dialog.dart';
 import 'package:ac_project_app/ui/widget/buttons/upload_button.dart';
 import 'package:ac_project_app/ui/widget/dialog/bottom_dialog.dart';
-import 'package:ac_project_app/ui/widget/dialog/center_dialog.dart';
 import 'package:ac_project_app/ui/widget/link_hero.dart';
+import 'package:ac_project_app/util/custom_debounce.dart';
 import 'package:ac_project_app/util/get_arguments.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:ac_project_app/util/number_commas.dart';
@@ -34,6 +35,20 @@ class ShareLinkView extends StatefulWidget {
 
 class _ShareLinkViewState extends State<ShareLinkView> {
   final textController = TextEditingController();
+  late CustomDebounce debounce;
+
+  @override
+  void initState() {
+    super.initState();
+    debounce = CustomDebounce(delay: const Duration(seconds: 1));
+  }
+
+  @override
+  void dispose() {
+    textController.dispose();
+    debounce.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,8 +57,15 @@ class _ShareLinkViewState extends State<ShareLinkView> {
     final isAdmin = arguments['isAdmin'] as bool;
     final links = <Link>[];
 
-    return BlocProvider(
-      create: (_) => LinksFromSelectedFolderCubit(folder, 0),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => LinksFromSelectedFolderCubit(folder, 0),
+        ),
+        BlocProvider(
+          create: (context) => GetProfileInfoCubit(),
+        ),
+      ],
       child: Scaffold(
         backgroundColor: Colors.white,
         body: SafeArea(
@@ -55,20 +77,25 @@ class _ShareLinkViewState extends State<ShareLinkView> {
                     onNotification: (scrollEnd) {
                       final metrics = scrollEnd.metrics;
                       if (metrics.atEdge && metrics.pixels != 0) {
-                        context.read<LinksFromSelectedFolderCubit>().loadMore();
+                        Log.i('Reached the end of the list, loading more links');
+                        cubitContext.read<LinksFromSelectedFolderCubit>().loadMore();
                       }
                       return true;
                     },
                     child: CustomScrollView(
                       slivers: [
-                        buildTopAppBar(context, folder, isAdmin),
+                        buildTopAppBar(context, cubitContext, folder, isAdmin),
                         buildTitleBar(folder),
                         buildContentsCountText(state, folder.membersCount),
-                        SearchBar(),
+                        SearchBar(
+                          totalLinks: links,
+                          cubitContext: cubitContext,
+                        ),
                         BodyList(
                           folder: folder,
                           width: MediaQuery.of(context).size.width,
                           context: context,
+                          cubitContext: cubitContext,
                           totalLinks: links,
                           state: state,
                           foldersContext: context,
@@ -80,7 +107,8 @@ class _ShareLinkViewState extends State<ShareLinkView> {
                     context,
                     callback: () {
                       links.clear();
-                      context.read<LinksFromSelectedFolderCubit>().refresh();
+                      cubitContext.read<LinksFromSelectedFolderCubit>().refresh();
+                      Log.i('Upload button clicked, refreshing links');
                     },
                   ),
                 ],
@@ -96,6 +124,7 @@ class _ShareLinkViewState extends State<ShareLinkView> {
     required Folder folder,
     required double width,
     required BuildContext context,
+    required BuildContext cubitContext,
     required List<Link> totalLinks,
     required LinkListState state,
     required BuildContext foldersContext,
@@ -116,6 +145,7 @@ class _ShareLinkViewState extends State<ShareLinkView> {
               totalLinks[index],
               totalLinks,
               foldersContext,
+              cubitContext,
               folder,
               index,
               width,
@@ -134,38 +164,50 @@ class _ShareLinkViewState extends State<ShareLinkView> {
     Link link,
     List<Link> totalLinks,
     BuildContext foldersContext,
+    BuildContext cubitContext,
     Folder folder,
     int index,
     double width,
   ) {
     final isOdd = index.isOdd;
-    return Padding(
-      padding: EdgeInsets.only(left: isOdd ? 0 : 24.w, right: isOdd ? 24.w : 0),
-      child: InkWell(
-        onTap: () {
-          Navigator.pushNamed(
-            context,
-            Routes.linkDetail,
-            arguments: {
-              'link': link,
-              'isMine': true,
-              'visible': folder.visible,
-            },
-          ).then((result) {
-            Log.i(result);
-            if (result == 'changed') {
-              // update
-              totalLinks.clear();
 
-              foldersContext.read<GetFoldersCubit>().getFolders();
-              context.read<LinksFromSelectedFolderCubit>().getSelectedLinks(folder, 0);
-            } else if (result == 'deleted') {
-              Navigator.pop(context);
-            }
-          });
-        },
-        child: buildBodyListItem(width, link, isOdd),
-      ),
+    return BlocBuilder<GetProfileInfoCubit, ProfileState>(
+      builder: (profileInfoCubit, state) {
+        if (state is ProfileLoadingState || state is ProfileInitialState) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (state is ProfileErrorState) {
+          return Center(child: Text(state.message));
+        }
+
+        final isMine = link.user?.id == (state as ProfileLoadedState).profile.id;
+        return Padding(
+          padding: EdgeInsets.only(left: isOdd ? 0 : 24.w, right: isOdd ? 24.w : 0),
+          child: GestureDetector(
+            onTap: () {
+              Navigator.pushNamed(
+                context,
+                Routes.linkDetail,
+                arguments: {
+                  'link': link,
+                  'isMine': isMine,
+                  'visible': folder.visible,
+                  'isShared': true,
+                },
+              ).then((result) {
+                Log.i(result);
+                if (result == 'changed') {
+                  // update
+                  totalLinks.clear();
+                  cubitContext.read<LinksFromSelectedFolderCubit>().getSelectedLinks(folder, 0);
+                } else if (result == 'deleted') {
+                  cubitContext.read<LinksFromSelectedFolderCubit>().refresh();
+                }
+              });
+            },
+            child: buildBodyListItem(width, link, isOdd),
+          ),
+        );
+      },
     );
   }
 
@@ -330,6 +372,7 @@ class _ShareLinkViewState extends State<ShareLinkView> {
 
   Widget buildTopAppBar(
     BuildContext context,
+    BuildContext cubitContext,
     Folder folder,
     bool isAdmin,
   ) {
@@ -366,7 +409,10 @@ class _ShareLinkViewState extends State<ShareLinkView> {
         ),
         InkWell(
           onTap: () {
-            showSharedFolderOptionsDialog(context, folder, isAdmin: isAdmin);
+            showSharedFolderOptionsDialogInShareFolder(context, folder, isAdmin: isAdmin, callback: () async {
+              Navigator.pop(context);
+              Navigator.pop(context, true);
+            });
           },
           child: Container(
             margin: EdgeInsets.only(right: 20.w),
@@ -389,7 +435,10 @@ class _ShareLinkViewState extends State<ShareLinkView> {
     );
   }
 
-  Widget SearchBar() {
+  Widget SearchBar({
+    required List<Link> totalLinks,
+    required BuildContext cubitContext,
+  }) {
     return SliverToBoxAdapter(
       child: Container(
         decoration: BoxDecoration(
@@ -408,7 +457,6 @@ class _ShareLinkViewState extends State<ShareLinkView> {
             textAlignVertical: TextAlignVertical.center,
             controller: textController,
             cursorColor: grey800,
-            autofocus: true,
             style: TextStyle(
               color: grey800,
               fontSize: 14.sp,
@@ -416,7 +464,12 @@ class _ShareLinkViewState extends State<ShareLinkView> {
             ),
             textInputAction: TextInputAction.search,
             onSubmitted: (value) {
-              // onTapSearch(isMine, context);
+              search(totalLinks, cubitContext, value);
+            },
+            onChanged: (String value) {
+              debounce(() {
+                search(totalLinks, cubitContext, value);
+              });
             },
             decoration: InputDecoration(
               border: InputBorder.none,
@@ -444,6 +497,7 @@ class _ShareLinkViewState extends State<ShareLinkView> {
               suffixIcon: InkWell(
                 onTap: () {
                   textController.text = '';
+                  search(totalLinks, cubitContext, '');
                 },
                 child: Icon(
                   CupertinoIcons.clear_circled_solid,
@@ -456,5 +510,10 @@ class _ShareLinkViewState extends State<ShareLinkView> {
         ),
       ),
     );
+  }
+
+  void search(List<Link> totalLinks, BuildContext cubitContext, String value) {
+    totalLinks.clear();
+    cubitContext.read<LinksFromSelectedFolderCubit>().searchLinksFromSelectedFolder(value, 0);
   }
 }

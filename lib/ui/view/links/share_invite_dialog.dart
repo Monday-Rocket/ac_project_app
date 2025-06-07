@@ -1,16 +1,15 @@
 import 'package:ac_project_app/const/colors.dart';
-import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
-import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/provider/api/folders/share_folder_api.dart';
+import 'package:ac_project_app/provider/global_variables.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/text/custom_font.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-void showInviteDialog(BuildContext context, int? folderId) {
+void showInviteDialog(BuildContext context, int? folderId, {void Function()? callback}) {
   showDialog<bool?>(
     context: context,
     builder: (ctx) {
@@ -81,11 +80,9 @@ void showInviteDialog(BuildContext context, int? folderId) {
                       getIt<ShareFolderApi>().generateInviteToken(folderId).then((result) {
                         result.when(
                           success: (inviteLink) {
-                            final profileInfoCubit = getIt<GetProfileInfoCubit>();
-                            final state = profileInfoCubit.state;
                             var nickname = '링크풀';
-                            if (state is ProfileLoadedState) {
-                              nickname = state.profile.nickname;
+                            if (me != null) {
+                              nickname = me!.nickname;
                             }
 
                             Clipboard.setData(ClipboardData(text: 'https://monday-rocket.github.io/linkpool-invite-page?nickname=$nickname&id=$folderId&token=${inviteLink.invite_token}'));
@@ -93,14 +90,14 @@ void showInviteDialog(BuildContext context, int? folderId) {
                               context: context,
                               '링크 복사완료! 링크로 멤버를 초대해보세요',
                             );
-                            Navigator.pop(context);
+                            Navigator.pop(context, true);
                           },
                           error: (msg) {
                             showBottomToast(
                               context: context,
                               '링크 생성에 실패했습니다. 다시 시도해주세요.',
                             );
-                            Navigator.pop(context);
+                            Navigator.pop(context, false);
                           },
                         );
                       });
@@ -117,5 +114,9 @@ void showInviteDialog(BuildContext context, int? folderId) {
         ),
       );
     },
-  ).then((bool? value) {});
+  ).then((bool? value) {
+    if (value ?? false) {
+      callback?.call();
+    }
+  });
 }

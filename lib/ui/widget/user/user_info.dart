@@ -1,10 +1,9 @@
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/folders/get_user_folders_cubit.dart';
-import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
-import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/models/profile/profile_image.dart';
+import 'package:ac_project_app/provider/global_variables.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/util/string_utils.dart';
 import 'package:flutter/material.dart';
@@ -17,14 +16,8 @@ Widget UserInfoWidget({
 }) {
   return GestureDetector(
     onTap: () async {
-      final profileInfoCubit = getIt<GetProfileInfoCubit>();
       final userFoldersCubit = getIt<GetUserFoldersCubit>();
-
-      if (profileInfoCubit.state is! ProfileLoadedState) {
-        await profileInfoCubit.loadProfileData();
-      }
-
-      final isMine = (profileInfoCubit.state as ProfileLoadedState).profile.id == link.user!.id;
+      final isMine = me?.id == link.user!.id;
 
       await userFoldersCubit.getFolders(link.user!.id!).then((_) {
         Navigator.of(context).pushNamed(

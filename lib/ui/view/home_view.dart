@@ -11,10 +11,10 @@ import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/provider/api/folders/folder_api.dart';
 import 'package:ac_project_app/provider/api/folders/share_folder_api.dart';
-import 'package:ac_project_app/provider/check_clipboard_link.dart';
 import 'package:ac_project_app/provider/global_variables.dart';
 import 'package:ac_project_app/provider/kakao/kakao.dart';
 import 'package:ac_project_app/provider/manager/app_pause_manager.dart';
+import 'package:ac_project_app/provider/share_db.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/page/home/home_page.dart';
 import 'package:ac_project_app/ui/page/my_folder/my_folder_page.dart';
@@ -22,7 +22,6 @@ import 'package:ac_project_app/ui/page/my_page/my_page.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/util/get_arguments.dart';
 import 'package:ac_project_app/util/logger.dart';
-import 'package:ac_project_app/util/url_valid.dart';
 import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -81,28 +80,6 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
       appPauseManager.showPopupIfPaused(context);
       getIt<FolderApi>().bulkSave();
       Kakao.receiveLink(context);
-      navigateToUploadViewIfClipboardIsValid();
-    }
-  }
-
-  void navigateToUploadViewIfClipboardIsValid() {
-    if (isNotUploadState) {
-      Clipboard.getData(Clipboard.kTextPlain).then((value) {
-        isValidUrl(value?.text ?? '').then((isValid) {
-          if (isValid) {
-            final url = value!.text;
-            if (isClipboardLink(url)) return;
-            Clipboard.setData(const ClipboardData(text: ''));
-            Navigator.pushNamed(
-              context,
-              Routes.upload,
-              arguments: {
-                'url': url,
-              },
-            );
-          }
-        });
-      });
     }
   }
 
@@ -267,17 +244,21 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
               success: (data) {
                 for (final folder in data.data) {
                   if (folder.id == int.parse(folderId)) {
+                    ShareDB.insert(folder);
                     Navigator.pushNamed(context, Routes.sharedLinks, arguments: {
                       'folder': folder,
                       'isAdmin': folder.isAdmin,
-                    }).then((_) {
-                      context.read<GetFoldersCubit>().getFolders();
                     });
                     break;
                   }
                 }
               },
-              error: (msg) {},
+              error: (msg) {
+                showBottomToast(
+                  context: context,
+                  '폴더 정보를 불러오지 못했어요. 다시 시도해주세요.',
+                );
+              },
             );
 
             showBottomToast(

@@ -194,14 +194,14 @@ class _SharedLinkSettingViewState extends State<SharedLinkSettingView> {
             if (result) {
               showBottomToast(
                 context: context,
-                '폴더명이 변경되었어요!',
+                '폴더 설정 변경이 완료되었어요!',
               );
               Navigator.pop(context);
               Navigator.pop(context, true);
             } else {
               showBottomToast(
                 context: context,
-                '폴더명 변경에 실패했어요',
+                '폴더 설정 변경에 실패했어요',
               );
             }
           }

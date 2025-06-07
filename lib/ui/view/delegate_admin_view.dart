@@ -5,7 +5,7 @@ import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/profile/profile_image.dart';
 import 'package:ac_project_app/models/user/detail_user.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
-import 'package:ac_project_app/ui/widget/dialog/share_folder_delete_dialog.dart';
+import 'package:ac_project_app/ui/widget/dialog/delete_share_folder_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -87,9 +87,8 @@ class DelegateAdminView extends StatelessWidget {
                                         ),
                                         GestureDetector(
                                           onTap: () async {
-                                            Navigator.pop(context);
                                             delegateFolder(context, user.nickname, callback: () async {
-                                              final result = await cubitContext.read<DelegateAdminCubit>().delegateAdmin(folderId, user.id);
+                                              final result = await context.read<DelegateAdminCubit>().delegateAdmin(folderId, user.id);
                                               if (result) {
                                                 Navigator.pop(context);
                                                 Navigator.pop(context);

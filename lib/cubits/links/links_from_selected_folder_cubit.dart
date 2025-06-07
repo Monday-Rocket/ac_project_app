@@ -8,8 +8,7 @@ import 'package:ac_project_app/provider/api/folders/link_api.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LinksFromSelectedFolderCubit extends Cubit<LinkListState> {
-  LinksFromSelectedFolderCubit(Folder folder, int pageNum)
-      : super(LinkListInitialState()) {
+  LinksFromSelectedFolderCubit(Folder folder, int pageNum) : super(LinkListInitialState()) {
     getSelectedLinks(folder, pageNum);
   }
 
@@ -18,8 +17,10 @@ class LinksFromSelectedFolderCubit extends Cubit<LinkListState> {
   HasMoreCubit hasMore = HasMoreCubit();
   Folder? currentFolder;
   int page = 0;
+  String searchingText = '';
 
   Future<void> getSelectedLinks(Folder folder, int pageNum) async {
+    searchingText = '';
     emit(LinkListLoadingState());
 
     currentFolder = folder;
@@ -58,7 +59,11 @@ class LinksFromSelectedFolderCubit extends Cubit<LinkListState> {
 
   void loadMore() {
     if (hasMore.state == ScrollableType.can) {
-      getSelectedLinks(currentFolder!, page + 1);
+      if (searchingText.isNotEmpty) {
+        searchLinksFromSelectedFolder(searchingText, page + 1);
+      } else {
+        getSelectedLinks(currentFolder!, page + 1);
+      }
     }
   }
 
@@ -72,5 +77,25 @@ class LinksFromSelectedFolderCubit extends Cubit<LinkListState> {
 
   void loading() {
     emit(LinkListLoadingState());
+  }
+
+  Future<void> searchLinksFromSelectedFolder(
+    String text,
+    int pageNum,
+  ) async {
+    searchingText = text;
+    emit(LinkListLoadingState());
+
+    final result = await linkApi.searchLinksFromFolder(text, currentFolder!.id!, pageNum);
+    result.when(
+      success: (data) {
+        final totalCount = data.totalCount ?? 0;
+        final links = _setScrollState(data);
+        emit(LinkListLoadedState(links, totalCount));
+      },
+      error: (msg) {
+        emit(LinkListErrorState(msg));
+      },
+    );
   }
 }

@@ -44,6 +44,7 @@ class _MyFolderPageState extends State<MyFolderPage> with WidgetsBindingObserver
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (!mounted || ModalRoute.of(context)?.isCurrent == false) return;
     if (state == AppLifecycleState.resumed || state == AppLifecycleState.detached) {
       Future.delayed(const Duration(milliseconds: 300), () {
         context.read<GetFoldersCubit>().getFolders().then((value) {
@@ -59,26 +60,28 @@ class _MyFolderPageState extends State<MyFolderPage> with WidgetsBindingObserver
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
-      child: Stack(
-        children: [
-          Assets.images.myFolderBack.image(
-            width: width,
-            fit: BoxFit.fill,
-          ),
-          BlocBuilder<GetFoldersCubit, FoldersState>(
-            builder: (getFolderContext, folderState) {
-              return Column(
+      child: BlocBuilder<GetFoldersCubit, FoldersState>(
+        builder: (getFolderContext, folderState) {
+          return Stack(
+            children: [
+              Assets.images.myFolderBack.image(
+                width: width,
+                fit: BoxFit.fill,
+              ),
+              Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   ProfileView(folderState),
                   SearchView(context, folderState),
                   FolderListView(folderState),
                 ],
-              );
-            },
-          ),
-          FloatingUploadButton(context, setState: setState),
-        ],
+              ),
+              FloatingUploadButton(context, callback: () {
+                getFolderContext.read<GetFoldersCubit>().getFolders();
+              }),
+            ],
+          );
+        },
       ),
     );
   }
@@ -319,11 +322,13 @@ class _MyFolderPageState extends State<MyFolderPage> with WidgetsBindingObserver
             shrinkWrap: true,
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             itemCount: folders.length,
-            separatorBuilder: (ctx, index) => Divider(
-              thickness: 1.w,
-              height: 1.w,
-              color: greyTab,
-            ),
+            separatorBuilder: (ctx, index) {
+              return Divider(
+                thickness: 1.w,
+                height: 1.w,
+                color: greyTab,
+              );
+            },
             itemBuilder: (ctx, index) {
               return FolderListItem(folders, index, context);
             },
@@ -344,6 +349,7 @@ class _MyFolderPageState extends State<MyFolderPage> with WidgetsBindingObserver
     final isSharedFolder = folder.shared ?? false;
     final visible = folder.visible ?? true;
     final isNotClassified = folder.name == '미분류';
+    final isLastFolder = index == folders.length - 1;
 
     return ListTile(
       contentPadding: EdgeInsets.zero,
@@ -353,7 +359,7 @@ class _MyFolderPageState extends State<MyFolderPage> with WidgetsBindingObserver
           moveToMyLinksView(context, folders, index);
         },
         child: Container(
-          margin: EdgeInsets.symmetric(vertical: 20.w, horizontal: 4.w),
+          margin: EdgeInsets.only(top: 20, bottom: isLastFolder ? 40 : 20, left: 4, right: 4),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -426,7 +432,10 @@ class _MyFolderPageState extends State<MyFolderPage> with WidgetsBindingObserver
                 InkWell(
                   onTap: () {
                     if (isSharedFolder) {
-                      showSharedFolderOptionsDialog(context, folder, isAdmin: isAdmin);
+                      showSharedFolderOptionsDialogFromFolders(context, folder, isAdmin: isAdmin, callback: () {
+                        Navigator.pop(context);
+                        context.read<GetFoldersCubit>().getFolders();
+                      });
                     } else {
                       showFolderOptionsDialog(folders, folder, context);
                     }

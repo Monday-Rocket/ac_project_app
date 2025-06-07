@@ -1,16 +1,141 @@
 import 'package:ac_project_app/const/colors.dart';
-import 'package:ac_project_app/cubits/folders/get_my_folders_cubit.dart';
+import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
+import 'package:ac_project_app/provider/api/folders/folder_api.dart';
+import 'package:ac_project_app/provider/share_db.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/text/custom_font.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 
-void deleteSharedFolderDialog(BuildContext context, Folder folder, {void Function()? callback}) {
+void deleteShareFolderDialog(
+  BuildContext context,
+  Folder folder, {
+  void Function()? callback,
+}) {
+  showDialog<bool?>(
+    context: context,
+    builder: (ctx) {
+      return Dialog(
+        backgroundColor: Colors.transparent,
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.all(
+              Radius.circular(16.w),
+            ),
+          ),
+          width: 285.w,
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.w),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Align(
+                  alignment: Alignment.topRight,
+                  child: GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: Icon(
+                      Icons.close_rounded,
+                      size: 24.w,
+                    ),
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(top: 2.w, bottom: 10.w),
+                  child: Text(
+                    '공유폴더를 나가시겠어요?',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 20.sp,
+                      color: grey900,
+                      letterSpacing: -0.2.sp,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                Text(
+                  '내 폴더에 있는 공유폴더와\n저장한 링크가 사라져요',
+                  style: TextStyle(
+                    color: grey500,
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w500,
+                    height: 19 / 14,
+                    letterSpacing: -0.1.sp,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                Container(
+                  margin: EdgeInsets.only(
+                    top: 33.w,
+                    bottom: 6.w,
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SizedBox(
+                        width: 120.w,
+                        child: GestureDetector(
+                          onTap: () => Navigator.pop(context),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: grey100,
+                              borderRadius: BorderRadius.circular(8.w),
+                            ),
+                            width: double.infinity,
+                            padding: EdgeInsets.symmetric(vertical: 14.w),
+                            child: Center(
+                              child: Text(
+                                '취소',
+                                style: TextStyle(color: grey500, fontWeight: FontWeight.bold, fontSize: 16.sp, height: 19 / 16),
+                              ).bold(),
+                            ),
+                          ),
+                        ),
+                      ),
+                      7.horizontalSpace,
+                      SizedBox(
+                        width: 120.w,
+                        child: GestureDetector(
+                          onTap: () => getIt<FolderApi>().deleteFolder(folder).then((result) {
+                            Navigator.pop(context, true);
+                            if (result) {
+                              showBottomToast(context: context, '폴더 나가기를 완료했어요');
+                            }
+                            callback?.call();
+                          }),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: primary600,
+                              borderRadius: BorderRadius.circular(8.w),
+                            ),
+                            width: double.infinity,
+                            padding: EdgeInsets.symmetric(vertical: 14.w),
+                            child: Center(
+                              child: Text(
+                                '나가기',
+                                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16.sp, height: 19 / 16),
+                              ).bold(),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    },
+  );
+}
+
+void deleteSharedFolderAdminDialog(BuildContext context, Folder folder, {void Function()? callback}) {
   showDialog<bool?>(
     context: context,
     builder: (ctx) {
@@ -98,15 +223,14 @@ void deleteSharedFolderDialog(BuildContext context, Folder folder, {void Functio
                           ),
                           disabledBackgroundColor: secondary),
                       onPressed: isChecked
-                          ? () {
-                              final cubit = context.read<GetFoldersCubit>();
-                              cubit.delete(folder).then((result) {
-                                Navigator.pop(context, true);
-                                cubit.getFolders();
-                                if (result) {
-                                  showBottomToast(context: context, '폴더 삭제를 완료했어요');
-                                }
-                              });
+                          ? () async {
+                              final result = await getIt<FolderApi>().deleteFolder(folder);
+                              await ShareDB.deleteFolder(folder);
+                              Navigator.pop(context, true);
+                              if (result) {
+                                showBottomToast(context: context, '폴더 삭제를 완료했어요');
+                              }
+                              callback?.call();
                             }
                           : null,
                       child: Text(
@@ -174,10 +298,7 @@ void deleteSharedFolderDialog(BuildContext context, Folder folder, {void Functio
         },
       );
     },
-  ).then((bool? value) {
-    Navigator.pop(context);
-    callback?.call();
-  });
+  );
 }
 
 void delegateFolder(BuildContext context, String nickname, {required void Function() callback}) {
@@ -193,6 +314,7 @@ void delegateFolder(BuildContext context, String nickname, {required void Functi
             right: 14.w,
             bottom: 20.w,
           ),
+          width: 285.w,
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.all(
@@ -216,7 +338,7 @@ void delegateFolder(BuildContext context, String nickname, {required void Functi
               Container(
                 margin: EdgeInsets.only(top: 2.w),
                 child: Text(
-                  '`$nickname`님에게 방장\n권한을 위임하시겠어요?',
+                  '`${nickname}`님에게 방장\n권한을 위임하시겠어요?',
                   style: TextStyle(
                     fontWeight: FontWeight.w700,
                     fontSize: 20.sp,

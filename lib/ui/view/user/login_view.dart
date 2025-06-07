@@ -509,26 +509,6 @@ class _LoginViewState extends State<LoginView> {
             ],
           ),
           SizedBox(height: 53.w),
-          InkWell(
-            key: const Key('EmailLoginButton'),
-            onTap: () => Navigator.pushNamed(context, Routes.emailLogin),
-            child: Text(
-              '이메일로 로그인',
-              style: TextStyle(
-                color: grey400,
-                fontWeight: FontWeight.w500,
-                fontSize: 15.sp,
-                letterSpacing: -0.1.w,
-              ),
-            ),
-          ),
-          SizedBox(height: 12.w),
-          InkWell(
-            key: const Key('SignedUserLoginButton'),
-            onTap: () =>
-                context.read<LoginCubit>().login(LoginType.signedLoginTest),
-            child: Container(width: 1, height: 1, color: Colors.transparent),
-          ),
         ],
       ),
     );

@@ -18,7 +18,6 @@ import 'package:ac_project_app/ui/view/links/share_invite_dialog.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/buttons/upload_button.dart';
 import 'package:ac_project_app/ui/widget/dialog/bottom_dialog.dart';
-import 'package:ac_project_app/ui/widget/dialog/center_dialog.dart';
 import 'package:ac_project_app/ui/widget/link_hero.dart';
 import 'package:ac_project_app/ui/widget/scaffold_with_stack_widget.dart';
 import 'package:ac_project_app/ui/widget/shape/reverse_triangle_painter.dart';
@@ -201,7 +200,7 @@ class MyLinkView extends StatelessWidget {
                       buildBodyList(
                         folder: folder,
                         width: width,
-                        context: cubitContext,
+                        cubitContext: cubitContext,
                         totalLinks: links,
                         state: state,
                         folderState: folderState,
@@ -241,24 +240,7 @@ class MyLinkView extends StatelessWidget {
     List<Folder> folders,
     Folder folder,
   ) {
-    return SliverAppBar(
-      pinned: true,
-      leading: IconButton(
-        onPressed: () {
-          Navigator.pop(context);
-        },
-        icon: SvgPicture.asset(
-          Assets.images.icBack,
-          width: 24.w,
-          height: 24.w,
-          fit: BoxFit.cover,
-        ),
-        color: grey900,
-        padding: EdgeInsets.only(left: 20.w, right: 8.w),
-      ),
-      leadingWidth: 44.w,
-      toolbarHeight: 48.w,
-      actions: [
+    final actions = [
         InkWell(
           onTap: () {
             showInviteDialog(context, folder.id);
@@ -291,7 +273,28 @@ class MyLinkView extends StatelessWidget {
             ),
           ),
         ),
-      ],
+      ];
+    if (folder.isClassified == false) { // 미분류 폴더는 초대 버튼을 숨김
+      actions.removeAt(0);
+    }
+    return SliverAppBar(
+      pinned: true,
+      leading: IconButton(
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        icon: SvgPicture.asset(
+          Assets.images.icBack,
+          width: 24.w,
+          height: 24.w,
+          fit: BoxFit.cover,
+        ),
+        color: grey900,
+        padding: EdgeInsets.only(left: 20.w, right: 8.w),
+      ),
+      leadingWidth: 44.w,
+      toolbarHeight: 48.w,
+      actions: actions,
       flexibleSpace: FlexibleSpaceBar(
         background: Container(
           color: Colors.white,
@@ -521,14 +524,14 @@ class MyLinkView extends StatelessWidget {
   Widget buildBodyList({
     required Folder folder,
     required double width,
-    required BuildContext context,
+    required BuildContext cubitContext,
     required List<Link> totalLinks,
     required LinkListState state,
     required FoldersState folderState,
     required BuildContext foldersContext,
   }) {
     if (folder.links == 0) {
-      return buildEmptyList(context);
+      return buildEmptyList(cubitContext);
     } else {
       Log.i(state);
       Log.i(folderState);
@@ -544,7 +547,7 @@ class MyLinkView extends StatelessWidget {
               return Column(
                 children: [
                   buildLinkItem(
-                    context,
+                    cubitContext,
                     link,
                     totalLinks,
                     foldersContext,
@@ -577,7 +580,7 @@ class MyLinkView extends StatelessWidget {
   }
 
   InkWell buildLinkItem(
-    BuildContext context,
+    BuildContext cubitContext,
     Link link,
     List<Link> totalLinks,
     BuildContext foldersContext,
@@ -589,7 +592,7 @@ class MyLinkView extends StatelessWidget {
     return InkWell(
       onTap: () {
         Navigator.pushNamed(
-          context,
+          cubitContext,
           Routes.linkDetail,
           arguments: {
             'link': link,
@@ -603,9 +606,9 @@ class MyLinkView extends StatelessWidget {
             totalLinks.clear();
 
             foldersContext.read<GetFoldersCubit>().getFolders();
-            context.read<LinksFromSelectedFolderCubit>().getSelectedLinks(folder, 0);
+            cubitContext.read<LinksFromSelectedFolderCubit>().refresh();
           } else if (result == 'deleted') {
-            Navigator.pop(context);
+            cubitContext.read<LinksFromSelectedFolderCubit>().refresh();
           }
         });
       },
@@ -618,13 +621,13 @@ class MyLinkView extends StatelessWidget {
             (result) {
               if (result) {
                 showBottomToast(
-                  context: context,
+                  context: cubitContext,
                   '링크가 삭제되었어요!',
                 );
               }
               totalLinks.clear();
               foldersContext.read<GetFoldersCubit>().getFolders();
-              context.read<LinksFromSelectedFolderCubit>().getSelectedLinks(folder, 0);
+              cubitContext.read<LinksFromSelectedFolderCubit>().getSelectedLinks(folder, 0);
             },
           );
         },
