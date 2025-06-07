@@ -6,6 +6,7 @@ import 'package:ac_project_app/provider/shared_pref_provider.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_naver_login/flutter_naver_login.dart';
+import 'package:flutter_naver_login/interface/types/naver_login_status.dart';
 
 class Naver {
   static Future<bool> login() async {
@@ -14,7 +15,7 @@ class Naver {
 
     if (result.status == NaverLoginStatus.loggedIn) {
       final customToken = await FirebaseAuthRemoteDataSource().createCustomToken({
-        'uid': result.account.id,
+        'uid': result.account?.id ?? '',
         'serviceName': 'naver',
       });
       final userCredential = await FirebaseAuth.instance.signInWithCustomToken(customToken);
@@ -26,7 +27,7 @@ class Naver {
 
   static Future<void> logout() async {
     final result = await FlutterNaverLogin.logOutAndDeleteToken();
-    if (result.status == NaverLoginStatus.cancelledByUser) {
+    if (result.status == NaverLoginStatus.loggedOut) {
       Log.d('logout');
     } else {
       Log.d(result.status.name);

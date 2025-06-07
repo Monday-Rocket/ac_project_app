@@ -3,7 +3,6 @@
 import 'dart:async';
 
 import 'package:ac_project_app/const/colors.dart';
-import 'package:ac_project_app/cubits/folders/folder_view_type_cubit.dart';
 import 'package:ac_project_app/cubits/folders/folders_state.dart';
 import 'package:ac_project_app/cubits/folders/get_my_folders_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
@@ -30,8 +29,7 @@ class MyFolderPage extends StatefulWidget {
   State<MyFolderPage> createState() => _MyFolderPageState();
 }
 
-class _MyFolderPageState extends State<MyFolderPage>
-    with WidgetsBindingObserver {
+class _MyFolderPageState extends State<MyFolderPage> with WidgetsBindingObserver {
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
@@ -46,8 +44,8 @@ class _MyFolderPageState extends State<MyFolderPage>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed ||
-        state == AppLifecycleState.detached) {
+    if (!mounted || ModalRoute.of(context)?.isCurrent == false) return;
+    if (state == AppLifecycleState.resumed || state == AppLifecycleState.detached) {
       Future.delayed(const Duration(milliseconds: 300), () {
         context.read<GetFoldersCubit>().getFolders().then((value) {
           setState(() {});
@@ -60,67 +58,69 @@ class _MyFolderPageState extends State<MyFolderPage>
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
 
-    return BlocBuilder<FolderViewTypeCubit, FolderViewType>(
-      builder: (cubitContext, folderViewType) {
-        return GestureDetector(
-          onTap: () => FocusScope.of(cubitContext).unfocus(),
-          child: Stack(
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: BlocBuilder<GetFoldersCubit, FoldersState>(
+        builder: (getFolderContext, folderState) {
+          return Stack(
             children: [
               Assets.images.myFolderBack.image(
                 width: width,
                 fit: BoxFit.fill,
               ),
-              BlocBuilder<GetFoldersCubit, FoldersState>(
-                builder: (getFolderContext, folderState) {
-                  return Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      ProfileView(folderState),
-                      SearchView(context, folderState),
-                      Builder(
-                        builder: (context) {
-                          if (folderState is FolderLoadingState) {
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          } else if (folderState is FolderErrorState) {
-                            Log.e(folderState.props[0]);
-                            return const Center(
-                              child: Icon(Icons.close),
-                            );
-                          } else if (folderState is FolderLoadedState) {
-                            if (folderState.folders.isEmpty) {
-                              return Expanded(
-                                child: Center(
-                                  child: Text(
-                                    '등록된 폴더가 없습니다',
-                                    style: TextStyle(
-                                      color: grey300,
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ),
-                              );
-                            } else {
-                              return buildListView(
-                                folderState.folders,
-                                context,
-                              );
-                            }
-                          } else {
-                            return const SizedBox.shrink();
-                          }
-                        },
-                      ),
-                    ],
-                  );
-                },
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ProfileView(folderState),
+                  SearchView(context, folderState),
+                  FolderListView(folderState),
+                ],
               ),
-              FloatingUploadButton(context, setState: setState),
+              FloatingUploadButton(context, callback: () {
+                getFolderContext.read<GetFoldersCubit>().getFolders();
+              }),
             ],
-          ),
-        );
+          );
+        },
+      ),
+    );
+  }
+
+  Builder FolderListView(FoldersState folderState) {
+    return Builder(
+      builder: (context) {
+        if (folderState is FolderLoadingState) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        } else if (folderState is FolderErrorState) {
+          Log.e(folderState.props[0]);
+          return const Center(
+            child: Icon(Icons.close),
+          );
+        } else if (folderState is FolderLoadedState) {
+          if (folderState.folders.isEmpty) {
+            return Expanded(
+              child: Center(
+                child: Text(
+                  '등록된 폴더가 없습니다',
+                  style: TextStyle(
+                    color: grey300,
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            );
+          } else {
+            return buildListView(
+              folderState.folders,
+              context,
+            );
+          }
+        } else {
+          return const SizedBox.shrink();
+        }
       },
     );
   }
@@ -184,8 +184,7 @@ class _MyFolderPageState extends State<MyFolderPage>
     );
   }
 
-  BlocBuilder<GetProfileInfoCubit, ProfileState> ProfileView(
-      FoldersState folderState) {
+  BlocBuilder<GetProfileInfoCubit, ProfileState> ProfileView(FoldersState folderState) {
     var linksText = '';
     var addedLinksCount = 0;
     if (folderState is FolderLoadedState) {
@@ -284,17 +283,31 @@ class _MyFolderPageState extends State<MyFolderPage>
     List<Folder> folders,
     int index,
   ) {
+    final folder = folders[index];
+    final isShared = folder.shared ?? false;
+
+    if (isShared) {
+      Navigator.pushNamed(context, Routes.sharedLinks, arguments: {
+        'folder': folder,
+        'isAdmin': folder.isAdmin,
+      }).then((_) {
+        context.read<GetFoldersCubit>().getFolders();
+      });
+      return;
+    }
+
+    final notSharedFolders = folders.where((folder) => folder.shared != true).toList();
+    final changedIndex = notSharedFolders.indexWhere((folder) => folder.name == folders[index].name);
     Navigator.pushNamed(
       context,
       Routes.myLinks,
       arguments: {
-        'folders': folders,
-        'tabIndex': index,
+        'folders': notSharedFolders,
+        'selectedFolder': notSharedFolders[changedIndex],
+        'tabIndex': changedIndex,
       },
-    ).then((result) {
-      context.read<GetFoldersCubit>().getFolders().then((value) {
-        setState(() {});
-      });
+    ).then((_) {
+      context.read<GetFoldersCubit>().getFolders();
     });
   }
 
@@ -309,125 +322,15 @@ class _MyFolderPageState extends State<MyFolderPage>
             shrinkWrap: true,
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             itemCount: folders.length,
-            separatorBuilder: (ctx, index) => Divider(
-              thickness: 1.w,
-              height: 1.w,
-              color: greyTab,
-            ),
-            itemBuilder: (ctx, index) {
-              final folder = folders[index];
-              final visible = folder.visible ?? true;
-              final isNotClassified = folder.name == '미분류';
-
-              return ListTile(
-                contentPadding: EdgeInsets.zero,
-                key: Key('$index'),
-                title: InkWell(
-                  onTap: () {
-                    moveToMyLinksView(context, folders, index);
-                  },
-                  child: Container(
-                    margin:
-                        EdgeInsets.symmetric(vertical: 20.w, horizontal: 4.w),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Container(
-                              width: 69.w,
-                              height: 63.w,
-                              margin: EdgeInsets.only(right: 30.w),
-                              child: Stack(
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(20.w),
-                                    ),
-                                    child: ColoredBox(
-                                      color: grey100,
-                                      child: folder.thumbnail != null &&
-                                              (folder.thumbnail?.isNotEmpty ??
-                                                  false)
-                                          ? Image.network(
-                                              folder.thumbnail!,
-                                              width: 63.w,
-                                              height: 63.w,
-                                              fit: BoxFit.cover,
-                                              errorBuilder: (_, __, ___) =>
-                                                  emptyFolderView(),
-                                            )
-                                          : emptyFolderView(),
-                                    ),
-                                  ),
-                                  if (!visible)
-                                    Align(
-                                      alignment: Alignment.bottomRight,
-                                      child: Padding(
-                                        padding: EdgeInsets.only(bottom: 3.w),
-                                        child: Assets.images.icLockWebp.image(
-                                            width: 24.w,
-                                            height: 24.w,
-                                            fit: BoxFit.cover),
-                                      ),
-                                    )
-                                  else
-                                    const SizedBox.shrink(),
-                                ],
-                              ),
-                            ),
-                            Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SizedBox(
-                                  width: 120.w,
-                                  child: Text(
-                                    folder.name!,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16.sp,
-                                      color: blackBold,
-                                      letterSpacing: -0.2,
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 6.w,
-                                ),
-                                Text(
-                                  '링크 ${addCommasFrom(folder.links)}개',
-                                  style: TextStyle(
-                                    fontSize: 12.sp,
-                                    fontWeight: FontWeight.w500,
-                                    color: greyText,
-                                    letterSpacing: -0.2,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        if (isNotClassified)
-                          const SizedBox.shrink()
-                        else
-                          InkWell(
-                            onTap: () => showFolderOptionsDialog(
-                              folders,
-                              folder,
-                              context,
-                            ),
-                            child: Padding(
-                              padding: EdgeInsets.all(8.w),
-                              child: SvgPicture.asset(Assets.images.more),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                ),
+            separatorBuilder: (ctx, index) {
+              return Divider(
+                thickness: 1.w,
+                height: 1.w,
+                color: greyTab,
               );
+            },
+            itemBuilder: (ctx, index) {
+              return FolderListItem(folders, index, context);
             },
             onReorder: (int oldIndex, int newIndex) {
               Log.i('old: $oldIndex, new: $newIndex');
@@ -440,7 +343,136 @@ class _MyFolderPageState extends State<MyFolderPage>
     );
   }
 
-  Container emptyFolderView() {
+  ListTile FolderListItem(List<Folder> folders, int index, BuildContext context) {
+    final folder = folders[index];
+    final isAdmin = folder.isAdmin ?? false;
+    final isSharedFolder = folder.shared ?? false;
+    final visible = folder.visible ?? true;
+    final isNotClassified = folder.name == '미분류';
+    final isLastFolder = index == folders.length - 1;
+
+    return ListTile(
+      contentPadding: EdgeInsets.zero,
+      key: Key('$index'),
+      title: InkWell(
+        onTap: () {
+          moveToMyLinksView(context, folders, index);
+        },
+        child: Container(
+          margin: EdgeInsets.only(top: 20, bottom: isLastFolder ? 40 : 20, left: 4, right: 4),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 69.w,
+                    height: 63.w,
+                    margin: EdgeInsets.only(right: 30.w),
+                    child: Stack(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(20.w),
+                          ),
+                          child: ColoredBox(
+                            color: grey100,
+                            child: FolderThumbnail(folder),
+                          ),
+                        ),
+                        if (!visible)
+                          Align(
+                            alignment: Alignment.bottomRight,
+                            child: Padding(
+                              padding: EdgeInsets.only(bottom: 3.w),
+                              child: Assets.images.icLockWebp.image(width: 24.w, height: 24.w, fit: BoxFit.cover),
+                            ),
+                          )
+                        else
+                          const SizedBox.shrink(),
+                      ],
+                    ),
+                  ),
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        width: 120.w,
+                        child: Text(
+                          folder.name!,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16.sp,
+                            color: blackBold,
+                            letterSpacing: -0.2,
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 6.w,
+                      ),
+                      Text(
+                        '링크 ${addCommasFrom(folder.links)}개',
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.w500,
+                          color: greyText,
+                          letterSpacing: -0.2,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              if (isNotClassified)
+                const SizedBox.shrink()
+              else
+                InkWell(
+                  onTap: () {
+                    if (isSharedFolder) {
+                      showSharedFolderOptionsDialogFromFolders(context, folder, isAdmin: isAdmin, callback: () {
+                        Navigator.pop(context);
+                        context.read<GetFoldersCubit>().getFolders();
+                      });
+                    } else {
+                      showFolderOptionsDialog(folders, folder, context);
+                    }
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.all(8.w),
+                    child: SvgPicture.asset(Assets.images.more),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget FolderThumbnail(Folder folder) {
+    if (folder.shared ?? false) {
+      return emptyFolderView(folder.shared);
+    }
+
+    return folder.thumbnail != null && (folder.thumbnail?.isNotEmpty ?? false)
+        ? Image.network(
+            folder.thumbnail!,
+            width: 63.w,
+            height: 63.w,
+            fit: BoxFit.cover,
+            errorBuilder: (_, __, ___) => emptyFolderView(folder.shared),
+          )
+        : emptyFolderView(folder.shared);
+  }
+
+  Container emptyFolderView(bool? shared) {
+    var color = const Color(0xFFA07EFF);
+    if (shared ?? false) {
+      color = const Color(0xFF7EA5FF);
+    }
     return Container(
       width: 63.w,
       height: 63.w,
@@ -448,6 +480,8 @@ class _MyFolderPageState extends State<MyFolderPage>
       child: Center(
         child: SvgPicture.asset(
           Assets.images.folder,
+          // color: color,
+          colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
           width: 24.w,
           height: 24.w,
         ),

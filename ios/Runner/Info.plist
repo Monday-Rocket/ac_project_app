@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>FirebaseDeepLinkPasteboardRetrievalEnabled</key>
+	<false/>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>kakaokompassauth</string>
@@ -48,24 +50,12 @@
 			</array>
 		</dict>
 		<dict>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
+		    <key>CFBundleURLSchemes</key>
+        	<array>
+        		<string>linkpool</string>
+        	</array>
 			<key>CFBundleURLName</key>
-			<string>com.mr.acProjectApp</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>acprojectapp.page.link</string>
-			</array>
-		</dict>
-		<dict>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-			<key>CFBundleURLName</key>
-			<string>com.mr.acProjectApp</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>linkpool</string>
-			</array>
+			<string>boring-km.dev</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeRole</key>
@@ -153,13 +143,15 @@
 	<string>Light</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
-	<key>naverConsumerKey</key>
+	<key>NidClientID</key>
 	<string>${NAVER_CLIENT_ID}</string>
-	<key>naverConsumerSecret</key>
+	<key>NidClientSecret</key>
 	<string>${NAVER_CLIENT_SECRET}</string>
-	<key>naverServiceAppName</key>
+	<key>NidAppName</key>
 	<string>${NAVER_CLIENT_NAME}</string>
-	<key>naverServiceAppUrlScheme</key>
+	<key>NidUrlScheme</key>
 	<string>linkpool</string>
+	<key>FlutterDeepLinkingEnabled</key>
+	<false/>
 </dict>
 </plist>

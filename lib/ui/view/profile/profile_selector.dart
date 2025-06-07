@@ -45,6 +45,7 @@ class _ProfileSelectorState extends State<ProfileSelector> {
       body: SafeArea(
         child: Column(
           children: [
+            Container(color: grey100, width: double.infinity, height: 1.w),
             SelectedProfileImage(),
             SelectableProfileImages(),
           ],
@@ -186,8 +187,6 @@ class _ProfileSelectorState extends State<ProfileSelector> {
   AppBar _buildAppBar(BuildContext context) {
     return AppBar(
       backgroundColor: Colors.white,
-      elevation: 0.5,
-      scrolledUnderElevation: 0.5,
       shadowColor: grey100,
       systemOverlayStyle: SystemUiOverlayStyle.dark,
       leading: IconButton(
@@ -197,6 +196,7 @@ class _ProfileSelectorState extends State<ProfileSelector> {
       ),
       leadingWidth: 44.w,
       toolbarHeight: 48.w,
+      centerTitle: true,
       title: Text(
         '프로필 변경',
         style: TextStyle(

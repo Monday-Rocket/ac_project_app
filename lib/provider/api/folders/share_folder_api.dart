@@ -4,12 +4,12 @@ import 'package:ac_project_app/models/share/invite_link.dart';
 import 'package:ac_project_app/models/user/detail_user.dart';
 import 'package:ac_project_app/provider/api/custom_client.dart';
 
-class FolderApi {
-  FolderApi(this._client);
+class ShareFolderApi {
+  ShareFolderApi(this._client);
 
   final CustomClient _client;
 
-  Future<Result<InviteLink>> generateInviteLink(String folderId) async {
+  Future<Result<InviteLink>> generateInviteToken(int? folderId) async {
     final result = await _client.postUri('/folders/$folderId/invite-link');
     return result.when(
       success: (inviteLink) {
@@ -32,12 +32,12 @@ class FolderApi {
   }
 
   Future<Result<void>> acceptInviteLink(
-    String folderId,
-    String inviteToken,
-  ) async {
+      String folderId,
+      String inviteToken,
+      ) async {
     final result = await _client.postUri(
       '/folders/$folderId/invite-link/accept',
-      body: {'token': inviteToken},
+      body: {'invite_token': inviteToken},
     );
     return result.when(
       success: (_) => const Result.success(null),
@@ -60,9 +60,9 @@ class FolderApi {
   }
 
   Future<Result<void>> delegateFolderAdmin(
-    String folderId,
-    String userId,
-  ) async {
+      String folderId,
+      String userId,
+      ) async {
     final result = await _client.postUri(
       '/folders/$folderId/admin/delegate',
       body: {'memberId': userId},
@@ -74,9 +74,9 @@ class FolderApi {
   }
 
   Future<Result<void>> removeFolderMember(
-    String folderId,
-    String userId,
-  ) async {
+      String folderId,
+      String userId,
+      ) async {
     final result = await _client.postUri('/folders/$folderId/$userId/displace');
     return result.when(
       success: (_) => const Result.success(null),

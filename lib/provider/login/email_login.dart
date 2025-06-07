@@ -49,7 +49,7 @@ class Email {
           .sendSignInLinkToEmail(
         email: email,
         actionCodeSettings: ActionCodeSettings(
-          url: 'https://acprojectapp.page.link/jTpt?email=$email',
+          url: 'https://acprojectapp.page.link/jTpt?email=$email',  // TODO update this URL
           handleCodeInApp: true,
           iOSBundleId: 'com.mr.acProjectApp',
           androidPackageName: 'com.mr.ac_project_app',

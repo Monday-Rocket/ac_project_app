@@ -1,6 +1,7 @@
 import UIKit
 import Flutter
-import NaverThirdPartyLogin
+import NidThirdPartyLogin
+import app_links
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
@@ -9,6 +10,7 @@ import NaverThirdPartyLogin
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
+
     let controller : FlutterViewController = window?.rootViewController as! FlutterViewController
     let localPathChannel = FlutterMethodChannel(name: "share_data_provider",
                                                 binaryMessenger: controller.binaryMessenger)
@@ -32,8 +34,9 @@ import NaverThirdPartyLogin
       }
       
     })
-    
+
     GeneratedPluginRegistrant.register(with: self)
+      
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
   
@@ -41,10 +44,10 @@ import NaverThirdPartyLogin
     if url.absoluteString.hasPrefix("kakao"){
       super.application(app, open:url, options: options)
       return true
-    } else if url.absoluteString.contains("thirdPartyLoginResult") {
-      let result = NaverThirdPartyLoginConnection.getSharedInstance().application(app, open: url, options: options)
-      return result
+    } else if (NidOAuth.shared.handleURL(url) == true) { // If the URL was passed from the Naver app
+        return true
     } else {
+      AppLinks.shared.handleLink(url: url)
       return true
     }
   }

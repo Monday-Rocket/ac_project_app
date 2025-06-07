@@ -9,9 +9,11 @@ import 'package:ac_project_app/provider/shared_pref_provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class GetFoldersCubit extends Cubit<FoldersState> {
-  GetFoldersCubit({bool? excludeUnclassified}) : super(FolderInitialState()) {
+  GetFoldersCubit({bool? excludeUnclassified, bool? excludeSharedLinks}) : super(FolderInitialState()) {
     if (excludeUnclassified ?? false) {
       getFoldersWithoutUnclassified();
+    } else if (excludeSharedLinks ?? false) {
+      getFoldersWithoutSharedLinks();
     } else {
       getFolders(isFirst: true);
     }
@@ -83,6 +85,16 @@ class GetFoldersCubit extends Cubit<FoldersState> {
     return result;
   }
 
+  Future<bool> changeNameAndVisible(Folder folder) async {
+    final result = await folderApi.patchFolder(folder.id!, {
+      'name': folder.name,
+      'visible': folder.visible,
+    });
+    await ShareDB.changeFolder(folder);
+    unawaited(getFolders());
+    return result;
+  }
+
   Future<bool> delete(Folder folder) async {
     final result = await folderApi.deleteFolder(folder);
     await ShareDB.deleteFolder(folder);
@@ -102,4 +114,24 @@ class GetFoldersCubit extends Cubit<FoldersState> {
   }
 
   Future<int> getAddedLinksCount() async => getTotalLinksCount() - await SharedPrefHelper.getValueFromKey<int>('savedLinksCount', defaultValue: 0);
+
+  Future<void> getFoldersWithoutSharedLinks() async {
+    try {
+      emit(FolderLoadingState());
+
+      (await folderApi.getMyFoldersWithoutShared()).when(
+        success: (list) async {
+          folders = list;
+
+          final totalLinksText = '${getTotalLinksCount()}';
+          final addedLinksCount = await getAddedLinksCount();
+
+          emit(FolderLoadedState(folders, totalLinksText, addedLinksCount));
+        },
+        error: (msg) => emit(FolderErrorState(msg)),
+      );
+    } catch (e) {
+      emit(FolderErrorState(e.toString()));
+    }
+  }
 }

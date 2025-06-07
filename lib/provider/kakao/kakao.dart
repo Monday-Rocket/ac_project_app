@@ -2,8 +2,6 @@ import 'dart:async';
 
 import 'package:ac_project_app/cubits/folders/get_user_folders_cubit.dart';
 import 'package:ac_project_app/cubits/login/login_type.dart';
-import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
-import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/link/link.dart' as my_link;
@@ -11,6 +9,7 @@ import 'package:ac_project_app/models/profile/profile.dart' as app_profile;
 import 'package:ac_project_app/models/profile/profile_image.dart';
 import 'package:ac_project_app/provider/api/folders/link_api.dart';
 import 'package:ac_project_app/provider/api/user/user_api.dart' as my_user_api;
+import 'package:ac_project_app/provider/global_variables.dart';
 import 'package:ac_project_app/provider/login/firebase_auth_remote_data_source.dart';
 import 'package:ac_project_app/provider/shared_pref_provider.dart';
 import 'package:ac_project_app/routes.dart';
@@ -256,11 +255,8 @@ class Kakao {
         getIt<my_user_api.UserApi>().getUsersId(userId).then((result) {
           result.when(
             success: (user) {
-              final profileInfoCubit = getIt<GetProfileInfoCubit>();
               final userFoldersCubit = getIt<GetUserFoldersCubit>();
-              final isMine =
-                  (profileInfoCubit.state as ProfileLoadedState).profile.id ==
-                      user.id;
+              final isMine = me?.id == user.id;
 
               userFoldersCubit.getFolders(user.id!).then((_) {
                 Navigator.of(context).pushNamed(

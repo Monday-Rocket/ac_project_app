@@ -30,6 +30,28 @@ class FolderApi {
     );
   }
 
+  Future<Result<List<Folder>>> getMyFoldersWithoutShared() async {
+    final result = await _client.getUri('/folders');
+    return result.when(
+      success: (folders) {
+        final list = <Folder>[];
+        for (final data in folders as List<dynamic>) {
+          var folder = Folder.fromJson(data as LinkedHashMap<String, dynamic>);
+          if (folder.name == 'unclassified') {
+            folder = folder.copyWith(name: '미분류', isClassified: false);
+          }
+          if (folder.shared ?? false) {
+            continue;
+          }
+          list.add(folder);
+        }
+
+        return Result.success(list);
+      },
+      error: Result.error,
+    );
+  }
+
   Future<Result<List<Folder>>> getMyFoldersWithoutUnclassified() async {
     final result = await _client.getUri('/folders');
     return result.when(
@@ -37,8 +59,7 @@ class FolderApi {
         final list = <Folder>[];
 
         for (final data in folders as List<dynamic>) {
-          final folder =
-              Folder.fromJson(data as LinkedHashMap<String, dynamic>);
+          final folder = Folder.fromJson(data as LinkedHashMap<String, dynamic>);
           if (folder.name == 'unclassified') {
             continue;
           }
@@ -58,8 +79,7 @@ class FolderApi {
         final list = <Folder>[];
 
         for (final data in folders as List<dynamic>) {
-          var folder =
-              Folder.fromJson(data as LinkedHashMap<String, dynamic>);
+          var folder = Folder.fromJson(data as LinkedHashMap<String, dynamic>);
           if (folder.name == 'unclassified') {
             folder = folder.copyWith(name: '미분류', isClassified: false);
           }

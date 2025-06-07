@@ -10,6 +10,7 @@ import 'package:ac_project_app/models/profile/profile_image.dart';
 import 'package:ac_project_app/models/user/detail_user.dart';
 import 'package:ac_project_app/provider/api/user/user_api.dart';
 import 'package:ac_project_app/provider/logout.dart';
+import 'package:ac_project_app/provider/shared_pref_provider.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/dialog/center_dialog.dart';
@@ -183,6 +184,7 @@ class _MyPageState extends State<MyPage> {
                   rightText: '로그아웃',
                   leftCallback: () => Navigator.pop(context),
                   rightCallback: () => logout(() {
+                    SharedPrefHelper.saveKeyValue('savedLinksCount', 0);
                     Navigator.of(context).pop(true);
                     Navigator.pushReplacementNamed(context, Routes.login);
                   }),
@@ -200,6 +202,7 @@ class _MyPageState extends State<MyPage> {
                   leftCallback: () {
                     getIt<UserApi>().deleteUser().then((value) {
                       if (value) {
+                        SharedPrefHelper.saveKeyValue('savedLinksCount', 0);
                         Navigator.of(context).pop(true);
                         Navigator.pushReplacementNamed(context, Routes.login);
                       } else {

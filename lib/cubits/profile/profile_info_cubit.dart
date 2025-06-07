@@ -4,6 +4,7 @@ import 'package:ac_project_app/models/profile/profile.dart';
 import 'package:ac_project_app/models/user/detail_user.dart';
 import 'package:ac_project_app/provider/api/user/profile_api.dart';
 import 'package:ac_project_app/provider/api/user/user_api.dart';
+import 'package:ac_project_app/provider/global_variables.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -21,13 +22,14 @@ class GetProfileInfoCubit extends Cubit<ProfileState> {
     final result = await userApi.getUsers();
     result.when(
       success: (user) {
+        me = Profile(
+          id: user.id,
+          nickname: user.nickname,
+          profileImage: user.profile_img,
+        );
         emit(
           ProfileLoadedState(
-            Profile(
-              id: user.id,
-              nickname: user.nickname,
-              profileImage: user.profile_img,
-            ),
+            me!,
           ),
         );
       },

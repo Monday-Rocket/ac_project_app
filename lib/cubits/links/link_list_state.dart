@@ -15,12 +15,13 @@ class LinkListLoadingState extends LinkListState {
 }
 
 class LinkListLoadedState extends LinkListState {
-  LinkListLoadedState(this.links);
+  LinkListLoadedState(this.links, this.totalCount);
 
   final List<Link> links;
+  final int totalCount;
 
   @override
-  List<Object> get props => [links];
+  List<Object> get props => [links, totalCount];
 }
 
 class LinkListErrorState extends LinkListState {
