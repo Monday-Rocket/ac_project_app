@@ -177,4 +177,25 @@ class LinkApi {
       error: Result.error,
     );
   }
+
+  Future<Result<SearchedLinks>> searchLinksFromFolder(
+    String text,
+    int folderId,
+    int pageNum,
+  ) async {
+    final result = await _client.getUri(
+      '/links/search/folder/$folderId?'
+      'keyword=$text&'
+      'page_no=$pageNum&'
+      'page_size=10',
+    );
+    return result.when(
+      success: (data) {
+        return Result.success(
+          SearchedLinks.fromJson(data as Map<String, dynamic>),
+        );
+      },
+      error: Result.error,
+    );
+  }
 }

@@ -1,8 +1,11 @@
 import 'package:ac_project_app/ui/page/my_page/my_page.dart';
+import 'package:ac_project_app/ui/view/delegate_admin_view.dart';
 import 'package:ac_project_app/ui/view/home_view.dart';
 import 'package:ac_project_app/ui/view/links/link_detail_view.dart';
 import 'package:ac_project_app/ui/view/links/my_link_view.dart';
 import 'package:ac_project_app/ui/view/links/search_view.dart';
+import 'package:ac_project_app/ui/view/links/share_link_view.dart';
+import 'package:ac_project_app/ui/view/links/shared_link_setting_view.dart';
 import 'package:ac_project_app/ui/view/links/user_feed_view.dart';
 import 'package:ac_project_app/ui/view/oss_licenses_view.dart';
 import 'package:ac_project_app/ui/view/profile/change_profile_view.dart';
@@ -23,6 +26,9 @@ class Routes {
   static const myLinks = '/myLinks';
   static const search = '/search';
   static const userFeed = '/userFeed';
+  static const sharedLinks = '/sharedLinks';
+  static const sharedLinkSetting = '/sharedLinkSetting';
+  static const delegateAdmin = '/delegateAdmin';
 
   // user
   static const profile = '/profile';
@@ -75,8 +81,14 @@ class Pages {
         return router.create(child: UploadView(args: arguments as Map<String, dynamic>?));
       case Routes.tutorial:
         return router.create(child: const TutorialView());
-        case Routes.ossLicenses:
+      case Routes.ossLicenses:
         return router.create(child: const OssLicensesView());
+      case Routes.sharedLinks:
+        return router.create(child: const ShareLinkView());
+      case Routes.sharedLinkSetting:
+        return router.create(child: const SharedLinkSettingView());
+      case Routes.delegateAdmin:
+        return router.create(child: const DelegateAdminView());
       default:
         return null;
     }

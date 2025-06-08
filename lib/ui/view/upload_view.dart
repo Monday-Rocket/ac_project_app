@@ -10,7 +10,7 @@ import 'package:ac_project_app/cubits/sign_up/button_state_cubit.dart';
 import 'package:ac_project_app/enums/navigator_pop_type.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/link/upload_type.dart';
-import 'package:ac_project_app/provider/upload_state_variable.dart';
+import 'package:ac_project_app/provider/check_clipboard_link.dart';
 import 'package:ac_project_app/ui/widget/add_folder/folder_add_title.dart';
 import 'package:ac_project_app/ui/widget/add_folder/horizontal_folder_list.dart';
 import 'package:ac_project_app/ui/widget/add_folder/subtitle.dart';
@@ -18,6 +18,7 @@ import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/buttons/bottom_sheet_button.dart';
 import 'package:ac_project_app/ui/widget/dialog/center_dialog.dart';
 import 'package:ac_project_app/ui/widget/loading.dart';
+import 'package:ac_project_app/util/url_valid.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -35,7 +36,7 @@ class UploadView extends StatefulWidget {
   State<UploadView> createState() => _UploadViewState();
 }
 
-class _UploadViewState extends State<UploadView> {
+class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
   final linkTextController = TextEditingController();
   final commentTextController = TextEditingController();
 
@@ -50,18 +51,33 @@ class _UploadViewState extends State<UploadView> {
 
   @override
   void initState() {
+    _loadUrlFromClipboard();
     if (widget.args != null) {
-      linkTextController.text = widget.args!['url'] as String;
-      buttonState = ButtonState.enabled;
+      selectedFolderId = widget.args! as int;
     }
-    isNotUploadState = false;
     super.initState();
   }
 
   @override
-  void dispose() {
-    isNotUploadState = true;
-    super.dispose();
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _loadUrlFromClipboard();
+    }
+    super.didChangeAppLifecycleState(state);
+  }
+
+  void _loadUrlFromClipboard() {
+    Clipboard.getData(Clipboard.kTextPlain).then((value) {
+      isValidUrl(value?.text ?? '').then((isValid) {
+        if (isValid) {
+          final url = value!.text;
+          if (isClipboardLink(url)) return;
+          Clipboard.setData(const ClipboardData(text: ''));
+          linkTextController.text = url ?? '';
+          buttonState = ButtonState.enabled;
+        }
+      });
+    });
   }
 
   @override
@@ -129,9 +145,7 @@ class _UploadViewState extends State<UploadView> {
                                         '폴더 선택',
                                         state.folders,
                                         callback: () {
-                                          setState(() {
-                                            isSavedNewFolder = true;
-                                          });
+                                          folderContext.read<GetFoldersCubit>().getFolders();
                                         },
                                       ),
                                     buildFolderList(
@@ -154,6 +168,7 @@ class _UploadViewState extends State<UploadView> {
                             buildCommentTextField(visible),
                             SizedBox(height: 13.w),
                             buildUploadWarning(true),
+                            80.verticalSpace,
                             SizedBox(
                               height: keyboardHeight.w,
                             ),

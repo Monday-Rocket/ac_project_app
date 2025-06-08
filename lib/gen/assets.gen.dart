@@ -25,13 +25,13 @@ class $AssetsImagesGen {
   /// File path: assets/images/app_name.svg
   String get appName => 'assets/images/app_name.svg';
 
-  /// File path: assets/images/app_white_icon.png
+  /// File path: assets/images/app_white_icon.webp
   AssetGenImage get appWhiteIcon =>
-      const AssetGenImage('assets/images/app_white_icon.png');
+      const AssetGenImage('assets/images/app_white_icon.webp');
 
-  /// File path: assets/images/apple_icon.png
+  /// File path: assets/images/apple_icon.webp
   AssetGenImage get appleIcon =>
-      const AssetGenImage('assets/images/apple_icon.png');
+      const AssetGenImage('assets/images/apple_icon.webp');
 
   /// File path: assets/images/btn_add.svg
   String get btnAdd => 'assets/images/btn_add.svg';
@@ -51,9 +51,9 @@ class $AssetsImagesGen {
   /// File path: assets/images/folder_big.svg
   String get folderBig => 'assets/images/folder_big.svg';
 
-  /// File path: assets/images/folder_search_icon.png
+  /// File path: assets/images/folder_search_icon.webp
   AssetGenImage get folderSearchIcon =>
-      const AssetGenImage('assets/images/folder_search_icon.png');
+      const AssetGenImage('assets/images/folder_search_icon.webp');
 
   /// File path: assets/images/grid_icon.svg
   String get gridIcon => 'assets/images/grid_icon.svg';
@@ -64,16 +64,16 @@ class $AssetsImagesGen {
   /// File path: assets/images/ic_change.svg
   String get icChange => 'assets/images/ic_change.svg';
 
-  /// File path: assets/images/ic_lock.png
-  AssetGenImage get icLockPng =>
-      const AssetGenImage('assets/images/ic_lock.png');
-
   /// File path: assets/images/ic_lock.svg
   String get icLockSvg => 'assets/images/ic_lock.svg';
 
-  /// File path: assets/images/ic_lock_color.png
+  /// File path: assets/images/ic_lock.webp
+  AssetGenImage get icLockWebp =>
+      const AssetGenImage('assets/images/ic_lock.webp');
+
+  /// File path: assets/images/ic_lock_color.webp
   AssetGenImage get icLockColor =>
-      const AssetGenImage('assets/images/ic_lock_color.png');
+      const AssetGenImage('assets/images/ic_lock_color.webp');
 
   /// File path: assets/images/ic_myfolder.svg
   String get icMyfolder => 'assets/images/ic_myfolder.svg';
@@ -102,18 +102,25 @@ class $AssetsImagesGen {
   /// File path: assets/images/ic_write_comment.svg
   String get icWriteComment => 'assets/images/ic_write_comment.svg';
 
-  /// File path: assets/images/kakao_icon.png
+  /// File path: assets/images/invite_user.svg
+  String get inviteUser => 'assets/images/invite_user.svg';
+
+  /// File path: assets/images/kakao_icon.webp
   AssetGenImage get kakaoIcon =>
-      const AssetGenImage('assets/images/kakao_icon.png');
+      const AssetGenImage('assets/images/kakao_icon.webp');
+
+  /// File path: assets/images/lavel_crown.png
+  AssetGenImage get lavelCrown =>
+      const AssetGenImage('assets/images/lavel_crown.png');
 
   /// File path: assets/images/list_icon.svg
   String get listIcon => 'assets/images/list_icon.svg';
 
   $AssetsImagesLoginGen get login => const $AssetsImagesLoginGen();
 
-  /// File path: assets/images/login_logo.png
+  /// File path: assets/images/login_logo.webp
   AssetGenImage get loginLogo =>
-      const AssetGenImage('assets/images/login_logo.png');
+      const AssetGenImage('assets/images/login_logo.webp');
 
   /// File path: assets/images/login_logo_text.svg
   String get loginLogoText => 'assets/images/login_logo_text.svg';
@@ -124,15 +131,22 @@ class $AssetsImagesGen {
   /// File path: assets/images/more_vert.svg
   String get moreVert => 'assets/images/more_vert.svg';
 
-  /// File path: assets/images/my_folder_back.png
+  /// File path: assets/images/my_folder_back.webp
   AssetGenImage get myFolderBack =>
-      const AssetGenImage('assets/images/my_folder_back.png');
+      const AssetGenImage('assets/images/my_folder_back.webp');
 
-  /// File path: assets/images/naver_icon.png
+  /// File path: assets/images/naver_icon.webp
   AssetGenImage get naverIcon =>
-      const AssetGenImage('assets/images/naver_icon.png');
+      const AssetGenImage('assets/images/naver_icon.webp');
+
+  /// File path: assets/images/paper_plane.webp
+  AssetGenImage get paperPlane =>
+      const AssetGenImage('assets/images/paper_plane.webp');
 
   $AssetsImagesProfileGen get profile => const $AssetsImagesProfileGen();
+
+  /// File path: assets/images/small_right_arrow.svg
+  String get smallRightArrow => 'assets/images/small_right_arrow.svg';
 
   /// File path: assets/images/toggle_off.svg
   String get toggleOff => 'assets/images/toggle_off.svg';
@@ -146,9 +160,9 @@ class $AssetsImagesGen {
   /// File path: assets/images/warning_mark.svg
   String get warningMark => 'assets/images/warning_mark.svg';
 
-  /// File path: assets/images/wave_back.png
+  /// File path: assets/images/wave_back.webp
   AssetGenImage get waveBack =>
-      const AssetGenImage('assets/images/wave_back.png');
+      const AssetGenImage('assets/images/wave_back.webp');
 
   /// List of all assets
   List<dynamic> get values => [
@@ -165,8 +179,8 @@ class $AssetsImagesGen {
         gridIcon,
         icBack,
         icChange,
-        icLockPng,
         icLockSvg,
+        icLockWebp,
         icLockColor,
         icMyfolder,
         icMyfolderDisabled,
@@ -177,7 +191,9 @@ class $AssetsImagesGen {
         icUpload,
         icUploadDisabled,
         icWriteComment,
+        inviteUser,
         kakaoIcon,
+        lavelCrown,
         listIcon,
         loginLogo,
         loginLogoText,
@@ -185,6 +201,8 @@ class $AssetsImagesGen {
         moreVert,
         myFolderBack,
         naverIcon,
+        paperPlane,
+        smallRightArrow,
         toggleOff,
         toggleOn,
         uploadPlus,
@@ -220,13 +238,13 @@ class $AssetsTutorialsGen {
 class $AssetsImagesLoginGen {
   const $AssetsImagesLoginGen();
 
-  /// File path: assets/images/login/AppleIcon.png
+  /// File path: assets/images/login/AppleIcon.webp
   AssetGenImage get appleIcon =>
-      const AssetGenImage('assets/images/login/AppleIcon.png');
+      const AssetGenImage('assets/images/login/AppleIcon.webp');
 
-  /// File path: assets/images/login/GoogleIcon.png
+  /// File path: assets/images/login/GoogleIcon.webp
   AssetGenImage get googleIcon =>
-      const AssetGenImage('assets/images/login/GoogleIcon.png');
+      const AssetGenImage('assets/images/login/GoogleIcon.webp');
 
   /// List of all assets
   List<AssetGenImage> get values => [appleIcon, googleIcon];
@@ -235,41 +253,41 @@ class $AssetsImagesLoginGen {
 class $AssetsImagesProfileGen {
   const $AssetsImagesProfileGen();
 
-  /// File path: assets/images/profile/img_01_on.png
+  /// File path: assets/images/profile/img_01_on.webp
   AssetGenImage get img01On =>
-      const AssetGenImage('assets/images/profile/img_01_on.png');
+      const AssetGenImage('assets/images/profile/img_01_on.webp');
 
-  /// File path: assets/images/profile/img_02_on.png
+  /// File path: assets/images/profile/img_02_on.webp
   AssetGenImage get img02On =>
-      const AssetGenImage('assets/images/profile/img_02_on.png');
+      const AssetGenImage('assets/images/profile/img_02_on.webp');
 
-  /// File path: assets/images/profile/img_03_on.png
+  /// File path: assets/images/profile/img_03_on.webp
   AssetGenImage get img03On =>
-      const AssetGenImage('assets/images/profile/img_03_on.png');
+      const AssetGenImage('assets/images/profile/img_03_on.webp');
 
-  /// File path: assets/images/profile/img_04_on.png
+  /// File path: assets/images/profile/img_04_on.webp
   AssetGenImage get img04On =>
-      const AssetGenImage('assets/images/profile/img_04_on.png');
+      const AssetGenImage('assets/images/profile/img_04_on.webp');
 
-  /// File path: assets/images/profile/img_05_on.png
+  /// File path: assets/images/profile/img_05_on.webp
   AssetGenImage get img05On =>
-      const AssetGenImage('assets/images/profile/img_05_on.png');
+      const AssetGenImage('assets/images/profile/img_05_on.webp');
 
-  /// File path: assets/images/profile/img_06_on.png
+  /// File path: assets/images/profile/img_06_on.webp
   AssetGenImage get img06On =>
-      const AssetGenImage('assets/images/profile/img_06_on.png');
+      const AssetGenImage('assets/images/profile/img_06_on.webp');
 
-  /// File path: assets/images/profile/img_07_on.png
+  /// File path: assets/images/profile/img_07_on.webp
   AssetGenImage get img07On =>
-      const AssetGenImage('assets/images/profile/img_07_on.png');
+      const AssetGenImage('assets/images/profile/img_07_on.webp');
 
-  /// File path: assets/images/profile/img_08_on.png
+  /// File path: assets/images/profile/img_08_on.webp
   AssetGenImage get img08On =>
-      const AssetGenImage('assets/images/profile/img_08_on.png');
+      const AssetGenImage('assets/images/profile/img_08_on.webp');
 
-  /// File path: assets/images/profile/img_09_on.png
+  /// File path: assets/images/profile/img_09_on.webp
   AssetGenImage get img09On =>
-      const AssetGenImage('assets/images/profile/img_09_on.png');
+      const AssetGenImage('assets/images/profile/img_09_on.webp');
 
   /// List of all assets
   List<AssetGenImage> get values => [

@@ -23,11 +23,12 @@ void showBottomToast(
       ),
       content: subMsg == null
           ? Row(
-              mainAxisAlignment: callback == null
-                  ? MainAxisAlignment.center
-                  : MainAxisAlignment.start,
+              mainAxisAlignment: callback == null ? MainAxisAlignment.center : MainAxisAlignment.start,
               children: [
-                Text(text),
+                Text(
+                  text,
+                  style: TextStyle(fontSize: 13.sp, height: 16 / 13, letterSpacing: -0.1.w, fontWeight: FontWeight.w600),
+                ),
               ],
             )
           : Column(
@@ -42,6 +43,7 @@ void showBottomToast(
                     fontSize: 13.sp,
                     height: 16 / 13,
                     letterSpacing: -0.1.w,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
                 SizedBox(height: 6.w),
@@ -53,6 +55,7 @@ void showBottomToast(
                     fontSize: 13.sp,
                     letterSpacing: -0.1.w,
                     height: 16 / 13,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ],

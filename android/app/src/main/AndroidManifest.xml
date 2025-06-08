@@ -48,6 +48,10 @@
                 <data
                     android:host="kakaolink"
                     android:scheme="kakao${KAKAO_API_KEY}" />
+
+                <data
+                    android:host="boring-km.dev"
+                    android:scheme="linkpool" />
             </intent-filter>
         </activity>
         <activity

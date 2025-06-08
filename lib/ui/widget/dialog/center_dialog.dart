@@ -46,7 +46,7 @@ void showPopUp({
                     if (icon) iconImage,
                     Container(
                       margin:
-                          EdgeInsets.only(top: icon ? 14.h : 0, bottom: 10.w),
+                      EdgeInsets.only(top: icon ? 14.h : 0, bottom: 10.w),
                       child: Text(
                         title,
                         style: TextStyle(
@@ -164,7 +164,7 @@ void showEmailPopUp({
                     if (icon) iconImage,
                     Container(
                       margin:
-                          EdgeInsets.only(top: icon ? 14.h : 0, bottom: 10.h.w),
+                      EdgeInsets.only(top: icon ? 14.h : 0, bottom: 10.h.w),
                       child: Text(
                         title,
                         style: TextStyle(
@@ -246,8 +246,7 @@ void showEmailPopUp({
   );
 }
 
-void deleteFolderDialog(BuildContext context, Folder folder,
-    {void Function()? callback}) {
+void deleteFolderDialog(BuildContext context, Folder folder, {void Function()? callback}) {
   final width = MediaQuery.of(context).size.width;
   showDialog<bool?>(
     context: context,
@@ -530,7 +529,7 @@ void showPausePopup({
                     ),
                     Container(
                       margin:
-                          EdgeInsets.only(top: icon ? 14.h : 0, bottom: 10.w),
+                      EdgeInsets.only(top: icon ? 14.h : 0, bottom: 10.w),
                       child: Text(
                         title,
                         style: TextStyle(
@@ -621,3 +620,5 @@ void showPausePopup({
     callback?.call();
   });
 }
+
+

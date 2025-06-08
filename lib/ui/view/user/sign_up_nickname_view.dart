@@ -49,6 +49,7 @@ class SignUpNicknameView extends StatelessWidget {
                       resizeToAvoidBottomInset: false,
                       appBar: buildBackAppBar(context),
                       body: buildBody(context, state, keyboardHeight, formKey),
+                      backgroundColor: Colors.white,
                       bottomSheet: buildBottomSheetButton(
                         context: context,
                         text: '확인',

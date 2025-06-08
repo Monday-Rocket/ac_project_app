@@ -5,8 +5,6 @@ import 'package:ac_project_app/cubits/folders/folder_name_cubit.dart';
 import 'package:ac_project_app/cubits/folders/folders_state.dart';
 import 'package:ac_project_app/cubits/folders/get_my_folders_cubit.dart';
 import 'package:ac_project_app/cubits/folders/get_selected_folder_cubit.dart';
-import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
-import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
@@ -15,13 +13,16 @@ import 'package:ac_project_app/models/report/report_type.dart';
 import 'package:ac_project_app/models/user/detail_user.dart';
 import 'package:ac_project_app/provider/api/folders/link_api.dart';
 import 'package:ac_project_app/provider/check_clipboard_link.dart';
+import 'package:ac_project_app/provider/global_variables.dart';
 import 'package:ac_project_app/provider/kakao/kakao.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/page/my_folder/folder_visible_state.dart';
+import 'package:ac_project_app/ui/view/links/share_invite_dialog.dart';
 import 'package:ac_project_app/ui/widget/add_folder/folder_add_title.dart';
 import 'package:ac_project_app/ui/widget/add_folder/horizontal_folder_list.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/dialog/center_dialog.dart';
+import 'package:ac_project_app/ui/widget/dialog/delete_share_folder_dialog.dart';
 import 'package:ac_project_app/ui/widget/move_to_my_folder_dialog.dart';
 import 'package:ac_project_app/ui/widget/rename_folder/show_rename_folder_dialog.dart';
 import 'package:flutter/material.dart';
@@ -30,16 +31,75 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:share_plus/share_plus.dart';
 
 Future<bool?> showMyLinkOptionsDialog(
-  Link link,
-  BuildContext parentContext, {
-  void Function()? popCallback,
-  bool? linkVisible,
-}) {
+    Link link,
+    BuildContext parentContext, {
+      bool isShared = false,
+      void Function()? popCallback,
+      bool? linkVisible,
+    }) {
   return showModalBottomSheet<bool?>(
     backgroundColor: Colors.transparent,
     context: parentContext,
     isScrollControlled: true,
     builder: (BuildContext context) {
+      final children = [
+        BottomListItem(
+          '공유',
+          callback: () {
+            setClipboardLink(link.url);
+            Share.share(
+              link.url ?? '',
+              subject: link.title,
+            );
+          },
+        ),
+        BottomListItem(
+          '카카오톡 공유',
+          callback: () {
+            if (linkVisible ?? true) {
+              Kakao.sendKakaoLinkShare(link);
+            } else {
+              showPopUp(
+                title: '폴더를 공개해 주세요',
+                content: '카카오톡 공유는\n공개 폴더로 전환 후 가능해요!',
+                parentContext: parentContext,
+                callback: () => Navigator.pop(context),
+                icon: true,
+                iconImage: Assets.images.icLockColor.image(width: 27.w, height: 27.w),
+              );
+            }
+          },
+        ),
+        BottomListItem(
+          '링크 삭제',
+          callback: () {
+            getIt<LinkApi>().deleteLink(link).then((result) {
+              Navigator.pop(context);
+              if (popCallback != null) {
+                popCallback.call();
+              } else {
+                Navigator.pop(parentContext, 'deleted');
+              }
+              if (result) {
+                showBottomToast(
+                  context: context,
+                  '링크가 삭제되었어요!',
+                );
+              }
+            });
+          },
+        ),
+        BottomListItem(
+          '폴더 이동',
+          callback: () {
+            showChangeFolderDialog(
+              link,
+              context,
+            );
+          },
+        ),
+      ];
+      if (isShared) children.removeLast();
       return Wrap(
         children: [
           DecoratedBox(
@@ -47,9 +107,7 @@ Future<bool?> showMyLinkOptionsDialog(
             child: Padding(
               padding: EdgeInsets.only(
                 top: 29.w,
-                bottom: Platform.isAndroid
-                    ? MediaQuery.of(context).padding.bottom
-                    : 16.w,
+                bottom: Platform.isAndroid ? MediaQuery.of(context).padding.bottom : 16.w,
               ),
               child: Column(
                 children: [
@@ -63,64 +121,7 @@ Future<bool?> showMyLinkOptionsDialog(
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        BottomListItem(
-                          '공유',
-                          callback: () {
-                            setClipboardLink(link.url);
-                            Share.share(
-                              link.url ?? '',
-                              subject: link.title,
-                            );
-                          },
-                        ),
-                        BottomListItem(
-                          '카카오톡 공유',
-                          callback: () {
-                            if (linkVisible ?? true) {
-                              Kakao.sendKakaoLinkShare(link);
-                            } else {
-                              showPopUp(
-                                title: '폴더를 공개해 주세요',
-                                content: '카카오톡 공유는\n공개 폴더로 전환 후 가능해요!',
-                                parentContext: parentContext,
-                                callback: () => Navigator.pop(context),
-                                icon: true,
-                                iconImage: Assets.images.icLockColor
-                                    .image(width: 27.w, height: 27.w),
-                              );
-                            }
-                          },
-                        ),
-                        BottomListItem(
-                          '링크 삭제',
-                          callback: () {
-                            getIt<LinkApi>().deleteLink(link).then((result) {
-                              Navigator.pop(context);
-                              if (popCallback != null) {
-                                popCallback.call();
-                              } else {
-                                Navigator.pop(parentContext, 'deleted');
-                              }
-                              if (result) {
-                                showBottomToast(
-                                  context: context,
-                                  '링크가 삭제되었어요!',
-                                );
-                              }
-                            });
-                          },
-                        ),
-                        BottomListItem(
-                          '폴더 이동',
-                          callback: () {
-                            showChangeFolderDialog(
-                              link,
-                              context,
-                            );
-                          },
-                        ),
-                      ],
+                      children: children,
                     ),
                   ),
                 ],
@@ -150,10 +151,7 @@ Future<bool?> showChangeFolderDialog(Link link, BuildContext parentContext) {
                   child: Padding(
                     padding: EdgeInsets.only(
                       top: 29.w,
-                      bottom: (Platform.isAndroid
-                              ? MediaQuery.of(context).padding.bottom
-                              : 16.w) +
-                          30.w,
+                      bottom: (Platform.isAndroid ? MediaQuery.of(context).padding.bottom : 16.w) + 30.w,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -182,9 +180,7 @@ Future<bool?> showChangeFolderDialog(Link link, BuildContext parentContext) {
                             folderContext: foldersContext,
                             state: state,
                             callback: (_, folder) {
-                              getIt<LinkApi>()
-                                  .changeFolder(link, folder.id!)
-                                  .then((result) {
+                              getIt<LinkApi>().changeFolder(link, folder.id!).then((result) {
                                 Navigator.pop(context);
                                 Navigator.pop(context);
                                 Navigator.pop(context, 'changed');
@@ -217,15 +213,58 @@ Future<bool?> showChangeFolderDialog(Link link, BuildContext parentContext) {
 }
 
 Future<bool?> showLinkOptionsDialog(
-  Link link,
-  BuildContext parentContext, {
-  void Function()? callback,
-}) {
+    Link link,
+    BuildContext parentContext, {
+      bool isShared = false,
+      void Function()? callback,
+    }) {
   return showModalBottomSheet<bool?>(
     backgroundColor: Colors.transparent,
     context: parentContext,
     isScrollControlled: true,
     builder: (BuildContext context) {
+      final children = [
+        BottomListItem(
+          '공유',
+          callback: () {
+            setClipboardLink(link.url);
+            Share.share(
+              link.url ?? '',
+              subject: link.title,
+            );
+          },
+        ),
+        BottomListItem(
+          '카카오톡 공유',
+          callback: () {
+            Kakao.sendKakaoLinkShare(link);
+          },
+        ),
+        BottomListItem(
+          '내 폴더 담기',
+          callback: () {
+            moveToMyFolderDialog(parentContext, link);
+          },
+        ),
+        BottomListItem(
+          '신고하기',
+          callback: () {
+            Navigator.pushNamed(
+              context,
+              Routes.report,
+              arguments: {
+                'type': ReportType.post,
+                'id': link.id,
+                'name': link.title,
+              },
+            ).then((value) {
+              Navigator.pop(context);
+              callback?.call();
+            });
+          },
+        ),
+      ];
+      if (isShared) children.removeAt(2);
       return Wrap(
         children: [
           DecoratedBox(
@@ -233,9 +272,7 @@ Future<bool?> showLinkOptionsDialog(
             child: Padding(
               padding: EdgeInsets.only(
                 top: 29.w,
-                bottom: Platform.isAndroid
-                    ? MediaQuery.of(context).viewInsets.bottom
-                    : 4.w,
+                bottom: Platform.isAndroid ? MediaQuery.of(context).viewInsets.bottom : 4.w,
               ),
               child: Column(
                 children: [
@@ -249,47 +286,7 @@ Future<bool?> showLinkOptionsDialog(
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        BottomListItem(
-                          '공유',
-                          callback: () {
-                            setClipboardLink(link.url);
-                            Share.share(
-                              link.url ?? '',
-                              subject: link.title,
-                            );
-                          },
-                        ),
-                        BottomListItem(
-                          '카카오톡 공유',
-                          callback: () {
-                            Kakao.sendKakaoLinkShare(link);
-                          },
-                        ),
-                        BottomListItem(
-                          '내 폴더 담기',
-                          callback: () {
-                            moveToMyFolderDialog(parentContext, link);
-                          },
-                        ),
-                        BottomListItem(
-                          '신고하기',
-                          callback: () {
-                            Navigator.pushNamed(
-                              context,
-                              Routes.report,
-                              arguments: {
-                                'type': ReportType.post,
-                                'id': link.id,
-                                'name': link.title,
-                              },
-                            ).then((value) {
-                              Navigator.pop(context);
-                              callback?.call();
-                            });
-                          },
-                        ),
-                      ],
+                      children: children,
                     ),
                   ),
                 ],
@@ -303,10 +300,10 @@ Future<bool?> showLinkOptionsDialog(
 }
 
 Future<bool?> showUserOptionDialog(
-  BuildContext parentContext,
-  DetailUser user, {
-  void Function()? callback,
-}) {
+    BuildContext parentContext,
+    DetailUser user, {
+      void Function()? callback,
+    }) {
   return showModalBottomSheet<bool?>(
     backgroundColor: Colors.transparent,
     context: parentContext,
@@ -319,9 +316,7 @@ Future<bool?> showUserOptionDialog(
             child: Padding(
               padding: EdgeInsets.only(
                 top: 29.w,
-                bottom: Platform.isAndroid
-                    ? MediaQuery.of(context).padding.bottom
-                    : 16.w,
+                bottom: Platform.isAndroid ? MediaQuery.of(context).padding.bottom : 16.w,
               ),
               child: Column(
                 children: [
@@ -436,15 +431,14 @@ BoxDecoration DialogDecoration() {
 }
 
 void saveEmptyFolder(
-  BuildContext context,
-  BuildContext parentContext,
-  String folderName,
-  FolderVisibleState visibleState, {
-  void Function(BuildContext context, List<Folder> folders, int index)?
-      moveToMyLinksView,
-  void Function()? callback,
-  bool? hasNotUnclassified,
-}) {
+    BuildContext context,
+    BuildContext parentContext,
+    String folderName,
+    FolderVisibleState visibleState, {
+      void Function(BuildContext context, List<Folder> folders, int index)? moveToMyLinksView,
+      void Function()? callback,
+      bool? hasNotUnclassified,
+    }) {
   if (folderName.isEmpty) {
     return;
   }
@@ -460,10 +454,7 @@ void saveEmptyFolder(
       showBottomToast(context: context, '새로운 폴더가 생성되었어요!');
 
       if (hasNotUnclassified ?? false) {
-        parentContext
-            .read<GetFoldersCubit>()
-            .getFoldersWithoutUnclassified()
-            .then((_) {
+        parentContext.read<GetFoldersCubit>().getFoldersWithoutUnclassified().then((_) {
           runCallback(
             parentContext,
             moveToMyLinksView: moveToMyLinksView,
@@ -486,24 +477,23 @@ void saveEmptyFolder(
 }
 
 void runCallback(
-  BuildContext parentContext, {
-  void Function(BuildContext context, List<Folder> folders, int index)?
-      moveToMyLinksView,
-  void Function()? callback,
-}) {
+    BuildContext parentContext, {
+      void Function(BuildContext context, List<Folder> folders, int index)? moveToMyLinksView,
+      void Function()? callback,
+    }) {
   final folders = parentContext.read<GetFoldersCubit>().folders;
   moveToMyLinksView?.call(parentContext, folders, folders.length - 1);
   callback?.call();
 }
 
-Future<bool?> showFolderOptionsDialog(
-  List<Folder> folders,
-  Folder currFolder,
-  BuildContext parentContext, {
-  bool fromLinkView = false,
-}) async {
+void showFolderOptionsDialog(
+    List<Folder> folders,
+    Folder currFolder,
+    BuildContext parentContext, {
+      bool fromLinkView = false,
+    }) {
   final visible = currFolder.visible ?? false;
-  return showModalBottomSheet<bool?>(
+  showModalBottomSheet<void>(
     backgroundColor: Colors.transparent,
     context: parentContext,
     isScrollControlled: true,
@@ -521,9 +511,7 @@ Future<bool?> showFolderOptionsDialog(
             child: Padding(
               padding: EdgeInsets.only(
                 top: 29.w,
-                bottom: Platform.isAndroid
-                    ? MediaQuery.of(context).padding.bottom
-                    : 0,
+                bottom: Platform.isAndroid ? MediaQuery.of(context).padding.bottom : 0,
               ),
               child: Column(
                 children: [
@@ -596,29 +584,21 @@ Future<bool?> showFolderOptionsDialog(
                         BottomListItem(
                           '카카오톡 폴더 공유',
                           callback: () {
-                            final profileInfoCubit =
-                                getIt<GetProfileInfoCubit>();
-                            if (profileInfoCubit.state is ProfileLoadedState) {
-                              final profile =
-                                  (profileInfoCubit.state as ProfileLoadedState)
-                                      .profile;
 
-                              if (currFolder.visible ?? false) {
-                                Kakao.sendFolderKakaoShare(
-                                  currFolder,
-                                  profile,
-                                );
-                              } else {
-                                showPopUp(
-                                  title: '폴더를 공개해 주세요',
-                                  content: '카카오톡 폴더 공유는\n공개 폴더로 전환 후 가능해요!',
-                                  parentContext: parentContext,
-                                  callback: () => Navigator.pop(context),
-                                  icon: true,
-                                  iconImage: Assets.images.icLockColor
-                                      .image(width: 27.w, height: 27.w),
-                                );
-                              }
+                            if ((currFolder.visible ?? false) && me != null) {
+                              Kakao.sendFolderKakaoShare(
+                                currFolder,
+                                me!,
+                              );
+                            } else {
+                              showPopUp(
+                                title: '폴더를 공개해 주세요',
+                                content: '카카오톡 폴더 공유는\n공개 폴더로 전환 후 가능해요!',
+                                parentContext: parentContext,
+                                callback: () => Navigator.pop(context),
+                                icon: true,
+                                iconImage: Assets.images.icLockColor.image(width: 27.w, height: 27.w),
+                              );
                             }
                           },
                         ),
@@ -635,22 +615,296 @@ Future<bool?> showFolderOptionsDialog(
   );
 }
 
+void showSharedFolderOptionsDialogFromFolders(
+    BuildContext parentContext,
+    Folder folder, {
+      bool isAdmin = false,
+      void Function()? callback,
+    }) {
+  Column SharedFolderMenu() {
+    if (isAdmin) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          BottomListItem(
+            '폴더 설정',
+            callback: () {
+              Navigator.pushNamed(parentContext, Routes.sharedLinkSetting, arguments: {
+                'folder': folder,
+              }).then((result) {
+                if (result == true) {
+                  parentContext.read<GetFoldersCubit>().getFolders();
+                }
+              });
+            },
+          ),
+          BottomListItem(
+            '폴더 삭제',
+            callback: () {
+              deleteSharedFolderAdminDialog(
+                parentContext,
+                folder,
+                callback: () {
+                  callback?.call();
+                },
+              );
+            },
+          ),
+          // BottomListItem(
+          //   '멤버 관리',
+          //   callback: () {},
+          // ),
+        ],
+      );
+    } else {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          BottomListItem(
+            '공유하기',
+            callback: () {
+              showInviteDialog(parentContext, folder.id, callback: () {
+                Navigator.pop(parentContext);
+              });
+            },
+          ),
+          BottomListItem(
+            '폴더 나가기',
+            callback: () {
+              deleteShareFolderDialog(
+                parentContext,
+                folder,
+                callback: () {
+                  callback?.call();
+                },
+              );
+            },
+          ),
+        ],
+      );
+    }
+  }
+
+  showModalBottomSheet<bool?>(
+    backgroundColor: Colors.transparent,
+    context: parentContext,
+    isScrollControlled: true,
+    builder: (BuildContext context) {
+      return Wrap(
+        children: [
+          DecoratedBox(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20.w),
+                topRight: Radius.circular(20.w),
+              ),
+            ),
+            child: Padding(
+              padding: EdgeInsets.only(
+                top: 29.w,
+                bottom: Platform.isAndroid ? MediaQuery.of(context).padding.bottom : 0,
+              ),
+              child: Column(
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(left: 30.w, right: 20.w),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '공유 폴더',
+                          style: TextStyle(
+                            color: grey800,
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () => Navigator.pop(context),
+                          child: Icon(
+                            Icons.close_rounded,
+                            size: 24.w,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(
+                      top: 17.w,
+                      left: 6.w,
+                      right: 6.w,
+                      bottom: 20.w,
+                    ),
+                    child: SharedFolderMenu(),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      );
+    },
+  ).then((result) {
+    if (result ?? false) {
+      parentContext.read<GetFoldersCubit>().getFolders();
+    }
+  });
+}
+
+void showSharedFolderOptionsDialogInShareFolder(
+    BuildContext parentContext,
+    Folder folder, {
+      bool isAdmin = false,
+      void Function()? callback,
+    }) {
+  Column SharedFolderMenu() {
+    if (isAdmin) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          BottomListItem(
+            '폴더 설정',
+            callback: () {
+              Navigator.pushNamed(parentContext, Routes.sharedLinkSetting, arguments: {
+                'folder': folder,
+              }).then((result) {
+                if (result == true) {
+                  parentContext.read<GetFoldersCubit>().getFolders();
+                }
+              });
+            },
+          ),
+          BottomListItem(
+            '폴더 삭제',
+            callback: () {
+              deleteSharedFolderAdminDialog(
+                parentContext,
+                folder,
+                callback: () {
+                  callback?.call();
+                },
+              );
+            },
+          ),
+          // BottomListItem(
+          //   '멤버 관리',
+          //   callback: () {},
+          // ),
+        ],
+      );
+    } else {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          BottomListItem(
+            '공유하기',
+            callback: () {
+              showInviteDialog(parentContext, folder.id, callback: () {
+                Navigator.pop(parentContext);
+              });
+            },
+          ),
+          BottomListItem(
+            '폴더 나가기',
+            callback: () async {
+              deleteShareFolderDialog(
+                parentContext,
+                folder,
+                callback: () {
+                  callback?.call();
+                },
+              );
+            },
+          ),
+        ],
+      );
+    }
+  }
+
+  showModalBottomSheet<bool?>(
+    backgroundColor: Colors.transparent,
+    context: parentContext,
+    isScrollControlled: true,
+    builder: (BuildContext context) {
+      return Wrap(
+        children: [
+          DecoratedBox(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20.w),
+                topRight: Radius.circular(20.w),
+              ),
+            ),
+            child: Padding(
+              padding: EdgeInsets.only(
+                top: 29.w,
+                bottom: Platform.isAndroid ? MediaQuery.of(context).padding.bottom : 0,
+              ),
+              child: Column(
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(left: 30.w, right: 20.w),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '공유 폴더',
+                          style: TextStyle(
+                            color: grey800,
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () => Navigator.pop(context),
+                          child: Icon(
+                            Icons.close_rounded,
+                            size: 24.w,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(
+                      top: 17.w,
+                      left: 6.w,
+                      right: 6.w,
+                      bottom: 20.w,
+                    ),
+                    child: SharedFolderMenu(),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      );
+    },
+  ).then((result) {
+    if (result ?? false) {
+      parentContext.read<GetFoldersCubit>().getFolders();
+    }
+  });
+}
+
 void changeFolderVisible(BuildContext context, Folder folder) {
   context.read<GetFoldersCubit>().transferVisible(folder).then((value) {
     Navigator.pop(context);
     if (value) {
-      context
-          .read<GetSelectedFolderCubit>()
-          .update(folder.copyWith(visible: !(folder.visible ?? false)));
+      context.read<GetSelectedFolderCubit>().update(folder.copyWith(visible: !(folder.visible ?? false)));
     }
   });
 }
 
 void changeFolderName(
-  BuildContext context,
-  List<Folder> folders,
-  Folder currFolder,
-) {
+    BuildContext context,
+    List<Folder> folders,
+    Folder currFolder,
+    ) {
   showRenameFolderDialog(
     context,
     currFolder: currFolder,
@@ -660,9 +914,7 @@ void changeFolderName(
     if (name.isNotEmpty) {
       Navigator.pop(context, true);
       context.read<GetFoldersCubit>().getFolders();
-      context
-          .read<GetSelectedFolderCubit>()
-          .update(currFolder.copyWith(name: name));
+      context.read<GetSelectedFolderCubit>().update(currFolder.copyWith(name: name));
     }
   });
 }

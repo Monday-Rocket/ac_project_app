@@ -10,7 +10,6 @@ void main(List<String> arguments) async {
       'lib/initial_settings.dart '
       'lib/routes.dart '
       'lib/provider/login/*.dart '
-      'lib/provider/comment_temp_data_provider.dart '
       'lib/provider/global_providers.dart '
       'lib/provider/logout.dart '
       'lib/provider/profile_images.dart '

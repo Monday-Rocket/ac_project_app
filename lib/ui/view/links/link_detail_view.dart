@@ -9,7 +9,7 @@ import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/link/link.dart';
-import 'package:ac_project_app/provider/comment_temp_data_provider.dart';
+import 'package:ac_project_app/provider/shared_pref_provider.dart';
 import 'package:ac_project_app/ui/widget/buttons/bottom_sheet_button.dart';
 import 'package:ac_project_app/ui/widget/dialog/bottom_dialog.dart';
 import 'package:ac_project_app/ui/widget/dialog/center_dialog.dart';
@@ -34,18 +34,19 @@ class LinkDetailView extends StatefulWidget {
 }
 
 class _LinkDetailViewState extends State<LinkDetailView> {
-
   final scrollController = ScrollController();
   late Link? globalLink;
   late bool? isMine;
   late bool linkVisible;
-  
+  late bool isShared;
+
   @override
   Widget build(BuildContext context) {
     final args = getArguments(context);
     globalLink = args['link'] as Link;
     isMine = args['isMine'] as bool?;
     linkVisible = args['visible'] as bool? ?? true;
+    isShared = args['isShared'] as bool? ?? false;
 
     final profileState = context.watch<GetProfileInfoCubit>().state;
     var isMyLink = false;
@@ -90,7 +91,6 @@ class _LinkDetailViewState extends State<LinkDetailView> {
                 } else {
                   return PopScope(
                     onPopInvokedWithResult: (bool didPop, _) {
-                      Log.d('onPopInvoked ${editState.type}: $didPop');
                       if (didPop) return;
                       changePreviousViewIfEdited(editState, context);
                     },
@@ -117,7 +117,6 @@ class _LinkDetailViewState extends State<LinkDetailView> {
   }
 
   void changePreviousViewIfEdited(EditState editState, BuildContext context) {
-    Log.d('changePreviousViewIfEdited: ${editState.type}');
     if (editState.type == EditStateType.editedView) {
       Navigator.pop(context, 'changed');
     } else {
@@ -154,17 +153,7 @@ class _LinkDetailViewState extends State<LinkDetailView> {
         toolbarHeight: 48.w,
         actions: [
           InkWell(
-            onTap: () => isMyLink
-                ? showMyLinkOptionsDialog(
-                    link,
-                    context,
-                    linkVisible: linkVisible,
-                  )
-                : showLinkOptionsDialog(
-                    link,
-                    context,
-                    callback: () => Navigator.pop(context),
-                  ),
+            onTap: () => showLinkDialog(isMyLink, link, context, linkVisible),
             child: Container(
               margin: EdgeInsets.only(right: 24.w),
               child: SvgPicture.asset(
@@ -209,13 +198,29 @@ class _LinkDetailViewState extends State<LinkDetailView> {
     );
   }
 
+  Future<bool?> showLinkDialog(bool isMyLink, Link link, BuildContext context, bool linkVisible) {
+    return isMyLink
+        ? showMyLinkOptionsDialog(
+            link,
+            context,
+            linkVisible: linkVisible,
+            isShared: isShared,
+          )
+        : showLinkOptionsDialog(
+            link,
+            context,
+            isShared: isShared,
+            callback: () => Navigator.pop(context),
+          );
+  }
+
   void goBackPage(EditState editState, BuildContext context, int? linkId) {
     if (editState.type == EditStateType.edit) {
       showWaitDialog(
         context,
         callback: () {
           final value = context.read<DetailEditCubit>().textController.text;
-          saveKeyValue(linkId!.toString(), value).then((value) {
+          SharedPrefHelper.saveKeyValue(linkId!.toString(), value).then((value) {
             Navigator.pop(context); // 창 닫기
             Navigator.pop(context); // 뒤로 가기
           });
@@ -310,8 +315,7 @@ class _LinkDetailViewState extends State<LinkDetailView> {
                                   topRight: Radius.circular(10.w),
                                 ),
                               ),
-                              width:
-                                  MediaQuery.of(cubitContext).size.width - 48.w,
+                              width: MediaQuery.of(cubitContext).size.width - 48.w,
                               height: 10.w,
                             );
                           },
@@ -458,9 +462,7 @@ class _LinkDetailViewState extends State<LinkDetailView> {
                           minHeight: 120.w,
                         ),
                         child: TextField(
-                          controller: cubitContext
-                              .read<DetailEditCubit>()
-                              .textController,
+                          controller: cubitContext.read<DetailEditCubit>().textController,
                           style: TextStyle(
                             fontSize: 14.sp,
                             color: grey700,
@@ -501,24 +503,19 @@ class _LinkDetailViewState extends State<LinkDetailView> {
       showWaitDialog(
         cubitContext,
         callback: () {
-          final value =
-              cubitContext.read<DetailEditCubit>().textController.text;
+          final value = cubitContext.read<DetailEditCubit>().textController.text;
           Log.i('value: $value');
-          saveKeyValue(linkId!.toString(), value).then(
-            (_) => toggleEditor(cubitContext)
-                .then((_) => Navigator.pop(cubitContext)),
+          SharedPrefHelper.saveKeyValue(linkId!.toString(), value).then(
+            (_) => toggleEditor(cubitContext).then((_) => Navigator.pop(cubitContext)),
           );
         },
       );
     } else {
-      getValueFromKey(linkId!.toString()).then((temp) {
-        if (temp.isNotEmpty) {
+      SharedPrefHelper.getValueFromKey<String?>(linkId!.toString(), removeKey: true).then((temp) {
+        if (temp != null && temp.isNotEmpty) {
           cubitContext.read<DetailEditCubit>().textController.text = temp;
         } else {
-          cubitContext
-              .read<DetailEditCubit>()
-              .textController
-              .text = link.describe ?? '';
+          cubitContext.read<DetailEditCubit>().textController.text = link.describe ?? '';
         }
         toggleEditor(cubitContext);
       });

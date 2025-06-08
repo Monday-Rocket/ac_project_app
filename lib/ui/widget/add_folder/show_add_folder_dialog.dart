@@ -19,8 +19,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 Future<bool?> showAddFolderDialog(
   BuildContext parentContext, {
   required List<Folder> folders,
-  void Function(BuildContext context, List<Folder> folders, int index)?
-      moveToMyLinksView,
+  void Function(BuildContext context, List<Folder> folders, int index)? moveToMyLinksView,
   void Function()? callback,
   bool? hasNotUnclassified,
 }) async {
@@ -75,8 +74,7 @@ Future<bool?> showAddFolderDialog(
 Padding _buildDialogBody(
   BuildContext context,
   BuildContext parentContext,
-  void Function(BuildContext context, List<Folder> folders, int index)?
-      moveToMyLinksView,
+  void Function(BuildContext context, List<Folder> folders, int index)? moveToMyLinksView,
   void Function()? callback,
   bool? hasNotUnclassified,
   GlobalKey<FormState> formKey,
@@ -115,9 +113,7 @@ Padding _buildDialogBody(
                         child: Text(
                           '완료',
                           style: TextStyle(
-                            color: state == ButtonState.disabled
-                                ? grey300
-                                : grey800,
+                            color: state == ButtonState.disabled ? grey300 : grey800,
                             fontWeight: FontWeight.w500,
                             fontSize: 16.sp,
                           ),
@@ -183,6 +179,9 @@ Padding _buildDialogBody(
                         if (Folder.containsNameFromFolderList(folders, value)) {
                           return '이미 사용하고 있는 폴더명이예요. 새로운 폴더명을 입력해주세요.';
                         }
+                        if (value != null && value.length > 20) {
+                          return '20자 이하로 입력해주세요.';
+                        }
 
                         return null;
                       },
@@ -190,9 +189,8 @@ Padding _buildDialogBody(
                         Log.i('onSaved $value');
                       },
                       onChanged: (String? value) {
-                        formKey.currentState?.validate();
-
-                        if (value?.isEmpty ?? true) {
+                        final validate = formKey.currentState?.validate();
+                        if (validate != true) {
                           context.read<ButtonStateCubit>().disable();
                         } else {
                           context.read<ButtonStateCubit>().enable();
@@ -248,30 +246,28 @@ Padding _buildDialogBody(
                 return Container(
                   margin: EdgeInsets.only(
                     top: 50.w,
-                    bottom: Platform.isAndroid
-                        ? MediaQuery.of(context).padding.bottom
-                        : 16.w,
+                    bottom: Platform.isAndroid ? MediaQuery.of(context).padding.bottom : 16.w,
                   ),
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       minimumSize: Size.fromHeight(55.w),
-                      backgroundColor: state == ButtonState.disabled
-                          ? secondary
-                          : primary600,
+                      backgroundColor: state == ButtonState.disabled ? secondary : primary600,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12.w),
                       ),
                       shadowColor: Colors.transparent,
                     ),
-                    onPressed: () => saveEmptyFolder(
-                      context,
-                      parentContext,
-                      context.read<FolderNameCubit>().state,
-                      visibleState,
-                      moveToMyLinksView: moveToMyLinksView,
-                      callback: callback,
-                      hasNotUnclassified: hasNotUnclassified,
-                    ),
+                    onPressed: state == ButtonState.enabled
+                        ? () => saveEmptyFolder(
+                              context,
+                              parentContext,
+                              context.read<FolderNameCubit>().state,
+                              visibleState,
+                              moveToMyLinksView: moveToMyLinksView,
+                              callback: callback,
+                              hasNotUnclassified: hasNotUnclassified,
+                            )
+                        : null,
                     child: Text(
                       '폴더 생성하기',
                       style: TextStyle(

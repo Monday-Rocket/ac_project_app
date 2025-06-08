@@ -4,13 +4,13 @@ import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/user/user.dart' as user;
 import 'package:ac_project_app/provider/api/user/user_api.dart';
+import 'package:ac_project_app/provider/shared_pref_provider.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/dialog/center_dialog.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class Email {
   static Future<void> login(
@@ -20,8 +20,7 @@ class Email {
     required void Function(String) onError,
         required void Function() onFail,
   }) async {
-    final prefs = await SharedPreferences.getInstance();
-    unawaited(prefs.setString('loginType', 'email'));
+    unawaited(SharedPrefHelper.saveKeyValue('loginType', 'email'));
     final userCredential = await FirebaseAuth.instance.signInWithEmailLink(
       email: email,
       emailLink: emailLink,
@@ -50,7 +49,7 @@ class Email {
           .sendSignInLinkToEmail(
         email: email,
         actionCodeSettings: ActionCodeSettings(
-          url: 'https://acprojectapp.page.link/jTpt?email=$email',
+          url: 'https://acprojectapp.page.link/jTpt?email=$email',  // TODO update this URL
           handleCodeInApp: true,
           iOSBundleId: 'com.mr.acProjectApp',
           androidPackageName: 'com.mr.ac_project_app',

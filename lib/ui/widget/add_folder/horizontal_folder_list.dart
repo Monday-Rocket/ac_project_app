@@ -113,7 +113,7 @@ GestureDetector FolderItem(int i, List<Folder> folders,
                     alignment: Alignment.bottomRight,
                     child: Padding(
                       padding: EdgeInsets.only(bottom: 3.w),
-                      child: Assets.images.icLockPng.image(),
+                      child: Assets.images.icLockWebp.image(),
                     ),
                   ),
                 )
@@ -189,7 +189,7 @@ Widget UnclassifiedItem(int? selectedIndex, void Function() callback) {
                 alignment: Alignment.bottomRight,
                 child: Padding(
                   padding: EdgeInsets.only(bottom: 3.w),
-                  child: Assets.images.icLockPng.image(),
+                  child: Assets.images.icLockWebp.image(),
                 ),
               ),
             ),

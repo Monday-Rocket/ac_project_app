@@ -13,7 +13,6 @@ ignore:
   - 'lib/firebase_options.dart'
   - 'lib/util/logger.dart'
   - 'lib/provider/login/*.dart'
-  - 'lib/provider/comment_temp_data_provider.dart'
   - 'lib/provider/global_providers.dart'
   - 'lib/provider/logout.dart'
   - 'lib/provider/profile_images.dart'

@@ -3,17 +3,16 @@ import 'dart:async';
 import 'package:ac_project_app/provider/kakao/kakao.dart';
 import 'package:ac_project_app/provider/login/naver_login.dart';
 import 'package:ac_project_app/provider/share_data_provider.dart';
+import 'package:ac_project_app/provider/shared_pref_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 void logout(void Function() callback) {
   // 1. 공유패널 비우기
   ShareDataProvider.clearAllData();
 
   // 2. 로그아웃 하기
-  SharedPreferences.getInstance().then((prefs) {
-    final loginType = prefs.getString('loginType') ?? '';
+  SharedPrefHelper.getValueFromKey<String>('loginType').then((loginType) {
     switch (loginType) {
       case 'google':
         GoogleSignIn(
@@ -39,8 +38,8 @@ void logout(void Function() callback) {
 
 Future<bool> logoutWithoutPush(FirebaseAuth auth) async {
   try {
-    final prefs = await SharedPreferences.getInstance();
-    final loginType = prefs.getString('loginType') ?? '';
+    final loginType = await SharedPrefHelper.getValueFromKey<String>('loginType');
+
     switch (loginType) {
       case 'google':
         await GoogleSignIn(

@@ -14,9 +14,11 @@ class FolderLoadingState extends FoldersState {
 }
 
 class FolderLoadedState extends FoldersState {
-  FolderLoadedState(this.folders);
+  FolderLoadedState(this.folders, this.totalLinksText, this.addedLinksCount);
 
   final List<Folder> folders;
+  final String totalLinksText;
+  final int addedLinksCount;
 
   @override
   List<Object> get props => folders;

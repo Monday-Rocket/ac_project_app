@@ -2,8 +2,6 @@ import 'dart:async';
 
 import 'package:ac_project_app/cubits/folders/get_user_folders_cubit.dart';
 import 'package:ac_project_app/cubits/login/login_type.dart';
-import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
-import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/link/link.dart' as my_link;
@@ -11,7 +9,9 @@ import 'package:ac_project_app/models/profile/profile.dart' as app_profile;
 import 'package:ac_project_app/models/profile/profile_image.dart';
 import 'package:ac_project_app/provider/api/folders/link_api.dart';
 import 'package:ac_project_app/provider/api/user/user_api.dart' as my_user_api;
+import 'package:ac_project_app/provider/global_variables.dart';
 import 'package:ac_project_app/provider/login/firebase_auth_remote_data_source.dart';
+import 'package:ac_project_app/provider/shared_pref_provider.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/util/logger.dart';
@@ -22,15 +22,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kakao_flutter_sdk_share/kakao_flutter_sdk_share.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class Kakao {
   static Future<bool> login() async {
     final isLogin = await _login();
 
     if (isLogin) {
-      final prefs = await SharedPreferences.getInstance();
-      unawaited(prefs.setString('loginType', LoginType.kakao.name));
+      unawaited(SharedPrefHelper.saveKeyValue('loginType', LoginType.kakao.name));
       final user = await UserApi.instance.me();
       // https://velog.io/@ember/Firebase-deploy-Forbidden-%ED%95%B4%EA%B2%B0
       final customToken =
@@ -257,11 +255,8 @@ class Kakao {
         getIt<my_user_api.UserApi>().getUsersId(userId).then((result) {
           result.when(
             success: (user) {
-              final profileInfoCubit = getIt<GetProfileInfoCubit>();
               final userFoldersCubit = getIt<GetUserFoldersCubit>();
-              final isMine =
-                  (profileInfoCubit.state as ProfileLoadedState).profile.id ==
-                      user.id;
+              final isMine = me?.id == user.id;
 
               userFoldersCubit.getFolders(user.id!).then((_) {
                 Navigator.of(context).pushNamed(

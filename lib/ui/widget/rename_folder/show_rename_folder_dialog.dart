@@ -178,6 +178,9 @@ Padding _buildDialogBody(
                           return '이미 사용하고 있는 폴더명이예요.'
                               ' 변경할 폴더명을 입력해주세요.';
                         }
+                        if (value != null && value.length > 20) {
+                          return '20자 이하로 입력해주세요.';
+                        }
 
                         return null;
                       },
@@ -185,9 +188,8 @@ Padding _buildDialogBody(
                         Log.i('onSaved $value');
                       },
                       onChanged: (String? value) {
-                        formKey.currentState?.validate();
-
-                        if (value?.isEmpty ?? true) {
+                        final validate = formKey.currentState?.validate();
+                        if (validate != true) {
                           context.read<ButtonStateCubit>().disable();
                         } else {
                           context.read<ButtonStateCubit>().enable();
@@ -220,9 +222,10 @@ Padding _buildDialogBody(
                       ),
                       shadowColor: Colors.transparent,
                     ),
-                    onPressed: () {
+                    onPressed: state == ButtonState.enabled ? () {
                       final cubit = context.read<GetFoldersCubit>();
                       final name = context.read<FolderNameCubit>().state;
+                      Log.i('currFolder: ${currFolder.name}, name: $name');
                       cubit.changeName(currFolder, name).then((result) {
                         Navigator.pop(context, name);
                         cubit.getFolders();
@@ -233,7 +236,7 @@ Padding _buildDialogBody(
                           );
                         }
                       });
-                    },
+                    } : null,
                     child: Text(
                       '폴더명 변경',
                       style: TextStyle(

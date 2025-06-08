@@ -8,6 +8,7 @@ import 'package:ac_project_app/cubits/login/login_type.dart';
 import 'package:ac_project_app/cubits/login/login_user_state.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/user/user.dart' as custom;
+import 'package:ac_project_app/provider/global_variables.dart';
 import 'package:ac_project_app/provider/login/email_login.dart';
 import 'package:ac_project_app/provider/share_data_provider.dart';
 import 'package:ac_project_app/routes.dart';
@@ -23,8 +24,30 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class LoginView extends StatelessWidget {
+class LoginView extends StatefulWidget {
   const LoginView({super.key});
+
+  @override
+  State<LoginView> createState() => _LoginViewState();
+}
+
+class _LoginViewState extends State<LoginView> {
+  StreamSubscription<Uri>? receiveStreamSubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    receiveStreamSubscription = AppLinks().uriLinkStream.listen((uri) {
+      Log.i('Received in LoginView dynamic link: $uri');
+      appLinkUrl = uri.toString();
+    });
+  }
+
+  @override
+  void dispose() {
+    receiveStreamSubscription?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,9 +84,13 @@ class LoginView extends StatelessWidget {
   }
 
   void retrieveDynamicLinkAndSignIn(BuildContext context) {
-    final appLinks = AppLinks();
+    receiveStreamSubscription = AppLinks().uriLinkStream.listen((uri) {
+      Log.i('Received dynamic link: $uri');
+      if (uri.queryParameters.isNotEmpty && uri.queryParameters['token'] != null) {
+        showBottomToast('로그인 후 다시 참여해주세요.', context: context);
+        return;
+      }
 
-    appLinks.uriLinkStream.listen((uri) {
       context.read<LoginCubit>().loading();
       final validLink = FirebaseAuth.instance.isSignInWithEmailLink(uri.toString());
       if (validLink) {
@@ -482,26 +509,6 @@ class LoginView extends StatelessWidget {
             ],
           ),
           SizedBox(height: 53.w),
-          InkWell(
-            key: const Key('EmailLoginButton'),
-            onTap: () => Navigator.pushNamed(context, Routes.emailLogin),
-            child: Text(
-              '이메일로 로그인',
-              style: TextStyle(
-                color: grey400,
-                fontWeight: FontWeight.w500,
-                fontSize: 15.sp,
-                letterSpacing: -0.1.w,
-              ),
-            ),
-          ),
-          SizedBox(height: 12.w),
-          InkWell(
-            key: const Key('SignedUserLoginButton'),
-            onTap: () =>
-                context.read<LoginCubit>().login(LoginType.signedLoginTest),
-            child: Container(width: 1, height: 1, color: Colors.transparent),
-          ),
         ],
       ),
     );
