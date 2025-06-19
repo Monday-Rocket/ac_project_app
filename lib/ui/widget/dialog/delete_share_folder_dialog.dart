@@ -184,7 +184,9 @@ void deleteSharedFolderAdminDialog(BuildContext context, Folder folder, {void Fu
                   28.verticalSpace,
                   GestureDetector(
                     onTap: () {
-                      Navigator.pushNamed(context, Routes.delegateAdmin, arguments: folder.id);
+                      Navigator.pushNamed(context, Routes.delegateAdmin, arguments: folder.id).then((_) {
+                        callback?.call();
+                      });
                     },
                     child: Container(
                       height: 19,

@@ -176,7 +176,7 @@ class MyLinkView extends StatelessWidget {
                 NotificationListener<ScrollEndNotification>(
                   onNotification: (scrollEnd) {
                     final metrics = scrollEnd.metrics;
-                    if (metrics.atEdge && metrics.pixels != 0) {
+                    if (metrics.atEdge && metrics.pixels > 100) {
                       context.read<LinksFromSelectedFolderCubit>().loadMore();
                     }
                     return true;

@@ -90,7 +90,7 @@ class Pages {
       case Routes.delegateAdmin:
         return router.create(child: const DelegateAdminView());
       default:
-        return null;
+        return router.create(child: const SplashView());
     }
   }
 }

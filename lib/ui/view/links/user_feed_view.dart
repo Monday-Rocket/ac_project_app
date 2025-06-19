@@ -100,7 +100,7 @@ class UserFeedView extends StatelessWidget {
     return NotificationListener<ScrollEndNotification>(
       onNotification: (scrollEnd) {
         final metrics = scrollEnd.metrics;
-        if (metrics.atEdge && metrics.pixels != 0) {
+        if (metrics.atEdge && metrics.pixels > 100) {
           feedContext.read<FeedViewCubit>().loadMore();
         }
 
