@@ -788,10 +788,6 @@ void showSharedFolderOptionsDialogInShareFolder(
               );
             },
           ),
-          // BottomListItem(
-          //   '멤버 관리',
-          //   callback: () {},
-          // ),
         ],
       );
     } else {

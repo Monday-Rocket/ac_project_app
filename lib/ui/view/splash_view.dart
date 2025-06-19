@@ -5,9 +5,12 @@ import 'package:ac_project_app/cubits/login/auto_login_cubit.dart';
 import 'package:ac_project_app/cubits/login/login_user_state.dart';
 import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
+import 'package:ac_project_app/provider/global_variables.dart';
 import 'package:ac_project_app/provider/tutorial_provider.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/dialog/center_dialog.dart';
+import 'package:ac_project_app/util/logger.dart';
+import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -25,6 +28,7 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
   late AnimationController secondAnimationController;
 
   final autoLoginCubit = getIt<AutoLoginCubit>();
+  StreamSubscription<Uri>? receiveStreamSubscription;
 
   @override
   void initState() {
@@ -32,6 +36,10 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
     setAnimationController();
     loginAfterAnimation();
     super.initState();
+    receiveStreamSubscription = AppLinks().uriLinkStream.listen((uri) {
+      Log.i('Received in LoginView dynamic link: $uri');
+      appLinkUrl = uri.toString();
+    });
   }
 
   void loginAfterAnimation() {

@@ -90,6 +90,9 @@ class Pages {
       case Routes.delegateAdmin:
         return router.create(child: const DelegateAdminView());
       default:
+        if (settings.name != null && (settings.name?.startsWith('linkpool://') ?? false)) {
+          return router.create(child: const SplashView());
+        }
         return null;
     }
   }

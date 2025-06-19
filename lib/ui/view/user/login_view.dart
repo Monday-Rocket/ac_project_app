@@ -66,8 +66,6 @@ class _LoginViewState extends State<LoginView> {
                   showErrorBanner(loginContext, state.message);
                 } else if (state is LoginLoadedState) {
                   moveToNext(context, loginContext, state.user);
-                } else if (state is LoginInitialState) {
-                  retrieveDynamicLinkAndSignIn(loginContext);
                 }
                 return Column(
                   children: [
@@ -81,27 +79,6 @@ class _LoginViewState extends State<LoginView> {
         ),
       ),
     );
-  }
-
-  void retrieveDynamicLinkAndSignIn(BuildContext context) {
-    receiveStreamSubscription = AppLinks().uriLinkStream.listen((uri) {
-      Log.i('Received dynamic link: $uri');
-      if (uri.queryParameters.isNotEmpty && uri.queryParameters['token'] != null) {
-        showBottomToast('로그인 후 다시 참여해주세요.', context: context);
-        return;
-      }
-
-      context.read<LoginCubit>().loading();
-      final validLink = FirebaseAuth.instance.isSignInWithEmailLink(uri.toString());
-      if (validLink) {
-        final link = uri.queryParameters['link'] ?? '';
-        final continueUrl = Uri.parse(link).queryParameters['continueUrl'] ?? '';
-        final email = Uri.parse(continueUrl).queryParameters['email'] ?? '';
-        _handleLink(email, uri.toString(), context);
-      } else {
-        context.read<LoginCubit>().showError('이메일 로그인/회원가입 실패');
-      }
-    });
   }
 
   void _handleLink(String email, String link, BuildContext context) {

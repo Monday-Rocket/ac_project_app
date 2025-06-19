@@ -76,7 +76,7 @@ class _ShareLinkViewState extends State<ShareLinkView> {
                   NotificationListener<ScrollEndNotification>(
                     onNotification: (scrollEnd) {
                       final metrics = scrollEnd.metrics;
-                      if (metrics.atEdge && metrics.pixels != 0) {
+                      if (metrics.atEdge && metrics.pixels > 100) {
                         Log.i('Reached the end of the list, loading more links');
                         cubitContext.read<LinksFromSelectedFolderCubit>().loadMore();
                       }
@@ -174,14 +174,14 @@ class _ShareLinkViewState extends State<ShareLinkView> {
     return BlocBuilder<GetProfileInfoCubit, ProfileState>(
       builder: (profileInfoCubit, state) {
         if (state is ProfileLoadingState || state is ProfileInitialState) {
-          return const Center(child: CircularProgressIndicator());
+          return SizedBox(width: double.infinity, height: width * (107 / 375), child: const Center(child: CircularProgressIndicator()));
         } else if (state is ProfileErrorState) {
           return Center(child: Text(state.message));
         }
 
         final isMine = link.user?.id == (state as ProfileLoadedState).profile.id;
         return Padding(
-          padding: EdgeInsets.only(left: isOdd ? 0 : 24.w, right: isOdd ? 24.w : 0),
+          padding: EdgeInsets.only(left: isOdd ? 0 : 13.5.w, right: isOdd ? 13.5.w : 0),
           child: GestureDetector(
             onTap: () {
               Navigator.pushNamed(
@@ -212,72 +212,81 @@ class _ShareLinkViewState extends State<ShareLinkView> {
   }
 
   Widget buildBodyListItem(double width, Link link, bool isOdd) {
-    return Column(
-      crossAxisAlignment: isOdd ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-      children: [
-        LinkHero(
-          tag: 'linkImage${link.id}',
-          child: ClipRRect(
-            borderRadius: BorderRadius.all(
-              Radius.circular(7.w),
-            ),
-            child: ColoredBox(
-              color: grey100,
-              child: link.image != null && link.image!.isNotEmpty
-                  ? CachedNetworkImage(
-                      imageUrl: link.image ?? '',
-                      imageBuilder: (context, imageProvider) => Container(
-                        width: width * (152 / 375),
-                        height: width * (101 / 375),
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: imageProvider,
-                            fit: BoxFit.cover,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10.5),
+      child: Column(
+        children: [
+          LinkHero(
+            tag: 'linkImage${link.id}',
+            child: ClipRRect(
+              borderRadius: BorderRadius.all(
+                Radius.circular(7.w),
+              ),
+              child: ColoredBox(
+                color: grey100,
+                child: link.image != null && link.image!.isNotEmpty
+                    ? CachedNetworkImage(
+                        imageUrl: link.image ?? '',
+                        imageBuilder: (context, imageProvider) => Container(
+                          width: double.infinity,
+                          height: width * (107 / 375),
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: imageProvider,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
+                        placeholder: (context, url) => SizedBox(
+                          width: double.infinity,
+                          height: width * (107 / 375),
+                          child: const Center(child: CircularProgressIndicator()),
+                        ),
+                        errorWidget: (_, __, ___) {
+                          return SizedBox(
+                            width: double.infinity,
+                            height: width * (107 / 375),
+                          );
+                        },
+                      )
+                    : SizedBox(
+                        width: double.infinity,
+                        height: width * (107 / 375),
                       ),
-                      errorWidget: (_, __, ___) {
-                        return SizedBox(
-                          width: width * (152 / 375),
-                          height: width * (101 / 375),
-                        );
-                      },
-                    )
-                  : SizedBox(width: width * (152 / 375), height: width * (101 / 375)),
+              ),
             ),
           ),
-        ),
-        16.verticalSpace,
-        const Row(),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            152.horizontalSpace,
-            Text(
-              link.title ?? '',
-              maxLines: 1,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16.sp,
-                color: blackBold,
-                overflow: TextOverflow.ellipsis,
-                height: 19 / 16,
-                letterSpacing: -0.2,
+          16.verticalSpace,
+          Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              152.horizontalSpace,
+              Text(
+                link.title ?? '',
+                maxLines: 1,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16.sp,
+                  color: blackBold,
+                  overflow: TextOverflow.ellipsis,
+                  height: 19 / 16,
+                  letterSpacing: -0.2,
+                ),
               ),
-            ),
-            5.verticalSpace,
-            Text(
-              makeLinkTimeString(link.time ?? ''),
-              style: TextStyle(
-                color: grey400,
-                fontSize: 12.sp,
-                letterSpacing: -0.2.w,
+              5.verticalSpace,
+              Text(
+                makeLinkTimeString(link.time ?? ''),
+                style: TextStyle(
+                  color: grey400,
+                  fontSize: 12.sp,
+                  letterSpacing: -0.2.w,
+                ),
               ),
-            ),
-          ],
-        ),
-      ],
+            ],
+          ),
+        ],
+      ),
     );
   }
 
