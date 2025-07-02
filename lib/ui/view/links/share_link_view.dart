@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/const/strings.dart';
 import 'package:ac_project_app/cubits/links/link_list_state.dart';
@@ -7,6 +9,7 @@ import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/link/link.dart';
+import 'package:ac_project_app/models/profile/profile_image.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/view/links/share_invite_dialog.dart';
 import 'package:ac_project_app/ui/widget/buttons/upload_button.dart';
@@ -85,7 +88,7 @@ class _ShareLinkViewState extends State<ShareLinkView> {
                     child: CustomScrollView(
                       slivers: [
                         buildTopAppBar(context, cubitContext, folder, isAdmin),
-                        buildTitleBar(folder),
+                        buildTitleBar(folder, folder.membersCount ?? 1),
                         buildContentsCountText(state, folder.membersCount),
                         SearchBar(
                           totalLinks: links,
@@ -317,7 +320,7 @@ class _ShareLinkViewState extends State<ShareLinkView> {
         child: Row(
           children: [
             Text(
-              '링크 ${addCommasFrom(count)}개',
+              '${addCommasFrom(count)}개의 링크',
               style: TextStyle(
                 color: greyText,
                 fontWeight: FontWeight.w500,
@@ -345,8 +348,16 @@ class _ShareLinkViewState extends State<ShareLinkView> {
     );
   }
 
-  Widget buildTitleBar(Folder folder) {
-    final classified = folder.isClassified ?? true;
+  Widget buildTitleBar(Folder folder, int membersCount) {
+    final profileImageNumberList = <String>[];
+    for (var attempts = 0; attempts < membersCount && profileImageNumberList.length < 2; attempts++) {
+      final randomNumber = Random().nextInt(9) + 1; // Generate a number between 1 and 9
+      final formattedNumber = randomNumber.toString().padLeft(2, '0'); // Format as '01' to '09'
+      if (!profileImageNumberList.contains(formattedNumber)) {
+        profileImageNumberList.add(formattedNumber);
+      }
+    }
+
     return SliverToBoxAdapter(
       child: Container(
         margin: EdgeInsets.only(left: 24.w, right: 12.w, top: 10.w),
@@ -357,7 +368,7 @@ class _ShareLinkViewState extends State<ShareLinkView> {
                 maxWidth: 250.w,
               ),
               child: Text(
-                classified ? folder.name! : '미분류',
+                folder.name!,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
@@ -373,6 +384,11 @@ class _ShareLinkViewState extends State<ShareLinkView> {
               )
             else
               const SizedBox.shrink(),
+            10.horizontalSpace,
+            ParticipantsProfile(
+              profileImageNumberList: profileImageNumberList,
+              membersCount: membersCount,
+            )
           ],
         ),
       ),
@@ -524,5 +540,72 @@ class _ShareLinkViewState extends State<ShareLinkView> {
   void search(List<Link> totalLinks, BuildContext cubitContext, String value) {
     totalLinks.clear();
     cubitContext.read<LinksFromSelectedFolderCubit>().searchLinksFromSelectedFolder(value, 0);
+  }
+
+  Widget ParticipantsProfile({required List<String> profileImageNumberList, required int membersCount}) {
+    final profileCount = profileImageNumberList.length;
+    final displayCount = min(profileCount, 2);
+
+    return Container(
+      margin: EdgeInsets.only(left: 8.w),
+      child: SizedBox(
+        width: (displayCount * 17.w) + 26.w + (membersCount > 2 ? 34.w : 0), // 전체 너비 명시
+        height: 26.w, // 높이 명시
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            // 프로필 이미지들
+            for (int index = 0; index < displayCount; index++)
+              Positioned(
+                left: index * 17.w,
+                child: CircleAvatar(
+                  radius: 13.w,
+                  backgroundColor: grey100,
+                  child: Image.asset(
+                    ProfileImage.makeImagePath(profileImageNumberList[index]),
+                    width: 25.w,
+                    height: 25.w,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) {
+                      return Assets.images.profile.img01On.image(
+                        width: 25.w,
+                        height: 25.w,
+                        fit: BoxFit.cover,
+                      );
+                    },
+                  ),
+                ),
+              ),
+            // +N 표시
+            if (membersCount > 2)
+              Positioned(
+                left: 34.w,
+                child: CircleAvatar(
+                  radius: 13.w,
+                  backgroundColor: grey100,
+                  child: Container(
+                    width: 24,
+                    height: 24,
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: grey700,
+                    ),
+                    child: Center(
+                      child: Text(
+                        '+${membersCount - 2}',
+                        style: TextStyle(
+                          color: grey50,
+                          fontSize: 10.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
   }
 }
