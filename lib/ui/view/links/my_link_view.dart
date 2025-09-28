@@ -241,19 +241,19 @@ class MyLinkView extends StatelessWidget {
     Folder folder,
   ) {
     final actions = [
-        InkWell(
-          onTap: () {
-            showInviteDialog(context, folder.id);
-          },
-          child: Container(
-            padding: EdgeInsets.all(4.w),
-            child: SvgPicture.asset(
-              Assets.images.inviteUser,
-              width: 24.w,
-              height: 24.w,
-            ),
-          ),
-        ),
+        // InkWell(
+        //   onTap: () {
+        //     showInviteDialog(context, folder.id);
+        //   },
+        //   child: Container(
+        //     padding: EdgeInsets.all(4.w),
+        //     child: SvgPicture.asset(
+        //       Assets.images.inviteUser,
+        //       width: 24.w,
+        //       height: 24.w,
+        //     ),
+        //   ),
+        // ),
         InkWell(
           onTap: () {
             showFolderOptionsDialog(

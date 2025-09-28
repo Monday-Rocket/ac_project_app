@@ -58,6 +58,7 @@ class ShareDataProvider {
           'name': json['name'],
           'visible': json['visible'],
           'created_at': json['created_at'],
+          'share_mode': json['share_mode'],
         };
         result.add(folder);
       }

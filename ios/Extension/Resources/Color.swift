@@ -35,6 +35,10 @@ extension UIColor {
     return UIColor(rgb: 0xC8BFFF)
   }
   
+  static var secondary100: UIColor {
+    return UIColor(rgb: 0xF3F1FF)
+  }
+  
   // MARK: - GREY
   
   static var grey100: UIColor {
