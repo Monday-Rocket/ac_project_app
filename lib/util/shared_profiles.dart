@@ -8,6 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 Widget ParticipantsProfile(int membersCount, {double scale = 1.0, double fontSize = 10}) {
+  if (membersCount <= 0) {
+    return const SizedBox.shrink();
+  }
   final profileImageNumberList = _getProfileImageList(membersCount);
   final profileCount = profileImageNumberList.length;
   final displayCount = min(profileCount, 2);  // 2개냐 3개냐
@@ -79,8 +82,8 @@ Widget ParticipantsProfile(int membersCount, {double scale = 1.0, double fontSiz
 List<String> _getProfileImageList(int membersCount) {
   final profileImageNumberList = <String>[];
   for (var attempts = 0; attempts < membersCount && profileImageNumberList.length < 2; attempts++) {
-    final randomNumber = Random().nextInt(9) + 1; // Generate a number between 1 and 9
-    final formattedNumber = randomNumber.toString().padLeft(2, '0'); // Format as '01' to '09'
+    final randomNumber = Random().nextInt(9) + 1;
+    final formattedNumber = randomNumber.toString().padLeft(2, '0');
     if (!profileImageNumberList.contains(formattedNumber)) {
       profileImageNumberList.add(formattedNumber);
     }

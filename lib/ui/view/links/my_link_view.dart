@@ -26,6 +26,7 @@ import 'package:ac_project_app/ui/widget/widget_offset.dart';
 import 'package:ac_project_app/util/get_arguments.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:ac_project_app/util/number_commas.dart';
+import 'package:ac_project_app/util/shared_profiles.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -49,7 +50,7 @@ class MyLinkView extends StatelessWidget {
     final links = <Link>[];
 
     return BlocProvider(
-      create: (_) => GetFoldersCubit(excludeSharedLinks: true),
+      create: (_) => GetFoldersCubit(),
       child: BlocBuilder<GetFoldersCubit, FoldersState>(
         builder: (foldersContext, folderState) {
           if (folderState is FolderLoadedState) {
@@ -186,7 +187,7 @@ class MyLinkView extends StatelessWidget {
                     slivers: [
                       buildTopAppBar(context, folders, folder),
                       buildTitleBar(folder),
-                      buildContentsCountText(state),
+                      LinkCountText(state, folder),
                       buildSearchBar(context, links),
                       buildTabBar(
                         folders,
@@ -241,27 +242,34 @@ class MyLinkView extends StatelessWidget {
     Folder folder,
   ) {
     final actions = [
-        // InkWell(
-        //   onTap: () {
-        //     showInviteDialog(context, folder.id);
-        //   },
-        //   child: Container(
-        //     padding: EdgeInsets.all(4.w),
-        //     child: SvgPicture.asset(
-        //       Assets.images.inviteUser,
-        //       width: 24.w,
-        //       height: 24.w,
-        //     ),
-        //   ),
-        // ),
         InkWell(
           onTap: () {
-            showFolderOptionsDialog(
-              folders,
-              folder,
-              context,
-              fromLinkView: true,
-            );
+            showInviteDialog(context, folder.id);
+          },
+          child: Container(
+            padding: EdgeInsets.all(4.w),
+            child: SvgPicture.asset(
+              Assets.images.inviteUser,
+              width: 24.w,
+              height: 24.w,
+            ),
+          ),
+        ),
+        InkWell(
+          onTap: () {
+            if (folder.shared ?? false) {
+              showSharedFolderOptionsDialogInShareFolder(context, folder, isAdmin: folder.isAdmin ?? false, callback: () async {
+                Navigator.pop(context);
+                Navigator.pop(context, true);
+              });
+            } else {
+              showFolderOptionsDialog(
+                folders,
+                folder,
+                context,
+                fromLinkView: true,
+              );
+            }
           },
           child: Container(
             margin: EdgeInsets.only(right: 20.w),
@@ -275,7 +283,7 @@ class MyLinkView extends StatelessWidget {
         ),
       ];
     if (folder.isClassified == false) { // 미분류 폴더는 초대 버튼을 숨김
-      actions.removeAt(0);
+      actions..removeAt(0)..removeAt(0);
     }
     return SliverAppBar(
       pinned: true,
@@ -333,14 +341,24 @@ class MyLinkView extends StatelessWidget {
               )
             else
               const SizedBox.shrink(),
+            10.horizontalSpace,
+            ParticipantsProfile(folder.membersCount ?? 0)
           ],
         ),
       ),
     );
   }
 
-  Widget buildContentsCountText(LinkListState state) {
+  Widget LinkCountText(LinkListState state, Folder folder) {
     final count = (state is LinkListLoadedState) ? state.totalCount : 0;
+    if (folder.shared ?? false) {
+      return buildSharedContentsCountText(count, folder.membersCount);
+    } else {
+      return buildContentsCountText(count);
+    }
+  }
+
+  Widget buildContentsCountText(int count) {
     return SliverToBoxAdapter(
       child: Container(
         margin: EdgeInsets.only(left: 24.w, top: 3.w),
@@ -351,6 +369,42 @@ class MyLinkView extends StatelessWidget {
             fontWeight: FontWeight.w500,
             fontSize: 14.sp,
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildSharedContentsCountText(int count, int? membersCount) {
+    final members = membersCount ?? 0;
+    return SliverToBoxAdapter(
+      child: Container(
+        margin: EdgeInsets.only(left: 24.w, top: 3.w),
+        child: Row(
+          children: [
+            Text(
+              '${addCommasFrom(count)}개의 링크',
+              style: TextStyle(
+                color: greyText,
+                fontWeight: FontWeight.w500,
+                fontSize: 14.sp,
+              ),
+            ),
+            8.horizontalSpace,
+            Container(
+              width: 1,
+              height: 10,
+              color: grey300,
+            ),
+            8.horizontalSpace,
+            Text(
+              '$members명의 멤버',
+              style: TextStyle(
+                color: greyText,
+                fontWeight: FontWeight.w500,
+                fontSize: 14.sp,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -598,6 +652,7 @@ class MyLinkView extends StatelessWidget {
             'link': link,
             'isMine': true,
             'visible': folder.visible,
+            'isShared': folder.shared,
           },
         ).then((result) {
           Log.i(result);
