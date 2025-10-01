@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/const/strings.dart';
 import 'package:ac_project_app/cubits/links/link_list_state.dart';
@@ -9,7 +7,6 @@ import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/link/link.dart';
-import 'package:ac_project_app/models/profile/profile_image.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/view/links/share_invite_dialog.dart';
 import 'package:ac_project_app/ui/widget/buttons/upload_button.dart';
@@ -19,6 +16,7 @@ import 'package:ac_project_app/util/custom_debounce.dart';
 import 'package:ac_project_app/util/get_arguments.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:ac_project_app/util/number_commas.dart';
+import 'package:ac_project_app/util/shared_profiles.dart';
 import 'package:ac_project_app/util/string_utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
@@ -349,15 +347,6 @@ class _ShareLinkViewState extends State<ShareLinkView> {
   }
 
   Widget buildTitleBar(Folder folder, int membersCount) {
-    final profileImageNumberList = <String>[];
-    for (var attempts = 0; attempts < membersCount && profileImageNumberList.length < 2; attempts++) {
-      final randomNumber = Random().nextInt(9) + 1; // Generate a number between 1 and 9
-      final formattedNumber = randomNumber.toString().padLeft(2, '0'); // Format as '01' to '09'
-      if (!profileImageNumberList.contains(formattedNumber)) {
-        profileImageNumberList.add(formattedNumber);
-      }
-    }
-
     return SliverToBoxAdapter(
       child: Container(
         margin: EdgeInsets.only(left: 24.w, right: 12.w, top: 10.w),
@@ -385,10 +374,7 @@ class _ShareLinkViewState extends State<ShareLinkView> {
             else
               const SizedBox.shrink(),
             10.horizontalSpace,
-            ParticipantsProfile(
-              profileImageNumberList: profileImageNumberList,
-              membersCount: membersCount,
-            )
+            ParticipantsProfile(membersCount)
           ],
         ),
       ),
@@ -542,70 +528,5 @@ class _ShareLinkViewState extends State<ShareLinkView> {
     cubitContext.read<LinksFromSelectedFolderCubit>().searchLinksFromSelectedFolder(value, 0);
   }
 
-  Widget ParticipantsProfile({required List<String> profileImageNumberList, required int membersCount}) {
-    final profileCount = profileImageNumberList.length;
-    final displayCount = min(profileCount, 2);
 
-    return Container(
-      margin: EdgeInsets.only(left: 8.w),
-      child: SizedBox(
-        width: (displayCount * 17.w) + 26.w + (membersCount > 2 ? 34.w : 0), // 전체 너비 명시
-        height: 26.w, // 높이 명시
-        child: Stack(
-          clipBehavior: Clip.none,
-          children: [
-            // 프로필 이미지들
-            for (int index = 0; index < displayCount; index++)
-              Positioned(
-                left: index * 17.w,
-                child: CircleAvatar(
-                  radius: 13.w,
-                  backgroundColor: grey100,
-                  child: Image.asset(
-                    ProfileImage.makeImagePath(profileImageNumberList[index]),
-                    width: 25.w,
-                    height: 25.w,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) {
-                      return Assets.images.profile.img01On.image(
-                        width: 25.w,
-                        height: 25.w,
-                        fit: BoxFit.cover,
-                      );
-                    },
-                  ),
-                ),
-              ),
-            // +N 표시
-            if (membersCount > 2)
-              Positioned(
-                left: 34.w,
-                child: CircleAvatar(
-                  radius: 13.w,
-                  backgroundColor: grey100,
-                  child: Container(
-                    width: 24,
-                    height: 24,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: grey700,
-                    ),
-                    child: Center(
-                      child: Text(
-                        '+${membersCount - 2}',
-                        style: TextStyle(
-                          color: grey50,
-                          fontSize: 10.sp,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
 }
