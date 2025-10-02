@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/folders/folder_name_cubit.dart';
 import 'package:ac_project_app/cubits/folders/folder_visible_cubit.dart';
+import 'package:ac_project_app/cubits/folders/select_share_mode_cubit.dart';
 import 'package:ac_project_app/cubits/sign_up/button_state_cubit.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
@@ -32,15 +33,10 @@ Future<bool?> showAddFolderDialog(
     builder: (BuildContext context) {
       return MultiBlocProvider(
         providers: [
-          BlocProvider(
-            create: (_) => ButtonStateCubit(),
-          ),
-          BlocProvider(
-            create: (_) => FolderNameCubit(),
-          ),
-          BlocProvider(
-            create: (_) => FolderVisibleCubit(),
-          ),
+          BlocProvider(create: (_) => ButtonStateCubit()),
+          BlocProvider(create: (_) => FolderNameCubit()),
+          BlocProvider(create: (_) => FolderVisibleCubit()),
+          BlocProvider(create: (_) => SelectShareModeCubit()),
         ],
         child: Wrap(
           children: [
@@ -241,11 +237,79 @@ Padding _buildDialogBody(
                 ],
               ),
             ),
+            24.verticalSpace,
+            BlocBuilder<SelectShareModeCubit, bool>(
+              builder: (context, isShare) {
+                return Row(
+                  spacing: 8,
+                  children: [
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          context.read<SelectShareModeCubit>().selectPrivateMode();
+                        },
+                        child: Container(
+                          height: 72,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: !isShare ? primary600 : grey600, width: !isShare ? 1 : 0.5),
+                            borderRadius: const BorderRadius.all(Radius.circular(8)),
+                            color: !isShare ? secondary100 : Colors.white
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              (!isShare ? Assets.images.userAloneP : Assets.images.userAlone).image(width: 24, height: 24),
+                              6.verticalSpace,
+                              Text('개인폴더',
+                                style: TextStyle(
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: !isShare ? primary600 : grey800,
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          context.read<SelectShareModeCubit>().selectShareMode();
+                        },
+                        child: Container(
+                          height: 72,
+                          decoration: BoxDecoration(
+                              border: Border.all(color: isShare ? primary600 : grey600, width: isShare ? 1 : 0.5),
+                              borderRadius: const BorderRadius.all(Radius.circular(8)),
+                              color: isShare ? secondary100 : Colors.white
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              (isShare ? Assets.images.userSharedP : Assets.images.userShared).image(width: 24, height: 24),
+                              6.verticalSpace,
+                              Text('공유폴더',
+                                style: TextStyle(
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: isShare ? primary600 : grey800,
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
             BlocBuilder<ButtonStateCubit, ButtonState>(
               builder: (context, state) {
                 return Container(
                   margin: EdgeInsets.only(
-                    top: 50.w,
+                    top: 40.w,
                     bottom: Platform.isAndroid ? MediaQuery.of(context).padding.bottom : 16.w,
                   ),
                   child: ElevatedButton(

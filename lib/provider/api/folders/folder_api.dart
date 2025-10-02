@@ -99,6 +99,7 @@ class FolderApi {
         'name': folder.name,
         'visible': folder.visible,
         'created_at': folder.time,
+        'shared': folder.shared,
       },
     );
 

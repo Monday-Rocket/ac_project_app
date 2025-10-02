@@ -5,6 +5,7 @@ import 'package:ac_project_app/cubits/folders/folder_name_cubit.dart';
 import 'package:ac_project_app/cubits/folders/folders_state.dart';
 import 'package:ac_project_app/cubits/folders/get_my_folders_cubit.dart';
 import 'package:ac_project_app/cubits/folders/get_selected_folder_cubit.dart';
+import 'package:ac_project_app/cubits/folders/select_share_mode_cubit.dart';
 import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
@@ -442,10 +443,11 @@ void saveEmptyFolder(
   if (folderName.isEmpty) {
     return;
   }
-
+  final isShareMode = context.read<SelectShareModeCubit>().state;
   final folder = Folder(
     name: folderName,
     visible: visibleState == FolderVisibleState.visible,
+    shared: isShareMode
   );
 
   context.read<FolderNameCubit>().add(folder).then((result) {

@@ -159,7 +159,7 @@ class DelegateAdminView extends StatelessWidget {
           children: [
             profileImage(loadedState.admin),
             16.horizontalSpace,
-            Assets.images.lavelCrown.image(),
+            Assets.images.crown.image(),
             6.horizontalSpace,
             Text(
               loadedState.admin.nickname,
