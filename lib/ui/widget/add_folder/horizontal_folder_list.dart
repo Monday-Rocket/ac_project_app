@@ -100,14 +100,18 @@ GestureDetector FolderItem(int i, List<Folder> folders, void Function(int index,
                   child: ParticipantsProfile(folder.membersCount ?? 0, scale: 0.75, fontSize: 8),
                 ),
               ),
-              Visibility(
-                visible: selectedIndex == i,
-                child: Container(
-                  width: 95.w,
-                  height: 95.w,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(32.w)),
-                    color: secondary400,
+              IgnorePointer(
+                child: AnimatedOpacity(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                  opacity: selectedIndex == i ? 0.6 : 0.0,
+                  child: Container(
+                    width: 95.w,
+                    height: 95.w,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(32.w)),
+                      color: secondary400,
+                    ),
                   ),
                 ),
               ),
@@ -136,7 +140,7 @@ GestureDetector FolderItem(int i, List<Folder> folders, void Function(int index,
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: grey700,
-                fontWeight: FontWeight.w500,
+                fontWeight: selectedIndex == i ? FontWeight.w700 : FontWeight.w500,
                 fontSize: 12.sp,
                 letterSpacing: -0.3.w,
                 height: 14.3 / 12,
