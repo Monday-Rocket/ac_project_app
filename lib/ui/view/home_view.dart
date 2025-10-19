@@ -240,14 +240,16 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
       getIt<ShareFolderApi>().acceptInviteLink(folderId, inviteToken).then((result) {
         result.map(
           success: (_) async {
-            (await getIt<FolderApi>().getMyFoldersWithoutUnclassified()).map(
+            (await getIt<FolderApi>().getMyFolders()).map(
               success: (data) {
-                for (final folder in data.data) {
+                for (var i = 0; i < data.data.length; i++) {
+                  final folder = data.data[i];
                   if (folder.id == int.parse(folderId)) {
                     ShareDB.insert(folder);
-                    Navigator.pushNamed(context, Routes.sharedLinks, arguments: {
-                      'folder': folder,
-                      'isAdmin': folder.isAdmin,
+                    Navigator.pushNamed(context, Routes.myLinks, arguments: {
+                      'folders': data.data,
+                      'selectedFolder': folder,
+                      'tabIndex': i,
                     });
                     break;
                   }

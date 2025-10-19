@@ -3,6 +3,7 @@ import 'package:ac_project_app/cubits/folders/folders_state.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/util/logger.dart';
+import 'package:ac_project_app/util/shared_profiles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -49,8 +50,7 @@ Widget buildFolderList({
   }
 }
 
-GestureDetector FolderItem(int i, List<Folder> folders,
-    void Function(int index, Folder folder)? callback, int? selectedIndex) {
+GestureDetector FolderItem(int i, List<Folder> folders, void Function(int index, Folder folder)? callback, int? selectedIndex) {
   final folder = folders[i];
   final rightPadding = i != folders.length - 1 ? 12 : 24;
   final visible = folder.visible ?? false;
@@ -81,8 +81,7 @@ GestureDetector FolderItem(int i, List<Folder> folders,
                   ),
                   child: ColoredBox(
                     color: grey100,
-                    child: folder.thumbnail != null &&
-                            (folder.thumbnail?.isNotEmpty ?? false)
+                    child: folder.thumbnail != null && (folder.thumbnail?.isNotEmpty ?? false)
                         ? Image.network(
                             folder.thumbnail!,
                             width: 95.w,
@@ -94,14 +93,25 @@ GestureDetector FolderItem(int i, List<Folder> folders,
                   ),
                 ),
               ),
-              Visibility(
-                visible: selectedIndex == i,
-                child: Container(
-                  width: 95.w,
-                  height: 95.w,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(32.w)),
-                    color: secondary400,
+              Align(
+                alignment: Alignment.topLeft,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 12),
+                  child: ParticipantsProfile(folder.membersCount ?? 0, scale: 0.75, fontSize: 8),
+                ),
+              ),
+              IgnorePointer(
+                child: AnimatedOpacity(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                  opacity: selectedIndex == i ? 0.6 : 0.0,
+                  child: Container(
+                    width: 95.w,
+                    height: 95.w,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(32.w)),
+                      color: secondary400,
+                    ),
                   ),
                 ),
               ),
@@ -130,7 +140,7 @@ GestureDetector FolderItem(int i, List<Folder> folders,
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: grey700,
-                fontWeight: FontWeight.w500,
+                fontWeight: selectedIndex == i ? FontWeight.w700 : FontWeight.w500,
                 fontSize: 12.sp,
                 letterSpacing: -0.3.w,
                 height: 14.3 / 12,

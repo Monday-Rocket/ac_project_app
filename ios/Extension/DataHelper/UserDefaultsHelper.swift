@@ -73,14 +73,15 @@ class UserDefaultsHelper {
     
   }
   
-  static func saveNewFolder(_ link: String, _ folderName: String, _ visible: Bool) {
+  static func saveNewFolder(_ link: String, _ folderName: String, _ visible: Bool, _ shareMode: Bool) {
     
     // 1. folder array 추가
     
     let folderData = [
       "name": folderName,
       "visible": !visible,
-      "created_at": Date.ISOStringFromDate(date: Date())
+      "created_at": Date.ISOStringFromDate(date: Date()),
+      "share_mode": shareMode
     ] as [String : Any]
     
     do {
