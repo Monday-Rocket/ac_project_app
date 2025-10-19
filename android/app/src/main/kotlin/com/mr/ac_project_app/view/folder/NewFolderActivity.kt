@@ -1,7 +1,6 @@
 package com.mr.ac_project_app.view.folder
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Rect
@@ -16,6 +15,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -30,12 +30,14 @@ import com.mr.ac_project_app.ui.InsetsWithKeyboardAnimationCallback
 import com.mr.ac_project_app.ui.InsetsWithKeyboardCallback
 import com.mr.ac_project_app.view.SaveSuccessActivity
 import com.mr.ac_project_app.view.share.ShareActivity
+import androidx.core.view.isVisible
 
 class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
 
+    private lateinit var callback: OnBackPressedCallback
     private lateinit var binding: ActivityNewFolderBinding
     private var folderVisibility = true
-    private lateinit var callback: OnBackPressedCallback
+    private var shareMode = false
 
     private val viewModel: NewFolderViewModel by viewModels()
 
@@ -86,7 +88,8 @@ class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
                 binding.folderNameEditText.text.toString(),
                 link,
                 folderVisibility,
-                imageLink
+                imageLink,
+                shareMode
             )
 
             if (saveResult) {
@@ -113,11 +116,22 @@ class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
 
                 // show keyboard
                 binding.folderNameEditText.requestFocus()
-                val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.showSoftInput(binding.folderNameEditText, 0)
             }
         }
 
+        onSelectAloneMode()
+
+        binding.notShareButton.setOnClickListener {
+            onSelectAloneMode()
+            shareMode = false
+        }
+
+        binding.shareButton.setOnClickListener {
+            onSelectShareMode()
+            shareMode = true
+        }
     }
 
     override fun dispatchTouchEvent(event: MotionEvent?): Boolean {
@@ -128,8 +142,8 @@ class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
                 v.getGlobalVisibleRect(outRect)
                 if (!outRect.contains(event.rawX.toInt(), event.rawY.toInt())) {
                     v.clearFocus()
-                    val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0)
+                    val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+                    imm.hideSoftInputFromWindow(v.windowToken, 0)
                 }
             }
         }
@@ -180,7 +194,7 @@ class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
                     binding.completeText.setTextColor(getColor(R.color.grey300))
                     binding.saveFolderButton.isEnabled = false
                 }
-                if (binding.errorText.visibility == View.VISIBLE) {
+                if (binding.errorText.isVisible) {
                     binding.folderNameEditText.backgroundTintList = ColorStateList.valueOf(getColor(R.color.primary600))
                     binding.errorText.visibility = View.GONE
                 }
@@ -198,7 +212,7 @@ class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
                             return true
                         }
                     }
-                } catch (e: Exception) {
+                } catch (_: Exception) {
                     return true
                 }
                 return false
@@ -222,5 +236,27 @@ class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
 
     override fun onButtonClick() {
         finishAffinity()
+    }
+
+    fun onSelectAloneMode() {
+        binding.notShareButton.background = AppCompatResources.getDrawable(this, R.drawable.share_mode_box_p)
+        binding.shareButton.background = AppCompatResources.getDrawable(this, R.drawable.share_mode_box)
+
+        binding.notShareIcon.setImageResource(R.drawable.user_alone_p)
+        binding.shareIcon.setImageResource(R.drawable.user_shared)
+
+        binding.notShareText.setTextColor(getColor(R.color.primary600))
+        binding.shareText.setTextColor(getColor(R.color.grey800))
+    }
+
+    fun onSelectShareMode() {
+        binding.notShareButton.background = AppCompatResources.getDrawable(this, R.drawable.share_mode_box)
+        binding.shareButton.background = AppCompatResources.getDrawable(this, R.drawable.share_mode_box_p)
+
+        binding.notShareIcon.setImageResource(R.drawable.user_alone)
+        binding.shareIcon.setImageResource(R.drawable.user_shared_p)
+
+        binding.notShareText.setTextColor(getColor(R.color.grey800))
+        binding.shareText.setTextColor(getColor(R.color.primary600))
     }
 }

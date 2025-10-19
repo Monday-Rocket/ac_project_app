@@ -42,6 +42,9 @@ class $AssetsImagesGen {
   /// File path: assets/images/check_icon.svg
   String get checkIcon => 'assets/images/check_icon.svg';
 
+  /// File path: assets/images/crown.webp
+  AssetGenImage get crown => const AssetGenImage('assets/images/crown.webp');
+
   /// File path: assets/images/email_notice.svg
   String get emailNotice => 'assets/images/email_notice.svg';
 
@@ -109,13 +112,10 @@ class $AssetsImagesGen {
   AssetGenImage get kakaoIcon =>
       const AssetGenImage('assets/images/kakao_icon.webp');
 
-  /// File path: assets/images/lavel_crown.png
-  AssetGenImage get lavelCrown =>
-      const AssetGenImage('assets/images/lavel_crown.png');
-
   /// File path: assets/images/list_icon.svg
   String get listIcon => 'assets/images/list_icon.svg';
 
+  /// Directory path: assets/images/login
   $AssetsImagesLoginGen get login => const $AssetsImagesLoginGen();
 
   /// File path: assets/images/login_logo.webp
@@ -143,6 +143,7 @@ class $AssetsImagesGen {
   AssetGenImage get paperPlane =>
       const AssetGenImage('assets/images/paper_plane.webp');
 
+  /// Directory path: assets/images/profile
   $AssetsImagesProfileGen get profile => const $AssetsImagesProfileGen();
 
   /// File path: assets/images/small_right_arrow.svg
@@ -157,6 +158,22 @@ class $AssetsImagesGen {
   /// File path: assets/images/upload_plus.svg
   String get uploadPlus => 'assets/images/upload_plus.svg';
 
+  /// File path: assets/images/user_alone.webp
+  AssetGenImage get userAlone =>
+      const AssetGenImage('assets/images/user_alone.webp');
+
+  /// File path: assets/images/user_alone_p.webp
+  AssetGenImage get userAloneP =>
+      const AssetGenImage('assets/images/user_alone_p.webp');
+
+  /// File path: assets/images/user_shared.webp
+  AssetGenImage get userShared =>
+      const AssetGenImage('assets/images/user_shared.webp');
+
+  /// File path: assets/images/user_shared_p.webp
+  AssetGenImage get userSharedP =>
+      const AssetGenImage('assets/images/user_shared_p.webp');
+
   /// File path: assets/images/warning_mark.svg
   String get warningMark => 'assets/images/warning_mark.svg';
 
@@ -166,49 +183,53 @@ class $AssetsImagesGen {
 
   /// List of all assets
   List<dynamic> get values => [
-        appName,
-        appWhiteIcon,
-        appleIcon,
-        btnAdd,
-        btnXPrimary,
-        checkIcon,
-        emailNotice,
-        folder,
-        folderBig,
-        folderSearchIcon,
-        gridIcon,
-        icBack,
-        icChange,
-        icLockSvg,
-        icLockWebp,
-        icLockColor,
-        icMyfolder,
-        icMyfolderDisabled,
-        icMypage,
-        icMypageDisabled,
-        icSearch,
-        icSearchDisabled,
-        icUpload,
-        icUploadDisabled,
-        icWriteComment,
-        inviteUser,
-        kakaoIcon,
-        lavelCrown,
-        listIcon,
-        loginLogo,
-        loginLogoText,
-        more,
-        moreVert,
-        myFolderBack,
-        naverIcon,
-        paperPlane,
-        smallRightArrow,
-        toggleOff,
-        toggleOn,
-        uploadPlus,
-        warningMark,
-        waveBack
-      ];
+    appName,
+    appWhiteIcon,
+    appleIcon,
+    btnAdd,
+    btnXPrimary,
+    checkIcon,
+    crown,
+    emailNotice,
+    folder,
+    folderBig,
+    folderSearchIcon,
+    gridIcon,
+    icBack,
+    icChange,
+    icLockSvg,
+    icLockWebp,
+    icLockColor,
+    icMyfolder,
+    icMyfolderDisabled,
+    icMypage,
+    icMypageDisabled,
+    icSearch,
+    icSearchDisabled,
+    icUpload,
+    icUploadDisabled,
+    icWriteComment,
+    inviteUser,
+    kakaoIcon,
+    listIcon,
+    loginLogo,
+    loginLogoText,
+    more,
+    moreVert,
+    myFolderBack,
+    naverIcon,
+    paperPlane,
+    smallRightArrow,
+    toggleOff,
+    toggleOn,
+    uploadPlus,
+    userAlone,
+    userAloneP,
+    userShared,
+    userSharedP,
+    warningMark,
+    waveBack,
+  ];
 }
 
 class $AssetsTutorialsGen {
@@ -231,8 +252,12 @@ class $AssetsTutorialsGen {
       const AssetGenImage('assets/tutorials/tutorial4.png');
 
   /// List of all assets
-  List<AssetGenImage> get values =>
-      [tutorial1, tutorial2, tutorial3, tutorial4];
+  List<AssetGenImage> get values => [
+    tutorial1,
+    tutorial2,
+    tutorial3,
+    tutorial4,
+  ];
 }
 
 class $AssetsImagesLoginGen {
@@ -291,30 +316,37 @@ class $AssetsImagesProfileGen {
 
   /// List of all assets
   List<AssetGenImage> get values => [
-        img01On,
-        img02On,
-        img03On,
-        img04On,
-        img05On,
-        img06On,
-        img07On,
-        img08On,
-        img09On
-      ];
+    img01On,
+    img02On,
+    img03On,
+    img04On,
+    img05On,
+    img06On,
+    img07On,
+    img08On,
+    img09On,
+  ];
 }
 
 class Assets {
-  Assets._();
+  const Assets._();
 
+  static const String aEnv = '.env';
   static const $AssetsAnimationsGen animations = $AssetsAnimationsGen();
   static const $AssetsImagesGen images = $AssetsImagesGen();
   static const $AssetsTutorialsGen tutorials = $AssetsTutorialsGen();
+
+  /// List of all assets
+  static List<String> get values => [aEnv];
 }
 
 class AssetGenImage {
-  const AssetGenImage(this._assetName);
+  const AssetGenImage(this._assetName, {this.size, this.flavors = const {}});
 
   final String _assetName;
+
+  final Size? size;
+  final Set<String> flavors;
 
   Image image({
     Key? key,
@@ -334,10 +366,10 @@ class AssetGenImage {
     ImageRepeat repeat = ImageRepeat.noRepeat,
     Rect? centerSlice,
     bool matchTextDirection = false,
-    bool gaplessPlayback = false,
+    bool gaplessPlayback = true,
     bool isAntiAlias = false,
     String? package,
-    FilterQuality filterQuality = FilterQuality.low,
+    FilterQuality filterQuality = FilterQuality.medium,
     int? cacheWidth,
     int? cacheHeight,
   }) {
@@ -369,15 +401,8 @@ class AssetGenImage {
     );
   }
 
-  ImageProvider provider({
-    AssetBundle? bundle,
-    String? package,
-  }) {
-    return AssetImage(
-      _assetName,
-      bundle: bundle,
-      package: package,
-    );
+  ImageProvider provider({AssetBundle? bundle, String? package}) {
+    return AssetImage(_assetName, bundle: bundle, package: package);
   }
 
   String get path => _assetName;

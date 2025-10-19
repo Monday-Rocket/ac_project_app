@@ -1,5 +1,6 @@
 package com.mr.ac_project_app.view.folder
 
+import android.annotation.SuppressLint
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import com.mr.ac_project_app.data.ShareDBFunctions
@@ -11,13 +12,10 @@ import org.json.JSONObject
 
 class NewFolderViewModel(application: Application): AndroidViewModel(application) {
 
-    private var dbHelper: ShareDbHelper
+    private var dbHelper: ShareDbHelper = ShareDbHelper(context = getApplication<Application>().applicationContext)
 
-    init {
-        dbHelper = ShareDbHelper(context = getApplication<Application>().applicationContext)
-    }
-
-    fun saveNewFolder(name: String, link: String, visible: Boolean, imageLink: String): Boolean {
+    @SuppressLint("UseKtx")
+    fun saveNewFolder(name: String, link: String, visible: Boolean, imageLink: String, shareMode: Boolean): Boolean {
 
         val result = ShareDBFunctions.saveNewFolder(dbHelper, name, visible, imageLink)
         if (result) {
@@ -29,6 +27,7 @@ class NewFolderViewModel(application: Application): AndroidViewModel(application
                 json.put("name", name)
                 json.put("visible", visible)
                 json.put("created_at", getCurrentDateTime())
+                json.put("share_mode", shareMode)
 
                 val set = HashSet(newFolders.getStringSet("new_folders", HashSet())!!)
                 set.add(json.convert())

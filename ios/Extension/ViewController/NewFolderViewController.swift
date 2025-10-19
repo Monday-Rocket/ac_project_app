@@ -24,12 +24,21 @@ class NewFolderViewController : UIViewController {
   @IBOutlet weak var errorText: UILabel!
   @IBOutlet weak var errorTextConstraint: NSLayoutConstraint!
   
+  @IBOutlet weak var aloneView: UIView!
+  @IBOutlet weak var aloneIcon: UIImageView!
+  @IBOutlet weak var aloneText: UILabel!
+  
+  @IBOutlet weak var sharedView: UIView!
+  @IBOutlet weak var shareIcon: UIImageView!
+  @IBOutlet weak var shareText: UILabel!
+  
   
   var link: String?
   var imageLink: String?
   var newFolderVisible = false
   
   let dbHelper = DBHelper.shared
+  var selectedShareMode = false
 
   
   override func viewDidLoad() {
@@ -59,6 +68,17 @@ class NewFolderViewController : UIViewController {
     self.errorText.isHidden = true
     self.errorTextConstraint.constant = 0
     self.view.layoutIfNeeded()
+    
+    let notShareTapGesture = UITapGestureRecognizer(target: self, action: #selector(selectNotShareMode))
+    aloneView.addGestureRecognizer(notShareTapGesture)
+    aloneView.isUserInteractionEnabled = true
+    
+    let shareTapGesture = UITapGestureRecognizer(target: self, action: #selector(selectShareMode))
+    sharedView.addGestureRecognizer(shareTapGesture)
+    sharedView.isUserInteractionEnabled = true
+    
+    // MARK: - 기본 모드는 개인폴더 저장
+    self.selectNotShareMode()
   }
   
   override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -167,7 +187,7 @@ class NewFolderViewController : UIViewController {
     if self.link != nil, !(folderName?.isEmpty ?? true) {
       let result = dbHelper.insertData(name: folderName!, visible: visible, imageLink: imageLink)
       if result {
-        UserDefaultsHelper.saveNewFolder(self.link!, folderName!, self.newFolderVisible)
+        UserDefaultsHelper.saveNewFolder(self.link!, folderName!, self.newFolderVisible, self.selectedShareMode)
         performSegue(withIdentifier: "saveSuccessSegue", sender: self)
       } else {
         showErrorText()
@@ -182,5 +202,37 @@ class NewFolderViewController : UIViewController {
     }, completion: { _ in
       self.extensionContext?.completeRequest(returningItems: nil, completionHandler: nil)
     })
+  }
+  
+  @objc private func selectNotShareMode() {
+    selectedShareMode = false
+    
+    aloneView.layer.borderWidth = 1
+    aloneView.layer.borderColor = UIColor.primary600.cgColor
+    aloneView.backgroundColor = UIColor.secondary100
+    aloneIcon.image = UIImage(named:"user_alone_p")
+    aloneText.textColor = UIColor.primary600
+    
+    sharedView.layer.borderWidth = 0.5
+    sharedView.layer.borderColor = UIColor.grey400.cgColor
+    sharedView.backgroundColor = .clear
+    shareIcon.image = UIImage(named:"user_shared")
+    shareText.textColor = UIColor.grey800
+  }
+  
+  @objc private func selectShareMode() {
+    selectedShareMode = true
+    
+    aloneView.layer.borderWidth = 0.5
+    aloneView.layer.borderColor = UIColor.grey400.cgColor
+    aloneView.backgroundColor = .clear
+    aloneIcon.image = UIImage(named: "user_alone")
+    aloneText.textColor = UIColor.grey800
+    
+    sharedView.layer.borderWidth = 1
+    sharedView.layer.borderColor = UIColor.primary600.cgColor
+    sharedView.backgroundColor = UIColor.secondary100
+    shareIcon.image = UIImage(named: "user_shared_p")
+    shareText.textColor = UIColor.primary600
   }
 }

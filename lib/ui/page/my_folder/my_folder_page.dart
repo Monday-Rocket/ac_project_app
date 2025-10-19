@@ -283,28 +283,13 @@ class _MyFolderPageState extends State<MyFolderPage> with WidgetsBindingObserver
     List<Folder> folders,
     int index,
   ) {
-    final folder = folders[index];
-    final isShared = folder.shared ?? false;
-
-    if (isShared) {
-      Navigator.pushNamed(context, Routes.sharedLinks, arguments: {
-        'folder': folder,
-        'isAdmin': folder.isAdmin,
-      }).then((_) {
-        context.read<GetFoldersCubit>().getFolders();
-      });
-      return;
-    }
-
-    final notSharedFolders = folders.where((folder) => folder.shared != true).toList();
-    final changedIndex = notSharedFolders.indexWhere((folder) => folder.name == folders[index].name);
     Navigator.pushNamed(
       context,
       Routes.myLinks,
       arguments: {
-        'folders': notSharedFolders,
-        'selectedFolder': notSharedFolders[changedIndex],
-        'tabIndex': changedIndex,
+        'folders': folders,
+        'selectedFolder': folders[index],
+        'tabIndex': index,
       },
     ).then((_) {
       context.read<GetFoldersCubit>().getFolders();
@@ -397,6 +382,7 @@ class _MyFolderPageState extends State<MyFolderPage> with WidgetsBindingObserver
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      SharedCountText(isSharedFolder, folder.membersCount),
                       SizedBox(
                         width: 120.w,
                         child: Text(
@@ -484,6 +470,28 @@ class _MyFolderPageState extends State<MyFolderPage> with WidgetsBindingObserver
           colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
           width: 24.w,
           height: 24.w,
+        ),
+      ),
+    );
+  }
+
+  Widget SharedCountText(bool isSharedFolder, int? membersCount) {
+    if (!isSharedFolder || membersCount == null || membersCount <= 0) {
+      return const SizedBox.shrink();
+    }
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
+      margin: EdgeInsets.only(bottom: 4.w),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF3F1FF),
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Text(
+        '$membersCount명 참여중',
+        style: TextStyle(
+          fontSize: 12.sp,
+          fontWeight: FontWeight.w500,
+          color: const Color(0xFF536DFE),
         ),
       ),
     );
