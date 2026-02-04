@@ -294,6 +294,132 @@ LocalLink fromServerLink(Link serverLink) {
 
 ---
 
+## 네이티브 공유 패널 연동 변경
+
+### 현재 구조 (서버 연동)
+
+네이티브(iOS/Android)에서 공유 패널 UI를 통해 링크와 폴더를 저장하고, Flutter에서 일괄 업로드하는 구조입니다.
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  네이티브 공유 패널 (iOS/Android)                                │
+│  - 사용자가 다른 앱에서 "공유" → 링크풀 선택                       │
+│  - 네이티브 UI에서 폴더 선택/생성, 메모 입력                       │
+│  - 네이티브 로컬 저장소에 임시 저장                               │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  Flutter 앱 실행 시                                             │
+│  - ShareDataProvider.getNewLinks()                              │
+│  - ShareDataProvider.getNewFolders()                            │
+│  - MethodChannel('share_data_provider')로 네이티브 데이터 조회    │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  FolderApi.bulkSave()                                           │
+│  - POST /bulk API 호출                                          │
+│  - 서버에 폴더/링크 일괄 업로드                                   │
+│  - 성공 시 ShareDataProvider.clearLinksAndFolders() 호출         │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### 변경 후 구조 (로컬 DB)
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  네이티브 공유 패널 (iOS/Android)                                │
+│  - 동일하게 네이티브 UI에서 링크/폴더 입력                        │
+│  - 네이티브 로컬 저장소에 임시 저장 (기존과 동일)                  │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  Flutter 앱 실행 시                                             │
+│  - ShareDataProvider.getNewLinks()                              │
+│  - ShareDataProvider.getNewFolders()                            │
+│  - (기존과 동일하게 네이티브에서 데이터 조회)                      │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  LocalRepository.bulkInsert() (신규)                            │
+│  - 로컬 SQLite DB에 직접 저장                                    │
+│  - 서버 API 호출 없음                                            │
+│  - 성공 시 ShareDataProvider.clearLinksAndFolders() 호출         │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### 변경 대상 파일
+
+| 파일 | 변경 내용 |
+|------|----------|
+| `lib/provider/api/folders/folder_api.dart` | `bulkSave()` 제거 |
+| `lib/provider/share_data_provider.dart` | `loadServerData()` 제거/수정 |
+| `lib/provider/local/local_bulk_repository.dart` | **신규** - 로컬 일괄 저장 |
+
+### 신규 메서드: LocalBulkRepository
+
+```dart
+class LocalBulkRepository {
+  final Database _db;
+
+  /// 네이티브 공유 패널에서 받은 데이터를 로컬 DB에 일괄 저장
+  Future<bool> bulkInsert() async {
+    try {
+      // 1. 네이티브에서 새 폴더/링크 가져오기
+      final newFolders = await ShareDataProvider.getNewFolders();
+      final newLinks = await ShareDataProvider.getNewLinks();
+
+      if (newFolders.isEmpty && newLinks.isEmpty) {
+        return true;
+      }
+
+      // 2. 트랜잭션으로 일괄 저장
+      await _db.transaction((txn) async {
+        // 폴더 저장
+        for (final folderData in newFolders) {
+          await txn.insert('folder', {
+            'name': folderData['name'],
+            'is_classified': 1,
+            'created_at': folderData['created_at'],
+            'updated_at': DateTime.now().toIso8601String(),
+          });
+        }
+
+        // 링크 저장
+        for (final linkData in newLinks) {
+          // 폴더 이름으로 folder_id 조회
+          final folderId = await _getFolderIdByName(txn, linkData['folder_name']);
+
+          await txn.insert('link', {
+            'folder_id': folderId,
+            'url': linkData['url'],
+            'title': linkData['title'],
+            'image': linkData['image'],
+            'describe': linkData['describe'],
+            'inflow_type': 'SHARE',
+            'created_at': linkData['created_at'],
+            'updated_at': DateTime.now().toIso8601String(),
+          });
+        }
+      });
+
+      // 3. 네이티브 임시 저장소 비우기
+      await ShareDataProvider.clearLinksAndFolders();
+
+      return true;
+    } catch (e) {
+      Log.e('bulkInsert error: $e');
+      return false;
+    }
+  }
+}
+```
+
+---
+
 ## 전환 대상 API → 로컬 DB 매핑
 
 ### Folders API
@@ -324,19 +450,27 @@ LocalLink fromServerLink(Link serverLink) {
 ```
 lib/
 ├── provider/
-│   ├── api/                    # 기존 API (Save Offline만 유지)
+│   ├── api/                         # 기존 API (Save Offline만 유지)
 │   │   └── save_offline/
+│   │       └── save_offline_api.dart
 │   │
-│   └── local/                  # 신규: 로컬 저장소
-│       ├── database_helper.dart    # DB 초기화, 마이그레이션
-│       ├── local_folder_repository.dart
-│       └── local_link_repository.dart
+│   ├── local/                       # 신규: 로컬 저장소
+│   │   ├── database_helper.dart         # DB 초기화, 마이그레이션
+│   │   ├── local_folder_repository.dart # 폴더 CRUD
+│   │   ├── local_link_repository.dart   # 링크 CRUD
+│   │   └── local_bulk_repository.dart   # 네이티브 공유 패널 일괄 저장
+│   │
+│   ├── share_data_provider.dart     # 수정: loadServerData() 제거
+│   └── share_db.dart                # 제거 또는 local/로 통합
 │
 ├── models/
+│   ├── local/                       # 신규: 로컬 전용 모델
+│   │   ├── local_folder.dart
+│   │   └── local_link.dart
 │   ├── folder/
-│   │   └── folder.dart         # 기존 유지
+│   │   └── folder.dart              # 마이그레이션용 유지
 │   └── link/
-│       └── link.dart           # 기존 유지
+│       └── link.dart                # 마이그레이션용 유지
 ```
 
 ---
@@ -369,10 +503,13 @@ lib/
 2. [ ] DI 설정 정리
 3. [ ] 테스트 코드 업데이트
 
-### Phase 5: 공유 패널 연동
+### Phase 5: 네이티브 공유 패널 연동 변경
 
-1. [ ] 네이티브 공유 패널에서 저장 시 로컬 DB 직접 저장
-2. [ ] `ShareDataProvider` 수정
+1. [ ] `LocalBulkRepository` 구현 - 네이티브 데이터 → 로컬 DB 저장
+2. [ ] `FolderApi.bulkSave()` 호출 부분 → `LocalBulkRepository.bulkInsert()` 로 교체
+3. [ ] `ShareDataProvider.loadServerData()` 제거
+4. [ ] `ShareDataProvider.loadServerDataAtFirst()` 제거
+5. [ ] 앱 시작 시 `bulkInsert()` 자동 호출 로직 추가
 
 ---
 
