@@ -1,0 +1,53 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(fvm flutter:*)",
+      "Bash(fvm dart:*)",
+      "Bash(make:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git checkout:*)",
+      "Bash(git branch:*)",
+      "Bash(ls:*)",
+      "Bash(cd:*)",
+      "Bash(cat:*)",
+      "Bash(mkdir:*)"
+    ],
+    "deny": []
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '\\n📝 파일이 수정되었습니다. 커밋이 필요하면 /commit 을 사용하세요.'"
+          }
+        ]
+      },
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '\\n📄 새 파일이 생성되었습니다. 커밋이 필요하면 /commit 을 사용하세요.'"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd /Users/kangmin/dev/ac_project_app && if [ -n \"$(git status --porcelain)\" ]; then echo '\\n⚠️  커밋되지 않은 변경사항이 있습니다:' && git status --short && echo '\\n💡 커밋하려면 /commit 을 사용하세요.'; fi"
+          }
+        ]
+      }
+    ]
+  }
+}

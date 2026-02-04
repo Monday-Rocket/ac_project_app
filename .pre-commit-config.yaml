@@ -1,0 +1,78 @@
+# 링크풀 (LinkPool) Pre-commit 설정
+# https://pre-commit.com
+#
+# 설치 방법:
+#   pip install pre-commit
+#   pre-commit install
+#
+# 수동 실행:
+#   pre-commit run --all-files
+
+default_language_version:
+  python: python3
+
+repos:
+  # 일반적인 체크
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      # 파일 끝에 빈 줄 추가
+      - id: end-of-file-fixer
+        exclude: '\.g\.dart$|\.freezed\.dart$'
+      # 줄 끝 공백 제거
+      - id: trailing-whitespace
+        exclude: '\.g\.dart$|\.freezed\.dart$'
+      # YAML 문법 검사
+      - id: check-yaml
+      # 큰 파일 추가 방지
+      - id: check-added-large-files
+        args: ['--maxkb=1000']
+      # 병합 충돌 마커 검사
+      - id: check-merge-conflict
+      # 비밀 키 검사
+      - id: detect-private-key
+      # JSON 문법 검사
+      - id: check-json
+        exclude: '\.vscode/'
+
+  # Flutter/Dart 전용 훅
+  - repo: local
+    hooks:
+      # Dart 포맷팅
+      - id: dart-format
+        name: Dart Format
+        entry: fvm dart format
+        language: system
+        types: [dart]
+        exclude: '\.g\.dart$|\.freezed\.dart$'
+
+      # Flutter 분석
+      - id: flutter-analyze
+        name: Flutter Analyze
+        entry: fvm flutter analyze --no-fatal-infos
+        language: system
+        types: [dart]
+        pass_filenames: false
+
+      # 테스트 실행 (선택적 - 느릴 수 있음)
+      # 주석 해제하여 활성화
+      # - id: flutter-test
+      #   name: Flutter Test
+      #   entry: fvm flutter test
+      #   language: system
+      #   types: [dart]
+      #   pass_filenames: false
+      #   stages: [push]
+
+  # Markdown 린트 (선택적)
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.38.0
+    hooks:
+      - id: markdownlint
+        args: ['--fix', '--disable', 'MD013', 'MD033', 'MD041', '--']
+        exclude: 'CHANGELOG\.md'
+
+# CI 환경에서의 설정
+ci:
+  autofix_prs: true
+  autoupdate_schedule: weekly
