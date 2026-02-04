@@ -60,38 +60,236 @@ CREATE TABLE folder (
 
 ---
 
+## 데이터 구조 정의
+
+### 현재 서버 모델 vs 로컬 DB 모델
+
+#### Folder 모델 비교
+
+| 필드 | 서버 모델 | 로컬 DB | 비고 |
+|------|----------|---------|------|
+| `id` | int? | INTEGER PK | 유지 |
+| `name` | String? | TEXT NOT NULL | 유지 |
+| `thumbnail` | String? | TEXT | 유지 (폴더 아이콘) |
+| `visible` | bool? | INTEGER | **제거** (오프라인에서 의미 없음) |
+| `links` | int? | - | 제거 (쿼리로 계산) |
+| `time` | String? (created_date_time) | TEXT | 유지 |
+| `isClassified` | bool? | INTEGER | 유지 (미분류 폴더 구분) |
+| `isAdmin` | bool? | - | **제거** (공유 기능 제거) |
+| `shared` | bool? | - | **제거** (공유 기능 제거) |
+| `membersCount` | int? | - | **제거** (공유 기능 제거) |
+
+#### Link 모델 비교
+
+| 필드 | 서버 모델 | 로컬 DB | 비고 |
+|------|----------|---------|------|
+| `id` | int? | INTEGER PK | 유지 |
+| `url` | String? | TEXT NOT NULL | 유지 |
+| `title` | String? | TEXT | 유지 |
+| `image` | String? | TEXT | 유지 (썸네일 URL) |
+| `describe` | String? | TEXT | 유지 (메모) |
+| `folderId` | int? | INTEGER FK | 유지 |
+| `time` | String? (created_date_time) | TEXT | 유지 |
+| `user` | DetailUser? | - | **제거** (오프라인에서 불필요) |
+| `inflowType` | String? | TEXT | 유지 (유입 경로) |
+
+---
+
 ## 새로운 DB 스키마
 
-### folder 테이블 (수정)
+### folder 테이블
 
 ```sql
 CREATE TABLE folder (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  name VARCHAR(200) NOT NULL,
-  visible INTEGER NOT NULL DEFAULT 1,
-  thumbnail VARCHAR(10),
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+  name TEXT NOT NULL,
+  thumbnail TEXT,
+  is_classified INTEGER NOT NULL DEFAULT 1,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+-- 미분류 폴더는 name='unclassified', is_classified=0 으로 구분
 ```
 
-### link 테이블 (신규)
+| 컬럼 | 타입 | 설명 | 제약조건 |
+|------|------|------|----------|
+| id | INTEGER | 기본키 | PK, AUTOINCREMENT |
+| name | TEXT | 폴더 이름 | NOT NULL |
+| thumbnail | TEXT | 폴더 아이콘 코드 | nullable |
+| is_classified | INTEGER | 분류 여부 (0=미분류) | NOT NULL, DEFAULT 1 |
+| created_at | TEXT | 생성 시간 (ISO 8601) | NOT NULL |
+| updated_at | TEXT | 수정 시간 (ISO 8601) | NOT NULL |
+
+### link 테이블
 
 ```sql
 CREATE TABLE link (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   folder_id INTEGER NOT NULL,
   url TEXT NOT NULL,
-  title VARCHAR(500),
+  title TEXT,
   image TEXT,
   describe TEXT,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+  inflow_type TEXT,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (folder_id) REFERENCES folder(id) ON DELETE CASCADE
 );
 
 CREATE INDEX idx_link_folder_id ON link(folder_id);
 CREATE INDEX idx_link_created_at ON link(created_at DESC);
+CREATE INDEX idx_link_title ON link(title);  -- 검색용
+```
+
+| 컬럼 | 타입 | 설명 | 제약조건 |
+|------|------|------|----------|
+| id | INTEGER | 기본키 | PK, AUTOINCREMENT |
+| folder_id | INTEGER | 폴더 FK | NOT NULL, FK |
+| url | TEXT | 링크 URL | NOT NULL |
+| title | TEXT | 링크 제목 | nullable |
+| image | TEXT | 썸네일 이미지 URL | nullable |
+| describe | TEXT | 메모/설명 | nullable |
+| inflow_type | TEXT | 유입 경로 (SHARE, MANUAL 등) | nullable |
+| created_at | TEXT | 생성 시간 (ISO 8601) | NOT NULL |
+| updated_at | TEXT | 수정 시간 (ISO 8601) | NOT NULL |
+
+---
+
+## Dart 모델 클래스 (로컬용)
+
+### LocalFolder
+
+```dart
+class LocalFolder {
+  final int? id;
+  final String name;
+  final String? thumbnail;
+  final bool isClassified;
+  final String createdAt;
+  final String updatedAt;
+
+  // 링크 개수는 쿼리로 계산
+  int? linksCount;
+
+  const LocalFolder({
+    this.id,
+    required this.name,
+    this.thumbnail,
+    this.isClassified = true,
+    required this.createdAt,
+    required this.updatedAt,
+    this.linksCount,
+  });
+
+  Map<String, dynamic> toMap() => {
+    'id': id,
+    'name': name,
+    'thumbnail': thumbnail,
+    'is_classified': isClassified ? 1 : 0,
+    'created_at': createdAt,
+    'updated_at': updatedAt,
+  };
+
+  factory LocalFolder.fromMap(Map<String, dynamic> map) => LocalFolder(
+    id: map['id'] as int?,
+    name: map['name'] as String,
+    thumbnail: map['thumbnail'] as String?,
+    isClassified: (map['is_classified'] as int) == 1,
+    createdAt: map['created_at'] as String,
+    updatedAt: map['updated_at'] as String,
+    linksCount: map['links_count'] as int?,
+  );
+}
+```
+
+### LocalLink
+
+```dart
+class LocalLink {
+  final int? id;
+  final int folderId;
+  final String url;
+  final String? title;
+  final String? image;
+  final String? describe;
+  final String? inflowType;
+  final String createdAt;
+  final String updatedAt;
+
+  const LocalLink({
+    this.id,
+    required this.folderId,
+    required this.url,
+    this.title,
+    this.image,
+    this.describe,
+    this.inflowType,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+
+  Map<String, dynamic> toMap() => {
+    'id': id,
+    'folder_id': folderId,
+    'url': url,
+    'title': title,
+    'image': image,
+    'describe': describe,
+    'inflow_type': inflowType,
+    'created_at': createdAt,
+    'updated_at': updatedAt,
+  };
+
+  factory LocalLink.fromMap(Map<String, dynamic> map) => LocalLink(
+    id: map['id'] as int?,
+    folderId: map['folder_id'] as int,
+    url: map['url'] as String,
+    title: map['title'] as String?,
+    image: map['image'] as String?,
+    describe: map['describe'] as String?,
+    inflowType: map['inflow_type'] as String?,
+    createdAt: map['created_at'] as String,
+    updatedAt: map['updated_at'] as String,
+  );
+}
+```
+
+---
+
+## 서버 → 로컬 변환
+
+### Folder 변환
+
+```dart
+LocalFolder fromServerFolder(Folder serverFolder) {
+  return LocalFolder(
+    id: serverFolder.id,
+    name: serverFolder.name ?? '',
+    thumbnail: serverFolder.thumbnail,
+    isClassified: serverFolder.isClassified ?? true,
+    createdAt: serverFolder.time ?? DateTime.now().toIso8601String(),
+    updatedAt: DateTime.now().toIso8601String(),
+  );
+}
+```
+
+### Link 변환
+
+```dart
+LocalLink fromServerLink(Link serverLink) {
+  return LocalLink(
+    id: serverLink.id,
+    folderId: serverLink.folderId ?? 0,
+    url: serverLink.url ?? '',
+    title: serverLink.title,
+    image: serverLink.image,
+    describe: serverLink.describe,
+    inflowType: serverLink.inflowType,
+    createdAt: serverLink.time ?? DateTime.now().toIso8601String(),
+    updatedAt: DateTime.now().toIso8601String(),
+  );
+}
 ```
 
 ---
