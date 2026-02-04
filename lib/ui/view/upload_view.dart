@@ -3,8 +3,8 @@
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/const/strings.dart';
 import 'package:ac_project_app/cubits/folders/folders_state.dart';
-import 'package:ac_project_app/cubits/folders/get_my_folders_cubit.dart';
-import 'package:ac_project_app/cubits/links/upload_link_cubit.dart';
+import 'package:ac_project_app/cubits/folders/local_folders_cubit.dart';
+import 'package:ac_project_app/cubits/links/local_upload_link_cubit.dart';
 import 'package:ac_project_app/cubits/links/upload_result_state.dart';
 import 'package:ac_project_app/cubits/sign_up/button_state_cubit.dart';
 import 'package:ac_project_app/enums/navigator_pop_type.dart';
@@ -84,11 +84,11 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider<GetFoldersCubit>(
-          create: (_) => GetFoldersCubit(),
+        BlocProvider<LocalFoldersCubit>(
+          create: (_) => LocalFoldersCubit(),
         ),
-        BlocProvider<UploadLinkCubit>(
-          create: (_) => UploadLinkCubit(),
+        BlocProvider<LocalUploadLinkCubit>(
+          create: (_) => LocalUploadLinkCubit(),
         ),
       ],
       child: KeyboardDismissOnTap(
@@ -135,7 +135,7 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
                           children: [
                             buildSubTitle('링크'),
                             buildLinkTextField(),
-                            BlocBuilder<GetFoldersCubit, FoldersState>(
+                            BlocBuilder<LocalFoldersCubit, FoldersState>(
                               builder: (folderContext, state) {
                                 return Column(
                                   children: [
@@ -145,7 +145,7 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
                                         '폴더 선택',
                                         state.folders,
                                         callback: () {
-                                          folderContext.read<GetFoldersCubit>().getFolders();
+                                          folderContext.read<LocalFoldersCubit>().getFolders();
                                         },
                                       ),
                                     buildFolderList(
@@ -338,7 +338,7 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
   }
 
   Widget buildLinkTextField() {
-    return BlocBuilder<UploadLinkCubit, UploadResult>(
+    return BlocBuilder<LocalUploadLinkCubit, UploadResult>(
       builder: (context, uploadResult) {
         final linkError = uploadResult.state == UploadResultState.error;
         return Column(
@@ -394,7 +394,7 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
                             if (url.isNotEmpty) {
                               buttonState = ButtonState.enabled;
                             }
-                            context.read<UploadLinkCubit>().validateMetadata(url);
+                            context.read<LocalUploadLinkCubit>().validateMetadata(url);
                           }),
                         ),
                       ),
@@ -523,7 +523,7 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
   void completeRegister(BuildContext context) {
     setLoading();
     context
-        .read<UploadLinkCubit>()
+        .read<LocalUploadLinkCubit>()
         .completeRegister(
           linkTextController.text,
           commentTextController.text,

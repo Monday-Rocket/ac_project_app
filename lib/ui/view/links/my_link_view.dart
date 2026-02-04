@@ -1,17 +1,17 @@
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/const/strings.dart';
 import 'package:ac_project_app/cubits/folders/folders_state.dart';
-import 'package:ac_project_app/cubits/folders/get_my_folders_cubit.dart';
 import 'package:ac_project_app/cubits/folders/get_selected_folder_cubit.dart';
+import 'package:ac_project_app/cubits/folders/local_folders_cubit.dart';
 import 'package:ac_project_app/cubits/links/link_list_state.dart';
-import 'package:ac_project_app/cubits/links/links_from_selected_folder_cubit.dart';
+import 'package:ac_project_app/cubits/links/local_links_from_folder_cubit.dart';
 import 'package:ac_project_app/cubits/tool_tip/my_link_upload_tool_tip_cubit.dart';
 import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/gen/fonts.gen.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/link/link.dart';
-import 'package:ac_project_app/provider/api/folders/link_api.dart';
+import 'package:ac_project_app/provider/local/local_link_repository.dart';
 import 'package:ac_project_app/provider/tool_tip_check.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/view/links/share_invite_dialog.dart';
@@ -50,8 +50,8 @@ class MyLinkView extends StatelessWidget {
     final links = <Link>[];
 
     return BlocProvider(
-      create: (_) => GetFoldersCubit(),
-      child: BlocBuilder<GetFoldersCubit, FoldersState>(
+      create: (_) => LocalFoldersCubit(),
+      child: BlocBuilder<LocalFoldersCubit, FoldersState>(
         builder: (foldersContext, folderState) {
           if (folderState is FolderLoadedState) {
             folders
@@ -65,7 +65,7 @@ class MyLinkView extends StatelessWidget {
                 create: (_) => GetSelectedFolderCubit(selectedFolder),
               ),
               BlocProvider(
-                create: (_) => LinksFromSelectedFolderCubit(selectedFolder, 0),
+                create: (_) => LocalLinksFromFolderCubit(selectedFolder, 0),
               ),
               BlocProvider(
                 create: (_) => MyLinkUploadToolTipCubit(toolTipKey),
@@ -170,7 +170,7 @@ class MyLinkView extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: BlocBuilder<LinksFromSelectedFolderCubit, LinkListState>(
+        child: BlocBuilder<LocalLinksFromFolderCubit, LinkListState>(
           builder: (cubitContext, state) {
             return Stack(
               children: [
@@ -178,7 +178,7 @@ class MyLinkView extends StatelessWidget {
                   onNotification: (scrollEnd) {
                     final metrics = scrollEnd.metrics;
                     if (metrics.atEdge && metrics.pixels > 100) {
-                      context.read<LinksFromSelectedFolderCubit>().loadMore();
+                      context.read<LocalLinksFromFolderCubit>().loadMore();
                     }
                     return true;
                   },
@@ -214,7 +214,7 @@ class MyLinkView extends StatelessWidget {
                   context,
                   callback: () {
                     links.clear();
-                    context.read<LinksFromSelectedFolderCubit>().refresh();
+                    context.read<LocalLinksFromFolderCubit>().refresh();
                   },
                 ),
                 if (state is LinkListLoadingState || state is LinkListInitialState)
@@ -452,7 +452,7 @@ class MyLinkView extends StatelessWidget {
                 // update
                 totalLinks.clear();
                 ToolTipCheck.setMyLinkUploaded();
-                context.read<GetFoldersCubit>().getFolders();
+                context.read<LocalFoldersCubit>().getFolders();
               }),
               child: Padding(
                 padding: EdgeInsets.all(6.w),
@@ -561,7 +561,7 @@ class MyLinkView extends StatelessWidget {
                           onChangeIndex.call(index);
                           totalLinks.clear();
                           context.read<GetSelectedFolderCubit>().update(folders[index]);
-                          context.read<LinksFromSelectedFolderCubit>().getSelectedLinks(folders[index], 0);
+                          context.read<LocalLinksFromFolderCubit>().getSelectedLinks(folders[index], 0);
                         },
                       );
                     },
@@ -660,10 +660,10 @@ class MyLinkView extends StatelessWidget {
             // update
             totalLinks.clear();
 
-            foldersContext.read<GetFoldersCubit>().getFolders();
-            cubitContext.read<LinksFromSelectedFolderCubit>().refresh();
+            foldersContext.read<LocalFoldersCubit>().getFolders();
+            cubitContext.read<LocalLinksFromFolderCubit>().refresh();
           } else if (result == 'deleted') {
-            cubitContext.read<LinksFromSelectedFolderCubit>().refresh();
+            cubitContext.read<LocalLinksFromFolderCubit>().refresh();
           }
         });
       },
@@ -672,17 +672,17 @@ class MyLinkView extends StatelessWidget {
         link: link,
         child: buildBodyListItem(width, link),
         callback: () {
-          getIt<LinkApi>().deleteLink(link).then(
-            (result) {
-              if (result) {
+          getIt<LocalLinkRepository>().deleteLink(link.id!).then(
+            (count) {
+              if (count > 0) {
                 showBottomToast(
                   context: cubitContext,
                   '링크가 삭제되었어요!',
                 );
               }
               totalLinks.clear();
-              foldersContext.read<GetFoldersCubit>().getFolders();
-              cubitContext.read<LinksFromSelectedFolderCubit>().getSelectedLinks(folder, 0);
+              foldersContext.read<LocalFoldersCubit>().getFolders();
+              cubitContext.read<LocalLinksFromFolderCubit>().getSelectedLinks(folder, 0);
             },
           );
         },

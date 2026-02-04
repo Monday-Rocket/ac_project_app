@@ -4,9 +4,9 @@ import 'dart:async';
 
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/folders/get_user_folders_cubit.dart';
-import 'package:ac_project_app/cubits/home/search_links_cubit.dart';
+import 'package:ac_project_app/cubits/home/local_search_links_cubit.dart';
 import 'package:ac_project_app/cubits/links/link_list_state.dart';
-import 'package:ac_project_app/cubits/links/upload_link_cubit.dart';
+import 'package:ac_project_app/cubits/links/local_upload_link_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
@@ -46,12 +46,12 @@ class _SearchViewState extends State<SearchView> {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (_) => SearchLinksCubit(),
+          create: (_) => LocalSearchLinksCubit(),
         ),
         BlocProvider(
           create: (_) => GetUserFoldersCubit(),
         ),
-        BlocProvider(create: (_) => UploadLinkCubit()),
+        BlocProvider(create: (_) => LocalUploadLinkCubit()),
       ],
       child: GestureDetector(
         onTap: () {
@@ -132,12 +132,12 @@ class _SearchViewState extends State<SearchView> {
 
   void onTapSearch(bool isMine, BuildContext context) {
     if (buttonState) {
-      context.read<SearchLinksCubit>().clear();
+      context.read<LocalSearchLinksCubit>().clear();
       final text = textController.text;
       if (isMine) {
-        context.read<SearchLinksCubit>().searchMyLinks(text, 0);
+        context.read<LocalSearchLinksCubit>().searchMyLinks(text, 0);
       } else {
-        context.read<SearchLinksCubit>().searchLinks(text, 0);
+        context.read<LocalSearchLinksCubit>().searchLinks(text, 0);
       }
     }
   }
@@ -148,9 +148,9 @@ class _SearchViewState extends State<SearchView> {
   ) {
     final width = MediaQuery.of(parentContext).size.width;
 
-    return BlocBuilder<SearchLinksCubit, LinkListState>(
+    return BlocBuilder<LocalSearchLinksCubit, LinkListState>(
       builder: (context, state) {
-        final totalLinks = context.read<SearchLinksCubit>().totalLinks;
+        final totalLinks = context.read<LocalSearchLinksCubit>().totalLinks;
         if (totalLinks.isEmpty) {
           return Center(
             child: Text(
@@ -173,7 +173,7 @@ class _SearchViewState extends State<SearchView> {
               onNotification: (scrollEnd) {
                 final metrics = scrollEnd.metrics;
                 if (metrics.extentAfter <= 800) {
-                  context.read<SearchLinksCubit>().loadMore();
+                  context.read<LocalSearchLinksCubit>().loadMore();
                 }
                 return true;
               },
@@ -369,7 +369,7 @@ class _SearchViewState extends State<SearchView> {
     return Center(
       child: Container(
         margin: EdgeInsets.only(left: 10.w),
-        child: BlocBuilder<SearchLinksCubit, LinkListState>(
+        child: BlocBuilder<LocalSearchLinksCubit, LinkListState>(
           builder: (context, state) {
             return Container(
               decoration: BoxDecoration(
@@ -480,6 +480,6 @@ class _SearchViewState extends State<SearchView> {
   }
 
   Future<void> refresh(BuildContext context, List<Link> totalLinks) async {
-    context.read<SearchLinksCubit>().refresh();
+    context.read<LocalSearchLinksCubit>().refresh();
   }
 }

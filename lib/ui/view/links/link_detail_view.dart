@@ -2,9 +2,9 @@
 
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/folders/get_user_folders_cubit.dart';
-import 'package:ac_project_app/cubits/links/detail_edit_cubit.dart';
 import 'package:ac_project_app/cubits/links/edit_state.dart';
-import 'package:ac_project_app/cubits/links/upload_link_cubit.dart';
+import 'package:ac_project_app/cubits/links/local_detail_edit_cubit.dart';
+import 'package:ac_project_app/cubits/links/local_upload_link_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
@@ -59,14 +59,14 @@ class _LinkDetailViewState extends State<LinkDetailView> {
 
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_) => DetailEditCubit(globalLink)),
+        BlocProvider(create: (_) => LocalDetailEditCubit(globalLink)),
         BlocProvider(create: (_) => GetUserFoldersCubit()),
-        BlocProvider(create: (_) => UploadLinkCubit()),
+        BlocProvider(create: (_) => LocalUploadLinkCubit()),
       ],
       child: KeyboardDismissOnTap(
         child: KeyboardVisibilityBuilder(
           builder: (context, visible) {
-            return BlocBuilder<DetailEditCubit, EditState>(
+            return BlocBuilder<LocalDetailEditCubit, EditState>(
               builder: (cubitContext, editState) {
                 final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
                 if (editState.type == EditStateType.edit) {
@@ -182,8 +182,8 @@ class _LinkDetailViewState extends State<LinkDetailView> {
               text: '확인',
               keyboardVisible: visible,
               onPressed: () {
-                cubitContext.read<DetailEditCubit>().saveComment(link).then((newLink) {
-                  cubitContext.read<DetailEditCubit>().toggleEdit(newLink);
+                cubitContext.read<LocalDetailEditCubit>().saveComment(link).then((newLink) {
+                  cubitContext.read<LocalDetailEditCubit>().toggleEdit(newLink);
                   setState(() {
                     globalLink = newLink;
                   });
@@ -219,7 +219,7 @@ class _LinkDetailViewState extends State<LinkDetailView> {
       showWaitDialog(
         context,
         callback: () {
-          final value = context.read<DetailEditCubit>().textController.text;
+          final value = context.read<LocalDetailEditCubit>().textController.text;
           SharedPrefHelper.saveKeyValue(linkId!.toString(), value).then((value) {
             Navigator.pop(context); // 창 닫기
             Navigator.pop(context); // 뒤로 가기
@@ -462,7 +462,7 @@ class _LinkDetailViewState extends State<LinkDetailView> {
                           minHeight: 120.w,
                         ),
                         child: TextField(
-                          controller: cubitContext.read<DetailEditCubit>().textController,
+                          controller: cubitContext.read<LocalDetailEditCubit>().textController,
                           style: TextStyle(
                             fontSize: 14.sp,
                             color: grey700,
@@ -503,7 +503,7 @@ class _LinkDetailViewState extends State<LinkDetailView> {
       showWaitDialog(
         cubitContext,
         callback: () {
-          final value = cubitContext.read<DetailEditCubit>().textController.text;
+          final value = cubitContext.read<LocalDetailEditCubit>().textController.text;
           Log.i('value: $value');
           SharedPrefHelper.saveKeyValue(linkId!.toString(), value).then(
             (_) => toggleEditor(cubitContext).then((_) => Navigator.pop(cubitContext)),
@@ -513,9 +513,9 @@ class _LinkDetailViewState extends State<LinkDetailView> {
     } else {
       SharedPrefHelper.getValueFromKey<String?>(linkId!.toString(), removeKey: true).then((temp) {
         if (temp != null && temp.isNotEmpty) {
-          cubitContext.read<DetailEditCubit>().textController.text = temp;
+          cubitContext.read<LocalDetailEditCubit>().textController.text = temp;
         } else {
-          cubitContext.read<DetailEditCubit>().textController.text = link.describe ?? '';
+          cubitContext.read<LocalDetailEditCubit>().textController.text = link.describe ?? '';
         }
         toggleEditor(cubitContext);
       });
@@ -526,7 +526,7 @@ class _LinkDetailViewState extends State<LinkDetailView> {
     FocusManager.instance.primaryFocus?.unfocus();
     await Future.delayed(
       const Duration(milliseconds: 200),
-      cubitContext.read<DetailEditCubit>().toggle,
+      cubitContext.read<LocalDetailEditCubit>().toggle,
     );
   }
 }

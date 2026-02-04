@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/folders/folder_name_cubit.dart';
 import 'package:ac_project_app/cubits/folders/folders_state.dart';
-import 'package:ac_project_app/cubits/folders/get_my_folders_cubit.dart';
 import 'package:ac_project_app/cubits/folders/get_selected_folder_cubit.dart';
+import 'package:ac_project_app/cubits/folders/local_folders_cubit.dart';
 import 'package:ac_project_app/cubits/folders/select_share_mode_cubit.dart';
 import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
@@ -12,7 +12,7 @@ import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/models/report/report_type.dart';
 import 'package:ac_project_app/models/user/detail_user.dart';
-import 'package:ac_project_app/provider/api/folders/link_api.dart';
+import 'package:ac_project_app/provider/local/local_link_repository.dart';
 import 'package:ac_project_app/provider/check_clipboard_link.dart';
 import 'package:ac_project_app/provider/global_variables.dart';
 import 'package:ac_project_app/provider/kakao/kakao.dart';
@@ -74,14 +74,14 @@ Future<bool?> showMyLinkOptionsDialog(
         BottomListItem(
           '링크 삭제',
           callback: () {
-            getIt<LinkApi>().deleteLink(link).then((result) {
+            getIt<LocalLinkRepository>().deleteLink(link.id!).then((count) {
               Navigator.pop(context);
               if (popCallback != null) {
                 popCallback.call();
               } else {
                 Navigator.pop(parentContext, 'deleted');
               }
-              if (result) {
+              if (count > 0) {
                 showBottomToast(
                   context: context,
                   '링크가 삭제되었어요!',
@@ -144,8 +144,8 @@ Future<bool?> showChangeFolderDialog(Link link, BuildContext parentContext) {
       return Wrap(
         children: [
           BlocProvider(
-            create: (_) => GetFoldersCubit(excludeUnclassified: true),
-            child: BlocBuilder<GetFoldersCubit, FoldersState>(
+            create: (_) => LocalFoldersCubit(excludeUnclassified: true),
+            child: BlocBuilder<LocalFoldersCubit, FoldersState>(
               builder: (foldersContext, state) {
                 return DecoratedBox(
                   decoration: DialogDecoration(),
@@ -181,11 +181,11 @@ Future<bool?> showChangeFolderDialog(Link link, BuildContext parentContext) {
                             folderContext: foldersContext,
                             state: state,
                             callback: (_, folder) {
-                              getIt<LinkApi>().changeFolder(link, folder.id!).then((result) {
+                              getIt<LocalLinkRepository>().moveLink(link.id!, folder.id!).then((count) {
                                 Navigator.pop(context);
                                 Navigator.pop(context);
                                 Navigator.pop(context, 'changed');
-                                if (result) {
+                                if (count > 0) {
                                   showBottomToast(
                                     context: context,
                                     '선택한 폴더로 이동 완료!',
@@ -456,7 +456,7 @@ void saveEmptyFolder(
       showBottomToast(context: context, '새로운 폴더가 생성되었어요!');
 
       if (hasNotUnclassified ?? false) {
-        parentContext.read<GetFoldersCubit>().getFoldersWithoutUnclassified().then((_) {
+        parentContext.read<LocalFoldersCubit>().getFoldersWithoutUnclassified().then((_) {
           runCallback(
             parentContext,
             moveToMyLinksView: moveToMyLinksView,
@@ -464,7 +464,7 @@ void saveEmptyFolder(
           );
         });
       } else {
-        parentContext.read<GetFoldersCubit>().getFolders().then((_) {
+        parentContext.read<LocalFoldersCubit>().getFolders().then((_) {
           runCallback(
             parentContext,
             moveToMyLinksView: moveToMyLinksView,
@@ -483,7 +483,7 @@ void runCallback(
       void Function(BuildContext context, List<Folder> folders, int index)? moveToMyLinksView,
       void Function()? callback,
     }) {
-  final folders = parentContext.read<GetFoldersCubit>().folders;
+  final folders = parentContext.read<LocalFoldersCubit>().folders;
   moveToMyLinksView?.call(parentContext, folders, folders.length - 1);
   callback?.call();
 }
@@ -635,7 +635,7 @@ void showSharedFolderOptionsDialogFromFolders(
                 'folder': folder,
               }).then((result) {
                 if (result == true) {
-                  parentContext.read<GetFoldersCubit>().getFolders();
+                  parentContext.read<LocalFoldersCubit>().getFolders();
                 }
               });
             },
@@ -750,7 +750,7 @@ void showSharedFolderOptionsDialogFromFolders(
     },
   ).then((result) {
     if (result ?? false) {
-      parentContext.read<GetFoldersCubit>().getFolders();
+      parentContext.read<LocalFoldersCubit>().getFolders();
     }
   });
 }
@@ -773,7 +773,7 @@ void showSharedFolderOptionsDialogInShareFolder(
                 'folder': folder,
               }).then((result) {
                 if (result == true) {
-                  parentContext.read<GetFoldersCubit>().getFolders();
+                  parentContext.read<LocalFoldersCubit>().getFolders();
                 }
               });
             },
@@ -884,13 +884,13 @@ void showSharedFolderOptionsDialogInShareFolder(
     },
   ).then((result) {
     if (result ?? false) {
-      parentContext.read<GetFoldersCubit>().getFolders();
+      parentContext.read<LocalFoldersCubit>().getFolders();
     }
   });
 }
 
 void changeFolderVisible(BuildContext context, Folder folder) {
-  context.read<GetFoldersCubit>().transferVisible(folder).then((value) {
+  context.read<LocalFoldersCubit>().transferVisible(folder).then((value) {
     Navigator.pop(context);
     if (value) {
       context.read<GetSelectedFolderCubit>().update(folder.copyWith(visible: !(folder.visible ?? false)));
@@ -911,7 +911,7 @@ void changeFolderName(
     name = name ?? '';
     if (name.isNotEmpty) {
       Navigator.pop(context, true);
-      context.read<GetFoldersCubit>().getFolders();
+      context.read<LocalFoldersCubit>().getFolders();
       context.read<GetSelectedFolderCubit>().update(currFolder.copyWith(name: name));
     }
   });

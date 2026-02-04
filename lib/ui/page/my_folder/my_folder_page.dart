@@ -4,7 +4,7 @@ import 'dart:async';
 
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/folders/folders_state.dart';
-import 'package:ac_project_app/cubits/folders/get_my_folders_cubit.dart';
+import 'package:ac_project_app/cubits/folders/local_folders_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
@@ -47,7 +47,7 @@ class _MyFolderPageState extends State<MyFolderPage> with WidgetsBindingObserver
     if (!mounted || ModalRoute.of(context)?.isCurrent == false) return;
     if (state == AppLifecycleState.resumed || state == AppLifecycleState.detached) {
       Future.delayed(const Duration(milliseconds: 300), () {
-        context.read<GetFoldersCubit>().getFolders().then((value) {
+        context.read<LocalFoldersCubit>().getFolders().then((value) {
           setState(() {});
         });
       });
@@ -60,7 +60,7 @@ class _MyFolderPageState extends State<MyFolderPage> with WidgetsBindingObserver
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
-      child: BlocBuilder<GetFoldersCubit, FoldersState>(
+      child: BlocBuilder<LocalFoldersCubit, FoldersState>(
         builder: (getFolderContext, folderState) {
           return Stack(
             children: [
@@ -77,7 +77,7 @@ class _MyFolderPageState extends State<MyFolderPage> with WidgetsBindingObserver
                 ],
               ),
               FloatingUploadButton(context, callback: () {
-                getFolderContext.read<GetFoldersCubit>().getFolders();
+                getFolderContext.read<LocalFoldersCubit>().getFolders();
               }),
             ],
           );
@@ -160,7 +160,7 @@ class _MyFolderPageState extends State<MyFolderPage> with WidgetsBindingObserver
                   prefixIcon: Assets.images.folderSearchIcon.image(),
                 ),
                 onChanged: (value) {
-                  context.read<GetFoldersCubit>().filter(value);
+                  context.read<LocalFoldersCubit>().filter(value);
                 },
               ),
             ),
@@ -292,7 +292,7 @@ class _MyFolderPageState extends State<MyFolderPage> with WidgetsBindingObserver
         'tabIndex': index,
       },
     ).then((_) {
-      context.read<GetFoldersCubit>().getFolders();
+      context.read<LocalFoldersCubit>().getFolders();
     });
   }
 
@@ -301,7 +301,7 @@ class _MyFolderPageState extends State<MyFolderPage> with WidgetsBindingObserver
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 24.w),
         child: RefreshIndicator(
-          onRefresh: () async => context.read<GetFoldersCubit>().getFolders(),
+          onRefresh: () async => context.read<LocalFoldersCubit>().getFolders(),
           color: primary600,
           child: CustomReorderableListView.separated(
             shrinkWrap: true,
@@ -420,7 +420,7 @@ class _MyFolderPageState extends State<MyFolderPage> with WidgetsBindingObserver
                     if (isSharedFolder) {
                       showSharedFolderOptionsDialogFromFolders(context, folder, isAdmin: isAdmin, callback: () {
                         Navigator.pop(context);
-                        context.read<GetFoldersCubit>().getFolders();
+                        context.read<LocalFoldersCubit>().getFolders();
                       });
                     } else {
                       showFolderOptionsDialog(folders, folder, context);
