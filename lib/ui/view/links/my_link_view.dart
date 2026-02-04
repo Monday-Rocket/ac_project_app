@@ -14,7 +14,6 @@ import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/provider/local/local_link_repository.dart';
 import 'package:ac_project_app/provider/tool_tip_check.dart';
 import 'package:ac_project_app/routes.dart';
-import 'package:ac_project_app/ui/view/links/share_invite_dialog.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/buttons/upload_button.dart';
 import 'package:ac_project_app/ui/widget/dialog/bottom_dialog.dart';
@@ -241,35 +240,18 @@ class MyLinkView extends StatelessWidget {
     List<Folder> folders,
     Folder folder,
   ) {
-    final actions = [
+    // 오프라인 모드: 공유 폴더 관련 기능 비활성화
+    final actions = <Widget>[];
+    if (folder.isClassified != false) {
+      actions.add(
         InkWell(
           onTap: () {
-            showInviteDialog(context, folder.id);
-          },
-          child: Container(
-            padding: EdgeInsets.all(4.w),
-            child: SvgPicture.asset(
-              Assets.images.inviteUser,
-              width: 24.w,
-              height: 24.w,
-            ),
-          ),
-        ),
-        InkWell(
-          onTap: () {
-            if (folder.shared ?? false) {
-              showSharedFolderOptionsDialogInShareFolder(context, folder, isAdmin: folder.isAdmin ?? false, callback: () async {
-                Navigator.pop(context);
-                Navigator.pop(context, true);
-              });
-            } else {
-              showFolderOptionsDialog(
-                folders,
-                folder,
-                context,
-                fromLinkView: true,
-              );
-            }
+            showFolderOptionsDialog(
+              folders,
+              folder,
+              context,
+              fromLinkView: true,
+            );
           },
           child: Container(
             margin: EdgeInsets.only(right: 20.w),
@@ -281,9 +263,7 @@ class MyLinkView extends StatelessWidget {
             ),
           ),
         ),
-      ];
-    if (folder.isClassified == false) { // 미분류 폴더는 초대 버튼을 숨김
-      actions..removeAt(0)..removeAt(0);
+      );
     }
     return SliverAppBar(
       pinned: true,

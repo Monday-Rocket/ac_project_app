@@ -3,7 +3,6 @@
 import 'dart:async';
 
 import 'package:ac_project_app/const/colors.dart';
-import 'package:ac_project_app/cubits/folders/get_user_folders_cubit.dart';
 import 'package:ac_project_app/cubits/home/local_search_links_cubit.dart';
 import 'package:ac_project_app/cubits/links/link_list_state.dart';
 import 'package:ac_project_app/cubits/links/local_upload_link_cubit.dart';
@@ -47,9 +46,6 @@ class _SearchViewState extends State<SearchView> {
       providers: [
         BlocProvider(
           create: (_) => LocalSearchLinksCubit(),
-        ),
-        BlocProvider(
-          create: (_) => GetUserFoldersCubit(),
         ),
         BlocProvider(create: (_) => LocalUploadLinkCubit()),
       ],

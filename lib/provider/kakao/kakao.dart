@@ -1,15 +1,12 @@
 import 'dart:async';
 
-import 'package:ac_project_app/cubits/folders/get_user_folders_cubit.dart';
 import 'package:ac_project_app/cubits/login/login_type.dart';
 import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/link/link.dart' as my_link;
 import 'package:ac_project_app/models/profile/profile.dart' as app_profile;
 import 'package:ac_project_app/models/profile/profile_image.dart';
-import 'package:ac_project_app/provider/api/folders/link_api.dart';
-import 'package:ac_project_app/provider/api/user/user_api.dart' as my_user_api;
-import 'package:ac_project_app/provider/global_variables.dart';
+import 'package:ac_project_app/provider/local/local_link_repository.dart';
 import 'package:ac_project_app/provider/login/firebase_auth_remote_data_source.dart';
 import 'package:ac_project_app/provider/shared_pref_provider.dart';
 import 'package:ac_project_app/routes.dart';
@@ -228,54 +225,30 @@ class Kakao {
     final query = Uri.parse(url).queryParameters;
 
     if (query.keys.contains('linkId')) {
-      getIt<LinkApi>().getLinkFromId(query['linkId']!).then((result) {
-        result.when(
-          success: (link) {
-            Navigator.pushNamed(
-              context,
-              Routes.linkDetail,
-              arguments: {
-                'link': link,
-              },
-            );
-          },
-          error: (msg) {
-            var errorMessage = msg;
-            if (msg.isEmpty || msg == '404') {
-              errorMessage = '링크 정보를 확인할 수 없습니다.';
-            }
-            showBottomToast(context: context, errorMessage);
-          },
-        );
-      });
-    } else {
-      if (query.keys.contains('folderId')) {
-        final folderId = query['folderId']!;
-        final userId = query['userId'] ?? '';
-        getIt<my_user_api.UserApi>().getUsersId(userId).then((result) {
-          result.when(
-            success: (user) {
-              final userFoldersCubit = getIt<GetUserFoldersCubit>();
-              final isMine = me?.id == user.id;
+      // 오프라인 모드: 로컬 DB에서 링크 조회
+      final linkIdStr = query['linkId']!;
+      final linkId = int.tryParse(linkIdStr);
+      if (linkId == null) {
+        showBottomToast(context: context, '링크 정보를 확인할 수 없습니다.');
+        return;
+      }
 
-              userFoldersCubit.getFolders(user.id!).then((_) {
-                Navigator.of(context).pushNamed(
-                  Routes.userFeed,
-                  arguments: {
-                    'user': user,
-                    'folders': userFoldersCubit.state.folderList,
-                    'folderId': folderId,
-                    'isMine': isMine,
-                  },
-                );
-              });
-            },
-            error: (e) {
-              Log.e(e);
+      getIt<LocalLinkRepository>().getLinkById(linkId).then((link) {
+        if (link != null) {
+          Navigator.pushNamed(
+            context,
+            Routes.linkDetail,
+            arguments: {
+              'link': link,
+              'isMine': true,
             },
           );
-        });
-      }
+        } else {
+          showBottomToast(context: context, '링크 정보를 확인할 수 없습니다.');
+        }
+      });
     }
+    // 오프라인 모드: 공유 폴더 기능 비활성화
+    // folderId, userId 기반 공유 폴더 접근 기능 제거
   }
 }

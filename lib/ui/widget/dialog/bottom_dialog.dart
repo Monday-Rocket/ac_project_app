@@ -10,7 +10,6 @@ import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/link/link.dart';
-import 'package:ac_project_app/models/report/report_type.dart';
 import 'package:ac_project_app/models/user/detail_user.dart';
 import 'package:ac_project_app/provider/local/local_link_repository.dart';
 import 'package:ac_project_app/provider/check_clipboard_link.dart';
@@ -18,7 +17,6 @@ import 'package:ac_project_app/provider/global_variables.dart';
 import 'package:ac_project_app/provider/kakao/kakao.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/page/my_folder/folder_visible_state.dart';
-import 'package:ac_project_app/ui/view/links/share_invite_dialog.dart';
 import 'package:ac_project_app/ui/widget/add_folder/folder_add_title.dart';
 import 'package:ac_project_app/ui/widget/add_folder/horizontal_folder_list.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
@@ -247,23 +245,7 @@ Future<bool?> showLinkOptionsDialog(
             moveToMyFolderDialog(parentContext, link);
           },
         ),
-        BottomListItem(
-          '신고하기',
-          callback: () {
-            Navigator.pushNamed(
-              context,
-              Routes.report,
-              arguments: {
-                'type': ReportType.post,
-                'id': link.id,
-                'name': link.title,
-              },
-            ).then((value) {
-              Navigator.pop(context);
-              callback?.call();
-            });
-          },
-        ),
+        // 오프라인 모드: 신고하기 기능 비활성화
       ];
       if (isShared) children.removeAt(2);
       return Wrap(
@@ -300,66 +282,14 @@ Future<bool?> showLinkOptionsDialog(
   );
 }
 
+// 오프라인 모드: 사용자 옵션 다이얼로그 비활성화 (신고하기 기능 제거)
 Future<bool?> showUserOptionDialog(
     BuildContext parentContext,
     DetailUser user, {
       void Function()? callback,
     }) {
-  return showModalBottomSheet<bool?>(
-    backgroundColor: Colors.transparent,
-    context: parentContext,
-    isScrollControlled: true,
-    builder: (BuildContext context) {
-      return Wrap(
-        children: [
-          DecoratedBox(
-            decoration: DialogDecoration(),
-            child: Padding(
-              padding: EdgeInsets.only(
-                top: 29.w,
-                bottom: Platform.isAndroid ? MediaQuery.of(context).padding.bottom : 16.w,
-              ),
-              child: Column(
-                children: [
-                  buildTitle(context, '사용자 옵션'),
-                  Container(
-                    margin: EdgeInsets.only(
-                      top: 17.w,
-                      left: 6.w,
-                      right: 6.w,
-                      bottom: 20.w,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        BottomListItem(
-                          '신고하기',
-                          callback: () {
-                            Navigator.pushNamed(
-                              parentContext,
-                              Routes.report,
-                              arguments: {
-                                'type': ReportType.user,
-                                'id': user.id,
-                                'name': user.nickname,
-                              },
-                            ).then((_) {
-                              Navigator.pop(context);
-                              callback?.call();
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      );
-    },
-  );
+  // 오프라인 모드에서는 다른 사용자 기능이 없으므로 빈 다이얼로그 반환
+  return Future.value(null);
 }
 
 Container buildTitle(BuildContext context, String title, {double? titleLeft}) {
@@ -659,17 +589,10 @@ void showSharedFolderOptionsDialogFromFolders(
         ],
       );
     } else {
+      // 오프라인 모드: 공유 폴더 초대 기능 비활성화
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          BottomListItem(
-            '공유하기',
-            callback: () {
-              showInviteDialog(parentContext, folder.id, callback: () {
-                Navigator.pop(parentContext);
-              });
-            },
-          ),
           BottomListItem(
             '폴더 나가기',
             callback: () {
@@ -715,7 +638,7 @@ void showSharedFolderOptionsDialogFromFolders(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          '공유 폴더',
+                          '폴더 옵션',
                           style: TextStyle(
                             color: grey800,
                             fontSize: 20.sp,
@@ -793,17 +716,10 @@ void showSharedFolderOptionsDialogInShareFolder(
         ],
       );
     } else {
+      // 오프라인 모드: 공유 폴더 초대 기능 비활성화
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          BottomListItem(
-            '공유하기',
-            callback: () {
-              showInviteDialog(parentContext, folder.id, callback: () {
-                Navigator.pop(parentContext);
-              });
-            },
-          ),
           BottomListItem(
             '폴더 나가기',
             callback: () async {

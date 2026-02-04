@@ -1,15 +1,12 @@
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/di/set_up_get_it.dart';
-import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/provider/api/folders/folder_api.dart';
 import 'package:ac_project_app/provider/share_db.dart';
-import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/text/custom_font.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
 
 void deleteShareFolderDialog(
   BuildContext context,
@@ -182,33 +179,7 @@ void deleteSharedFolderAdminDialog(BuildContext context, Folder folder, {void Fu
                     textAlign: TextAlign.center,
                   ),
                   28.verticalSpace,
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pushNamed(context, Routes.delegateAdmin, arguments: folder.id).then((_) {
-                        callback?.call();
-                      });
-                    },
-                    child: Container(
-                      height: 19,
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            '다른 멤버에게 방장 권한을 위임할 수도 있어요',
-                            style: TextStyle(
-                              color: grey400,
-                              fontSize: 12.sp,
-                              fontWeight: FontWeight.w500,
-                              letterSpacing: -0.2.sp,
-                            ),
-                          ),
-                          3.horizontalSpace,
-                          SvgPicture.asset(Assets.images.smallRightArrow)
-                        ],
-                      ),
-                    ),
-                  ),
+                  // 오프라인 모드: 방장 권한 위임 기능 비활성화
                   Container(
                     margin: EdgeInsets.only(
                       top: 16.w,
