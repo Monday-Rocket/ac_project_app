@@ -1,5 +1,5 @@
 import 'package:ac_project_app/const/colors.dart';
-import 'package:ac_project_app/cubits/folders/get_my_folders_cubit.dart';
+import 'package:ac_project_app/cubits/folders/local_folders_cubit.dart';
 import 'package:ac_project_app/cubits/sign_up/button_state_cubit.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
@@ -43,7 +43,7 @@ class _SharedLinkSettingViewState extends State<SharedLinkSettingView> {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => GetFoldersCubit(),
+          create: (context) => LocalFoldersCubit(),
         ),
         BlocProvider(
           create: (context) => ButtonStateCubit(),
@@ -187,7 +187,7 @@ class _SharedLinkSettingViewState extends State<SharedLinkSettingView> {
   Future<void> Function()? onPressed(BuildContext context, ButtonState state) {
     return state == ButtonState.enabled
         ? () async {
-            final result = await context.read<GetFoldersCubit>().changeNameAndVisible(folder.copyWith(
+            final result = await context.read<LocalFoldersCubit>().changeNameAndVisible(folder.copyWith(
                   name: _folderNameController.text,
                   visible: isPrivateFolder,
                 ));

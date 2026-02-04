@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/folders/folder_name_cubit.dart';
 import 'package:ac_project_app/cubits/folders/folder_visible_cubit.dart';
-import 'package:ac_project_app/cubits/folders/get_my_folders_cubit.dart';
+import 'package:ac_project_app/cubits/folders/local_folders_cubit.dart';
 import 'package:ac_project_app/cubits/sign_up/button_state_cubit.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/ui/page/my_folder/folder_visible_state.dart';
@@ -41,7 +41,7 @@ Future<String?> showRenameFolderDialog(
             create: (_) => FolderVisibleCubit(),
           ),
           BlocProvider(
-            create: (_) => GetFoldersCubit(),
+            create: (_) => LocalFoldersCubit(),
           ),
         ],
         child: Wrap(
@@ -93,7 +93,7 @@ Padding _buildDialogBody(
                       alignment: Alignment.topRight,
                       child: InkWell(
                         onTap: () {
-                          final cubit = context.read<GetFoldersCubit>();
+                          final cubit = context.read<LocalFoldersCubit>();
                           final name = context.read<FolderNameCubit>().state;
                           cubit.changeName(currFolder, name).then((result) {
                             Navigator.pop(context, name);
@@ -223,7 +223,7 @@ Padding _buildDialogBody(
                       shadowColor: Colors.transparent,
                     ),
                     onPressed: state == ButtonState.enabled ? () {
-                      final cubit = context.read<GetFoldersCubit>();
+                      final cubit = context.read<LocalFoldersCubit>();
                       final name = context.read<FolderNameCubit>().state;
                       Log.i('currFolder: ${currFolder.name}, name: $name');
                       cubit.changeName(currFolder, name).then((result) {

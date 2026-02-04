@@ -1,5 +1,5 @@
 import 'package:ac_project_app/const/colors.dart';
-import 'package:ac_project_app/cubits/folders/get_my_folders_cubit.dart';
+import 'package:ac_project_app/cubits/folders/local_folders_cubit.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/gen/fonts.gen.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
@@ -313,7 +313,7 @@ void deleteFolderDialog(BuildContext context, Folder folder, {void Function()? c
                       ),
                     ),
                     onPressed: () {
-                      final cubit = context.read<GetFoldersCubit>();
+                      final cubit = context.read<LocalFoldersCubit>();
                       cubit.delete(folder).then((result) {
                         Navigator.pop(context, true);
                         cubit.getFolders();
