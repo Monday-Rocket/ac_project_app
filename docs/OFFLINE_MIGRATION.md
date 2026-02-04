@@ -477,39 +477,48 @@ lib/
 
 ## 구현 단계
 
-### Phase 1: 로컬 DB 인프라 구축
+### Phase 1: 로컬 DB 인프라 구축 ✅ 완료
 
-1. [ ] `database_helper.dart` 생성 - DB 초기화, 버전 관리
-2. [ ] 새로운 스키마로 테이블 생성
-3. [ ] `LocalFolderRepository` 구현
-4. [ ] `LocalLinkRepository` 구현
+1. [x] `database_helper.dart` 생성 - DB 초기화, 버전 관리
+2. [x] 새로운 스키마로 테이블 생성
+3. [x] `LocalFolderRepository` 구현
+4. [x] `LocalLinkRepository` 구현
+5. [x] `LocalBulkRepository` 구현 (네이티브 공유 패널 + 서버 마이그레이션)
+6. [x] `OfflineMigrationService` 구현 (서버 → 로컬 데이터 이전)
+7. [x] 테스트 코드 작성 (33개 테스트 통과)
 
-### Phase 2: Cubit 수정
+### Phase 2: Cubit 수정 ✅ 완료
 
-1. [ ] `GetFoldersCubit` - API → LocalFolderRepository
-2. [ ] 링크 관련 Cubit들 - API → LocalLinkRepository
-3. [ ] 검색 기능 로컬 구현
+1. [x] `LocalFoldersCubit` - GetFoldersCubit 로컬 버전
+2. [x] `LocalLinksCubit` - GetLinksCubit 로컬 버전
+3. [x] `LocalUploadLinkCubit` - UploadLinkCubit 로컬 버전
+4. [x] `LocalLinksFromFolderCubit` - LinksFromSelectedFolderCubit 로컬 버전
+5. [x] `LocalSearchLinksCubit` - SearchLinksCubit 로컬 버전
+6. [x] `LocalDetailEditCubit` - DetailEditCubit 로컬 버전
+7. [x] 모델 변환 확장 메서드 (`local_model_extensions.dart`)
 
-### Phase 3: UI 연동
+### Phase 3: UI 연동 및 마이그레이션 🔄 부분 완료
 
-1. [ ] 폴더 목록 화면
-2. [ ] 링크 목록 화면
-3. [ ] 링크 추가/수정 화면
-4. [ ] 검색 화면
+1. [ ] 폴더 목록 화면 - 기존 Cubit → Local Cubit 교체
+2. [ ] 링크 목록 화면 - 기존 Cubit → Local Cubit 교체
+3. [ ] 링크 추가/수정 화면 - 기존 Cubit → Local Cubit 교체
+4. [ ] 검색 화면 - 기존 Cubit → Local Cubit 교체
+5. [x] 앱 시작 시 마이그레이션 로직 추가 (`AutoLoginCubit._runMigrationIfNeeded()`)
 
-### Phase 4: 기존 API 정리
+### Phase 4: 기존 API 정리 🔄 진행 예정
 
-1. [ ] 사용하지 않는 API 클라이언트 제거
-2. [ ] DI 설정 정리
+1. [ ] 사용하지 않는 API 클라이언트 제거 (FolderApi, LinkApi 등)
+2. [ ] DI 설정 정리 (API 제거, Local 전용으로 변경)
 3. [ ] 테스트 코드 업데이트
 
-### Phase 5: 네이티브 공유 패널 연동 변경
+### Phase 5: 네이티브 공유 패널 연동 변경 ✅ 완료
 
-1. [ ] `LocalBulkRepository` 구현 - 네이티브 데이터 → 로컬 DB 저장
-2. [ ] `FolderApi.bulkSave()` 호출 부분 → `LocalBulkRepository.bulkInsert()` 로 교체
-3. [ ] `ShareDataProvider.loadServerData()` 제거
-4. [ ] `ShareDataProvider.loadServerDataAtFirst()` 제거
-5. [ ] 앱 시작 시 `bulkInsert()` 자동 호출 로직 추가
+1. [x] `LocalBulkRepository.bulkInsertFromNative()` 구현
+2. [x] `ShareDataProvider.bulkSaveToLocal()` 신규 구현
+3. [x] `home_view.dart`에서 `bulkSaveToLocal()` 사용하도록 변경
+4. [x] `ShareDataProvider.loadServerData()` deprecated 처리
+5. [x] `ShareDataProvider.loadServerDataAtFirst()` deprecated 처리
+6. [x] 로그인 관련 파일에서 `loadServerData` 호출 제거
 
 ---
 
@@ -657,11 +666,40 @@ lib/provider/api/linkpool_pick/linkpool_pick_api.dart
 
 ## 체크리스트
 
-- [ ] DB 스키마 확정
-- [ ] Repository 인터페이스 설계
-- [ ] 단위 테스트 작성
-- [ ] Cubit 수정
-- [ ] UI 테스트
-- [ ] 마이그레이션 로직 구현
+- [x] DB 스키마 확정
+- [x] Repository 인터페이스 설계
+- [x] 단위 테스트 작성 (33개)
+- [x] Cubit 수정 (Local 버전 생성)
+- [ ] UI 연동 (Local Cubit 교체)
+- [x] 마이그레이션 로직 구현 (OfflineMigrationService)
 - [ ] 기존 API 제거
-- [ ] 문서 업데이트
+- [x] 문서 업데이트
+
+---
+
+## 구현된 파일 목록
+
+### 모델
+- `lib/models/local/local_folder.dart` - 로컬 폴더 모델
+- `lib/models/local/local_link.dart` - 로컬 링크 모델
+- `lib/models/local/local_model_extensions.dart` - 모델 변환 확장
+
+### Repository
+- `lib/provider/local/database_helper.dart` - DB 초기화
+- `lib/provider/local/local_folder_repository.dart` - 폴더 CRUD
+- `lib/provider/local/local_link_repository.dart` - 링크 CRUD
+- `lib/provider/local/local_bulk_repository.dart` - 일괄 저장
+- `lib/provider/local/offline_migration_service.dart` - 마이그레이션
+
+### Cubit
+- `lib/cubits/folders/local_folders_cubit.dart` - 로컬 폴더 Cubit
+- `lib/cubits/links/local_links_cubit.dart` - 로컬 링크 Cubit
+- `lib/cubits/links/local_upload_link_cubit.dart` - 로컬 업로드 Cubit
+- `lib/cubits/links/local_links_from_folder_cubit.dart` - 폴더별 링크 Cubit
+- `lib/cubits/links/local_detail_edit_cubit.dart` - 링크 편집 Cubit
+- `lib/cubits/home/local_search_links_cubit.dart` - 검색 Cubit
+
+### 테스트
+- `test/provider/local/local_folder_repository_test.dart`
+- `test/provider/local/local_link_repository_test.dart`
+- `test/provider/local/local_bulk_repository_test.dart`

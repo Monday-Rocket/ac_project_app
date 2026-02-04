@@ -9,7 +9,6 @@ import 'package:ac_project_app/provider/login/apple_login.dart';
 import 'package:ac_project_app/provider/login/email_password.dart';
 import 'package:ac_project_app/provider/login/google_login.dart';
 import 'package:ac_project_app/provider/login/naver_login.dart';
-import 'package:ac_project_app/provider/share_data_provider.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -63,12 +62,8 @@ class LoginCubit extends Cubit<LoginUserState> {
 
       user.when(
         success: (data) {
-          if (data.is_new == false) {
-            // 1. 공유패널 데이터 가져오기
-            ShareDataProvider.loadServerData();
-          }
-
-          // 2. 로그인 이후 화면으로 이동
+          // 오프라인 모드: 서버 데이터 로드는 OfflineMigrationService에서 처리
+          // 로그인 이후 화면으로 이동
           emit(LoginLoadedState(data));
         },
         error: (msg) {

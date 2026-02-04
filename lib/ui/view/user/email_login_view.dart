@@ -5,7 +5,6 @@ import 'dart:async';
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/provider/login/email_login.dart';
-import 'package:ac_project_app/provider/share_data_provider.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/buttons/bottom_sheet_button.dart';
@@ -290,8 +289,7 @@ class _EmailLoginViewState extends State<EmailLoginView>
             ),
           );
         } else {
-          ShareDataProvider.loadServerData();
-
+          // 오프라인 모드: 서버 데이터 로드는 OfflineMigrationService에서 처리
           Navigator.pushNamedAndRemoveUntil(
             context,
             Routes.home,

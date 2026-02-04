@@ -12,6 +12,7 @@ import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/provider/api/folders/folder_api.dart';
 import 'package:ac_project_app/provider/api/folders/share_folder_api.dart';
 import 'package:ac_project_app/provider/global_variables.dart';
+import 'package:ac_project_app/provider/share_data_provider.dart';
 import 'package:ac_project_app/provider/kakao/kakao.dart';
 import 'package:ac_project_app/provider/manager/app_pause_manager.dart';
 import 'package:ac_project_app/provider/share_db.dart';
@@ -51,7 +52,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
   }
 
   void saveLinksFromOutside() {
-    getIt<FolderApi>().bulkSave().then((value) {
+    ShareDataProvider.bulkSaveToLocal().then((value) {
       setState(() {});
     });
   }
@@ -78,7 +79,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
       if (!resumeState.value) return;
       resetResumeState();
       appPauseManager.showPopupIfPaused(context);
-      getIt<FolderApi>().bulkSave();
+      ShareDataProvider.bulkSaveToLocal();
       Kakao.receiveLink(context);
     }
   }

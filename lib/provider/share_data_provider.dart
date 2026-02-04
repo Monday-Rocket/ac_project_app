@@ -4,9 +4,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:ac_project_app/di/set_up_get_it.dart';
-import 'package:ac_project_app/provider/api/folders/folder_api.dart';
+import 'package:ac_project_app/provider/local/local_bulk_repository.dart';
 import 'package:ac_project_app/provider/share_db.dart';
-import 'package:ac_project_app/provider/shared_pref_provider.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:ac_project_app/util/string_utils.dart';
 import 'package:flutter/services.dart';
@@ -106,28 +105,45 @@ class ShareDataProvider {
     }
   }
 
-  static void loadServerData() {
+  /// 네이티브 공유 패널에서 받은 데이터를 로컬 DB에 저장
+  /// 기존 FolderApi.bulkSave()를 대체
+  static Future<bool> bulkSaveToLocal() async {
     try {
-      getIt<FolderApi>().getMyFoldersWithoutUnclassified().then(
-            (result) => result.when(
-              success: (folders) {
-                ShareDB.loadData(folders)
-                    .then((result) => Log.i('load all data: $result'));
-              },
-              error: Log.e,
-            ),
-          );
-    } on PlatformException catch (e) {
-      Log.e(e.message);
+      final newLinks = await getNewLinks();
+      final newFolders = await getNewFolders();
+
+      if (newLinks.isEmpty && newFolders.isEmpty) {
+        return true;
+      }
+
+      final bulkRepository = getIt<LocalBulkRepository>();
+      final result = await bulkRepository.bulkInsertFromNative(
+        links: newLinks,
+        folders: newFolders,
+      );
+
+      if (result.totalInserted > 0) {
+        Log.i('Local bulk save success: ${result.insertedFolders} folders, ${result.insertedLinks} links');
+        await clearLinksAndFolders();
+      }
+
+      return true;
+    } catch (e) {
+      Log.e('Local bulk save error: $e');
+      return false;
     }
   }
 
+  /// @deprecated 오프라인 모드에서는 사용하지 않음
+  /// 서버 폴더 데이터를 ShareDB에 로드 (레거시)
+  @Deprecated('Use OfflineMigrationService.migrateToLocal() instead')
+  static void loadServerData() {
+    Log.i('loadServerData is deprecated in offline mode');
+  }
+
+  /// @deprecated 오프라인 모드에서는 사용하지 않음
+  @Deprecated('Use OfflineMigrationService.migrateToLocal() instead')
   static void loadServerDataAtFirst() {
-    SharedPrefHelper.getValueFromKey<bool>('isFirst', defaultValue: false).then((isFirst) {
-      if (isFirst) {
-        loadServerData();
-        SharedPrefHelper.saveKeyValue('isFirst', false);
-      }
-    });
+    Log.i('loadServerDataAtFirst is deprecated in offline mode');
   }
 }
