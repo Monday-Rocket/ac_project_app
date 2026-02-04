@@ -400,6 +400,51 @@ POST /reports
 
 ---
 
+## Save Offline API
+
+링크 한번에 불러오기 관련 API
+
+### 불러오기 이력 조회
+
+사용자가 이전에 "링크 한번에 불러오기"를 완료했는지 확인합니다.
+
+```
+GET /save-offline
+```
+
+**Response**
+```json
+{
+  "status": 0,
+  "message": "",
+  "data": true
+}
+```
+
+| data | 설명 |
+|------|------|
+| `true` | 이미 불러오기 완료 |
+| `false` | 아직 불러오기 안함 |
+
+### 불러오기 완료 처리
+
+"링크 한번에 불러오기"를 완료 처리합니다.
+
+```
+POST /save-offline
+```
+
+**Response**
+```json
+{
+  "status": 0,
+  "message": "",
+  "data": null
+}
+```
+
+---
+
 ## Picks API (Linkpool Pick)
 
 링크풀 추천 관련 API
@@ -435,3 +480,4 @@ GET /picks
 | `lib/provider/api/user/profile_api.dart` | 프로필 API |
 | `lib/provider/api/report/report_api.dart` | 신고 API |
 | `lib/provider/api/linkpool_pick/linkpool_pick_api.dart` | 추천 API |
+| `lib/provider/api/save_offline/save_offline_api.dart` | 링크 불러오기 API |

@@ -8,6 +8,7 @@ import 'package:ac_project_app/provider/api/folders/link_api.dart';
 import 'package:ac_project_app/provider/api/folders/share_folder_api.dart';
 import 'package:ac_project_app/provider/api/linkpool_pick/linkpool_pick_api.dart';
 import 'package:ac_project_app/provider/api/report/report_api.dart';
+import 'package:ac_project_app/provider/api/save_offline/save_offline_api.dart';
 import 'package:ac_project_app/provider/api/user/profile_api.dart';
 import 'package:ac_project_app/provider/api/user/user_api.dart';
 import 'package:ac_project_app/provider/manager/app_pause_manager.dart';
@@ -29,6 +30,7 @@ void locator() {
     ..registerLazySingleton(() => UserApi(httpClient))
     ..registerLazySingleton(() => LinkpoolPickApi(httpClient))
     ..registerLazySingleton(() => ShareFolderApi(httpClient))
+    ..registerLazySingleton(() => SaveOfflineApi(httpClient))
 
     // Cubits
     ..registerLazySingleton(GetUserFoldersCubit.new)
