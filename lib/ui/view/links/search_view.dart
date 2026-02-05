@@ -6,14 +6,11 @@ import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/home/local_search_links_cubit.dart';
 import 'package:ac_project_app/cubits/links/link_list_state.dart';
 import 'package:ac_project_app/cubits/links/local_upload_link_cubit.dart';
-import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
-import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/dialog/bottom_dialog.dart';
 import 'package:ac_project_app/ui/widget/link_hero.dart';
-import 'package:ac_project_app/ui/widget/user/user_info.dart';
 import 'package:ac_project_app/util/get_arguments.dart';
 import 'package:ac_project_app/util/string_utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -200,7 +197,6 @@ class _SearchViewState extends State<SearchView> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            UserInfoWidget(context: context, link: link),
                             if (link.describe != null &&
                                 (link.describe?.isNotEmpty ?? false))
                               Column(
@@ -292,27 +288,15 @@ class _SearchViewState extends State<SearchView> {
                                     ),
                                     InkWell(
                                       onTap: () {
-                                        final profileState = context
-                                            .read<GetProfileInfoCubit>()
-                                            .state as ProfileLoadedState;
-                                        if (profileState.profile.id ==
-                                            link.user!.id) {
-                                          showMyLinkOptionsDialog(
-                                            link,
+                                        // 오프라인 모드: 모든 링크는 내 링크
+                                        showMyLinkOptionsDialog(
+                                          link,
+                                          context,
+                                          popCallback: () => refresh(
                                             context,
-                                            popCallback: () => refresh(
-                                              context,
-                                              totalLinks,
-                                            ),
-                                          );
-                                        } else {
-                                          showLinkOptionsDialog(
-                                            link,
-                                            context,
-                                            callback: () =>
-                                                refresh(context, totalLinks),
-                                          );
-                                        }
+                                            totalLinks,
+                                          ),
+                                        );
                                       },
                                       child: SvgPicture.asset(
                                         Assets.images.moreVert,

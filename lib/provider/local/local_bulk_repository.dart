@@ -131,33 +131,53 @@ class LocalBulkRepository {
     await db.transaction((txn) async {
       // 1. 서버 폴더 마이그레이션
       for (final serverFolder in serverFolders) {
-        final serverId = serverFolder['id'] as int;
+        final serverId = serverFolder['id'] as int?;
         final name = serverFolder['name'] as String? ?? '미분류';
         final visible = serverFolder['visible'] as bool? ?? true;
 
-        // 미분류 폴더는 기존 것 사용
-        if (!visible || name == '미분류') {
+        // 미분류 폴더는 기존 것 사용 (serverId가 null이거나 이름이 '미분류'인 경우)
+        if (serverId == null || name == '미분류') {
           final existing = await txn.query(
             'folder',
             where: 'is_classified = 0',
             limit: 1,
           );
           if (existing.isNotEmpty) {
-            serverToLocalFolderIdMap[serverId] = existing.first['id'] as int;
+            if (serverId != null) {
+              serverToLocalFolderIdMap[serverId] = existing.first['id'] as int;
+            }
             continue;
           }
         }
 
-        final now = DateTime.now().toIso8601String();
-        final localId = await txn.insert('folder', {
-          'name': name,
-          'thumbnail': serverFolder['thumbnail'] as String?,
-          'is_classified': visible ? 1 : 0,
-          'created_at': serverFolder['created_at'] as String? ?? now,
-          'updated_at': now,
-        });
-        serverToLocalFolderIdMap[serverId] = localId;
-        insertedFolders++;
+        // 이름 기준 중복 체크
+        final existingByName = await txn.query(
+          'folder',
+          where: 'name = ?',
+          whereArgs: [name],
+          limit: 1,
+        );
+
+        int localId;
+        if (existingByName.isNotEmpty) {
+          // 기존 폴더 사용
+          localId = existingByName.first['id'] as int;
+        } else {
+          // 새 폴더 생성 (미분류가 아닌 모든 폴더는 is_classified = 1)
+          final now = DateTime.now().toIso8601String();
+          localId = await txn.insert('folder', {
+            'name': name,
+            'thumbnail': serverFolder['thumbnail'] as String?,
+            'is_classified': 1, // visible은 공개/비공개 설정이므로 is_classified와 무관
+            'created_at': serverFolder['created_at'] as String? ?? now,
+            'updated_at': now,
+          });
+          insertedFolders++;
+        }
+
+        if (serverId != null) {
+          serverToLocalFolderIdMap[serverId] = localId;
+        }
       }
 
       // 2. 미분류 폴더 ID 확보
@@ -175,38 +195,33 @@ class LocalBulkRepository {
         final url = serverLink['url'] as String? ?? '';
         if (url.isEmpty) continue;
 
-        // URL 중복 체크
-        final existingLink = await txn.query(
-          'link',
-          where: 'url = ?',
-          whereArgs: [url],
-          limit: 1,
-        );
+        // Link.toJson()은 'folderId' (camelCase)로 저장
+        final serverFolderId = (serverLink['folderId'] ?? serverLink['folder_id']) as int?;
+        final mappedFolderId = serverFolderId != null
+            ? serverToLocalFolderIdMap[serverFolderId]
+            : null;
+        final folderId = mappedFolderId ?? unclassifiedId;
+        Log.i('[Migration] 링크 저장: serverFolderId=$serverFolderId, mappedFolderId=$mappedFolderId, folderId=$folderId, url=$url');
+        Log.i('[Migration] serverToLocalFolderIdMap: $serverToLocalFolderIdMap');
 
-        if (existingLink.isEmpty) {
-          final serverFolderId = serverLink['folder_id'] as int?;
-          final folderId = serverFolderId != null
-              ? (serverToLocalFolderIdMap[serverFolderId] ?? unclassifiedId)
-              : unclassifiedId;
+        final now = DateTime.now().toIso8601String();
+        await txn.insert('link', {
+          'folder_id': folderId,
+          'url': url,
+          'title': serverLink['title'] as String?,
+          'image': serverLink['image'] as String?,
+          'describe': serverLink['describe'] as String?,
+          'inflow_type': serverLink['inflow_type'] as String?,
+          // Link.toJson()은 'created_date_time'으로 저장
+          'created_at': (serverLink['created_date_time'] ?? serverLink['created_at']) as String? ?? now,
+          'updated_at': now,
+        });
+        insertedLinks++;
 
-          final now = DateTime.now().toIso8601String();
-          await txn.insert('link', {
-            'folder_id': folderId,
-            'url': url,
-            'title': serverLink['title'] as String?,
-            'image': serverLink['image'] as String?,
-            'describe': serverLink['describe'] as String?,
-            'inflow_type': serverLink['inflow_type'] as String?,
-            'created_at': serverLink['created_at'] as String? ?? now,
-            'updated_at': now,
-          });
-          insertedLinks++;
-
-          // 폴더 썸네일 업데이트
-          final image = serverLink['image'] as String?;
-          if (image != null) {
-            await _updateFolderThumbnailIfNeeded(txn, folderId, image);
-          }
+        // 폴더 썸네일 업데이트
+        final image = serverLink['image'] as String?;
+        if (image != null) {
+          await _updateFolderThumbnailIfNeeded(txn, folderId, image);
         }
       }
     });

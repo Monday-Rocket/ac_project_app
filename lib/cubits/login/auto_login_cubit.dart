@@ -13,7 +13,9 @@ class AutoLoginCubit extends Cubit<LoginUserState> {
   final appPauseManager = getIt<AppPauseManager>();
 
   Future<void> userCheck() async {
+    Log.i('[AutoLogin] userCheck() 호출됨');
     final pause = await appPauseManager.getPause();
+    Log.i('[AutoLogin] pause: $pause');
 
     if (pause) {
       await _showInspectionMessage();
@@ -31,22 +33,33 @@ class AutoLoginCubit extends Cubit<LoginUserState> {
 
   void _userCheck() {
     final user = FirebaseAuth.instance.currentUser;
+    Log.i('[AutoLogin] Firebase user: ${user?.uid ?? "null"}');
+
     if (user != null) {
+      Log.i('[AutoLogin] postUsers() 호출 중...');
       getIt<UserApi>().postUsers().then((result) {
         result.when(
           success: (data) {
+            Log.i('[AutoLogin] postUsers() 성공 - is_new: ${data.is_new}');
             if (data.is_new ?? false) {
+              Log.i('[AutoLogin] 새 사용자 - 마이그레이션 스킵');
               emit(LoginInitialState());
             } else {
               // 오프라인 모드: 서버 데이터 마이그레이션 실행
+              Log.i('[AutoLogin] 기존 사용자 - 마이그레이션 시작');
               _runMigrationIfNeeded().then((_) {
                 emit(LoginLoadedState(data));
               });
             }
           },
-          error: (_) => emit(LoginInitialState()),
+          error: (msg) {
+            Log.e('[AutoLogin] postUsers() 실패: $msg');
+            emit(LoginInitialState());
+          },
         );
       });
+    } else {
+      Log.i('[AutoLogin] Firebase user가 null - 로그인 필요');
     }
   }
 
@@ -57,6 +70,9 @@ class AutoLoginCubit extends Cubit<LoginUserState> {
 
       if (result.isSuccess) {
         Log.i('Migration completed: ${result.foldersCount} folders, ${result.linksCount} links');
+        if (result.logFilePath != null) {
+          Log.i('Migration log file: ${result.logFilePath}');
+        }
       } else if (result.isAlreadyCompleted) {
         Log.i('Migration already completed');
       } else if (result.isError) {

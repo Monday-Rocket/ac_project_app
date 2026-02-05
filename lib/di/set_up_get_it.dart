@@ -1,6 +1,8 @@
 import 'package:ac_project_app/cubits/login/auto_login_cubit.dart';
 import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
 import 'package:ac_project_app/provider/api/custom_client.dart';
+import 'package:ac_project_app/provider/api/folders/folder_api.dart';
+import 'package:ac_project_app/provider/api/folders/link_api.dart';
 import 'package:ac_project_app/provider/api/save_offline/save_offline_api.dart';
 import 'package:ac_project_app/provider/api/user/profile_api.dart';
 import 'package:ac_project_app/provider/api/user/user_api.dart';
@@ -25,6 +27,8 @@ void locator() {
     ..registerLazySingleton(() => UserApi(httpClient))
     ..registerLazySingleton(() => ProfileApi(httpClient))
     ..registerLazySingleton(() => SaveOfflineApi(httpClient))
+    ..registerLazySingleton(() => FolderApi(httpClient)) // 마이그레이션용
+    ..registerLazySingleton(() => LinkApi(httpClient)) // 마이그레이션용
 
     // Local Repositories (오프라인 모드 핵심)
     ..registerLazySingleton(() => databaseHelper)

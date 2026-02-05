@@ -4,8 +4,6 @@ import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/links/edit_state.dart';
 import 'package:ac_project_app/cubits/links/local_detail_edit_cubit.dart';
 import 'package:ac_project_app/cubits/links/local_upload_link_cubit.dart';
-import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
-import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/provider/shared_pref_provider.dart';
@@ -13,7 +11,6 @@ import 'package:ac_project_app/ui/widget/buttons/bottom_sheet_button.dart';
 import 'package:ac_project_app/ui/widget/dialog/bottom_dialog.dart';
 import 'package:ac_project_app/ui/widget/dialog/center_dialog.dart';
 import 'package:ac_project_app/ui/widget/link_hero.dart';
-import 'package:ac_project_app/ui/widget/user/user_info.dart';
 import 'package:ac_project_app/util/date_utils.dart';
 import 'package:ac_project_app/util/get_arguments.dart';
 import 'package:ac_project_app/util/logger.dart';
@@ -47,14 +44,8 @@ class _LinkDetailViewState extends State<LinkDetailView> {
     linkVisible = args['visible'] as bool? ?? true;
     isShared = args['isShared'] as bool? ?? false;
 
-    final profileState = context.watch<GetProfileInfoCubit>().state;
-    var isMyLink = false;
-    if (profileState is ProfileLoadedState) {
-      isMyLink = profileState.profile.id == globalLink!.user?.id;
-    }
-    if (isMine ?? false) {
-      isMyLink = true;
-    }
+    // 오프라인 모드: 모든 링크는 내 링크
+    final isMyLink = isMine ?? true;
 
     return MultiBlocProvider(
       providers: [
@@ -260,16 +251,6 @@ class _LinkDetailViewState extends State<LinkDetailView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            BlocBuilder<GetProfileInfoCubit, ProfileState>(
-              builder: (context, state) {
-                return UserInfoWidget(
-                  context: cubitContext,
-                  link: link,
-                  jobVisible: false,
-                );
-              },
-            ),
-            SizedBox(height: 20.w),
             InkWell(
               onTap: () async {
                 await launchUrl(
