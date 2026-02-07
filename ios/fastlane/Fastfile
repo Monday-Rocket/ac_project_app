@@ -42,7 +42,7 @@ platform :ios do
       scheme: "Runner",
       export_method: "app-store",
       export_options: {
-        teamID: ENV["DEVELOPER_PORTAL_TEAM_ID"],
+        teamID: "T583WJWNAK",
         signingStyle: "manual",
         provisioningProfiles: {
           "com.mr.acProjectApp" => "match AppStore com.mr.acProjectApp",
