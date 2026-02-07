@@ -42,6 +42,8 @@ platform :ios do
       scheme: "Runner",
       export_method: "app-store",
       export_options: {
+        teamID: ENV["DEVELOPER_PORTAL_TEAM_ID"],
+        signingStyle: "manual",
         provisioningProfiles: {
           "com.mr.acProjectApp" => "match AppStore com.mr.acProjectApp",
           "com.mr.acProjectApp.Extension" => "match AppStore com.mr.acProjectApp.Extension"
