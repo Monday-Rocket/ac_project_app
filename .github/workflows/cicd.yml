@@ -19,7 +19,9 @@ jobs:
           flutter-version: '3.38.6'
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.1.2'
+          ruby-version: '3.3'
+          bundler-cache: true
+          working-directory: ios
       - run: flutter clean
       - run: flutter pub get
       - run: echo "${{ secrets.FIREBASE_OPTIONS }}" | base64 -d > ./lib/firebase_options.dart
@@ -64,9 +66,9 @@ jobs:
           flutter-version: '3.38.6'
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.1.2'
-      - name: Install Fastlane
-        run: cd android && bundle install && cd ..
+          ruby-version: '3.3'
+          bundler-cache: true
+          working-directory: android
       - name: Install packages
         run: flutter pub get
       - run: echo '${{ secrets.SIGNING_PROPERTIES }}' | base64 -d > ./android/signing.properties
