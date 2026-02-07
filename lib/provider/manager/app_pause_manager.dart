@@ -39,6 +39,19 @@ class AppPauseManager {
     FirebaseCrashlytics.instance.crash();
   }
 
+  Future<bool> getNotice() async {
+    return (await database.ref('notice').get()).value as bool? ?? false;
+  }
+
+  Future<String> getNoticeTitle() async {
+    return (await database.ref('notice_title').get()).value as String? ?? '';
+  }
+
+  Future<String> getNoticeDescription() async {
+    return (await database.ref('notice_description').get()).value as String? ??
+        '';
+  }
+
   void showPopupIfPaused(BuildContext context) {
     getPause().then((value) {
       if (value) {

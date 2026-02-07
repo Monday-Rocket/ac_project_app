@@ -10,6 +10,7 @@ import 'package:ac_project_app/provider/global_variables.dart';
 import 'package:ac_project_app/provider/tutorial_provider.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/dialog/center_dialog.dart';
+import 'package:ac_project_app/provider/manager/app_pause_manager.dart';
 import 'package:ac_project_app/provider/offline_mode_provider.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:app_links/app_links.dart';
@@ -58,19 +59,11 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
     final isOfflineComplete = await OfflineModeProvider.isOfflineModeCompleted();
     Log.i('[Splash] isOfflineModeCompleted: $isOfflineComplete');
 
-    if (isOfflineComplete) {
-      Log.i('[Splash] 오프라인 모드 완료 - 로그인 스킵하고 홈으로 이동');
-      _navigateToHome();
-      return;
-    }
-
     final state = autoLoginCubit.state;
     Log.i('[Splash] moveToNextView - state: ${state.runtimeType}');
 
-    if (state is LoginInitialState) {
-      // Firebase 로그인은 되어있지만 아직 처리 중일 수 있음
-      _waitForLoginStateOrTimeout();
-    } else if (state is InspectionState) {
+    // 점검 중이면 차단 팝업 (앱 종료)
+    if (state is InspectionState) {
       showPausePopup(
         title: state.title,
         description: state.description,
@@ -81,6 +74,39 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
           autoLoginCubit.closeApp();
         },
       );
+      return;
+    }
+
+    // 공지사항 확인 (확인 후 정상 진행)
+    final appPauseManager = getIt<AppPauseManager>();
+    final hasNotice = await appPauseManager.getNotice();
+    Log.i('[Splash] hasNotice: $hasNotice');
+
+    if (hasNotice) {
+      final title = await appPauseManager.getNoticeTitle();
+      final description = await appPauseManager.getNoticeDescription();
+      showPopUp(
+        title: title,
+        content: description,
+        parentContext: context,
+        hasClose: false,
+        callback: () {
+          Navigator.pop(context);
+          _proceedAfterSplash(isOfflineComplete, state);
+        },
+      );
+      return;
+    }
+
+    _proceedAfterSplash(isOfflineComplete, state);
+  }
+
+  void _proceedAfterSplash(bool isOfflineComplete, LoginUserState state) {
+    if (isOfflineComplete) {
+      Log.i('[Splash] 오프라인 모드 완료 - 로그인 스킵하고 홈으로 이동');
+      _navigateToHome();
+    } else if (state is LoginInitialState) {
+      _waitForLoginStateOrTimeout();
     } else {
       _navigateToHome();
     }
