@@ -3,12 +3,15 @@ import 'dart:async';
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/login/auto_login_cubit.dart';
 import 'package:ac_project_app/cubits/login/login_user_state.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/provider/global_variables.dart';
 import 'package:ac_project_app/provider/tutorial_provider.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/dialog/center_dialog.dart';
+import 'package:ac_project_app/provider/manager/app_pause_manager.dart';
+import 'package:ac_project_app/provider/offline_mode_provider.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
@@ -51,11 +54,16 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
     });
   }
 
-  void moveToNextView() {
+  void moveToNextView() async {
+    // 오프라인 모드가 이미 완료되었으면 로그인 없이 바로 홈으로
+    final isOfflineComplete = await OfflineModeProvider.isOfflineModeCompleted();
+    Log.i('[Splash] isOfflineModeCompleted: $isOfflineComplete');
+
     final state = autoLoginCubit.state;
-    if (state is LoginInitialState) {
-      moveToLoginView();
-    } else if (state is InspectionState) {
+    Log.i('[Splash] moveToNextView - state: ${state.runtimeType}');
+
+    // 점검 중이면 차단 팝업 (앱 종료)
+    if (state is InspectionState) {
       showPausePopup(
         title: state.title,
         description: state.description,
@@ -66,15 +74,87 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
           autoLoginCubit.closeApp();
         },
       );
-    } else {
-      Navigator.pushReplacementNamed(
-        context,
-        Routes.home,
-        arguments: {
-          'index': 0,
+      return;
+    }
+
+    // 공지사항 확인 (확인 후 정상 진행)
+    final appPauseManager = getIt<AppPauseManager>();
+    final hasNotice = await appPauseManager.getNotice();
+    Log.i('[Splash] hasNotice: $hasNotice');
+
+    if (hasNotice) {
+      final title = await appPauseManager.getNoticeTitle();
+      final description = await appPauseManager.getNoticeDescription();
+      showPopUp(
+        title: title,
+        content: description,
+        parentContext: context,
+        hasClose: false,
+        callback: () {
+          Navigator.pop(context);
+          _proceedAfterSplash(isOfflineComplete, state);
         },
       );
+      return;
     }
+
+    _proceedAfterSplash(isOfflineComplete, state);
+  }
+
+  void _proceedAfterSplash(bool isOfflineComplete, LoginUserState state) {
+    if (isOfflineComplete) {
+      Log.i('[Splash] 오프라인 모드 완료 - 로그인 스킵하고 홈으로 이동');
+      _navigateToHome();
+    } else if (state is LoginInitialState) {
+      _waitForLoginStateOrTimeout();
+    } else {
+      _navigateToHome();
+    }
+  }
+
+  void _waitForLoginStateOrTimeout() {
+    // Firebase 유저가 있으면 상태 변화를 기다림
+    final hasFirebaseUser =
+        FirebaseAuth.instance.currentUser != null;
+    Log.i('[Splash] hasFirebaseUser: $hasFirebaseUser');
+
+    if (!hasFirebaseUser) {
+      moveToLoginView();
+      return;
+    }
+
+    // 상태 변화를 기다림 (최대 10초)
+    Log.i('[Splash] 로그인 상태 변화 대기 중...');
+    late final StreamSubscription<LoginUserState> subscription;
+    final timeout = Future<void>.delayed(const Duration(seconds: 10));
+
+    subscription = autoLoginCubit.stream.listen((state) {
+      Log.i('[Splash] 상태 변화 감지: ${state.runtimeType}');
+      if (state is LoginLoadedState) {
+        subscription.cancel();
+        _navigateToHome();
+      } else if (state is LoginInitialState) {
+        // 에러로 인해 초기 상태로 돌아온 경우
+        subscription.cancel();
+        moveToLoginView();
+      }
+    });
+
+    timeout.then((_) {
+      subscription.cancel();
+      Log.e('[Splash] 로그인 타임아웃 - 로그인 화면으로 이동');
+      moveToLoginView();
+    });
+  }
+
+  void _navigateToHome() {
+    Navigator.pushReplacementNamed(
+      context,
+      Routes.home,
+      arguments: {
+        'index': 0,
+      },
+    );
   }
 
   void moveToLoginView() =>

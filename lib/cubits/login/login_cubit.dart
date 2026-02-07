@@ -5,11 +5,11 @@ import 'package:ac_project_app/cubits/login/login_user_state.dart';
 import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/provider/api/user/user_api.dart';
 import 'package:ac_project_app/provider/kakao/kakao.dart';
+import 'package:ac_project_app/provider/local/offline_migration_service.dart';
 import 'package:ac_project_app/provider/login/apple_login.dart';
 import 'package:ac_project_app/provider/login/email_password.dart';
 import 'package:ac_project_app/provider/login/google_login.dart';
 import 'package:ac_project_app/provider/login/naver_login.dart';
-import 'package:ac_project_app/provider/share_data_provider.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -61,14 +61,15 @@ class LoginCubit extends Cubit<LoginUserState> {
     if (isSuccess) {
       final user = await userApi.postUsers();
 
-      user.when(
-        success: (data) {
-          if (data.is_new == false) {
-            // 1. 공유패널 데이터 가져오기
-            ShareDataProvider.loadServerData();
+      await user.when(
+        success: (data) async {
+          if (data.is_new ?? false) {
+            Log.i('[Login] 새 사용자 - 마이그레이션 스킵');
+          } else {
+            // 오프라인 모드: 서버 데이터 마이그레이션 실행
+            Log.i('[Login] 기존 사용자 - 마이그레이션 시작');
+            await _runMigrationIfNeeded();
           }
-
-          // 2. 로그인 이후 화면으로 이동
           emit(LoginLoadedState(data));
         },
         error: (msg) {
@@ -78,6 +79,26 @@ class LoginCubit extends Cubit<LoginUserState> {
     } else {
       Log.e('login fail');
       emit(LoginErrorState('login fail'));
+    }
+  }
+
+  Future<void> _runMigrationIfNeeded() async {
+    try {
+      final migrationService = getIt<OfflineMigrationService>();
+      final result = await migrationService.migrateToLocal();
+
+      if (result.isSuccess) {
+        Log.i('[Login] Migration completed: ${result.foldersCount} folders, ${result.linksCount} links');
+        if (result.logFilePath != null) {
+          Log.i('[Login] Migration log file: ${result.logFilePath}');
+        }
+      } else if (result.isAlreadyCompleted) {
+        Log.i('[Login] Migration already completed');
+      } else if (result.isError) {
+        Log.e('[Login] Migration error: ${result.errorMessage}');
+      }
+    } catch (e) {
+      Log.e('[Login] Migration exception: $e');
     }
   }
 }

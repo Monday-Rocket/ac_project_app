@@ -3,18 +3,14 @@
 import 'dart:async';
 
 import 'package:ac_project_app/const/colors.dart';
-import 'package:ac_project_app/cubits/folders/get_user_folders_cubit.dart';
-import 'package:ac_project_app/cubits/home/search_links_cubit.dart';
+import 'package:ac_project_app/cubits/home/local_search_links_cubit.dart';
 import 'package:ac_project_app/cubits/links/link_list_state.dart';
-import 'package:ac_project_app/cubits/links/upload_link_cubit.dart';
-import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
-import 'package:ac_project_app/cubits/profile/profile_state.dart';
+import 'package:ac_project_app/cubits/links/local_upload_link_cubit.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/dialog/bottom_dialog.dart';
 import 'package:ac_project_app/ui/widget/link_hero.dart';
-import 'package:ac_project_app/ui/widget/user/user_info.dart';
 import 'package:ac_project_app/util/get_arguments.dart';
 import 'package:ac_project_app/util/string_utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -46,12 +42,9 @@ class _SearchViewState extends State<SearchView> {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (_) => SearchLinksCubit(),
+          create: (_) => LocalSearchLinksCubit(),
         ),
-        BlocProvider(
-          create: (_) => GetUserFoldersCubit(),
-        ),
-        BlocProvider(create: (_) => UploadLinkCubit()),
+        BlocProvider(create: (_) => LocalUploadLinkCubit()),
       ],
       child: GestureDetector(
         onTap: () {
@@ -132,12 +125,12 @@ class _SearchViewState extends State<SearchView> {
 
   void onTapSearch(bool isMine, BuildContext context) {
     if (buttonState) {
-      context.read<SearchLinksCubit>().clear();
+      context.read<LocalSearchLinksCubit>().clear();
       final text = textController.text;
       if (isMine) {
-        context.read<SearchLinksCubit>().searchMyLinks(text, 0);
+        context.read<LocalSearchLinksCubit>().searchMyLinks(text, 0);
       } else {
-        context.read<SearchLinksCubit>().searchLinks(text, 0);
+        context.read<LocalSearchLinksCubit>().searchLinks(text, 0);
       }
     }
   }
@@ -148,9 +141,9 @@ class _SearchViewState extends State<SearchView> {
   ) {
     final width = MediaQuery.of(parentContext).size.width;
 
-    return BlocBuilder<SearchLinksCubit, LinkListState>(
+    return BlocBuilder<LocalSearchLinksCubit, LinkListState>(
       builder: (context, state) {
-        final totalLinks = context.read<SearchLinksCubit>().totalLinks;
+        final totalLinks = context.read<LocalSearchLinksCubit>().totalLinks;
         if (totalLinks.isEmpty) {
           return Center(
             child: Text(
@@ -173,7 +166,7 @@ class _SearchViewState extends State<SearchView> {
               onNotification: (scrollEnd) {
                 final metrics = scrollEnd.metrics;
                 if (metrics.extentAfter <= 800) {
-                  context.read<SearchLinksCubit>().loadMore();
+                  context.read<LocalSearchLinksCubit>().loadMore();
                 }
                 return true;
               },
@@ -192,6 +185,7 @@ class _SearchViewState extends State<SearchView> {
                           Routes.linkDetail,
                           arguments: {
                             'link': link,
+                            'heroPrefix': 'search_',
                           },
                         );
                       },
@@ -204,7 +198,6 @@ class _SearchViewState extends State<SearchView> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            UserInfoWidget(context: context, link: link),
                             if (link.describe != null &&
                                 (link.describe?.isNotEmpty ?? false))
                               Column(
@@ -231,7 +224,7 @@ class _SearchViewState extends State<SearchView> {
                                 bottom: 18.w,
                               ),
                               child: LinkHero(
-                                tag: 'linkImage${link.id}',
+                                tag: 'search_linkImage${link.id}',
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.all(
                                     Radius.circular(7.w),
@@ -281,7 +274,7 @@ class _SearchViewState extends State<SearchView> {
                                     SizedBox(
                                       width: width - (24 * 2 + 25).w,
                                       child: LinkHero(
-                                        tag: 'linkTitle${link.id}',
+                                        tag: 'search_linkTitle${link.id}',
                                         child: Text(
                                           link.title ?? '',
                                           overflow: TextOverflow.ellipsis,
@@ -296,27 +289,15 @@ class _SearchViewState extends State<SearchView> {
                                     ),
                                     InkWell(
                                       onTap: () {
-                                        final profileState = context
-                                            .read<GetProfileInfoCubit>()
-                                            .state as ProfileLoadedState;
-                                        if (profileState.profile.id ==
-                                            link.user!.id) {
-                                          showMyLinkOptionsDialog(
-                                            link,
+                                        // 오프라인 모드: 모든 링크는 내 링크
+                                        showMyLinkOptionsDialog(
+                                          link,
+                                          context,
+                                          popCallback: () => refresh(
                                             context,
-                                            popCallback: () => refresh(
-                                              context,
-                                              totalLinks,
-                                            ),
-                                          );
-                                        } else {
-                                          showLinkOptionsDialog(
-                                            link,
-                                            context,
-                                            callback: () =>
-                                                refresh(context, totalLinks),
-                                          );
-                                        }
+                                            totalLinks,
+                                          ),
+                                        );
                                       },
                                       child: SvgPicture.asset(
                                         Assets.images.moreVert,
@@ -331,7 +312,7 @@ class _SearchViewState extends State<SearchView> {
                                 Padding(
                                   padding: EdgeInsets.only(right: 25.w),
                                   child: LinkHero(
-                                    tag: 'linkUrl${link.id}',
+                                    tag: 'search_linkUrl${link.id}',
                                     child: Text(
                                       link.url ?? '',
                                       maxLines: 1,
@@ -369,7 +350,7 @@ class _SearchViewState extends State<SearchView> {
     return Center(
       child: Container(
         margin: EdgeInsets.only(left: 10.w),
-        child: BlocBuilder<SearchLinksCubit, LinkListState>(
+        child: BlocBuilder<LocalSearchLinksCubit, LinkListState>(
           builder: (context, state) {
             return Container(
               decoration: BoxDecoration(
@@ -480,6 +461,6 @@ class _SearchViewState extends State<SearchView> {
   }
 
   Future<void> refresh(BuildContext context, List<Link> totalLinks) async {
-    context.read<SearchLinksCubit>().refresh();
+    context.read<LocalSearchLinksCubit>().refresh();
   }
 }

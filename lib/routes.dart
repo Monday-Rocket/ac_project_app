@@ -1,14 +1,11 @@
 import 'package:ac_project_app/ui/page/my_page/my_page.dart';
-import 'package:ac_project_app/ui/view/delegate_admin_view.dart';
 import 'package:ac_project_app/ui/view/home_view.dart';
 import 'package:ac_project_app/ui/view/links/link_detail_view.dart';
 import 'package:ac_project_app/ui/view/links/my_link_view.dart';
 import 'package:ac_project_app/ui/view/links/search_view.dart';
 import 'package:ac_project_app/ui/view/links/shared_link_setting_view.dart';
-import 'package:ac_project_app/ui/view/links/user_feed_view.dart';
 import 'package:ac_project_app/ui/view/oss_licenses_view.dart';
 import 'package:ac_project_app/ui/view/profile/change_profile_view.dart';
-import 'package:ac_project_app/ui/view/report_view.dart';
 import 'package:ac_project_app/ui/view/splash_view.dart';
 import 'package:ac_project_app/ui/view/terms_view.dart';
 import 'package:ac_project_app/ui/view/tutorial_view.dart';
@@ -24,9 +21,7 @@ class Routes {
   static const linkDetail = '/linkDetail';
   static const myLinks = '/myLinks';
   static const search = '/search';
-  static const userFeed = '/userFeed';
   static const sharedLinkSetting = '/sharedLinkSetting';
-  static const delegateAdmin = '/delegateAdmin';
 
   // user
   static const profile = '/profile';
@@ -38,7 +33,6 @@ class Routes {
   static const splash = '/splash';
   static const terms = '/terms';
   static const myPage = '/myPage';
-  static const report = '/report';
   static const upload = '/upload';
   static const tutorial = '/tutorial';
   static const ossLicenses = '/ossLicenses';
@@ -63,8 +57,6 @@ class Pages {
         return router.create(child: MyLinkView());
       case Routes.linkDetail:
         return router.create(child: const LinkDetailView());
-      case Routes.userFeed:
-        return router.create(child: const UserFeedView());
       case Routes.signUpNickname:
         return router.create(child: const SignUpNicknameView());
       case Routes.myPage:
@@ -73,8 +65,6 @@ class Pages {
         return router.create(child: const ChangeProfileView());
       case Routes.search:
         return router.create(child: const SearchView());
-      case Routes.report:
-        return router.create(child: const ReportView());
       case Routes.upload:
         return router.create(child: UploadView(args: arguments as Map<String, dynamic>?));
       case Routes.tutorial:
@@ -83,8 +73,6 @@ class Pages {
         return router.create(child: const OssLicensesView());
       case Routes.sharedLinkSetting:
         return router.create(child: const SharedLinkSettingView());
-      case Routes.delegateAdmin:
-        return router.create(child: const DelegateAdminView());
       default:
         if (settings.name != null && ((settings.name?.startsWith('linkpool://') ?? false) || (settings.name?.startsWith('kakao') ?? false))) {
           return router.create(child: const SplashView());

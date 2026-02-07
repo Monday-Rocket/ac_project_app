@@ -1,12 +1,9 @@
 // ignore_for_file: avoid_positional_boolean_parameters
 
 import 'package:ac_project_app/const/colors.dart';
-import 'package:ac_project_app/cubits/folders/get_user_folders_cubit.dart';
-import 'package:ac_project_app/cubits/links/detail_edit_cubit.dart';
 import 'package:ac_project_app/cubits/links/edit_state.dart';
-import 'package:ac_project_app/cubits/links/upload_link_cubit.dart';
-import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
-import 'package:ac_project_app/cubits/profile/profile_state.dart';
+import 'package:ac_project_app/cubits/links/local_detail_edit_cubit.dart';
+import 'package:ac_project_app/cubits/links/local_upload_link_cubit.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/provider/shared_pref_provider.dart';
@@ -14,7 +11,6 @@ import 'package:ac_project_app/ui/widget/buttons/bottom_sheet_button.dart';
 import 'package:ac_project_app/ui/widget/dialog/bottom_dialog.dart';
 import 'package:ac_project_app/ui/widget/dialog/center_dialog.dart';
 import 'package:ac_project_app/ui/widget/link_hero.dart';
-import 'package:ac_project_app/ui/widget/user/user_info.dart';
 import 'package:ac_project_app/util/date_utils.dart';
 import 'package:ac_project_app/util/get_arguments.dart';
 import 'package:ac_project_app/util/logger.dart';
@@ -39,6 +35,7 @@ class _LinkDetailViewState extends State<LinkDetailView> {
   late bool? isMine;
   late bool linkVisible;
   late bool isShared;
+  late String heroPrefix;
 
   @override
   Widget build(BuildContext context) {
@@ -47,26 +44,20 @@ class _LinkDetailViewState extends State<LinkDetailView> {
     isMine = args['isMine'] as bool?;
     linkVisible = args['visible'] as bool? ?? true;
     isShared = args['isShared'] as bool? ?? false;
+    heroPrefix = args['heroPrefix'] as String? ?? '';
 
-    final profileState = context.watch<GetProfileInfoCubit>().state;
-    var isMyLink = false;
-    if (profileState is ProfileLoadedState) {
-      isMyLink = profileState.profile.id == globalLink!.user?.id;
-    }
-    if (isMine ?? false) {
-      isMyLink = true;
-    }
+    // 오프라인 모드: 모든 링크는 내 링크
+    final isMyLink = isMine ?? true;
 
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_) => DetailEditCubit(globalLink)),
-        BlocProvider(create: (_) => GetUserFoldersCubit()),
-        BlocProvider(create: (_) => UploadLinkCubit()),
+        BlocProvider(create: (_) => LocalDetailEditCubit(globalLink)),
+        BlocProvider(create: (_) => LocalUploadLinkCubit()),
       ],
       child: KeyboardDismissOnTap(
         child: KeyboardVisibilityBuilder(
           builder: (context, visible) {
-            return BlocBuilder<DetailEditCubit, EditState>(
+            return BlocBuilder<LocalDetailEditCubit, EditState>(
               builder: (cubitContext, editState) {
                 final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
                 if (editState.type == EditStateType.edit) {
@@ -182,8 +173,8 @@ class _LinkDetailViewState extends State<LinkDetailView> {
               text: '확인',
               keyboardVisible: visible,
               onPressed: () {
-                cubitContext.read<DetailEditCubit>().saveComment(link).then((newLink) {
-                  cubitContext.read<DetailEditCubit>().toggleEdit(newLink);
+                cubitContext.read<LocalDetailEditCubit>().saveComment(link).then((newLink) {
+                  cubitContext.read<LocalDetailEditCubit>().toggleEdit(newLink);
                   setState(() {
                     globalLink = newLink;
                   });
@@ -219,7 +210,7 @@ class _LinkDetailViewState extends State<LinkDetailView> {
       showWaitDialog(
         context,
         callback: () {
-          final value = context.read<DetailEditCubit>().textController.text;
+          final value = context.read<LocalDetailEditCubit>().textController.text;
           SharedPrefHelper.saveKeyValue(linkId!.toString(), value).then((value) {
             Navigator.pop(context); // 창 닫기
             Navigator.pop(context); // 뒤로 가기
@@ -262,16 +253,6 @@ class _LinkDetailViewState extends State<LinkDetailView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            BlocBuilder<GetProfileInfoCubit, ProfileState>(
-              builder: (context, state) {
-                return UserInfoWidget(
-                  context: cubitContext,
-                  link: link,
-                  jobVisible: false,
-                );
-              },
-            ),
-            SizedBox(height: 20.w),
             InkWell(
               onTap: () async {
                 await launchUrl(
@@ -295,7 +276,7 @@ class _LinkDetailViewState extends State<LinkDetailView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     LinkHero(
-                      tag: 'linkImage${link.id}',
+                      tag: '${heroPrefix}linkImage${link.id}',
                       child: ClipRRect(
                         borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(10.w),
@@ -338,7 +319,7 @@ class _LinkDetailViewState extends State<LinkDetailView> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               LinkHero(
-                                tag: 'linkTitle${link.id}',
+                                tag: '${heroPrefix}linkTitle${link.id}',
                                 child: Text(
                                   link.title ?? '',
                                   maxLines: 1,
@@ -352,7 +333,7 @@ class _LinkDetailViewState extends State<LinkDetailView> {
                                 ),
                               ),
                               LinkHero(
-                                tag: 'linkUrl${link.id}',
+                                tag: '${heroPrefix}linkUrl${link.id}',
                                 child: Container(
                                   margin: EdgeInsets.only(top: 7.w),
                                   child: Text(
@@ -462,7 +443,7 @@ class _LinkDetailViewState extends State<LinkDetailView> {
                           minHeight: 120.w,
                         ),
                         child: TextField(
-                          controller: cubitContext.read<DetailEditCubit>().textController,
+                          controller: cubitContext.read<LocalDetailEditCubit>().textController,
                           style: TextStyle(
                             fontSize: 14.sp,
                             color: grey700,
@@ -503,7 +484,7 @@ class _LinkDetailViewState extends State<LinkDetailView> {
       showWaitDialog(
         cubitContext,
         callback: () {
-          final value = cubitContext.read<DetailEditCubit>().textController.text;
+          final value = cubitContext.read<LocalDetailEditCubit>().textController.text;
           Log.i('value: $value');
           SharedPrefHelper.saveKeyValue(linkId!.toString(), value).then(
             (_) => toggleEditor(cubitContext).then((_) => Navigator.pop(cubitContext)),
@@ -513,9 +494,9 @@ class _LinkDetailViewState extends State<LinkDetailView> {
     } else {
       SharedPrefHelper.getValueFromKey<String?>(linkId!.toString(), removeKey: true).then((temp) {
         if (temp != null && temp.isNotEmpty) {
-          cubitContext.read<DetailEditCubit>().textController.text = temp;
+          cubitContext.read<LocalDetailEditCubit>().textController.text = temp;
         } else {
-          cubitContext.read<DetailEditCubit>().textController.text = link.describe ?? '';
+          cubitContext.read<LocalDetailEditCubit>().textController.text = link.describe ?? '';
         }
         toggleEditor(cubitContext);
       });
@@ -526,7 +507,7 @@ class _LinkDetailViewState extends State<LinkDetailView> {
     FocusManager.instance.primaryFocus?.unfocus();
     await Future.delayed(
       const Duration(milliseconds: 200),
-      cubitContext.read<DetailEditCubit>().toggle,
+      cubitContext.read<LocalDetailEditCubit>().toggle,
     );
   }
 }

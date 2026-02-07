@@ -27,6 +27,7 @@ class Link extends Equatable {
   final String? title;
   final String? image;
   final String? describe;
+  @JsonKey(name: 'folder_id')
   final int? folderId;
 
   @JsonKey(name: 'created_date_time')

@@ -1,7 +1,7 @@
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/folders/folders_state.dart';
-import 'package:ac_project_app/cubits/folders/get_my_folders_cubit.dart';
-import 'package:ac_project_app/cubits/links/upload_link_cubit.dart';
+import 'package:ac_project_app/cubits/folders/local_folders_cubit.dart';
+import 'package:ac_project_app/cubits/links/local_upload_link_cubit.dart';
 import 'package:ac_project_app/cubits/links/upload_result_state.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/link/link.dart';
@@ -25,8 +25,8 @@ Future<bool?> moveToMyFolderDialog(BuildContext parentContext, Link link) {
       return Wrap(
         children: [
           BlocProvider(
-            create: (_) => GetFoldersCubit(excludeUnclassified: true),
-            child: BlocBuilder<GetFoldersCubit, FoldersState>(
+            create: (_) => LocalFoldersCubit(excludeUnclassified: true),
+            child: BlocBuilder<LocalFoldersCubit, FoldersState>(
               builder: (foldersContext, state) {
                 return DecoratedBox(
                   decoration: DialogDecoration(),
@@ -93,7 +93,7 @@ void onSelectFolder(
   popIfCan(parentContext);
   popIfCan(context);
   parentContext
-      .read<UploadLinkCubit>()
+      .read<LocalUploadLinkCubit>()
       .completeRegister(
         link.url ?? '',
         link.describe ?? '',

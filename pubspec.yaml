@@ -3,7 +3,7 @@ description: 링크풀 - 체계적인 링크 관리의 시작
 
 publish_to: 'none'
 
-version: 1.0.73+73
+version: 1.0.75+75
 
 environment:
   sdk: ">=3.5.0 <4.0.0"
@@ -99,6 +99,9 @@ dev_dependencies:
   flutter_lints: ^2.0.0
 
   bloc_test: ^9.1.2
+
+  # for SQLite testing
+  sqflite_common_ffi: ^2.3.4+4
 
   # for model class
   json_serializable: ^6.8.0

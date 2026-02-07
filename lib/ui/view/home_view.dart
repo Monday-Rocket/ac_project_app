@@ -1,30 +1,18 @@
 import 'dart:async';
 
 import 'package:ac_project_app/const/colors.dart';
-import 'package:ac_project_app/cubits/folders/get_my_folders_cubit.dart';
-import 'package:ac_project_app/cubits/folders/get_user_folders_cubit.dart';
+import 'package:ac_project_app/cubits/folders/local_folders_cubit.dart';
 import 'package:ac_project_app/cubits/home_view_cubit.dart';
-import 'package:ac_project_app/cubits/linkpool_pick/linkpool_pick_cubit.dart';
-import 'package:ac_project_app/cubits/links/get_links_cubit.dart';
-import 'package:ac_project_app/cubits/links/upload_link_cubit.dart';
 import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
-import 'package:ac_project_app/provider/api/folders/folder_api.dart';
-import 'package:ac_project_app/provider/api/folders/share_folder_api.dart';
-import 'package:ac_project_app/provider/global_variables.dart';
+import 'package:ac_project_app/provider/share_data_provider.dart';
 import 'package:ac_project_app/provider/kakao/kakao.dart';
 import 'package:ac_project_app/provider/manager/app_pause_manager.dart';
-import 'package:ac_project_app/provider/share_db.dart';
-import 'package:ac_project_app/routes.dart';
-import 'package:ac_project_app/ui/page/home/home_page.dart';
+import 'package:ac_project_app/ui/page/home/local_explore_page.dart';
 import 'package:ac_project_app/ui/page/my_folder/my_folder_page.dart';
 import 'package:ac_project_app/ui/page/my_page/my_page.dart';
-import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/util/get_arguments.dart';
-import 'package:ac_project_app/util/logger.dart';
-import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -46,12 +34,13 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     saveLinksFromOutside();
     processAfterGetContext();
-    receiveInviteLink();
+    // 오프라인 모드: 공유 폴더 초대 링크 기능 비활성화
+    // receiveInviteLink();
     super.initState();
   }
 
   void saveLinksFromOutside() {
-    getIt<FolderApi>().bulkSave().then((value) {
+    ShareDataProvider.bulkSaveToLocal().then((value) {
       setState(() {});
     });
   }
@@ -78,7 +67,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
       if (!resumeState.value) return;
       resetResumeState();
       appPauseManager.showPopupIfPaused(context);
-      getIt<FolderApi>().bulkSave();
+      ShareDataProvider.bulkSaveToLocal();
       Kakao.receiveLink(context);
     }
   }
@@ -99,11 +88,8 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
         BlocProvider(
           create: (_) => HomeViewCubit((args['index'] as int?) ?? 0),
         ),
-        BlocProvider(
-          create: (_) => GetLinksCubit(),
-        ),
-        BlocProvider<GetFoldersCubit>(
-          create: (_) => GetFoldersCubit(),
+        BlocProvider<LocalFoldersCubit>(
+          create: (_) => LocalFoldersCubit(),
         ),
       ],
       child: BlocBuilder<HomeViewCubit, int>(
@@ -151,17 +137,10 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
       backgroundColor: Colors.white,
       body: IndexedStack(
         index: index,
-        children: <Widget>[
-          const MyFolderPage(),
-          MultiBlocProvider(
-            providers: [
-              BlocProvider(create: (_) => GetUserFoldersCubit()),
-              BlocProvider(create: (_) => UploadLinkCubit()),
-              BlocProvider(create: (_) => LinkpoolPickCubit()),
-            ],
-            child: const HomePage(),
-          ),
-          const MyPage(),
+        children: const <Widget>[
+          MyFolderPage(),
+          LocalExplorePage(),
+          MyPage(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -179,14 +158,9 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
         backgroundColor: Colors.white,
         onTap: (index) {
           if (index == 0) {
-            context.read<GetFoldersCubit>().getFolders();
-            context.read<HomeViewCubit>().moveTo(index);
-          } else if (index == 1) {
-            context.read<GetLinksCubit>().refresh();
-            context.read<HomeViewCubit>().moveTo(index);
-          } else {
-            context.read<HomeViewCubit>().moveTo(index);
+            context.read<LocalFoldersCubit>().getFolders();
           }
+          context.read<HomeViewCubit>().moveTo(index);
         },
       ),
     );
@@ -221,56 +195,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
     appPauseManager.showPopupIfPaused(context);
   }
 
-  void receiveInviteLink() {
-    AppLinks().uriLinkStream.listen((uri) {
-      Log.i('Received URI: $uri');
-      if (!mounted) return;
-      processInviteLink(uri);
-    });
-    if (appLinkUrl.isNotEmpty) {
-      processInviteLink(Uri.parse(appLinkUrl));
-      appLinkUrl = '';
-    }
-  }
-
-  void processInviteLink(Uri uri) {
-    if (uri.queryParameters.containsKey('token') && uri.queryParameters.containsKey('id')) {
-      final inviteToken = uri.queryParameters['token'] ?? '';
-      final folderId = uri.queryParameters['id'] ?? '';
-      getIt<ShareFolderApi>().acceptInviteLink(folderId, inviteToken).then((result) {
-        result.map(
-          success: (_) async {
-            (await getIt<FolderApi>().getMyFolders()).map(
-              success: (data) {
-                for (var i = 0; i < data.data.length; i++) {
-                  final folder = data.data[i];
-                  if (folder.id == int.parse(folderId)) {
-                    ShareDB.insert(folder);
-                    Navigator.pushNamed(context, Routes.myLinks, arguments: {
-                      'folders': data.data,
-                      'selectedFolder': folder,
-                      'tabIndex': i,
-                    });
-                    break;
-                  }
-                }
-              },
-              error: (msg) {
-                showBottomToast(
-                  context: context,
-                  '폴더 정보를 불러오지 못했어요. 다시 시도해주세요.',
-                );
-              },
-            );
-
-            showBottomToast(
-              context: context,
-              '초대 링크를 수락했어요!',
-            );
-          },
-          error: (msg) {},
-        );
-      });
-    }
-  }
+  // 오프라인 모드: 공유 폴더 초대 링크 기능 비활성화
+  // void receiveInviteLink() { ... }
+  // void processInviteLink(Uri uri) { ... }
 }

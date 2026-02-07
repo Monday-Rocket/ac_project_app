@@ -2,22 +2,16 @@
 
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/const/strings.dart';
-import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
-import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/di/set_up_get_it.dart';
-import 'package:ac_project_app/gen/assets.gen.dart';
-import 'package:ac_project_app/models/profile/profile_image.dart';
-import 'package:ac_project_app/models/user/detail_user.dart';
 import 'package:ac_project_app/provider/api/user/user_api.dart';
 import 'package:ac_project_app/provider/logout.dart';
+import 'package:ac_project_app/provider/offline_mode_provider.dart';
 import 'package:ac_project_app/provider/shared_pref_provider.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/dialog/center_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MyPage extends StatefulWidget {
@@ -28,103 +22,50 @@ class MyPage extends StatefulWidget {
 }
 
 class _MyPageState extends State<MyPage> {
+  bool _isOfflineModeCompleted = false;
+
   @override
   void initState() {
-    context.read<GetProfileInfoCubit>().loadProfileData();
     super.initState();
+    _loadOfflineModeStatus();
+  }
+
+  Future<void> _loadOfflineModeStatus() async {
+    final isComplete = await OfflineModeProvider.isOfflineModeCompleted();
+    if (mounted) {
+      setState(() {
+        _isOfflineModeCompleted = isComplete;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          BlocBuilder<GetProfileInfoCubit, ProfileState>(
-            builder: (profileContext, state) {
-              if (state is ProfileLoadedState) {
-                final profile = state.profile;
-                return Column(
-                  children: [
-                    GestureDetector(
-                      onTap: () => moveToProfileImageView(context),
-                      child: Container(
-                        alignment: Alignment.center,
-                        margin: EdgeInsets.only(top: 90.w, bottom: 6.w),
-                        width: 105.w,
-                        height: 105.w,
-                        child: Stack(
-                          alignment: Alignment.bottomRight,
-                          children: [
-                            Image.asset(
-                              ProfileImage.makeImagePath(profile.profileImage),
-                              width: 96.w,
-                              height: 96.w,
-                              fit: BoxFit.cover,
-                              errorBuilder: (_, __, ___) {
-                                return Assets.images.profile.img01On.image(
-                                    width: 96.w,
-                                    height: 96.w,
-                                    fit: BoxFit.cover);
-                              },
-                            ),
-                            Container(
-                              padding: EdgeInsets.all(4.w),
-                              width: 24.w,
-                              height: 24.w,
-                              decoration: const BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.white,
-                              ),
-                              child: SvgPicture.asset(
-                                Assets.images.icChange,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Text(
-                      profile.nickname,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 28.sp,
-                        color: const Color(0xff0e0e0e),
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                );
-              } else {
-                return Column(
-                  children: [
-                    SizedBox(
-                      height: 195.w,
-                    ),
-                    Text('', style: TextStyle(fontSize: 28.sp)),
-                  ],
-                );
-              }
-            },
-          ),
-          SizedBox(
-            height: 47.w,
+          // 심플 헤더
+          Padding(
+            padding: EdgeInsets.only(
+              top: 60.w,
+              left: 24.w,
+              right: 24.w,
+              bottom: 24.w,
+            ),
+            child: Text(
+              '설정',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 28.sp,
+                color: grey900,
+              ),
+            ),
           ),
           MenuList(context),
         ],
       ),
     );
-  }
-
-  void moveToProfileImageView(BuildContext context) {
-    Navigator.pushNamed(context, Routes.profile).then((detailUser) {
-      if (detailUser is DetailUser && detailUser.isNotEmpty()) {
-        context.read<GetProfileInfoCubit>().updateFromProfile(detailUser);
-        showBottomToast(
-          context: context,
-          '프로필 이미지를 변경했어요!',
-        );
-      }
-    });
   }
 
   Widget MenuList(BuildContext context) {
@@ -253,10 +194,13 @@ class _MyPageState extends State<MyPage> {
         DivisionLine(size: 1.w),
         MenuItem('오픈소스 라이센스'),
         DivisionLine(),
-        MenuItem('로그아웃', arrow: false),
-        DivisionLine(size: 1.w),
-        MenuItem('회원탈퇴', arrow: false, color: redError),
-        DivisionLine(size: 1.w),
+        // 오프라인 모드 완료 시 로그아웃/회원탈퇴 메뉴 숨김
+        if (!_isOfflineModeCompleted) ...[
+          MenuItem('로그아웃', arrow: false),
+          DivisionLine(size: 1.w),
+          MenuItem('회원탈퇴', arrow: false, color: redError),
+          DivisionLine(size: 1.w),
+        ],
       ],
     );
   }

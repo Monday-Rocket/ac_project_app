@@ -10,14 +10,12 @@ import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/user/user.dart' as custom;
 import 'package:ac_project_app/provider/global_variables.dart';
 import 'package:ac_project_app/provider/login/email_login.dart';
-import 'package:ac_project_app/provider/share_data_provider.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/buttons/apple/apple_login_button.dart';
 import 'package:ac_project_app/ui/widget/text/custom_font.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:app_links/app_links.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -102,7 +100,7 @@ class _LoginViewState extends State<LoginView> {
             ),
           );
         } else {
-          ShareDataProvider.loadServerData();
+          // 오프라인 모드: 서버 데이터 로드는 OfflineMigrationService에서 처리
           Navigator.pushNamedAndRemoveUntil(
             context,
             Routes.home,

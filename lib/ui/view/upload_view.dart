@@ -3,8 +3,8 @@
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/const/strings.dart';
 import 'package:ac_project_app/cubits/folders/folders_state.dart';
-import 'package:ac_project_app/cubits/folders/get_my_folders_cubit.dart';
-import 'package:ac_project_app/cubits/links/upload_link_cubit.dart';
+import 'package:ac_project_app/cubits/folders/local_folders_cubit.dart';
+import 'package:ac_project_app/cubits/links/local_upload_link_cubit.dart';
 import 'package:ac_project_app/cubits/links/upload_result_state.dart';
 import 'package:ac_project_app/cubits/sign_up/button_state_cubit.dart';
 import 'package:ac_project_app/enums/navigator_pop_type.dart';
@@ -84,11 +84,11 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider<GetFoldersCubit>(
-          create: (_) => GetFoldersCubit(),
+        BlocProvider<LocalFoldersCubit>(
+          create: (_) => LocalFoldersCubit(),
         ),
-        BlocProvider<UploadLinkCubit>(
-          create: (_) => UploadLinkCubit(),
+        BlocProvider<LocalUploadLinkCubit>(
+          create: (_) => LocalUploadLinkCubit(),
         ),
       ],
       child: KeyboardDismissOnTap(
@@ -111,7 +111,7 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
                 scrolledUnderElevation: 0,
                 systemOverlayStyle: SystemUiOverlayStyle.dark,
                 title: Text(
-                  '업로드',
+                  '링크 추가하기',
                   style: TextStyle(
                     color: grey900,
                     fontWeight: FontWeight.bold,
@@ -135,7 +135,7 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
                           children: [
                             buildSubTitle('링크'),
                             buildLinkTextField(),
-                            BlocBuilder<GetFoldersCubit, FoldersState>(
+                            BlocBuilder<LocalFoldersCubit, FoldersState>(
                               builder: (folderContext, state) {
                                 return Column(
                                   children: [
@@ -145,7 +145,7 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
                                         '폴더 선택',
                                         state.folders,
                                         callback: () {
-                                          folderContext.read<GetFoldersCubit>().getFolders();
+                                          folderContext.read<LocalFoldersCubit>().getFolders();
                                         },
                                       ),
                                     buildFolderList(
@@ -167,7 +167,6 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
                             buildSubTitle('링크 코멘트'),
                             buildCommentTextField(visible),
                             SizedBox(height: 13.w),
-                            buildUploadWarning(true),
                             80.verticalSpace,
                             SizedBox(
                               height: keyboardHeight.w,
@@ -210,49 +209,6 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(8.w)),
         color: grey50,
-      ),
-      child: Padding(
-        padding: EdgeInsets.only(left: 12.w, top: 12.w, bottom: 12.w),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: EdgeInsets.only(top: 3.w),
-              child: SvgPicture.asset(Assets.images.warningMark),
-            ),
-            SizedBox(width: 4.w),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  warningMsgTitle,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    color: grey600,
-                    fontSize: 11.sp,
-                  ),
-                ),
-                SizedBox(
-                  height: 6.w,
-                ),
-                SizedBox(
-                  width: 280.w,
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Text(
-                      warningMsgContent,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        color: grey400,
-                        fontSize: 11.sp,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -338,7 +294,7 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
   }
 
   Widget buildLinkTextField() {
-    return BlocBuilder<UploadLinkCubit, UploadResult>(
+    return BlocBuilder<LocalUploadLinkCubit, UploadResult>(
       builder: (context, uploadResult) {
         final linkError = uploadResult.state == UploadResultState.error;
         return Column(
@@ -394,7 +350,7 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
                             if (url.isNotEmpty) {
                               buttonState = ButtonState.enabled;
                             }
-                            context.read<UploadLinkCubit>().validateMetadata(url);
+                            context.read<LocalUploadLinkCubit>().validateMetadata(url);
                           }),
                         ),
                       ),
@@ -523,7 +479,7 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
   void completeRegister(BuildContext context) {
     setLoading();
     context
-        .read<UploadLinkCubit>()
+        .read<LocalUploadLinkCubit>()
         .completeRegister(
           linkTextController.text,
           commentTextController.text,
