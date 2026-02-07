@@ -32,9 +32,9 @@ platform :ios do
       type: 'appstore',
       app_identifier: ["#{BUNDLE_IDENTIFIER}", "#{EXTENSION_IDENTIFIER}"],
       git_basic_authorization: Base64.strict_encode64(ENV["GIT_AUTHORIZATION"]),
-      readonly: true,
       keychain_name: keychain_name,
-      keychain_password: keychain_password
+      keychain_password: keychain_password,
+      verbose: true
     )
     gym(
       configuration: "Release",
@@ -43,7 +43,6 @@ platform :ios do
       export_method: "app-store",
       export_options: {
         teamID: "T583WJWNAK",
-        signingStyle: "manual",
         provisioningProfiles: {
           "com.mr.acProjectApp" => "match AppStore com.mr.acProjectApp",
           "com.mr.acProjectApp.Extension" => "match AppStore com.mr.acProjectApp.Extension"
