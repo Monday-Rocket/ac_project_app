@@ -14,6 +14,7 @@ def create_temp_keychain(name, password)
   create_keychain(
     name: name,
     password: password,
+    default_keychain: true,
     unlock: true,
     timeout: 0,
     lock_when_sleeps: false
@@ -32,6 +33,7 @@ platform :ios do
       type: 'appstore',
       app_identifier: ["#{BUNDLE_IDENTIFIER}", "#{EXTENSION_IDENTIFIER}"],
       git_basic_authorization: Base64.strict_encode64(ENV["GIT_AUTHORIZATION"]),
+      readonly: true,
       keychain_name: keychain_name,
       keychain_password: keychain_password,
       verbose: true
