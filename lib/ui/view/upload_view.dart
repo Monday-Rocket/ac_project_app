@@ -111,7 +111,7 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
                 scrolledUnderElevation: 0,
                 systemOverlayStyle: SystemUiOverlayStyle.dark,
                 title: Text(
-                  '업로드',
+                  '링크 추가하기',
                   style: TextStyle(
                     color: grey900,
                     fontWeight: FontWeight.bold,
@@ -167,7 +167,6 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
                             buildSubTitle('링크 코멘트'),
                             buildCommentTextField(visible),
                             SizedBox(height: 13.w),
-                            buildUploadWarning(true),
                             80.verticalSpace,
                             SizedBox(
                               height: keyboardHeight.w,
@@ -210,49 +209,6 @@ class _UploadViewState extends State<UploadView> with WidgetsBindingObserver {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(8.w)),
         color: grey50,
-      ),
-      child: Padding(
-        padding: EdgeInsets.only(left: 12.w, top: 12.w, bottom: 12.w),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: EdgeInsets.only(top: 3.w),
-              child: SvgPicture.asset(Assets.images.warningMark),
-            ),
-            SizedBox(width: 4.w),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  warningMsgTitle,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    color: grey600,
-                    fontSize: 11.sp,
-                  ),
-                ),
-                SizedBox(
-                  height: 6.w,
-                ),
-                SizedBox(
-                  width: 280.w,
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Text(
-                      warningMsgContent,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        color: grey400,
-                        fontSize: 11.sp,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
       ),
     );
   }

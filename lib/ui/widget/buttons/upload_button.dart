@@ -21,7 +21,7 @@ Widget FloatingUploadButton(
         pushUploadView(context, folderId: folderId, setState: setState, callback: callback);
       },
       child: Container(
-        width: 94.w,
+        width: 80.w,
         height: 42.w,
         decoration: BoxDecoration(
           color: primary600,
@@ -45,7 +45,7 @@ Widget FloatingUploadButton(
             ),
             2.horizontalSpace,
             Text(
-              '업로드',
+              '추가',
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.w600,
