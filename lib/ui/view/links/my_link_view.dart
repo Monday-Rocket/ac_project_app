@@ -633,6 +633,7 @@ class MyLinkView extends StatelessWidget {
             'isMine': true,
             'visible': folder.visible,
             'isShared': folder.shared,
+            'heroPrefix': 'myLink_',
           },
         ).then((result) {
           Log.i(result);
@@ -739,7 +740,7 @@ class MyLinkView extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(right: 4.w),
             child: LinkHero(
-              tag: 'linkImage${link.id}',
+              tag: 'myLink_linkImage${link.id}',
               child: ClipRRect(
                 borderRadius: BorderRadius.all(
                   Radius.circular(7.w),

@@ -35,6 +35,7 @@ class _LinkDetailViewState extends State<LinkDetailView> {
   late bool? isMine;
   late bool linkVisible;
   late bool isShared;
+  late String heroPrefix;
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +44,7 @@ class _LinkDetailViewState extends State<LinkDetailView> {
     isMine = args['isMine'] as bool?;
     linkVisible = args['visible'] as bool? ?? true;
     isShared = args['isShared'] as bool? ?? false;
+    heroPrefix = args['heroPrefix'] as String? ?? '';
 
     // 오프라인 모드: 모든 링크는 내 링크
     final isMyLink = isMine ?? true;
@@ -274,7 +276,7 @@ class _LinkDetailViewState extends State<LinkDetailView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     LinkHero(
-                      tag: 'linkImage${link.id}',
+                      tag: '${heroPrefix}linkImage${link.id}',
                       child: ClipRRect(
                         borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(10.w),
@@ -317,7 +319,7 @@ class _LinkDetailViewState extends State<LinkDetailView> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               LinkHero(
-                                tag: 'linkTitle${link.id}',
+                                tag: '${heroPrefix}linkTitle${link.id}',
                                 child: Text(
                                   link.title ?? '',
                                   maxLines: 1,
@@ -331,7 +333,7 @@ class _LinkDetailViewState extends State<LinkDetailView> {
                                 ),
                               ),
                               LinkHero(
-                                tag: 'linkUrl${link.id}',
+                                tag: '${heroPrefix}linkUrl${link.id}',
                                 child: Container(
                                   margin: EdgeInsets.only(top: 7.w),
                                   child: Text(

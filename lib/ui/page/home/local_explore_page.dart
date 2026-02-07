@@ -163,6 +163,7 @@ class LocalExplorePage extends StatelessWidget {
           'link': link,
           'isMine': true,
           'visible': true,
+          'heroPrefix': 'explore_',
         },
       ),
       child: Container(
@@ -190,7 +191,7 @@ class LocalExplorePage extends StatelessWidget {
               Container(
                 margin: EdgeInsets.only(bottom: 16.w),
                 child: LinkHero(
-                  tag: 'linkImage${link.id}',
+                  tag: 'explore_linkImage${link.id}',
                   child: ClipRRect(
                     borderRadius: BorderRadius.all(Radius.circular(7.w)),
                     child: Container(
@@ -222,7 +223,7 @@ class LocalExplorePage extends StatelessWidget {
                 SizedBox(
                   width: width - (24 * 2 + 30).w,
                   child: LinkHero(
-                    tag: 'linkTitle${link.id}',
+                    tag: 'explore_linkTitle${link.id}',
                     child: Text(
                       link.title ?? '',
                       overflow: TextOverflow.ellipsis,
@@ -239,7 +240,7 @@ class LocalExplorePage extends StatelessWidget {
             ),
             SizedBox(height: 6.w),
             LinkHero(
-              tag: 'linkUrl${link.id}',
+              tag: 'explore_linkUrl${link.id}',
               child: Text(
                 link.url ?? '',
                 maxLines: 1,

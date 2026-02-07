@@ -185,6 +185,7 @@ class _SearchViewState extends State<SearchView> {
                           Routes.linkDetail,
                           arguments: {
                             'link': link,
+                            'heroPrefix': 'search_',
                           },
                         );
                       },
@@ -223,7 +224,7 @@ class _SearchViewState extends State<SearchView> {
                                 bottom: 18.w,
                               ),
                               child: LinkHero(
-                                tag: 'linkImage${link.id}',
+                                tag: 'search_linkImage${link.id}',
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.all(
                                     Radius.circular(7.w),
@@ -273,7 +274,7 @@ class _SearchViewState extends State<SearchView> {
                                     SizedBox(
                                       width: width - (24 * 2 + 25).w,
                                       child: LinkHero(
-                                        tag: 'linkTitle${link.id}',
+                                        tag: 'search_linkTitle${link.id}',
                                         child: Text(
                                           link.title ?? '',
                                           overflow: TextOverflow.ellipsis,
@@ -311,7 +312,7 @@ class _SearchViewState extends State<SearchView> {
                                 Padding(
                                   padding: EdgeInsets.only(right: 25.w),
                                   child: LinkHero(
-                                    tag: 'linkUrl${link.id}',
+                                    tag: 'search_linkUrl${link.id}',
                                     child: Text(
                                       link.url ?? '',
                                       maxLines: 1,
