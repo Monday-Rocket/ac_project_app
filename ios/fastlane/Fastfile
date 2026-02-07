@@ -19,7 +19,7 @@ platform :ios do
       configuration: "Release",
       workspace: "Runner.xcworkspace",
       scheme: "Runner",
-      export_method: "app-store-connect",
+      export_method: "app-store",
       export_options: {
         teamID: "T583WJWNAK",
         provisioningProfiles: {
