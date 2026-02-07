@@ -19,8 +19,6 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.3'
-          bundler-cache: true
-          working-directory: ios
       - run: flutter clean
       - run: flutter pub get
       - run: echo "${{ secrets.FIREBASE_OPTIONS }}" | base64 -d > ./lib/firebase_options.dart
@@ -31,7 +29,7 @@ jobs:
       - name: Flutter release build ios
         run: flutter build ios --release --no-codesign
       - name: Deploy iOS Beta to TestFlight via Fastlane
-        uses: maierj/fastlane-action@v3.1.0
+        uses: maierj/fastlane-action@v1.4.0
         with:
           lane: closed_beta
           subdirectory: ios
