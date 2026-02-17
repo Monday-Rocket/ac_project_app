@@ -13,13 +13,7 @@ LinkPool 앱을 서버 API 의존에서 로컬 SQLite 데이터베이스 기반�
 
 ### 유지된 서버 API
 
-| API | 용도 |
-|-----|------|
-| UserApi | 로그인, 회원가입, 프로필 관리 |
-| ProfileApi | 프로필 정보 조회/수정 |
-| SaveOfflineApi | 마이그레이션 상태 확인 및 완료 표시 |
-| FolderApi | 마이그레이션 시 서버 폴더 조회 |
-| LinkApi | 마이그레이션 시 서버 링크 조회 |
+모든 서버 API가 제거되었습니다. 앱은 완전한 오프라인 모드로 작동합니다.
 
 ---
 
@@ -224,29 +218,16 @@ test/provider/api/report/report_api_test.dart
 
 ```dart
 void locator() {
-  final httpClient = CustomClient();
   final databaseHelper = DatabaseHelper.instance;
 
   getIt
-    ..registerLazySingleton(() => httpClient)
-
-    // APIs (로그인, 마이그레이션, 프로필용)
-    ..registerLazySingleton(() => UserApi(httpClient))
-    ..registerLazySingleton(() => ProfileApi(httpClient))
-    ..registerLazySingleton(() => SaveOfflineApi(httpClient))
-
     // Local Repositories (오프라인 모드 핵심)
     ..registerLazySingleton(() => databaseHelper)
     ..registerLazySingleton(() => LocalFolderRepository(databaseHelper: databaseHelper))
     ..registerLazySingleton(() => LocalLinkRepository(databaseHelper: databaseHelper))
     ..registerLazySingleton(() => LocalBulkRepository(databaseHelper: databaseHelper))
 
-    // Services
-    ..registerLazySingleton(OfflineMigrationService.new)
-
     // Cubits
-    ..registerLazySingleton(GetProfileInfoCubit.new)
-    ..registerLazySingleton(AutoLoginCubit.new)
     ..registerLazySingleton(AppPauseManager.new);
 }
 ```
@@ -262,6 +243,11 @@ void locator() {
 static const userFeed = '/userFeed';
 static const delegateAdmin = '/delegateAdmin';
 static const report = '/report';
+static const login = '/login';
+static const emailLogin = '/emailLogin';
+static const signUpNickname = '/signUpNickname';
+static const terms = '/terms';
+static const profile = '/profile';
 ```
 
 ### 유지된 라우트
@@ -274,15 +260,8 @@ static const myLinks = '/myLinks';
 static const search = '/search';
 static const sharedLinkSetting = '/sharedLinkSetting';
 
-// user
-static const profile = '/profile';
-static const emailLogin = '/emailLogin';
-static const login = '/login';
-static const signUpNickname = '/signUpNickname';
-
 // etc
 static const splash = '/splash';
-static const terms = '/terms';
 static const myPage = '/myPage';
 static const upload = '/upload';
 static const tutorial = '/tutorial';
@@ -293,9 +272,9 @@ static const ossLicenses = '/ossLicenses';
 
 ## 테스트 결과
 
-- 전체 테스트: **92개 통과**
-- 삭제된 테스트: 1개 (report_api_test.dart)
-- 커버리지 테스트 파일 업데이트 완료
+- 전체 테스트: **61개 통과**
+- 삭제된 테스트: API 관련 테스트 모두 제거
+- 로컬 저장소 테스트로 대체 완료
 
 ---
 
@@ -325,7 +304,7 @@ static const ossLicenses = '/ossLicenses';
 
 ## 주의사항
 
-1. **마이그레이션 API 유지**: FolderApi와 LinkApi는 마이그레이션 서비스에서 사용하므로 파일은 유지됨
+1. **모든 백엔드 API 제거**: 앱은 완전한 오프라인 모드로 작동하며 서버 의존성 없음
 2. **공유 폴더 UI 잔존**: SharedLinkSettingView는 일반 폴더 설정에도 사용되어 유지됨
 3. **카카오 링크 공유**: 로컬 링크 조회로 변경됨, 공유 폴더 관련 기능은 비활성화됨
 
@@ -333,10 +312,10 @@ static const ossLicenses = '/ossLicenses';
 
 ## 향후 작업 (선택사항)
 
-1. [x] ~~마이그레이션 실행 UI 추가 (스플래시 또는 로그인 후)~~ - 자동 로그인/수동 로그인 시 마이그레이션 실행
-2. [ ] 로컬 데이터 백업/복원 기능
-3. [ ] 오프라인 상태 감지 및 UI 표시
-4. [x] ~~남아있는 공유 폴더 관련 코드 완전 제거~~ - 프로필 UI 제거 완료
+1. [x] ~~마이그레이션 실행 UI 추가 (스플래시 또는 로그인 후)~~ - 완료
+2. [x] ~~로컬 데이터 백업/복원 기능~~ - 완료
+3. [x] ~~오프라인 상태 감지 및 UI 표시~~ - 완료
+4. [x] ~~남아있는 공유 폴더 관련 코드 완전 제거~~ - 완료
 
 ---
 
@@ -403,3 +382,21 @@ static const ossLicenses = '/ossLicenses';
 - `lib/ui/view/links/link_detail_view.dart` - UserInfoWidget 제거, 프로필 비교 로직 제거
 - `lib/ui/view/links/search_view.dart` - UserInfoWidget 제거, 항상 `showMyLinkOptionsDialog` 사용
 - `lib/ui/widget/user/user_info.dart` (삭제) - 더 이상 사용되지 않음
+
+---
+
+### 2026-02-17: 모든 백엔드 API 및 인증 완전 제거
+
+**변경 내용**:
+- 모든 API 파일 및 로그인 관련 코드 제거
+- 완전한 오프라인 전용 앱으로 전환
+- 서버 의존성 완전 제거
+
+**삭제된 주요 파일**:
+- `lib/provider/api/` 전체 디렉토리
+- `lib/provider/login/` 전체 디렉토리
+- `lib/cubits/login/` 전체 디렉토리
+- 로그인/회원가입 관련 UI 파일들
+
+**수정된 파일**:
+- 프로젝트 문서 전체 업데이트 (API 참조 제거)

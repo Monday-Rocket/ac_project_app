@@ -1,5 +1,7 @@
 # 오프라인 전환 작업 계획
 
+> ⚠️ 이 문서는 오프라인 전환 과정의 기록입니다. 전환이 완료되어 모든 API가 제거되었습니다.
+
 ## 개요
 
 링크 조회/업로드를 백엔드 API 대신 앱 내 로컬 DB(SQLite)에 저장하는 방식으로 전환합니다.
@@ -497,19 +499,19 @@ lib/
 6. [x] `LocalDetailEditCubit` - DetailEditCubit 로컬 버전
 7. [x] 모델 변환 확장 메서드 (`local_model_extensions.dart`)
 
-### Phase 3: UI 연동 및 마이그레이션 🔄 부분 완료
+### Phase 3: UI 연동 및 마이그레이션 ✅ 완료
 
-1. [ ] 폴더 목록 화면 - 기존 Cubit → Local Cubit 교체
-2. [ ] 링크 목록 화면 - 기존 Cubit → Local Cubit 교체
-3. [ ] 링크 추가/수정 화면 - 기존 Cubit → Local Cubit 교체
-4. [ ] 검색 화면 - 기존 Cubit → Local Cubit 교체
+1. [x] 폴더 목록 화면 - 기존 Cubit → Local Cubit 교체
+2. [x] 링크 목록 화면 - 기존 Cubit → Local Cubit 교체
+3. [x] 링크 추가/수정 화면 - 기존 Cubit → Local Cubit 교체
+4. [x] 검색 화면 - 기존 Cubit → Local Cubit 교체
 5. [x] 앱 시작 시 마이그레이션 로직 추가 (`AutoLoginCubit._runMigrationIfNeeded()`)
 
-### Phase 4: 기존 API 정리 🔄 진행 예정
+### Phase 4: 기존 API 정리 ✅ 완료
 
-1. [ ] 사용하지 않는 API 클라이언트 제거 (FolderApi, LinkApi 등)
-2. [ ] DI 설정 정리 (API 제거, Local 전용으로 변경)
-3. [ ] 테스트 코드 업데이트
+1. [x] 사용하지 않는 API 클라이언트 제거 (FolderApi, LinkApi 등)
+2. [x] DI 설정 정리 (API 제거, Local 전용으로 변경)
+3. [x] 테스트 코드 업데이트
 
 ### Phase 5: 네이티브 공유 패널 연동 변경 ✅ 완료
 
@@ -670,9 +672,9 @@ lib/provider/api/linkpool_pick/linkpool_pick_api.dart
 - [x] Repository 인터페이스 설계
 - [x] 단위 테스트 작성 (33개)
 - [x] Cubit 수정 (Local 버전 생성)
-- [ ] UI 연동 (Local Cubit 교체)
+- [x] UI 연동 (Local Cubit 교체)
 - [x] 마이그레이션 로직 구현 (OfflineMigrationService)
-- [ ] 기존 API 제거
+- [x] 기존 API 제거
 - [x] 문서 업데이트
 
 ---

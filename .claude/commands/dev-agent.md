@@ -21,26 +21,28 @@
 
 ### Cubit 예시
 ```dart
-class GetFoldersCubit extends Cubit<FoldersState> {
-  GetFoldersCubit() : super(FolderInitialState());
+class LocalFoldersCubit extends Cubit<FoldersState> {
+  LocalFoldersCubit() : super(FolderInitialState());
 
-  final FolderApi folderApi = getIt();
+  final LocalFolderRepository folderRepo = getIt();
 
   Future<void> getFolders() async {
     emit(FolderLoadingState());
-    (await folderApi.getMyFolders()).when(
-      success: (list) => emit(FolderLoadedState(list)),
-      error: (msg) => emit(FolderErrorState(msg)),
-    );
+    try {
+      final folders = await folderRepo.getAllFolders();
+      emit(FolderLoadedState(folders));
+    } catch (e) {
+      emit(FolderErrorState(e.toString()));
+    }
   }
 }
 ```
 
 ### 테스트 예시
 ```dart
-blocTest<GetFoldersCubit, FoldersState>(
+blocTest<LocalFoldersCubit, FoldersState>(
   'emits [Loading, Loaded] when getFolders succeeds',
-  build: () => GetFoldersCubit(),
+  build: () => LocalFoldersCubit(),
   act: (cubit) => cubit.getFolders(),
   expect: () => [
     isA<FolderLoadingState>(),

@@ -4,37 +4,36 @@
 
 ## 역할
 
-- Mock Client를 활용한 API 테스트 작성
+- 로컬 DB Repository 테스트 작성
 - Cubit 상태 변화 테스트 작성
 - 위젯 테스트 작성
 - 테스트 커버리지 리포트 분석 및 개선
 
 ## 테스트 유형
 
-### 1. API 테스트
+### 1. Repository 테스트
 ```dart
-test('getMyFolders returns folder list', () async {
-  final mockClient = getMockClient(apiExpected, '/folders');
-  final api = getFolderApi(mockClient);
+test('getAllFolders returns folder list', () async {
+  final repo = LocalFolderRepository(databaseHelper: testDb);
 
-  final result = await api.getMyFolders();
+  // 테스트 데이터 삽입
+  await repo.createFolder(LocalFolder(name: '폴더1', createdAt: now, updatedAt: now));
 
-  result.when(
-    success: (folders) => expect(folders.length, 2),
-    error: fail,
-  );
+  final folders = await repo.getAllFolders();
+  expect(folders.length, 1);
+  expect(folders[0].name, '폴더1');
 });
 ```
 
 ### 2. Cubit 테스트
 ```dart
-blocTest<GetFoldersCubit, FoldersState>(
+blocTest<LocalFoldersCubit, FoldersState>(
   'emits [Loading, Loaded] when getFolders succeeds',
   build: () {
-    when(mockApi.getMyFolders()).thenAnswer(
-      (_) async => Result.success([Folder(id: 1)]),
+    when(mockRepo.getAllFolders()).thenAnswer(
+      (_) async => [LocalFolder(id: 1, name: 'Test')],
     );
-    return GetFoldersCubit(api: mockApi);
+    return LocalFoldersCubit(repository: mockRepo);
   },
   act: (cubit) => cubit.getFolders(),
   expect: () => [
@@ -56,7 +55,7 @@ testWidgets('should show loading indicator', (tester) async {
 
 ## 우선순위
 
-1. API 테스트 (provider/api/)
+1. Repository 테스트 (provider/local/)
 2. Cubit 테스트 (cubits/)
 3. 유틸리티 테스트 (util/)
 4. 위젯 테스트 (ui/)
@@ -66,7 +65,7 @@ testWidgets('should show loading indicator', (tester) async {
 | 영역 | 현재 | 목표 |
 |------|------|------|
 | 전체 | - | 10%+ |
-| API | - | 90%+ |
+| Repository | - | 90%+ |
 | Cubit | - | 80%+ |
 
 커버리지가 낮은 파일을 찾아 테스트를 추가해주세요.

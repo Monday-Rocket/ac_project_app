@@ -7,13 +7,12 @@
 1. [개요](#개요)
 2. [테스트 구조](#테스트-구조)
 3. [단위 테스트](#단위-테스트)
-4. [API 테스트](#api-테스트)
-5. [Cubit 테스트](#cubit-테스트)
-6. [위젯 테스트](#위젯-테스트)
-7. [통합 테스트](#통합-테스트)
-8. [테스트 실행](#테스트-실행)
-9. [커버리지](#커버리지)
-10. [Best Practices](#best-practices)
+4. [Cubit 테스트](#cubit-테스트)
+5. [위젯 테스트](#위젯-테스트)
+6. [통합 테스트](#통합-테스트)
+7. [테스트 실행](#테스트-실행)
+8. [커버리지](#커버리지)
+9. [Best Practices](#best-practices)
 
 ---
 
@@ -45,8 +44,7 @@
 | `flutter_test` | Flutter 테스트 프레임워크 |
 | `bloc_test` | Cubit/Bloc 테스트 |
 | `mockito` | Mock 객체 생성 |
-| `firebase_auth_mocks` | Firebase Auth Mock |
-| `http/testing` | HTTP 클라이언트 Mock |
+| `sqflite_common_ffi` | SQLite 테스트용 FFI |
 
 ---
 
@@ -57,16 +55,10 @@
 ```
 test/
 ├── provider/
-│   └── api/
-│       ├── folders/
-│       │   ├── folder_api_test.dart
-│       │   └── link_api_test.dart
-│       ├── report/
-│       │   └── report_api_test.dart
-│       ├── user/
-│       │   ├── profile_api_test.dart
-│       │   └── user_api_test.dart
-│       └── mock_client_generator.dart
+│   └── local/
+│       ├── local_folder_repository_test.dart
+│       ├── local_link_repository_test.dart
+│       └── local_bulk_repository_test.dart
 ├── ui/
 │   ├── widget/
 │   │   └── widget_offset_test.dart
@@ -132,118 +124,35 @@ void main() {
 
 ---
 
-## API 테스트
-
-### Mock Client 설정
-
-```dart
-// test/provider/api/mock_client_generator.dart
-import 'dart:convert';
-import 'package:http/testing.dart';
-import 'package:http/http.dart' as http;
-
-MockClient getMockClient(ApiResult expected, String path) {
-  return MockClient((request) async {
-    if (request.url.path.endsWith(path)) {
-      return http.Response(
-        jsonEncode(expected.toJson()),
-        200,
-        headers: {'content-type': 'application/json'},
-      );
-    }
-    return http.Response('Not Found', 404);
-  });
-}
-```
-
-### API 테스트 작성
-
-```dart
-// test/provider/api/folders/folder_api_test.dart
-import 'package:flutter_test/flutter_test.dart';
-import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
-
-void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
-
-  group('Folder API Tests', () {
-    late MockClient mockClient;
-    late FolderApi api;
-
-    setUp(() {
-      final apiExpected = ApiResult(
-        status: 0,
-        data: [
-          const Folder(id: 1, name: '폴더1'),
-          const Folder(id: 2, name: '폴더2'),
-        ],
-      );
-      mockClient = getMockClient(apiExpected, '/folders');
-      api = getFolderApi(mockClient);
-    });
-
-    test('getMyFolders should return folder list', () async {
-      final result = await api.getMyFolders();
-
-      result.when(
-        success: (folders) {
-          expect(folders.length, 2);
-          expect(folders[0].name, '폴더1');
-        },
-        error: fail,
-      );
-    });
-
-    test('deleteFolder should return true on success', () async {
-      final result = await api.deleteFolder(const Folder(id: 1));
-      expect(result, true);
-    });
-  });
-}
-
-FolderApi getFolderApi(MockClient mockClient) {
-  return FolderApi(
-    CustomClient(
-      client: mockClient,
-      auth: MockFirebaseAuth(
-        mockUser: MockUser(isAnonymous: true),
-      ),
-    ),
-  );
-}
-```
-
----
-
 ## Cubit 테스트
 
 ### bloc_test 사용
 
 ```dart
-// test/cubits/folders/get_folders_cubit_test.dart
+// test/cubits/folders/local_folders_cubit_test.dart
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
-class MockFolderApi extends Mock implements FolderApi {}
+class MockLocalFolderRepository extends Mock implements LocalFolderRepository {}
 
 void main() {
-  group('GetFoldersCubit Tests', () {
-    late MockFolderApi mockFolderApi;
+  group('LocalFoldersCubit Tests', () {
+    late MockLocalFolderRepository mockRepository;
 
     setUp(() {
-      mockFolderApi = MockFolderApi();
+      mockRepository = MockLocalFolderRepository();
     });
 
-    blocTest<GetFoldersCubit, FoldersState>(
+    blocTest<LocalFoldersCubit, FoldersState>(
       'emits [Loading, Loaded] when getFolders succeeds',
       build: () {
-        when(mockFolderApi.getMyFolders()).thenAnswer(
-          (_) async => Result.success([
-            const Folder(id: 1, name: 'Test'),
-          ]),
+        when(mockRepository.getAllFolders()).thenAnswer(
+          (_) async => [
+            const LocalFolder(id: 1, name: 'Test'),
+          ],
         );
-        return GetFoldersCubit(folderApi: mockFolderApi);
+        return LocalFoldersCubit(repository: mockRepository);
       },
       act: (cubit) => cubit.getFolders(),
       expect: () => [
@@ -252,13 +161,13 @@ void main() {
       ],
     );
 
-    blocTest<GetFoldersCubit, FoldersState>(
+    blocTest<LocalFoldersCubit, FoldersState>(
       'emits [Loading, Error] when getFolders fails',
       build: () {
-        when(mockFolderApi.getMyFolders()).thenAnswer(
-          (_) async => Result.error('Network error'),
+        when(mockRepository.getAllFolders()).thenThrow(
+          Exception('Database error'),
         );
-        return GetFoldersCubit(folderApi: mockFolderApi);
+        return LocalFoldersCubit(repository: mockRepository);
       },
       act: (cubit) => cubit.getFolders(),
       expect: () => [
@@ -363,20 +272,20 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('App Integration Tests', () {
-    testWidgets('full login flow', (tester) async {
+    testWidgets('folder creation flow', (tester) async {
       await tester.pumpWidget(const MyApp());
       await tester.pumpAndSettle();
 
-      // 로그인 버튼 찾기
-      final loginButton = find.byKey(const Key('login_button'));
-      expect(loginButton, findsOneWidget);
+      // 폴더 추가 버튼 찾기
+      final addButton = find.byKey(const Key('add_folder_button'));
+      expect(addButton, findsOneWidget);
 
-      // 로그인 버튼 탭
-      await tester.tap(loginButton);
+      // 폴더 추가 버튼 탭
+      await tester.tap(addButton);
       await tester.pumpAndSettle();
 
-      // 홈 화면 확인
-      expect(find.byType(HomePage), findsOneWidget);
+      // 폴더 생성 다이얼로그 확인
+      expect(find.byType(TextField), findsOneWidget);
     });
   });
 }
@@ -405,7 +314,7 @@ fvm flutter test
 ### 특정 파일 테스트
 
 ```bash
-fvm flutter test test/provider/api/folders/folder_api_test.dart
+fvm flutter test test/provider/local/local_folder_repository_test.dart
 ```
 
 ### 특정 그룹/테스트
@@ -415,7 +324,7 @@ fvm flutter test test/provider/api/folders/folder_api_test.dart
 fvm flutter test --name "getMyFolders should return folder list"
 
 # 특정 그룹만
-fvm flutter test --name "Folder API Tests"
+fvm flutter test --name "LocalFolderRepository Tests"
 ```
 
 ### 상세 출력
@@ -457,7 +366,7 @@ open coverage/html/index.html
 |------|------|------|
 | 전체 | TBD | 10%+ |
 | 신규 코드 | - | 80%+ |
-| API | - | 90%+ |
+| Repository | - | 90%+ |
 | Cubit | - | 80%+ |
 
 ### CI에서 커버리지
@@ -481,7 +390,7 @@ GitHub Actions에서 Codecov를 통해 커버리지를 추적합니다.
 
 ```dart
 // GOOD: 명확한 테스트 이름
-test('getMyFolders returns empty list when no folders exist', () {});
+test('getAllFolders returns empty list when no folders exist', () {});
 
 // BAD: 모호한 테스트 이름
 test('test1', () {});
@@ -492,13 +401,13 @@ test('test1', () {});
 ```dart
 test('should return folder list', () {
   // Arrange (준비)
-  final api = getFolderApi(mockClient);
+  final repo = LocalFolderRepository(databaseHelper: testDb);
 
   // Act (실행)
-  final result = await api.getMyFolders();
+  final result = await repo.getAllFolders();
 
   // Assert (검증)
-  expect(result.isSuccess, true);
+  expect(result, isEmpty);
 });
 ```
 
@@ -526,10 +435,10 @@ test('folder validation', () {
 
 ```dart
 void main() {
-  late MockApi mockApi;
+  late MockLocalFolderRepository mockRepo;
 
   setUp(() {
-    mockApi = MockApi();
+    mockRepo = MockLocalFolderRepository();
   });
 
   tearDown(() {

@@ -111,17 +111,17 @@ git checkout -b feature/your-feature-name
 ```
 feat(folder): 폴더 공유 기능 추가
 
-- 공유 링크 생성 API 연동
-- 공유 설정 페이지 구현
-- 공유 권한 관리 Cubit 추가
+- 로컬 DB 폴더 CRUD 구현
+- 폴더 목록 화면 연동
+- 폴더 관련 Cubit 추가
 
 Closes #123
 ```
 
 ```
-fix(login): 애플 로그인 크래시 수정
+fix(folder): 폴더 삭제 시 링크 미삭제 수정
 
-iOS 15에서 발생하는 애플 로그인 크래시 문제 해결
+CASCADE 설정 누락으로 폴더 삭제 시 하위 링크가 남는 문제 해결
 ```
 
 ### 커밋 전 체크리스트
@@ -231,7 +231,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../models/folder.dart';
+import '../models/local/local_folder.dart';
 
 // 2. part 선언
 part 'folder.freezed.dart';
@@ -265,7 +265,7 @@ fvm flutter format .
 
 1. **새 기능**: 단위 테스트 필수
 2. **버그 수정**: 회귀 테스트 추가
-3. **API 변경**: API 테스트 업데이트
+3. **DB 변경**: Repository 테스트 업데이트
 
 ### 테스트 실행
 
@@ -277,7 +277,7 @@ make test
 make test-coverage
 
 # 특정 테스트
-fvm flutter test test/provider/api/folders/folder_api_test.dart
+fvm flutter test test/provider/local/local_folder_repository_test.dart
 ```
 
 ### 커버리지 목표

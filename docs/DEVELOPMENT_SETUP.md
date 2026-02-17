@@ -200,7 +200,6 @@ fvm flutter run -d <device_id>
 
 ```bash
 # .env 예시
-BASE_URL=https://api.example.com
 KAKAO_NATIVE_KEY=your_kakao_key
 ```
 

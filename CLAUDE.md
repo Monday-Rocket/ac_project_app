@@ -2,7 +2,7 @@
 
 ## 프로젝트 개요
 
-링크풀은 링크를 체계적으로 관리하는 Flutter 모바일 앱입니다.
+링크풀은 링크를 체계적으로 관리하는 **오프라인 전용** Flutter 모바일 앱입니다.
 
 | 항목 | 내용 |
 |------|------|
@@ -17,16 +17,25 @@
 ```
 lib/
 ├── cubits/     # 상태 관리 (Cubit)
+│   ├── common/ # 공통 Cubit (ButtonStateCubit 등)
+│   ├── folders/ # 폴더 관련
+│   ├── links/  # 링크 관련
+│   └── ...
 ├── di/         # 의존성 주입
 ├── models/     # 데이터 모델
-├── provider/   # API, 데이터 제공자
+│   ├── local/  # 로컬 DB 모델
+│   └── ...
+├── provider/   # 데이터 제공자
+│   ├── local/  # 로컬 DB (SQLite)
+│   ├── kakao/  # 카카오 공유
+│   └── ...
 ├── ui/         # UI (page, view, widget)
 └── util/       # 유틸리티
 
 test/
-├── provider/api/  # API 테스트
-├── ui/            # 위젯 테스트
-└── util/          # 유틸리티 테스트
+├── provider/local/ # 로컬 DB 테스트
+├── ui/             # 위젯 테스트
+└── util/           # 유틸리티 테스트
 ```
 
 ## 개발 규칙
@@ -38,9 +47,10 @@ test/
 ### 의존성 주입
 - `lib/di/set_up_get_it.dart`에서 등록
 - `getIt<T>()`로 주입받아 사용
+- 로컬 DB Repository만 등록 (API 없음)
 
 ### 테스트
-- API: MockClient 사용
+- 로컬 DB: sqflite 테스트
 - Cubit: bloc_test 사용
 - TDD 방식 권장
 
@@ -83,31 +93,14 @@ fvm dart format .
 class ExampleCubit extends Cubit<ExampleState> {
   ExampleCubit() : super(ExampleInitialState());
 
-  final ExampleApi api = getIt();
+  final LocalFolderRepository repo = getIt();
 
   Future<void> fetchData() async {
     emit(ExampleLoadingState());
-    (await api.getData()).when(
-      success: (data) => emit(ExampleLoadedState(data)),
-      error: (msg) => emit(ExampleErrorState(msg)),
-    );
+    final data = await repo.getAllFolders();
+    emit(ExampleLoadedState(data));
   }
 }
-```
-
-### API 테스트 작성
-```dart
-test('getData success', () async {
-  final mockClient = getMockClient(expected, '/endpoint');
-  final api = ExampleApi(CustomClient(client: mockClient));
-
-  final result = await api.getData();
-
-  result.when(
-    success: (data) => expect(data, expected),
-    error: fail,
-  );
-});
 ```
 
 ## 참고 문서
@@ -117,3 +110,6 @@ test('getData success', () async {
 - [테스트 가이드](docs/TESTING_GUIDE.md)
 - [기여 가이드](CONTRIBUTING.md)
 - [작업목록](작업목록.md)
+
+# currentDate
+Today's date is 2026-02-17.

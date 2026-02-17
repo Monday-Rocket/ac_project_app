@@ -24,12 +24,11 @@
 
 | 영역 | 기술 |
 |------|------|
-| 프레임워크 | Flutter 3.24.5 |
+| 프레임워크 | Flutter 3.38.6 |
 | 상태 관리 | flutter_bloc (Cubit) |
 | 의존성 주입 | get_it |
-| 네트워크 | dio, http |
-| 로컬 저장소 | sqflite, shared_preferences |
-| 인증 | Firebase Auth, 소셜 로그인 |
+| 로컬 DB | sqflite |
+| 로컬 저장소 | shared_preferences |
 | 코드 생성 | freezed, json_serializable, flutter_gen |
 
 ---
@@ -47,7 +46,7 @@
 │           (Cubits)                  │
 ├─────────────────────────────────────┤
 │         Data Layer                  │
-│     (APIs, Providers, DB)           │
+│     (Local DB, Providers)           │
 ├─────────────────────────────────────┤
 │         Model Layer                 │
 │    (Entities, DTOs, Results)        │
@@ -57,12 +56,12 @@
 ### 데이터 흐름
 
 ```
-UI → Cubit → API/Provider → Model → Cubit (State) → UI
+UI → Cubit → LocalRepository → Model → Cubit (State) → UI
 ```
 
 1. **UI**가 사용자 액션을 **Cubit**에 전달
-2. **Cubit**이 **API/Provider**를 호출
-3. **API/Provider**가 데이터를 가져와 **Model**로 변환
+2. **Cubit**이 **LocalRepository**를 호출
+3. **LocalRepository**가 로컬 DB에서 데이터를 가져와 **Model**로 변환
 4. **Cubit**이 **State**를 업데이트
 5. **UI**가 State 변화를 감지하고 다시 렌더링
 
@@ -78,11 +77,10 @@ lib/
 │   └── strings.dart    # 문자열 상수
 │
 ├── cubits/             # 상태 관리 (BLoC/Cubit)
+│   ├── common/         # 공통 (ButtonStateCubit)
 │   ├── feed/           # 피드 관련
 │   ├── folders/        # 폴더 관련
 │   ├── links/          # 링크 관련
-│   ├── login/          # 로그인 관련
-│   ├── profile/        # 프로필 관련
 │   └── ...
 │
 ├── di/                 # 의존성 주입
@@ -95,16 +93,14 @@ lib/
 ├── models/             # 데이터 모델
 │   ├── folder/         # 폴더 모델
 │   ├── link/           # 링크 모델
-│   ├── user/           # 사용자 모델
-│   ├── net/            # 네트워크 응답 모델
+│   ├── local/          # 로컬 DB 모델
 │   └── ...
 │
 ├── provider/           # 데이터 제공자
-│   ├── api/            # REST API
-│   │   ├── folders/    # 폴더 API
-│   │   ├── user/       # 사용자 API
+│   ├── local/          # 로컬 Repository
+│   │   ├── local_folder_repository.dart
+│   │   ├── local_link_repository.dart
 │   │   └── ...
-│   ├── login/          # 로그인 제공자
 │   └── ...
 │
 ├── ui/                 # UI 컴포넌트
@@ -158,15 +154,17 @@ class GetFoldersCubit extends Cubit<FoldersState> {
     getFolders();
   }
 
-  final FolderApi folderApi = getIt();
+  final LocalFolderRepository folderRepo = getIt();
 
   Future<void> getFolders() async {
     emit(FolderLoadingState());
 
-    (await folderApi.getMyFolders()).when(
-      success: (list) => emit(FolderLoadedState(list, ...)),
-      error: (msg) => emit(FolderErrorState(msg)),
-    );
+    try {
+      final folders = await folderRepo.getAllFolders();
+      emit(FolderLoadedState(folders, ...));
+    } catch (e) {
+      emit(FolderErrorState(e.toString()));
+    }
   }
 }
 ```
@@ -194,10 +192,9 @@ BlocBuilder<GetFoldersCubit, FoldersState>(
 
 | 디렉토리 | 역할 |
 |---------|------|
+| `cubits/common/` | 공통 (ButtonStateCubit) |
 | `cubits/folders/` | 폴더 CRUD, 선택, 공유 |
 | `cubits/links/` | 링크 CRUD, 검색, 업로드 |
-| `cubits/login/` | 로그인, 자동 로그인 |
-| `cubits/profile/` | 프로필 정보 관리 |
 | `cubits/feed/` | 피드 뷰 관리 |
 
 ---
@@ -212,22 +209,23 @@ BlocBuilder<GetFoldersCubit, FoldersState>(
 final getIt = GetIt.instance;
 
 void locator() {
-  final httpClient = CustomClient();
+  final databaseHelper = DatabaseHelper.instance;
 
   getIt
-    // HTTP Client
-    ..registerLazySingleton(() => httpClient)
+    // Local Repositories (오프라인 모드 핵심)
+    ..registerLazySingleton(() => databaseHelper)
+    ..registerLazySingleton(
+      () => LocalFolderRepository(databaseHelper: databaseHelper),
+    )
+    ..registerLazySingleton(
+      () => LocalLinkRepository(databaseHelper: databaseHelper),
+    )
+    ..registerLazySingleton(
+      () => LocalBulkRepository(databaseHelper: databaseHelper),
+    )
 
-    // APIs
-    ..registerLazySingleton(() => FolderApi(httpClient))
-    ..registerLazySingleton(() => LinkApi(httpClient))
-    ..registerLazySingleton(() => ProfileApi(httpClient))
-    ..registerLazySingleton(() => UserApi(httpClient))
-
-    // Cubits (전역)
-    ..registerLazySingleton(GetUserFoldersCubit.new)
-    ..registerLazySingleton(GetProfileInfoCubit.new)
-    ..registerLazySingleton(AutoLoginCubit.new);
+    // Manager
+    ..registerLazySingleton(AppPauseManager.new);
 }
 ```
 
@@ -235,59 +233,51 @@ void locator() {
 
 ```dart
 // Cubit에서
-final FolderApi folderApi = getIt();
+final LocalFolderRepository folderRepo = getIt();
 
 // 또는
-final api = getIt<FolderApi>();
+final repo = getIt<LocalFolderRepository>();
 ```
 
 ---
 
 ## 데이터 레이어
 
-### API 구조
+### 로컬 Repository 구조
 
 ```dart
-class FolderApi {
-  FolderApi(this._client);
+class LocalFolderRepository {
+  final DatabaseHelper _databaseHelper;
 
-  final CustomClient _client;
+  LocalFolderRepository({required DatabaseHelper databaseHelper})
+      : _databaseHelper = databaseHelper;
 
-  Future<Result<List<Folder>>> getMyFolders() async {
-    try {
-      final response = await _client.get('/folders');
-      final result = ApiResult<List<dynamic>>.fromJson(response);
+  Future<List<LocalFolder>> getAllFolders() async {
+    final db = await _databaseHelper.database;
+    final maps = await db.query('folders', orderBy: 'created_at DESC');
+    return maps.map(LocalFolder.fromMap).toList();
+  }
 
-      if (result.status == 0) {
-        final folders = result.data
-            .map((e) => Folder.fromJson(e))
-            .toList();
-        return Result.success(folders);
-      }
-      return Result.error('Failed to fetch folders');
-    } catch (e) {
-      return Result.error(e.toString());
-    }
+  Future<int> createFolder(LocalFolder folder) async {
+    final db = await _databaseHelper.database;
+    return db.insert('folders', folder.toMap());
+  }
+
+  Future<int> updateFolder(LocalFolder folder) async {
+    final db = await _databaseHelper.database;
+    return db.update(
+      'folders',
+      folder.toMap(),
+      where: 'id = ?',
+      whereArgs: [folder.id],
+    );
+  }
+
+  Future<int> deleteFolder(int id) async {
+    final db = await _databaseHelper.database;
+    return db.delete('folders', where: 'id = ?', whereArgs: [id]);
   }
 }
-```
-
-### Result 패턴
-
-API 응답을 안전하게 처리하기 위해 Result 패턴을 사용합니다.
-
-```dart
-@freezed
-class Result<T> with _$Result<T> {
-  const factory Result.success(T data) = Success<T>;
-  const factory Result.error(String message) = Error<T>;
-}
-
-// 사용
-result.when(
-  success: (data) => emit(LoadedState(data)),
-  error: (msg) => emit(ErrorState(msg)),
-);
 ```
 
 ---
@@ -358,7 +348,7 @@ ui/
 |------|------|------|
 | Cubit | `*_cubit.dart` | `get_my_folders_cubit.dart` |
 | State | `*_state.dart` | `folders_state.dart` |
-| API | `*_api.dart` | `folder_api.dart` |
+| Repository | `*_repository.dart` | `local_folder_repository.dart` |
 | Model | 단수형 | `folder.dart` |
 | Page | `*_page.dart` | `my_folder_page.dart` |
 | Widget | 설명적 | `loading.dart`, `center_dialog.dart` |
@@ -369,7 +359,7 @@ ui/
 |------|------|------|
 | Cubit | `*Cubit` | `GetFoldersCubit` |
 | State | `*State` | `FolderLoadedState` |
-| API | `*Api` | `FolderApi` |
+| Repository | `*Repository` | `LocalFolderRepository` |
 | Model | PascalCase | `Folder` |
 | Widget | PascalCase | `LoadingWidget` |
 
