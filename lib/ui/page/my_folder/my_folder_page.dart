@@ -5,11 +5,8 @@ import 'dart:async';
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/folders/folders_state.dart';
 import 'package:ac_project_app/cubits/folders/local_folders_cubit.dart';
-import 'package:ac_project_app/cubits/profile/profile_info_cubit.dart';
-import 'package:ac_project_app/cubits/profile/profile_state.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
-import 'package:ac_project_app/models/profile/profile_image.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/add_folder/show_add_folder_dialog.dart';
 import 'package:ac_project_app/ui/widget/buttons/upload_button.dart';
@@ -71,7 +68,7 @@ class _MyFolderPageState extends State<MyFolderPage> with WidgetsBindingObserver
               Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  ProfileView(folderState),
+                  HeaderView(folderState),
                   SearchView(context, folderState),
                   FolderListView(folderState),
                 ],
@@ -184,7 +181,7 @@ class _MyFolderPageState extends State<MyFolderPage> with WidgetsBindingObserver
     );
   }
 
-  BlocBuilder<GetProfileInfoCubit, ProfileState> ProfileView(FoldersState folderState) {
+  Widget HeaderView(FoldersState folderState) {
     var linksText = '';
     var addedLinksCount = 0;
     if (folderState is FolderLoadedState) {
@@ -192,89 +189,77 @@ class _MyFolderPageState extends State<MyFolderPage> with WidgetsBindingObserver
       addedLinksCount = folderState.addedLinksCount;
     }
 
-    return BlocBuilder<GetProfileInfoCubit, ProfileState>(
-      builder: (context, state) {
-        if (state is ProfileLoadedState) {
-          final profile = state.profile;
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 105.w,
-                height: 105.w,
-                margin: EdgeInsetsDirectional.only(
-                  top: 90.w,
-                  bottom: 24.w,
-                ),
-                child: Image.asset(
-                  ProfileImage.makeImagePath(
-                    profile.profileImage,
-                  ),
-                  width: 96.w,
-                  height: 96.w,
-                  fit: BoxFit.cover,
-                ),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 105.w,
+          height: 105.w,
+          margin: EdgeInsetsDirectional.only(
+            top: 90.w,
+            bottom: 24.w,
+          ),
+          child: Assets.images.appWhiteIcon.image(
+            width: 96.w,
+            height: 96.w,
+            fit: BoxFit.cover,
+          ),
+        ),
+        Text(
+          '내 폴더',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 28.sp,
+            color: const Color(0xff0e0e0e),
+          ),
+        ),
+        10.verticalSpace,
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              '총 링크',
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: 12.sp,
+                color: grey600,
               ),
-              Text(
-                profile.nickname,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 28.sp,
-                  color: const Color(0xff0e0e0e),
-                ),
+            ),
+            6.horizontalSpace,
+            Text(
+              linksText,
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: 12.sp,
+                color: grey800,
               ),
-              10.verticalSpace,
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    '총 링크',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 12.sp,
-                      color: grey600,
-                    ),
-                  ),
-                  6.horizontalSpace,
-                  Text(
-                    linksText,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 12.sp,
-                      color: grey800,
-                    ),
-                  ),
-                  Container(
-                    width: 1.w,
-                    height: 9.w,
-                    color: greyD9,
-                    margin: const EdgeInsets.symmetric(horizontal: 14),
-                  ),
-                  Text(
-                    '추가된 링크',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 12.sp,
-                      color: grey600,
-                    ),
-                  ),
-                  6.horizontalSpace,
-                  Text(
-                    addCommasFrom(addedLinksCount),
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 12.sp,
-                      color: grey800,
-                    ),
-                  ),
-                ],
-              )
-            ],
-          );
-        } else {
-          return const SizedBox.shrink();
-        }
-      },
+            ),
+            Container(
+              width: 1.w,
+              height: 9.w,
+              color: greyD9,
+              margin: const EdgeInsets.symmetric(horizontal: 14),
+            ),
+            Text(
+              '추가된 링크',
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: 12.sp,
+                color: grey600,
+              ),
+            ),
+            6.horizontalSpace,
+            Text(
+              addCommasFrom(addedLinksCount),
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: 12.sp,
+                color: grey800,
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 
@@ -466,7 +451,6 @@ class _MyFolderPageState extends State<MyFolderPage> with WidgetsBindingObserver
       child: Center(
         child: SvgPicture.asset(
           Assets.images.folder,
-          // color: color,
           colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
           width: 24.w,
           height: 24.w,

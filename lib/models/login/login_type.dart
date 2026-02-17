@@ -1,3 +1,0 @@
-enum SignUpType {
-  newUser, signedUser
-}

@@ -102,5 +102,5 @@ class _TutorialViewState extends State<TutorialView> {
   }
 
   void moveToLoginView() =>
-      Navigator.pushReplacementNamed(context, Routes.login);
+      Navigator.pushReplacementNamed(context, Routes.home, arguments: {'index': 0});
 }

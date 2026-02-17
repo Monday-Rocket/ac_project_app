@@ -4,7 +4,7 @@ import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/folders/folder_name_cubit.dart';
 import 'package:ac_project_app/cubits/folders/folder_visible_cubit.dart';
 import 'package:ac_project_app/cubits/folders/local_folders_cubit.dart';
-import 'package:ac_project_app/cubits/sign_up/button_state_cubit.dart';
+import 'package:ac_project_app/cubits/common/button_state_cubit.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/ui/page/my_folder/folder_visible_state.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';

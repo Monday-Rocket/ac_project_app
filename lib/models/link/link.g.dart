@@ -14,7 +14,6 @@ Link _$LinkFromJson(Map<String, dynamic> json) => Link(
       describe: json['describe'] as String?,
       folderId: (json['folder_id'] as num?)?.toInt(),
       time: json['created_date_time'] as String?,
-      user: json['user'] == null ? null : DetailUser.fromJson(json['user']),
       inflowType: json['inflow_type'] as String?,
     );
 
@@ -26,6 +25,5 @@ Map<String, dynamic> _$LinkToJson(Link instance) => <String, dynamic>{
       'describe': instance.describe,
       'folder_id': instance.folderId,
       'created_date_time': instance.time,
-      'user': instance.user,
       'inflow_type': instance.inflowType,
     };

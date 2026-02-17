@@ -2,42 +2,13 @@
 
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/const/strings.dart';
-import 'package:ac_project_app/di/set_up_get_it.dart';
-import 'package:ac_project_app/provider/api/user/user_api.dart';
-import 'package:ac_project_app/provider/logout.dart';
-import 'package:ac_project_app/provider/offline_mode_provider.dart';
-import 'package:ac_project_app/provider/shared_pref_provider.dart';
 import 'package:ac_project_app/routes.dart';
-import 'package:ac_project_app/ui/widget/bottom_toast.dart';
-import 'package:ac_project_app/ui/widget/dialog/center_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class MyPage extends StatefulWidget {
+class MyPage extends StatelessWidget {
   const MyPage({super.key});
-
-  @override
-  State<MyPage> createState() => _MyPageState();
-}
-
-class _MyPageState extends State<MyPage> {
-  bool _isOfflineModeCompleted = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadOfflineModeStatus();
-  }
-
-  Future<void> _loadOfflineModeStatus() async {
-    final isComplete = await OfflineModeProvider.isOfflineModeCompleted();
-    if (mounted) {
-      setState(() {
-        _isOfflineModeCompleted = isComplete;
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -115,48 +86,6 @@ class _MyPageState extends State<MyPage> {
                 Navigator.pushNamed(context, Routes.ossLicenses);
                 break;
               }
-            case '로그아웃':
-              {
-                showMyPageDialog(
-                  title: '로그아웃',
-                  content: '계정을 로그아웃 하시겠어요?',
-                  parentContext: context,
-                  leftText: '취소',
-                  rightText: '로그아웃',
-                  leftCallback: () => Navigator.pop(context),
-                  rightCallback: () => logout(() {
-                    SharedPrefHelper.saveKeyValue('savedLinksCount', 0);
-                    Navigator.of(context).pop(true);
-                    Navigator.pushReplacementNamed(context, Routes.login);
-                  }),
-                );
-                break;
-              }
-            case '회원탈퇴':
-              {
-                showMyPageDialog(
-                  title: '정말 탈퇴하시겠어요?',
-                  content: '지금 탈퇴하면 그동안 모은 링크가 사라져요',
-                  parentContext: context,
-                  leftText: '회원 탈퇴',
-                  rightText: '탈퇴 취소',
-                  leftCallback: () {
-                    getIt<UserApi>().deleteUser().then((value) {
-                      if (value) {
-                        SharedPrefHelper.saveKeyValue('savedLinksCount', 0);
-                        Navigator.of(context).pop(true);
-                        Navigator.pushReplacementNamed(context, Routes.login);
-                      } else {
-                        Navigator.of(context).pop(true);
-                        showBottomToast(context: context, '회원탈퇴 실패');
-                      }
-                    });
-                  },
-                  rightCallback: () => Navigator.pop(context),
-                  icon: true,
-                );
-                break;
-              }
           }
         },
         child: Container(
@@ -194,13 +123,6 @@ class _MyPageState extends State<MyPage> {
         DivisionLine(size: 1.w),
         MenuItem('오픈소스 라이센스'),
         DivisionLine(),
-        // 오프라인 모드 완료 시 로그아웃/회원탈퇴 메뉴 숨김
-        if (!_isOfflineModeCompleted) ...[
-          MenuItem('로그아웃', arrow: false),
-          DivisionLine(size: 1.w),
-          MenuItem('회원탈퇴', arrow: false, color: redError),
-          DivisionLine(size: 1.w),
-        ],
       ],
     );
   }

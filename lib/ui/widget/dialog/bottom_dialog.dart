@@ -10,10 +10,8 @@ import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/link/link.dart';
-import 'package:ac_project_app/models/user/detail_user.dart';
 import 'package:ac_project_app/provider/local/local_link_repository.dart';
 import 'package:ac_project_app/provider/check_clipboard_link.dart';
-import 'package:ac_project_app/provider/global_variables.dart';
 import 'package:ac_project_app/provider/kakao/kakao.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/page/my_folder/folder_visible_state.dart';
@@ -282,15 +280,6 @@ Future<bool?> showLinkOptionsDialog(
   );
 }
 
-// 오프라인 모드: 사용자 옵션 다이얼로그 비활성화 (신고하기 기능 제거)
-Future<bool?> showUserOptionDialog(
-    BuildContext parentContext,
-    DetailUser user, {
-      void Function()? callback,
-    }) {
-  // 오프라인 모드에서는 다른 사용자 기능이 없으므로 빈 다이얼로그 반환
-  return Future.value(null);
-}
 
 Container buildTitle(BuildContext context, String title, {double? titleLeft}) {
   return Container(
@@ -516,22 +505,14 @@ void showFolderOptionsDialog(
                         BottomListItem(
                           '카카오톡 폴더 공유',
                           callback: () {
-
-                            if ((currFolder.visible ?? false) && me != null) {
-                              Kakao.sendFolderKakaoShare(
-                                currFolder,
-                                me!,
-                              );
-                            } else {
-                              showPopUp(
-                                title: '폴더를 공개해 주세요',
-                                content: '카카오톡 폴더 공유는\n공개 폴더로 전환 후 가능해요!',
-                                parentContext: parentContext,
-                                callback: () => Navigator.pop(context),
-                                icon: true,
-                                iconImage: Assets.images.icLockColor.image(width: 27.w, height: 27.w),
-                              );
-                            }
+                            showPopUp(
+                              title: '폴더를 공개해 주세요',
+                              content: '카카오톡 폴더 공유는\n공개 폴더로 전환 후 가능해요!',
+                              parentContext: parentContext,
+                              callback: () => Navigator.pop(context),
+                              icon: true,
+                              iconImage: Assets.images.icLockColor.image(width: 27.w, height: 27.w),
+                            );
                           },
                         ),
                       ],

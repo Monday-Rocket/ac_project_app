@@ -5,14 +5,9 @@ import 'package:ac_project_app/ui/view/links/my_link_view.dart';
 import 'package:ac_project_app/ui/view/links/search_view.dart';
 import 'package:ac_project_app/ui/view/links/shared_link_setting_view.dart';
 import 'package:ac_project_app/ui/view/oss_licenses_view.dart';
-import 'package:ac_project_app/ui/view/profile/change_profile_view.dart';
 import 'package:ac_project_app/ui/view/splash_view.dart';
-import 'package:ac_project_app/ui/view/terms_view.dart';
 import 'package:ac_project_app/ui/view/tutorial_view.dart';
 import 'package:ac_project_app/ui/view/upload_view.dart';
-import 'package:ac_project_app/ui/view/user/email_login_view.dart';
-import 'package:ac_project_app/ui/view/user/login_view.dart';
-import 'package:ac_project_app/ui/view/user/sign_up_nickname_view.dart';
 import 'package:flutter/material.dart';
 
 class Routes {
@@ -23,15 +18,8 @@ class Routes {
   static const search = '/search';
   static const sharedLinkSetting = '/sharedLinkSetting';
 
-  // user
-  static const profile = '/profile';
-  static const emailLogin = '/emailLogin';
-  static const login = '/login';
-  static const signUpNickname = '/signUpNickname';
-
   // etc
   static const splash = '/splash';
-  static const terms = '/terms';
   static const myPage = '/myPage';
   static const upload = '/upload';
   static const tutorial = '/tutorial';
@@ -45,24 +33,14 @@ class Pages {
     switch (settings.name) {
       case Routes.splash:
         return router.create(child: const SplashView());
-      case Routes.login:
-        return router.create(child: const LoginView());
-      case Routes.terms:
-        return router.create(child: const TermsView());
-      case Routes.emailLogin:
-        return router.create(child: const EmailLoginView());
       case Routes.home:
         return router.create(child: const HomeView());
       case Routes.myLinks:
         return router.create(child: MyLinkView());
       case Routes.linkDetail:
         return router.create(child: const LinkDetailView());
-      case Routes.signUpNickname:
-        return router.create(child: const SignUpNicknameView());
       case Routes.myPage:
         return router.create(child: const MyPage());
-      case Routes.profile:
-        return router.create(child: const ChangeProfileView());
       case Routes.search:
         return router.create(child: const SearchView());
       case Routes.upload:

@@ -1,7 +1,7 @@
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
-import 'package:ac_project_app/provider/api/folders/folder_api.dart';
+import 'package:ac_project_app/provider/local/local_folder_repository.dart';
 import 'package:ac_project_app/provider/share_db.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/text/custom_font.dart';
@@ -97,9 +97,9 @@ void deleteShareFolderDialog(
                       SizedBox(
                         width: 120.w,
                         child: GestureDetector(
-                          onTap: () => getIt<FolderApi>().deleteFolder(folder).then((result) {
+                          onTap: () => getIt<LocalFolderRepository>().deleteFolder(folder.id!).then((count) {
                             Navigator.pop(context, true);
-                            if (result) {
+                            if (count > 0) {
                               showBottomToast(context: context, '폴더 나가기를 완료했어요');
                             }
                             callback?.call();
@@ -179,7 +179,6 @@ void deleteSharedFolderAdminDialog(BuildContext context, Folder folder, {void Fu
                     textAlign: TextAlign.center,
                   ),
                   28.verticalSpace,
-                  // 오프라인 모드: 방장 권한 위임 기능 비활성화
                   Container(
                     margin: EdgeInsets.only(
                       top: 16.w,
@@ -197,10 +196,10 @@ void deleteSharedFolderAdminDialog(BuildContext context, Folder folder, {void Fu
                           disabledBackgroundColor: secondary),
                       onPressed: isChecked
                           ? () async {
-                              final result = await getIt<FolderApi>().deleteFolder(folder);
+                              final count = await getIt<LocalFolderRepository>().deleteFolder(folder.id!);
                               await ShareDB.deleteFolder(folder);
                               Navigator.pop(context, true);
-                              if (result) {
+                              if (count > 0) {
                                 showBottomToast(context: context, '폴더 삭제를 완료했어요');
                               }
                               callback?.call();

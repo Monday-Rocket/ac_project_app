@@ -1,4 +1,3 @@
-import 'package:ac_project_app/models/user/detail_user.dart';
 import 'package:equatable/equatable.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -14,7 +13,6 @@ class Link extends Equatable {
     this.describe,
     this.folderId,
     this.time,
-    this.user,
     this.inflowType,
   });
 
@@ -33,12 +31,9 @@ class Link extends Equatable {
   @JsonKey(name: 'created_date_time')
   final String? time;
 
-  final DetailUser? user;
-
   @JsonKey(name: 'inflow_type')
   final String? inflowType;
 
-  // copyWith() 메서드를 추가합니다.
   Link copyWith({
     int? id,
     String? url,
@@ -47,7 +42,6 @@ class Link extends Equatable {
     String? describe,
     int? folderId,
     String? time,
-    DetailUser? user,
     String? inflowType,
   }) {
     return Link(
@@ -58,12 +52,11 @@ class Link extends Equatable {
       describe: describe ?? this.describe,
       folderId: folderId ?? this.folderId,
       time: time ?? this.time,
-      user: user ?? this.user,
       inflowType: inflowType ?? this.inflowType,
     );
   }
 
   @override
   List<Object?> get props =>
-      [id, url, title, image, describe, folderId, time, user, inflowType];
+      [id, url, title, image, describe, folderId, time, inflowType];
 }

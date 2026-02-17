@@ -6,7 +6,7 @@ import 'package:ac_project_app/cubits/folders/folders_state.dart';
 import 'package:ac_project_app/cubits/folders/local_folders_cubit.dart';
 import 'package:ac_project_app/cubits/links/local_upload_link_cubit.dart';
 import 'package:ac_project_app/cubits/links/upload_result_state.dart';
-import 'package:ac_project_app/cubits/sign_up/button_state_cubit.dart';
+import 'package:ac_project_app/cubits/common/button_state_cubit.dart';
 import 'package:ac_project_app/enums/navigator_pop_type.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/link/upload_type.dart';
