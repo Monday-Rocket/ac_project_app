@@ -133,7 +133,7 @@ class LocalBulkRepository {
       for (final serverFolder in serverFolders) {
         final serverId = serverFolder['id'] as int?;
         final name = serverFolder['name'] as String? ?? '미분류';
-        final visible = serverFolder['visible'] as bool? ?? true;
+        final _ = serverFolder['visible'] as bool? ?? true;
 
         // 미분류 폴더는 기존 것 사용 (serverId가 null이거나 이름이 '미분류'인 경우)
         if (serverId == null || name == '미분류') {
