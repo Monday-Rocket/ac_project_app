@@ -1,6 +1,5 @@
 import UIKit
 import Flutter
-import NidThirdPartyLogin
 import app_links
 
 @main
@@ -44,8 +43,6 @@ import app_links
     if url.absoluteString.hasPrefix("kakao"){
       super.application(app, open:url, options: options)
       return true
-    } else if (NidOAuth.shared.handleURL(url) == true) { // If the URL was passed from the Naver app
-        return true
     } else {
       AppLinks.shared.handleLink(url: url)
       return true

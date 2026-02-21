@@ -35,7 +35,6 @@ dependencies:
 
   kakao_flutter_sdk_user: ^1.9.7+3
   flutter_dotenv: ^6.0.0
-  flutter_naver_login: ^2.1.1
 
   firebase_auth_mocks: ^0.14.1
 
