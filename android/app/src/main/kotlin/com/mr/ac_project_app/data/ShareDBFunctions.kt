@@ -27,7 +27,6 @@ object ShareDBFunctions {
             arrayOf(
                 ShareContract.Folder.seq,
                 ShareContract.Folder.folderName,
-                ShareContract.Folder.visible,
                 ShareContract.Folder.imageLink
             )
 
@@ -60,7 +59,6 @@ object ShareDBFunctions {
             while (moveToNext()) {
                 val folderName =
                     getString(getColumnIndexOrThrow(ShareContract.Folder.folderName))
-                val visible = getInt(getColumnIndexOrThrow(ShareContract.Folder.visible)) == 1
                 val imageLink =
                     getString(getColumnIndexOrThrow(ShareContract.Folder.imageLink))
 
@@ -68,8 +66,7 @@ object ShareDBFunctions {
                     FolderModel(
                         FolderType.One,
                         imageLink,
-                        folderName,
-                        visible
+                        folderName
                     )
                 )
             }
@@ -81,13 +78,11 @@ object ShareDBFunctions {
     fun saveNewFolder(
         dbHelper: ShareDbHelper,
         name: String,
-        visible: Boolean,
         imageLink: String
     ): Boolean {
         val db = dbHelper.writableDatabase
         val cv = ContentValues().apply {
             put(ShareContract.Folder.folderName, name)
-            put(ShareContract.Folder.visible, visible)
             put(ShareContract.Folder.imageLink, imageLink)
         }
         val result = db.insert(

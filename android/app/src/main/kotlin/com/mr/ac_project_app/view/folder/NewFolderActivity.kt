@@ -90,8 +90,7 @@ class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
                     "folder",
                     FolderModel.create(
                         imageLink,
-                        folderName,
-                        true
+                        folderName
                     )
                 )
                 movingIntent.putExtra("saveType", SaveType.New)

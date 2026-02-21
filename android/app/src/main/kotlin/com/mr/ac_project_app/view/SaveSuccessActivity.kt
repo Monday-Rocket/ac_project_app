@@ -86,8 +86,7 @@ class SaveSuccessActivity: FragmentActivity() {
                         .placeholder(R.drawable.folder_one)
                         .into(binding.oneLayout.oneImage)
 
-                    binding.oneLayout.lockImage.visibility =
-                        if (folder.visible) View.GONE else View.VISIBLE
+                    binding.oneLayout.lockImage.visibility = View.GONE
                 }
                 else -> {
                     binding.oneLayout.root.visibility = View.VISIBLE
@@ -103,8 +102,7 @@ class SaveSuccessActivity: FragmentActivity() {
                         .centerCrop()
                         .into(binding.oneLayout.oneImage)
 
-                    binding.oneLayout.lockImage.visibility =
-                        if (folder.visible) View.GONE else View.VISIBLE
+                    binding.oneLayout.lockImage.visibility = View.GONE
                 }
             }
         }

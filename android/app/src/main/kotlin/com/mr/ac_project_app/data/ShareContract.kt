@@ -7,7 +7,6 @@ object ShareContract {
         const val table = "folder"
         const val seq = "seq"
         const val folderName = "name"
-        const val visible = "visible"
         const val imageLink = "imageLink"
         const val time = "time"
     }

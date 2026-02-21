@@ -37,11 +37,7 @@ class RecyclerViewAdapter(private val modelList: ArrayList<FolderModel>, private
 
             textView.text = getShortText(folderModel.name)
 
-            if (folderModel.visible) {
-                lockImageView.visibility = View.GONE
-            } else {
-                lockImageView.visibility = View.VISIBLE
-            }
+            lockImageView.visibility = View.GONE
 
             oneImageView.clipToOutline = true
 
@@ -68,11 +64,7 @@ class RecyclerViewAdapter(private val modelList: ArrayList<FolderModel>, private
 
             textView.text = getShortText(folderModel.name)
 
-            if (folderModel.visible) {
-                lockImageView.visibility = View.GONE
-            } else {
-                lockImageView.visibility = View.VISIBLE
-            }
+            lockImageView.visibility = View.GONE
 
             oneImageView.clipToOutline = true
 

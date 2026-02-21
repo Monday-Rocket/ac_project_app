@@ -9,6 +9,5 @@ import Foundation
 
 struct Folder: Codable {
   var name: String
-  var visible: Int
   var imageLink: String?
 }

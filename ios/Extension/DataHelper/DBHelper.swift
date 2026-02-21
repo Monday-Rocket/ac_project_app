@@ -54,7 +54,6 @@ class DBHelper {
 CREATE TABLE IF NOT EXISTS folder(
   seq INT PRIMARY KEY,
   name VARCHAR(200) UNIQUE,
-  visible INT NOT NULL DEFAULT 1,
   imageLink VARCHAR(2000),
   time TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
@@ -79,19 +78,18 @@ CREATE TABLE IF NOT EXISTS folder(
     sqlite3_finalize(statement)
   }
   
-  func insertData(name: String, visible: Int, imageLink : String?) -> Bool {
-    
+  func insertData(name: String, imageLink : String?) -> Bool {
+
     let SQLITE_TRANSIENT = unsafeBitCast(-1, to: sqlite3_destructor_type.self)
-    
-    
-    let insertQuery = "INSERT INTO folder (name, visible, imageLink) VALUES (?, ?, ?);"
+
+
+    let insertQuery = "INSERT INTO folder (name, imageLink) VALUES (?, ?);"
     var statement: OpaquePointer? = nil
-    
+
     if sqlite3_prepare_v2(self.db, insertQuery, -1, &statement, nil) == SQLITE_OK {
-      
+
       sqlite3_bind_text(statement, 1, name, -1, SQLITE_TRANSIENT)
-      sqlite3_bind_int(statement, 2, Int32(visible))
-      sqlite3_bind_text(statement, 3, imageLink, -1, SQLITE_TRANSIENT)
+      sqlite3_bind_text(statement, 2, imageLink, -1, SQLITE_TRANSIENT)
     }
     else {
       NSLog("sqlite binding failure")
@@ -101,39 +99,36 @@ CREATE TABLE IF NOT EXISTS folder(
   }
   
   func readData() -> [Folder] {
-    let query: String = "SELECT name, visible, imageLink FROM folder ORDER BY TIME DESC;"
+    let query: String = "SELECT name, imageLink FROM folder ORDER BY TIME DESC;"
     var statement: OpaquePointer? = nil
-      // 아래는 [MyModel]? 이 되면 값이 안 들어간다.
-      // Nil을 인식하지 못하는 것으로..
     var result: [Folder] = []
-    
+
     if sqlite3_prepare(self.db, query, -1, &statement, nil) != SQLITE_OK {
       let errorMessage = String(cString: sqlite3_errmsg(db)!)
       NSLog("error while prepare: \(errorMessage)")
       return result
     }
     while sqlite3_step(statement) == SQLITE_ROW {
-      let name = String(cString: sqlite3_column_text(statement, 0)) // 결과의 0번째 테이블 값
-      let visible =  sqlite3_column_int(statement, 1)// 결과의 1번째 테이블 값.
-      
+      let name = String(cString: sqlite3_column_text(statement, 0))
+
       var imageLink = ""
-      
-      if let temp = sqlite3_column_text(statement, 2) {
-        imageLink = String(cString: temp) // 결과의 2번째 테이블 값.
+
+      if let temp = sqlite3_column_text(statement, 1) {
+        imageLink = String(cString: temp)
       }
-      
-      result.append(Folder(name: String(name), visible: Int(visible), imageLink: String(imageLink)))
+
+      result.append(Folder(name: String(name), imageLink: String(imageLink)))
     }
     sqlite3_finalize(statement)
     NSLog("🎁 \(result)")
-    
+
     return result
   }
   
-  func updateData(name: String, visible: Int, imageLink : String?) {
+  func updateData(name: String, imageLink : String?) {
     var statement: OpaquePointer?
-    
-    let queryString = "UPDATE folder SET name = '\(name)', visible = \(visible), imageLink = '\(imageLink ?? "")' WHERE name == '\(name)'"
+
+    let queryString = "UPDATE folder SET name = '\(name)', imageLink = '\(imageLink ?? "")' WHERE name == '\(name)'"
     
       // 쿼리 준비.
     if sqlite3_prepare(db, queryString, -1, &statement, nil) != SQLITE_OK {

@@ -11,7 +11,6 @@ class ShareDbHelper(context: Context) :
             create table if not exists ${ShareContract.Folder.table} (
                 ${ShareContract.Folder.seq} int primary key,
                 ${ShareContract.Folder.folderName} varchar(200) not null unique,
-                ${ShareContract.Folder.visible} boolean not null default 1,
                 ${ShareContract.Folder.imageLink} varchar(2000),
                 ${ShareContract.Folder.time} timestamp default current_timestamp not null
             );
@@ -32,7 +31,7 @@ class ShareDbHelper(context: Context) :
 
     companion object {
         // If you change the database schema, you must increment the database version.
-        const val DATABASE_VERSION = 2
+        const val DATABASE_VERSION = 3
         const val DATABASE_NAME = "share.db"
     }
 }

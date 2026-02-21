@@ -292,7 +292,7 @@ extension ShareViewController: UICollectionViewDataSource, UICollectionViewDeleg
     } else {
       cell.folderNameView.text = folderName
     }
-    cell.visibleView.image = item.visible == 1 ? nil : UIImage(named: "ic_lock_png")
+    cell.visibleView.image = nil
     
     cell.imageView.contentMode = .scaleAspectFill
     guard let imageUrl = item.imageLink, !item.imageLink!.isEmpty else {
