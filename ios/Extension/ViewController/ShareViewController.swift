@@ -39,6 +39,13 @@ class ShareViewController: UIViewController {
   
   override func viewDidLoad() {
     super.viewDidLoad()
+
+    // 투명 배경 설정 (시뮬레이터 + 실기기 모두 대응)
+    self.view.backgroundColor = .clear
+    self.navigationController?.view.backgroundColor = .clear
+    self.navigationController?.view.isOpaque = false
+    self.navigationController?.modalPresentationStyle = .overFullScreen
+
     self.getLink()  // link 아니면 에러 팝업으로 이동
     
     self.folderListView.delegate = self

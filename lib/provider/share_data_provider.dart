@@ -23,10 +23,12 @@ class ShareDataProvider {
           as LinkedHashMap<Object?, Object?>;
 
       final links = <Map<String, dynamic>>[];
+      Log.i('[getNewLinks] raw keys: ${newLinks.keys.toList()}');
       for (final url in newLinks.keys) {
-        final item =
-            jsonDecode(newLinks[url].toString()) as Map<String, dynamic>;
-        Log.i(item);
+        final rawValue = newLinks[url].toString();
+        Log.i('[getNewLinks] url=$url, raw=$rawValue');
+        final item = jsonDecode(rawValue) as Map<String, dynamic>;
+        Log.i('[getNewLinks] parsed: folder_name=${item['folder_name']}');
         final decoded = decodeBase64Text(item['title'] as String? ?? '');
         final shortTitle = getShortTitle(decoded);
         links.add({

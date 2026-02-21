@@ -78,13 +78,21 @@ class LocalBulkRepository {
         if (existingLink.isEmpty) {
           // 폴더 ID 매핑 (Native에서 넘어온 folder_id 또는 이름으로 매핑)
           final nativeFolderId = linkData['folder_id']?.toString();
-          final folderName = linkData['folder_name'] as String?;
+          final rawFolderName = linkData['folder_name'];
+          final folderName = (rawFolderName is String && rawFolderName.isNotEmpty)
+              ? rawFolderName
+              : null;
           int folderId;
+
+          Log.i('[BulkInsert] url=$url, folder_name=$rawFolderName, '
+              'nativeFolderId=$nativeFolderId, folderIdMap=$folderIdMap');
 
           if (nativeFolderId != null && folderIdMap.containsKey(nativeFolderId)) {
             folderId = folderIdMap[nativeFolderId]!;
+            Log.i('[BulkInsert] Matched by nativeFolderId: $folderId');
           } else if (folderName != null && folderIdMap.containsKey(folderName)) {
             folderId = folderIdMap[folderName]!;
+            Log.i('[BulkInsert] Matched by folderName in map: $folderId');
           } else if (folderName != null) {
             // 기존 폴더에서 이름으로 검색
             final existingFolder = await txn.query(
@@ -95,11 +103,15 @@ class LocalBulkRepository {
             );
             if (existingFolder.isNotEmpty) {
               folderId = existingFolder.first['id'] as int;
+              Log.i('[BulkInsert] Matched by DB query: $folderId');
             } else {
               folderId = unclassifiedId;
+              Log.i('[BulkInsert] Folder "$folderName" not found in DB, '
+                  'using unclassified: $folderId');
             }
           } else {
             folderId = unclassifiedId;
+            Log.i('[BulkInsert] No folder_name, using unclassified: $folderId');
           }
 
           final now = DateTime.now().toIso8601String();
