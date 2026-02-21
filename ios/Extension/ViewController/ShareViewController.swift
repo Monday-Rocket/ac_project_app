@@ -39,13 +39,6 @@ class ShareViewController: UIViewController {
   
   override func viewDidLoad() {
     super.viewDidLoad()
-
-    // 투명 배경 설정 (시뮬레이터 + 실기기 모두 대응)
-    self.view.backgroundColor = .clear
-    self.navigationController?.view.backgroundColor = .clear
-    self.navigationController?.view.isOpaque = false
-    self.navigationController?.modalPresentationStyle = .overFullScreen
-
     self.getLink()  // link 아니면 에러 팝업으로 이동
     
     self.folderListView.delegate = self
@@ -63,7 +56,20 @@ class ShareViewController: UIViewController {
     NSLog(UserDefaultsHelper.getNewLinks().description)
     NSLog(UserDefaultsHelper.getNewFolders().description)
   }
-  
+
+  override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
+
+    // 시스템이 깔아주는 배경(흰색/검정)을 투명하게 변경
+    var current: UIView? = self.navigationController?.view ?? self.view
+    while let view = current {
+      view.backgroundColor = .clear
+      view.isOpaque = false
+      current = view.superview
+    }
+    self.view.window?.backgroundColor = .clear
+  }
+
   @IBAction func closeWindow(_ sender: Any) {
     self.hideExtensionWithCompletionHandler()
   }
