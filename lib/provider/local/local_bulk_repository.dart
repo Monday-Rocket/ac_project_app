@@ -85,6 +85,19 @@ class LocalBulkRepository {
             folderId = folderIdMap[nativeFolderId]!;
           } else if (folderName != null && folderIdMap.containsKey(folderName)) {
             folderId = folderIdMap[folderName]!;
+          } else if (folderName != null) {
+            // 기존 폴더에서 이름으로 검색
+            final existingFolder = await txn.query(
+              'folder',
+              where: 'name = ?',
+              whereArgs: [folderName],
+              limit: 1,
+            );
+            if (existingFolder.isNotEmpty) {
+              folderId = existingFolder.first['id'] as int;
+            } else {
+              folderId = unclassifiedId;
+            }
           } else {
             folderId = unclassifiedId;
           }

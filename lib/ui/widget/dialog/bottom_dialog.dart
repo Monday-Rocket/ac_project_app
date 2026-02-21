@@ -5,7 +5,6 @@ import 'package:ac_project_app/cubits/folders/folder_name_cubit.dart';
 import 'package:ac_project_app/cubits/folders/folders_state.dart';
 import 'package:ac_project_app/cubits/folders/get_selected_folder_cubit.dart';
 import 'package:ac_project_app/cubits/folders/local_folders_cubit.dart';
-import 'package:ac_project_app/cubits/folders/select_share_mode_cubit.dart';
 import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
@@ -14,7 +13,6 @@ import 'package:ac_project_app/provider/local/local_link_repository.dart';
 import 'package:ac_project_app/provider/check_clipboard_link.dart';
 import 'package:ac_project_app/provider/kakao/kakao.dart';
 import 'package:ac_project_app/routes.dart';
-import 'package:ac_project_app/ui/page/my_folder/folder_visible_state.dart';
 import 'package:ac_project_app/ui/widget/add_folder/folder_add_title.dart';
 import 'package:ac_project_app/ui/widget/add_folder/horizontal_folder_list.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
@@ -353,8 +351,7 @@ BoxDecoration DialogDecoration() {
 void saveEmptyFolder(
     BuildContext context,
     BuildContext parentContext,
-    String folderName,
-    FolderVisibleState visibleState, {
+    String folderName, {
       void Function(BuildContext context, List<Folder> folders, int index)? moveToMyLinksView,
       void Function()? callback,
       bool? hasNotUnclassified,
@@ -362,11 +359,9 @@ void saveEmptyFolder(
   if (folderName.isEmpty) {
     return;
   }
-  final isShareMode = context.read<SelectShareModeCubit>().state;
   final folder = Folder(
     name: folderName,
-    visible: visibleState == FolderVisibleState.visible,
-    shared: isShareMode
+    visible: true,
   );
 
   context.read<FolderNameCubit>().add(folder).then((result) {
@@ -413,7 +408,6 @@ void showFolderOptionsDialog(
     BuildContext parentContext, {
       bool fromLinkView = false,
     }) {
-  final visible = currFolder.visible ?? false;
   showModalBottomSheet<void>(
     backgroundColor: Colors.transparent,
     context: parentContext,
@@ -469,15 +463,6 @@ void showFolderOptionsDialog(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        BottomListItem(
-                          visible ? '비공개로 전환' : '공개로 전환',
-                          callback: () {
-                            changeFolderVisible(
-                              parentContext,
-                              currFolder,
-                            );
-                          },
-                        ),
                         BottomListItem(
                           '폴더명 변경',
                           callback: () {
@@ -782,15 +767,6 @@ void showSharedFolderOptionsDialogInShareFolder(
   ).then((result) {
     if (result ?? false) {
       parentContext.read<LocalFoldersCubit>().getFolders();
-    }
-  });
-}
-
-void changeFolderVisible(BuildContext context, Folder folder) {
-  context.read<LocalFoldersCubit>().transferVisible(folder).then((value) {
-    Navigator.pop(context);
-    if (value) {
-      context.read<GetSelectedFolderCubit>().update(folder.copyWith(visible: !(folder.visible ?? false)));
     }
   });
 }

@@ -113,41 +113,15 @@
             android:textSize="11sp"
             android:visibility="gone"
             tools:visibility="visible"
-            app:layout_constraintBottom_toTopOf="@id/visible_toggle_button"
+            app:layout_constraintBottom_toTopOf="@id/save_folder_button"
             app:layout_constraintStart_toStartOf="parent" />
-
-        <TextView
-            android:id="@+id/folder_visible_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginBottom="26dp"
-            android:fontFamily="@font/pretendard_medium"
-            android:text="@string/invisible_folder"
-            android:textColor="@color/grey800"
-            android:textSize="16sp"
-            app:layout_constraintBottom_toTopOf="@+id/share_mode_layout"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <ToggleButton
-            android:id="@+id/visible_toggle_button"
-            android:layout_width="40dp"
-            android:layout_height="24dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginBottom="24dp"
-            android:background="@drawable/toggle_button"
-            android:text=""
-            android:textOff=""
-            android:textOn=""
-            app:layout_constraintBottom_toTopOf="@+id/share_mode_layout"
-            app:layout_constraintStart_toEndOf="@id/folder_visible_text" />
 
         <Button
             android:id="@+id/save_folder_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="24dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="40dp"
             android:background="@drawable/save_button"
             android:enabled="false"
             android:fontFamily="@font/pretendard_bold"
@@ -159,76 +133,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
-
-        <LinearLayout
-            android:id="@+id/share_mode_layout"
-            android:layout_width="match_parent"
-            android:layout_height="72dp"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toTopOf="@+id/save_folder_button"
-            app:layout_constraintStart_toStartOf="@id/body_layout"
-            app:layout_constraintEnd_toEndOf="@id/body_layout"
-            android:layout_marginBottom="40dp"
-            android:layout_marginHorizontal="24dp">
-
-            <LinearLayout
-                android:id="@+id/not_share_button"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@drawable/share_mode_box_p"
-                android:orientation="vertical"
-                android:gravity="center">
-
-                <ImageView
-                    android:id="@+id/not_share_icon"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/user_alone_p"/>
-
-                <TextView
-                    android:id="@+id/not_share_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:fontFamily="@font/pretendard_bold"
-                    android:text="개인폴더"
-                    android:textColor="@color/primary600"
-                    android:textSize="14sp"/>
-            </LinearLayout>
-
-            <View
-                android:layout_width="8dp"
-                android:layout_height="0dp"/>
-
-            <LinearLayout
-                android:id="@+id/share_button"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@drawable/share_mode_box"
-                android:orientation="vertical"
-                android:gravity="center">
-
-                <ImageView
-                    android:id="@+id/share_icon"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/user_shared"/>
-
-                <TextView
-                    android:id="@+id/share_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:fontFamily="@font/pretendard_bold"
-                    android:text="공유폴더"
-                    android:textColor="@color/grey800"
-                    android:textSize="14sp"/>
-
-            </LinearLayout>
-
-        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

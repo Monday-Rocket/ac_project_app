@@ -404,84 +404,14 @@
                                             </imageView>
                                         </subviews>
                                     </stackView>
-                                    <stackView opaque="NO" contentMode="center" distribution="fillEqually" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="CDc-aT-vE1">
-                                        <rect key="frame" x="24" y="223.66666666666666" width="342" height="74.333333333333343"/>
-                                        <subviews>
-                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="n73-23-wqJ">
-                                                <rect key="frame" x="0.0" y="0.0" width="167" height="74.333333333333329"/>
-                                                <subviews>
-                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="개인폴더" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pEx-Hg-Tv8">
-                                                        <rect key="frame" x="59.333333333333329" y="42" width="48.666666666666671" height="20.333333333333329"/>
-                                                        <fontDescription key="fontDescription" name="Pretendard-Bold" family="Pretendard" pointSize="14"/>
-                                                        <color key="textColor" name="grey800"/>
-                                                        <nil key="highlightedColor"/>
-                                                    </label>
-                                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="user_alone" translatesAutoresizingMaskIntoConstraints="NO" id="1FB-Q7-Zyr">
-                                                        <rect key="frame" x="71.666666666666671" y="12" width="24" height="24"/>
-                                                    </imageView>
-                                                </subviews>
-                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                <constraints>
-                                                    <constraint firstItem="pEx-Hg-Tv8" firstAttribute="centerX" secondItem="n73-23-wqJ" secondAttribute="centerX" id="4Sc-vI-ZnV"/>
-                                                    <constraint firstItem="pEx-Hg-Tv8" firstAttribute="top" secondItem="1FB-Q7-Zyr" secondAttribute="bottom" constant="6" id="GW5-xX-nCX"/>
-                                                    <constraint firstItem="1FB-Q7-Zyr" firstAttribute="centerX" secondItem="n73-23-wqJ" secondAttribute="centerX" id="NK7-OB-Leu"/>
-                                                    <constraint firstAttribute="bottom" secondItem="pEx-Hg-Tv8" secondAttribute="bottom" constant="12" id="m1v-c0-fvv"/>
-                                                    <constraint firstItem="1FB-Q7-Zyr" firstAttribute="top" secondItem="n73-23-wqJ" secondAttribute="top" constant="12" id="qNo-oV-pLb"/>
-                                                </constraints>
-                                                <userDefinedRuntimeAttributes>
-                                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.borderWidth">
-                                                        <integer key="value" value="1"/>
-                                                    </userDefinedRuntimeAttribute>
-                                                    <userDefinedRuntimeAttribute type="color" keyPath="layer.borderColor">
-                                                        <color key="value" name="grey600"/>
-                                                    </userDefinedRuntimeAttribute>
-                                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                                        <integer key="value" value="8"/>
-                                                    </userDefinedRuntimeAttribute>
-                                                </userDefinedRuntimeAttributes>
-                                            </view>
-                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="52o-3t-I0s">
-                                                <rect key="frame" x="175" y="0.0" width="167" height="74.333333333333329"/>
-                                                <subviews>
-                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="공유폴더" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="P69-kZ-6NA">
-                                                        <rect key="frame" x="59.333333333333314" y="42" width="48.666666666666657" height="20.333333333333329"/>
-                                                        <fontDescription key="fontDescription" name="Pretendard-Bold" family="Pretendard" pointSize="14"/>
-                                                        <color key="textColor" name="grey800"/>
-                                                        <nil key="highlightedColor"/>
-                                                    </label>
-                                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="user_shared" translatesAutoresizingMaskIntoConstraints="NO" id="2t1-BQ-WmG">
-                                                        <rect key="frame" x="71.666666666666686" y="12" width="24" height="24"/>
-                                                    </imageView>
-                                                </subviews>
-                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                <constraints>
-                                                    <constraint firstItem="P69-kZ-6NA" firstAttribute="top" secondItem="2t1-BQ-WmG" secondAttribute="bottom" constant="6" id="1Fa-JN-Zkb"/>
-                                                    <constraint firstAttribute="bottom" secondItem="P69-kZ-6NA" secondAttribute="bottom" constant="12" id="ZMw-Wl-ACd"/>
-                                                    <constraint firstItem="P69-kZ-6NA" firstAttribute="centerX" secondItem="52o-3t-I0s" secondAttribute="centerX" id="aaA-Gm-MI6"/>
-                                                    <constraint firstItem="2t1-BQ-WmG" firstAttribute="top" secondItem="52o-3t-I0s" secondAttribute="top" constant="12" id="uzh-81-Fjc"/>
-                                                    <constraint firstItem="2t1-BQ-WmG" firstAttribute="centerX" secondItem="52o-3t-I0s" secondAttribute="centerX" id="yN6-kS-NCh"/>
-                                                </constraints>
-                                                <userDefinedRuntimeAttributes>
-                                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.borderWidth">
-                                                        <integer key="value" value="1"/>
-                                                    </userDefinedRuntimeAttribute>
-                                                    <userDefinedRuntimeAttribute type="color" keyPath="layer.borderColor">
-                                                        <color key="value" name="grey600"/>
-                                                    </userDefinedRuntimeAttribute>
-                                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                                        <integer key="value" value="8"/>
-                                                    </userDefinedRuntimeAttribute>
-                                                </userDefinedRuntimeAttributes>
-                                            </view>
-                                        </subviews>
-                                    </stackView>
+
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="trailing" secondItem="1To-gm-Ap5" secondAttribute="trailing" constant="22" id="1Mn-y0-209"/>
                                     <constraint firstAttribute="trailing" secondItem="kSq-r6-dAB" secondAttribute="trailing" constant="24" id="3kj-6Z-5Yc"/>
                                     <constraint firstItem="Sg0-pJ-FCw" firstAttribute="top" relation="greaterThanOrEqual" secondItem="IVc-T7-frN" secondAttribute="bottom" constant="32" id="4QK-rh-SgU"/>
-                                    <constraint firstItem="CDc-aT-vE1" firstAttribute="top" secondItem="IVc-T7-frN" secondAttribute="bottom" constant="24" id="6Jx-tQ-lMp"/>
+
                                     <constraint firstItem="1To-gm-Ap5" firstAttribute="centerY" secondItem="eIA-y4-2YF" secondAttribute="centerY" id="AkI-qw-pXU"/>
                                     <constraint firstAttribute="bottom" secondItem="Sg0-pJ-FCw" secondAttribute="bottom" constant="34" id="Edl-aN-GrZ"/>
                                     <constraint firstItem="eIA-y4-2YF" firstAttribute="top" secondItem="4Xh-EY-Oxr" secondAttribute="top" constant="30" id="FvD-fo-j5H"/>
@@ -492,14 +422,14 @@
                                     <constraint firstItem="g6s-qd-bKi" firstAttribute="leading" secondItem="IVc-T7-frN" secondAttribute="leading" id="WHw-5q-ydY"/>
                                     <constraint firstItem="g6s-qd-bKi" firstAttribute="top" secondItem="kSq-r6-dAB" secondAttribute="bottom" constant="16" id="Wos-jp-ezR"/>
                                     <constraint firstItem="IVc-T7-frN" firstAttribute="top" secondItem="g6s-qd-bKi" secondAttribute="bottom" constant="16" id="bRw-gC-nTn"/>
-                                    <constraint firstItem="Sg0-pJ-FCw" firstAttribute="top" relation="greaterThanOrEqual" secondItem="CDc-aT-vE1" secondAttribute="bottom" constant="40" id="chc-mk-3pj"/>
+
                                     <constraint firstAttribute="height" constant="428" id="dbP-fr-pGG"/>
                                     <constraint firstItem="kSq-r6-dAB" firstAttribute="leading" secondItem="4Xh-EY-Oxr" secondAttribute="leading" constant="24" id="fVx-r7-Tj9"/>
-                                    <constraint firstAttribute="trailing" secondItem="CDc-aT-vE1" secondAttribute="trailing" constant="24" id="gbJ-Nd-n9U"/>
+
                                     <constraint firstAttribute="trailing" secondItem="Sg0-pJ-FCw" secondAttribute="trailing" constant="24" id="kyu-HL-E1D"/>
                                     <constraint firstItem="eIA-y4-2YF" firstAttribute="centerX" secondItem="4Xh-EY-Oxr" secondAttribute="centerX" id="woh-Mz-f25"/>
                                     <constraint firstItem="o71-Kz-ZJU" firstAttribute="leading" secondItem="4Xh-EY-Oxr" secondAttribute="leading" constant="20" id="xCO-7z-JMu"/>
-                                    <constraint firstItem="CDc-aT-vE1" firstAttribute="leading" secondItem="4Xh-EY-Oxr" secondAttribute="leading" constant="24" id="xm8-n6-EaO"/>
+
                                 </constraints>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
@@ -527,9 +457,7 @@
                     </view>
                     <navigationItem key="navigationItem" id="BVG-30-g9N"/>
                     <connections>
-                        <outlet property="aloneIcon" destination="1FB-Q7-Zyr" id="grX-fu-LrY"/>
-                        <outlet property="aloneText" destination="pEx-Hg-Tv8" id="zTI-zQ-nT8"/>
-                        <outlet property="aloneView" destination="n73-23-wqJ" id="KqR-be-FMA"/>
+
                         <outlet property="backButton" destination="o71-Kz-ZJU" id="Lh0-5F-fzT"/>
                         <outlet property="backgroundView" destination="MUp-UR-8Dp" id="xZ9-hx-Ju0"/>
                         <outlet property="errorText" destination="g6s-qd-bKi" id="raj-Tg-DQd"/>
@@ -538,10 +466,6 @@
                         <outlet property="layoutView" destination="4Xh-EY-Oxr" id="WXg-zn-bvj"/>
                         <outlet property="newFolderNameField" destination="kSq-r6-dAB" id="nE6-sI-uOA"/>
                         <outlet property="secondSaveButton" destination="1To-gm-Ap5" id="Dyq-cA-1bj"/>
-                        <outlet property="shareIcon" destination="2t1-BQ-WmG" id="TiQ-OH-XBh"/>
-                        <outlet property="shareText" destination="P69-kZ-6NA" id="qle-gT-Jgc"/>
-                        <outlet property="sharedView" destination="52o-3t-I0s" id="yj2-k2-UjS"/>
-                        <outlet property="visibleToggleButton" destination="Xoa-fc-uU0" id="8fR-JD-jjg"/>
                         <segue destination="X46-ny-z55" kind="show" identifier="saveSuccessSegue" id="9Bv-zS-hgp"/>
                     </connections>
                 </viewController>

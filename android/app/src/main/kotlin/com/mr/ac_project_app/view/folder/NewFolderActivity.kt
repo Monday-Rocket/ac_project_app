@@ -15,7 +15,6 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -36,8 +35,6 @@ class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
 
     private lateinit var callback: OnBackPressedCallback
     private lateinit var binding: ActivityNewFolderBinding
-    private var folderVisibility = true
-    private var shareMode = false
 
     private val viewModel: NewFolderViewModel by viewModels()
 
@@ -75,10 +72,6 @@ class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
             }
         }
 
-        binding.visibleToggleButton.setOnClickListener {
-            folderVisibility = !folderVisibility
-        }
-
         binding.saveFolderButton.setOnClickListener {
 
             val link = intent.getStringExtra("link") ?: ""
@@ -87,9 +80,7 @@ class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
             val saveResult = viewModel.saveNewFolder(
                 binding.folderNameEditText.text.toString(),
                 link,
-                folderVisibility,
-                imageLink,
-                shareMode
+                imageLink
             )
 
             if (saveResult) {
@@ -100,7 +91,7 @@ class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
                     FolderModel.create(
                         imageLink,
                         folderName,
-                        folderVisibility
+                        true
                     )
                 )
                 movingIntent.putExtra("saveType", SaveType.New)
@@ -121,17 +112,6 @@ class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
             }
         }
 
-        onSelectAloneMode()
-
-        binding.notShareButton.setOnClickListener {
-            onSelectAloneMode()
-            shareMode = false
-        }
-
-        binding.shareButton.setOnClickListener {
-            onSelectShareMode()
-            shareMode = true
-        }
     }
 
     override fun dispatchTouchEvent(event: MotionEvent?): Boolean {
@@ -238,25 +218,4 @@ class NewFolderActivity : FragmentActivity(), ConfirmDialogInterface {
         finishAffinity()
     }
 
-    fun onSelectAloneMode() {
-        binding.notShareButton.background = AppCompatResources.getDrawable(this, R.drawable.share_mode_box_p)
-        binding.shareButton.background = AppCompatResources.getDrawable(this, R.drawable.share_mode_box)
-
-        binding.notShareIcon.setImageResource(R.drawable.user_alone_p)
-        binding.shareIcon.setImageResource(R.drawable.user_shared)
-
-        binding.notShareText.setTextColor(getColor(R.color.primary600))
-        binding.shareText.setTextColor(getColor(R.color.grey800))
-    }
-
-    fun onSelectShareMode() {
-        binding.notShareButton.background = AppCompatResources.getDrawable(this, R.drawable.share_mode_box)
-        binding.shareButton.background = AppCompatResources.getDrawable(this, R.drawable.share_mode_box_p)
-
-        binding.notShareIcon.setImageResource(R.drawable.user_alone)
-        binding.shareIcon.setImageResource(R.drawable.user_shared_p)
-
-        binding.notShareText.setTextColor(getColor(R.color.grey800))
-        binding.shareText.setTextColor(getColor(R.color.primary600))
-    }
 }

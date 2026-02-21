@@ -120,9 +120,21 @@ class ShareDB {
           'time': folder.time,
         });
       }
+      await db.close();
       return true;
     } catch (e) {
       Log.e(e.toString());
+      return false;
+    }
+  }
+
+  /// 로컬 DB 폴더를 share.db에 전체 동기화
+  static Future<bool> syncFolders(List<Folder> folders) async {
+    try {
+      await deleteAllFolder();
+      return loadData(folders);
+    } catch (e) {
+      Log.e('syncFolders error: $e');
       return false;
     }
   }

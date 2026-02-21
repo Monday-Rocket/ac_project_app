@@ -2,11 +2,9 @@ import 'dart:io';
 
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/folders/folder_name_cubit.dart';
-import 'package:ac_project_app/cubits/folders/folder_visible_cubit.dart';
 import 'package:ac_project_app/cubits/folders/local_folders_cubit.dart';
 import 'package:ac_project_app/cubits/common/button_state_cubit.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
-import 'package:ac_project_app/ui/page/my_folder/folder_visible_state.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/text/custom_font.dart';
 import 'package:ac_project_app/util/logger.dart';
@@ -36,9 +34,6 @@ Future<String?> showRenameFolderDialog(
           ),
           BlocProvider(
             create: (_) => FolderNameCubit(),
-          ),
-          BlocProvider(
-            create: (_) => FolderVisibleCubit(),
           ),
           BlocProvider(
             create: (_) => LocalFoldersCubit(),
@@ -78,9 +73,8 @@ Padding _buildDialogBody(
       right: 24.w,
       bottom: MediaQuery.of(context).viewInsets.bottom + 16.w,
     ),
-    child: BlocBuilder<FolderVisibleCubit, FolderVisibleState>(
-      builder: (context, visibleState) {
-        return Column(
+    child: Builder(
+      builder: (context) => Column(
           children: [
             Stack(
               children: [
@@ -251,8 +245,7 @@ Padding _buildDialogBody(
               },
             ),
           ],
-        );
-      },
+      ),
     ),
   );
 }

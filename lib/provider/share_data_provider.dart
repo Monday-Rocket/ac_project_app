@@ -4,7 +4,9 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:ac_project_app/di/set_up_get_it.dart';
+import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/provider/local/local_bulk_repository.dart';
+import 'package:ac_project_app/provider/local/local_folder_repository.dart';
 import 'package:ac_project_app/provider/share_db.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:ac_project_app/util/string_utils.dart';
@@ -134,16 +136,29 @@ class ShareDataProvider {
     }
   }
 
-  /// @deprecated 오프라인 모드에서는 사용하지 않음
-  /// 서버 폴더 데이터를 ShareDB에 로드 (레거시)
-  @Deprecated('Use OfflineMigrationService.migrateToLocal() instead')
-  static void loadServerData() {
-    Log.i('loadServerData is deprecated in offline mode');
-  }
+  /// 로컬 DB의 폴더 목록을 share.db에 동기화
+  /// 네이티브 공유 화면에서 폴더 목록을 표시하기 위해 사용
+  static Future<void> syncFoldersToShareDB() async {
+    try {
+      final folderRepo = getIt<LocalFolderRepository>();
+      final localFolders = await folderRepo.getAllFolders();
 
-  /// @deprecated 오프라인 모드에서는 사용하지 않음
-  @Deprecated('Use OfflineMigrationService.migrateToLocal() instead')
-  static void loadServerDataAtFirst() {
-    Log.i('loadServerDataAtFirst is deprecated in offline mode');
+      final folders = localFolders
+          .where((f) => f.isClassified)
+          .map(
+            (f) => Folder(
+              name: f.name,
+              visible: true,
+              thumbnail: f.thumbnail,
+              time: f.createdAt,
+            ),
+          )
+          .toList();
+
+      await ShareDB.syncFolders(folders);
+      Log.i('share.db 동기화 완료: ${folders.length}개 폴더');
+    } catch (e) {
+      Log.e('share.db 동기화 실패: $e');
+    }
   }
 }

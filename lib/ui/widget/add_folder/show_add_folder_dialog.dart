@@ -2,12 +2,8 @@ import 'dart:io';
 
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/folders/folder_name_cubit.dart';
-import 'package:ac_project_app/cubits/folders/folder_visible_cubit.dart';
-import 'package:ac_project_app/cubits/folders/select_share_mode_cubit.dart';
 import 'package:ac_project_app/cubits/common/button_state_cubit.dart';
-import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
-import 'package:ac_project_app/ui/page/my_folder/folder_visible_state.dart';
 import 'package:ac_project_app/ui/widget/dialog/bottom_dialog.dart';
 import 'package:ac_project_app/ui/widget/text/custom_font.dart';
 import 'package:ac_project_app/util/logger.dart';
@@ -15,7 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 Future<bool?> showAddFolderDialog(
   BuildContext parentContext, {
@@ -35,8 +30,6 @@ Future<bool?> showAddFolderDialog(
         providers: [
           BlocProvider(create: (_) => ButtonStateCubit()),
           BlocProvider(create: (_) => FolderNameCubit()),
-          BlocProvider(create: (_) => FolderVisibleCubit()),
-          BlocProvider(create: (_) => SelectShareModeCubit()),
         ],
         child: Wrap(
           children: [
@@ -83,9 +76,8 @@ Padding _buildDialogBody(
       right: 24.w,
       bottom: MediaQuery.of(context).viewInsets.bottom + 16.w,
     ),
-    child: BlocBuilder<FolderVisibleCubit, FolderVisibleState>(
-      builder: (context, visibleState) {
-        return Column(
+    child: Builder(
+      builder: (context) => Column(
           children: [
             Stack(
               children: [
@@ -101,7 +93,6 @@ Padding _buildDialogBody(
                           context,
                           parentContext,
                           context.read<FolderNameCubit>().state,
-                          visibleState,
                           moveToMyLinksView: moveToMyLinksView,
                           callback: callback,
                           hasNotUnclassified: hasNotUnclassified,
@@ -198,7 +189,6 @@ Padding _buildDialogBody(
                           context,
                           parentContext,
                           value,
-                          visibleState,
                           moveToMyLinksView: moveToMyLinksView,
                           callback: callback,
                           hasNotUnclassified: hasNotUnclassified,
@@ -208,102 +198,6 @@ Padding _buildDialogBody(
                   ),
                 ),
               ],
-            ),
-            Container(
-              margin: EdgeInsets.only(top: 16.w),
-              child: Row(
-                children: [
-                  Text(
-                    '비공개 폴더',
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w500,
-                      color: grey800,
-                    ),
-                  ),
-                  SizedBox(
-                    width: 10.w,
-                  ),
-                  InkWell(
-                    onTap: context.read<FolderVisibleCubit>().toggle,
-                    child: visibleState == FolderVisibleState.invisible
-                        ? SvgPicture.asset(
-                            Assets.images.toggleOn,
-                          )
-                        : SvgPicture.asset(
-                            Assets.images.toggleOff,
-                          ),
-                  ),
-                ],
-              ),
-            ),
-            24.verticalSpace,
-            BlocBuilder<SelectShareModeCubit, bool>(
-              builder: (context, isShare) {
-                return Row(
-                  spacing: 8,
-                  children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          context.read<SelectShareModeCubit>().selectPrivateMode();
-                        },
-                        child: Container(
-                          height: 72,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: !isShare ? primary600 : grey600, width: !isShare ? 1 : 0.5),
-                            borderRadius: const BorderRadius.all(Radius.circular(8)),
-                            color: !isShare ? secondary100 : Colors.white
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              (!isShare ? Assets.images.userAloneP : Assets.images.userAlone).image(width: 24, height: 24),
-                              6.verticalSpace,
-                              Text('개인폴더',
-                                style: TextStyle(
-                                  fontSize: 14.sp,
-                                  fontWeight: FontWeight.w600,
-                                  color: !isShare ? primary600 : grey800,
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          context.read<SelectShareModeCubit>().selectShareMode();
-                        },
-                        child: Container(
-                          height: 72,
-                          decoration: BoxDecoration(
-                              border: Border.all(color: isShare ? primary600 : grey600, width: isShare ? 1 : 0.5),
-                              borderRadius: const BorderRadius.all(Radius.circular(8)),
-                              color: isShare ? secondary100 : Colors.white
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              (isShare ? Assets.images.userSharedP : Assets.images.userShared).image(width: 24, height: 24),
-                              6.verticalSpace,
-                              Text('공유폴더',
-                                style: TextStyle(
-                                  fontSize: 14.sp,
-                                  fontWeight: FontWeight.w600,
-                                  color: isShare ? primary600 : grey800,
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-              },
             ),
             BlocBuilder<ButtonStateCubit, ButtonState>(
               builder: (context, state) {
@@ -326,7 +220,6 @@ Padding _buildDialogBody(
                               context,
                               parentContext,
                               context.read<FolderNameCubit>().state,
-                              visibleState,
                               moveToMyLinksView: moveToMyLinksView,
                               callback: callback,
                               hasNotUnclassified: hasNotUnclassified,
@@ -346,8 +239,7 @@ Padding _buildDialogBody(
               },
             ),
           ],
-        );
-      },
+      ),
     ),
   );
 }

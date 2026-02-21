@@ -4,6 +4,7 @@ import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/gen/fonts.gen.dart';
 import 'package:ac_project_app/initial_settings.dart';
+import 'package:ac_project_app/provider/share_data_provider.dart';
 import 'package:ac_project_app/provider/share_db.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,7 @@ Future<void> main() async {
   await initSettings();
   await ShareDB.initSqflite();
   locator();
+  await ShareDataProvider.syncFoldersToShareDB();
   runApp(const MyApp());
 }
 

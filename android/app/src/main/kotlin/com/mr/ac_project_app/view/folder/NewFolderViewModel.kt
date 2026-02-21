@@ -15,9 +15,9 @@ class NewFolderViewModel(application: Application): AndroidViewModel(application
     private var dbHelper: ShareDbHelper = ShareDbHelper(context = getApplication<Application>().applicationContext)
 
     @SuppressLint("UseKtx")
-    fun saveNewFolder(name: String, link: String, visible: Boolean, imageLink: String, shareMode: Boolean): Boolean {
+    fun saveNewFolder(name: String, link: String, imageLink: String): Boolean {
 
-        val result = ShareDBFunctions.saveNewFolder(dbHelper, name, visible, imageLink)
+        val result = ShareDBFunctions.saveNewFolder(dbHelper, name, true, imageLink)
         if (result) {
             val context = getApplication<Application>().applicationContext
 
@@ -25,9 +25,8 @@ class NewFolderViewModel(application: Application): AndroidViewModel(application
             with(newFolders.edit()) {
                 val json = JSONObject()
                 json.put("name", name)
-                json.put("visible", visible)
+                json.put("visible", true)
                 json.put("created_at", getCurrentDateTime())
-                json.put("share_mode", shareMode)
 
                 val set = HashSet(newFolders.getStringSet("new_folders", HashSet())!!)
                 set.add(json.convert())
