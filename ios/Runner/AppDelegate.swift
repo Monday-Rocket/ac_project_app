@@ -3,19 +3,24 @@ import Flutter
 import app_links
 
 @main
-@objc class AppDelegate: FlutterAppDelegate {
-  
+@objc class AppDelegate: FlutterAppDelegate, FlutterImplicitEngineDelegate {
+
   override func application(
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
+    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+  }
 
-    let controller : FlutterViewController = window?.rootViewController as! FlutterViewController
+  func didInitializeImplicitFlutterEngine(_ engineBridge: FlutterImplicitEngineBridge) {
+    GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
+
+    let messenger = engineBridge.applicationRegistrar.messenger()
     let localPathChannel = FlutterMethodChannel(name: "share_data_provider",
-                                                binaryMessenger: controller.binaryMessenger)
+                                                binaryMessenger: messenger)
     localPathChannel.setMethodCallHandler({
       (call: FlutterMethodCall, result: @escaping FlutterResult) -> Void in
-      
+
       if (call.method == "getNewLinks") {
         let data = self.getNewLinks()
         result(data)
@@ -31,14 +36,10 @@ import app_links
       } else {
         result(FlutterMethodNotImplemented)
       }
-      
-    })
 
-    GeneratedPluginRegistrant.register(with: self)
-      
-    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+    })
   }
-  
+
   override func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
     if url.absoluteString.hasPrefix("kakao"){
       super.application(app, open:url, options: options)
@@ -48,49 +49,49 @@ import app_links
       return true
     }
   }
-  
+
   func getNewLinks() -> Dictionary<String, Any> {
     let linkStorage = UserDefaults(suiteName: "group.com.mr.acProjectApp.Share.new_links")!
     let keyList = linkStorage.dictionaryRepresentation().keys.sorted()
-    
+
     var dict = Dictionary<String, Any>()
-    
+
     for keyData in keyList {
       let key = keyData.description
       if key.contains("http") {
         dict[key] = linkStorage.object(forKey: keyData.description)
       }
     }
-    
+
     return dict
   }
-  
+
   func getNewFolders() -> [Any] {
     let folderStorage = UserDefaults(suiteName: "group.com.mr.acProjectApp.Share.new_folders")!
     return folderStorage.array(forKey: "new_folders") ?? []
   }
-  
+
   func getShareDBUrl() -> String? {
-    
+
     let fileContainer = FileManager
       .default
       .containerURL(
         forSecurityApplicationGroupIdentifier: "group.com.mr.acProjectApp.Share"
       )
-    
+
     let path = fileContainer?.path
     NSLog("🍀 \(path!)")
     return path
   }
-  
+
   func clearData() -> Bool {
     let folderStorage = UserDefaults(suiteName: "group.com.mr.acProjectApp.Share.new_folders")!
     let linkStorage = UserDefaults(suiteName: "group.com.mr.acProjectApp.Share.new_links")!
-    
+
     folderStorage.removeObject(forKey: "new_folders")
     linkStorage.dictionaryRepresentation().keys.forEach(linkStorage.removeObject(forKey:))
-    
+
     return true
   }
-  
+
 }
