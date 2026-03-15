@@ -52,9 +52,6 @@ class Pages {
       case Routes.sharedLinkSetting:
         return router.create(child: const SharedLinkSettingView());
       default:
-        if (settings.name != null && ((settings.name?.startsWith('linkpool://') ?? false) || (settings.name?.startsWith('kakao') ?? false))) {
-          return router.create(child: const SplashView());
-        }
         return null;
     }
   }

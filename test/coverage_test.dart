@@ -39,7 +39,6 @@ import 'package:ac_project_app/models/report/report_result_type.dart';
 import 'package:ac_project_app/models/report/report_type.dart';
 import 'package:ac_project_app/models/result.dart';
 import 'package:ac_project_app/models/tutorial/tutorial.dart';
-import 'package:ac_project_app/provider/kakao/kakao.dart';
 import 'package:ac_project_app/provider/local/database_helper.dart';
 import 'package:ac_project_app/provider/local/local_bulk_repository.dart';
 import 'package:ac_project_app/provider/local/local_folder_repository.dart';

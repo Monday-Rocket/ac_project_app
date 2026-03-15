@@ -35,8 +35,6 @@ if (signingPropertiesFile.exists()) {
 def _keyAlias = signingProperties.getProperty('key.alias')
 def _keyPassword = signingProperties.getProperty('key.password')
 def _storePassword = signingProperties.getProperty('store.password')
-def kakaoApiKey = signingProperties.getProperty('kakao.api.key')
-
 android {
     compileSdk 36
     ndkVersion = "28.2.13676358"
@@ -64,7 +62,6 @@ android {
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         ndk.debugSymbolLevel 'FULL'
-        manifestPlaceholders.KAKAO_API_KEY = kakaoApiKey
     }
 
     buildFeatures {

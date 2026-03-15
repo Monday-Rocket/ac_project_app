@@ -1,6 +1,5 @@
 import UIKit
 import Flutter
-import app_links
 
 @main
 @objc class AppDelegate: FlutterAppDelegate, FlutterImplicitEngineDelegate {
@@ -41,13 +40,7 @@ import app_links
   }
 
   override func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
-    if url.absoluteString.hasPrefix("kakao"){
-      super.application(app, open:url, options: options)
-      return true
-    } else {
-      AppLinks.shared.handleLink(url: url)
-      return true
-    }
+    return super.application(app, open: url, options: options)
   }
 
   func getNewLinks() -> Dictionary<String, Any> {

@@ -9,16 +9,11 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 
 // https://www.youtube.com/watch?v=Akt91Cl_z00&ab_channel=%EC%98%A4%EC%A4%80%EC%84%9D%EC%9D%98%EC%83%9D%EC%A1%B4%EC%BD%94%EB%94%A9
 Future<void> initSettings() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load();
-
-  KakaoSdk.init(
-    nativeAppKey: dotenv.env['KAKAO_API_KEY'],
-  );
 
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(

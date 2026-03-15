@@ -1,12 +1,9 @@
-import 'dart:async';
-
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/folders/local_folders_cubit.dart';
 import 'package:ac_project_app/cubits/home_view_cubit.dart';
 import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/provider/share_data_provider.dart';
-import 'package:ac_project_app/provider/kakao/kakao.dart';
 import 'package:ac_project_app/provider/manager/app_pause_manager.dart';
 import 'package:ac_project_app/ui/page/home/local_explore_page.dart';
 import 'package:ac_project_app/ui/page/my_folder/my_folder_page.dart';
@@ -16,7 +13,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:kakao_flutter_sdk_share/kakao_flutter_sdk_share.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -33,23 +29,12 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     saveLinksFromOutside();
-    processAfterGetContext();
-    // 오프라인 모드: 공유 폴더 초대 링크 기능 비활성화
-    // receiveInviteLink();
     super.initState();
   }
 
   void saveLinksFromOutside() {
     ShareDataProvider.bulkSaveToLocal().then((value) {
       setState(() {});
-    });
-  }
-
-  void processAfterGetContext() {
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-      final url = await receiveKakaoScheme();
-      if (!mounted) return;
-      Kakao.receiveLink(context, url: url);
     });
   }
 
@@ -68,7 +53,6 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
       resetResumeState();
       appPauseManager.showPopupIfPaused(context);
       ShareDataProvider.bulkSaveToLocal();
-      Kakao.receiveLink(context);
     }
   }
 

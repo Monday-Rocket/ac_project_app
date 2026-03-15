@@ -33,19 +33,12 @@ dependencies:
   firebase_database: ^11.3.6
   firebase_crashlytics: ^4.3.6
 
-  kakao_flutter_sdk_user: ^1.9.7+3
   flutter_dotenv: ^6.0.0
 
   firebase_auth_mocks: ^0.14.1
 
-  # app link
-  app_links: ^7.0.0
-
   ## UI Sizer
   flutter_screenutil: ^5.9.0
-
-  ## kakao_share
-  kakao_flutter_sdk_share: ^1.9.7+3
 
   ## Utils
   metadata_fetch:

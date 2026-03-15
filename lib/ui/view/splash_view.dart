@@ -3,13 +3,11 @@ import 'dart:async';
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
-import 'package:ac_project_app/provider/global_variables.dart';
 import 'package:ac_project_app/provider/tutorial_provider.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/dialog/center_dialog.dart';
 import 'package:ac_project_app/provider/manager/app_pause_manager.dart';
 import 'package:ac_project_app/util/logger.dart';
-import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -26,17 +24,11 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
   late AnimationController firstAnimationController;
   late AnimationController secondAnimationController;
 
-  StreamSubscription<Uri>? receiveStreamSubscription;
-
   @override
   void initState() {
     setAnimationController();
     _navigateAfterAnimation();
     super.initState();
-    receiveStreamSubscription = AppLinks().uriLinkStream.listen((uri) {
-      Log.i('Received in SplashView dynamic link: $uri');
-      appLinkUrl = uri.toString();
-    });
   }
 
   void _navigateAfterAnimation() {
