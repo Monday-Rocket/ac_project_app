@@ -29,13 +29,10 @@ dependencies:
   sign_in_with_apple: ^7.0.1
   google_sign_in: ^7.2.0
   firebase_core: ^3.13.1
-  firebase_auth: ^5.5.4
   firebase_database: ^11.3.6
   firebase_crashlytics: ^4.3.6
 
   flutter_dotenv: ^6.0.0
-
-  firebase_auth_mocks: ^0.14.1
 
   ## UI Sizer
   flutter_screenutil: ^5.9.0
@@ -57,7 +54,6 @@ dependencies:
   carousel_slider: ^5.0.0
   lottie:
   flutter_slidable: ^4.0.3
-  firebase_storage:
 
   ## lint
   very_good_analysis: ^10.2.0
@@ -70,7 +66,6 @@ dependencies:
   shared_preferences: ^2.5.3
 
   ## for Test Functions
-  flutter_signin_button: ^2.0.0
   freezed_annotation: ^3.1.0
 
   ## Web
@@ -81,6 +76,7 @@ dependencies:
   # for mock test
   mockito: ^5.4.4
   build_runner: ^2.4.13
+  supabase_flutter: ^2.12.2
 
 dev_dependencies:
   flutter_test:

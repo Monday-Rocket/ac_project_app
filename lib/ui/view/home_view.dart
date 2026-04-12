@@ -1,7 +1,9 @@
 import 'package:ac_project_app/const/colors.dart';
+import 'package:ac_project_app/cubits/auth/auth_cubit.dart';
 import 'package:ac_project_app/cubits/folders/local_folders_cubit.dart';
 import 'package:ac_project_app/cubits/home_view_cubit.dart';
 import 'package:ac_project_app/di/set_up_get_it.dart';
+import 'package:ac_project_app/provider/auth/auth_repository.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/provider/share_data_provider.dart';
 import 'package:ac_project_app/provider/manager/app_pause_manager.dart';
@@ -74,6 +76,9 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
         ),
         BlocProvider<LocalFoldersCubit>(
           create: (_) => LocalFoldersCubit(),
+        ),
+        BlocProvider<AuthCubit>(
+          create: (_) => AuthCubit(authRepository: getIt<AuthRepository>()),
         ),
       ],
       child: BlocBuilder<HomeViewCubit, int>(

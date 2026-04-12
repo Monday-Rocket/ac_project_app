@@ -9,11 +9,17 @@ import 'package:ac_project_app/provider/share_db.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:oktoast/oktoast.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<void> main() async {
   await initSettings();
+  await Supabase.initialize(
+    url: dotenv.get('SUPABASE_URL'),
+    anonKey: dotenv.get('SUPABASE_ANON_KEY'),
+  );
   await ShareDB.initSqflite();
   locator();
   await ShareDataProvider.syncFoldersToShareDB();

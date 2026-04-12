@@ -1,9 +1,13 @@
 // ignore_for_file: avoid_positional_boolean_parameters, non_constant_identifier_names
 
+import 'dart:io';
+
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/const/strings.dart';
+import 'package:ac_project_app/cubits/auth/auth_cubit.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -33,9 +37,116 @@ class MyPage extends StatelessWidget {
               ),
             ),
           ),
+          _AccountSection(),
           MenuList(context),
         ],
       ),
+    );
+  }
+
+  Widget _AccountSection() {
+    return BlocBuilder<AuthCubit, AuthState>(
+      builder: (context, state) {
+        return Padding(
+          padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.w),
+          child: state.isLoggedIn
+              ? _LoggedInView(context, state)
+              : _LoginButtons(context, state),
+        );
+      },
+    );
+  }
+
+  Widget _LoggedInView(BuildContext context, AuthState state) {
+    return Row(
+      children: [
+        CircleAvatar(
+          radius: 20.w,
+          backgroundColor: grey200,
+          backgroundImage: state.user?.userMetadata?['avatar_url'] != null
+              ? NetworkImage(state.user!.userMetadata!['avatar_url'] as String)
+              : null,
+          child: state.user?.userMetadata?['avatar_url'] == null
+              ? Icon(Icons.person, size: 20.w, color: grey500)
+              : null,
+        ),
+        SizedBox(width: 12.w),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                state.user?.email ?? '',
+                style: TextStyle(fontSize: 14.sp, color: grey900, fontWeight: FontWeight.w600),
+                overflow: TextOverflow.ellipsis,
+              ),
+              if (state.isPro)
+                Text('Pro', style: TextStyle(fontSize: 12.sp, color: primary600, fontWeight: FontWeight.bold)),
+            ],
+          ),
+        ),
+        TextButton(
+          onPressed: () => context.read<AuthCubit>().signOut(),
+          child: Text('로그아웃', style: TextStyle(fontSize: 12.sp, color: grey500)),
+        ),
+      ],
+    );
+  }
+
+  Widget _LoginButtons(BuildContext context, AuthState state) {
+    final isLoading = state.status == AuthStatus.loading;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '로그인하여 Pro 기능을 사용하세요',
+          style: TextStyle(fontSize: 13.sp, color: grey500),
+        ),
+        SizedBox(height: 12.w),
+        SizedBox(
+          width: double.infinity,
+          height: 44.w,
+          child: ElevatedButton.icon(
+            onPressed: isLoading ? null : () => context.read<AuthCubit>().signInWithGoogle(),
+            icon: Icon(Icons.g_mobiledata, size: 24.w),
+            label: Text('Google로 로그인', style: TextStyle(fontSize: 14.sp)),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white,
+              foregroundColor: grey900,
+              elevation: 0,
+              side: BorderSide(color: grey200, width: 1.w),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.w)),
+            ),
+          ),
+        ),
+        if (Platform.isIOS) ...[
+          SizedBox(height: 8.w),
+          SizedBox(
+            width: double.infinity,
+            height: 44.w,
+            child: ElevatedButton.icon(
+              onPressed: isLoading ? null : () => context.read<AuthCubit>().signInWithApple(),
+              icon: Icon(Icons.apple, size: 20.w),
+              label: Text('Apple로 로그인', style: TextStyle(fontSize: 14.sp)),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.black,
+                foregroundColor: Colors.white,
+                elevation: 0,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.w)),
+              ),
+            ),
+          ),
+        ],
+        if (state.errorMessage != null) ...[
+          SizedBox(height: 8.w),
+          Text(
+            state.errorMessage!,
+            style: TextStyle(fontSize: 11.sp, color: Colors.red),
+          ),
+        ],
+        SizedBox(height: 16.w),
+      ],
     );
   }
 
