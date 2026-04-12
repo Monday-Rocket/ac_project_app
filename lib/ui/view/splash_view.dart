@@ -1,13 +1,9 @@
 import 'dart:async';
 
 import 'package:ac_project_app/const/colors.dart';
-import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/provider/tutorial_provider.dart';
 import 'package:ac_project_app/routes.dart';
-import 'package:ac_project_app/ui/widget/dialog/center_dialog.dart';
-import 'package:ac_project_app/provider/manager/app_pause_manager.dart';
-import 'package:ac_project_app/util/logger.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -40,28 +36,7 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
     });
   }
 
-  void moveToNextView() async {
-    // 공지사항 확인 (확인 후 정상 진행)
-    final appPauseManager = getIt<AppPauseManager>();
-    final hasNotice = await appPauseManager.getNotice();
-    Log.i('[Splash] hasNotice: $hasNotice');
-
-    if (hasNotice) {
-      final title = await appPauseManager.getNoticeTitle();
-      final description = await appPauseManager.getNoticeDescription();
-      showPopUp(
-        title: title,
-        content: description,
-        parentContext: context,
-        hasClose: false,
-        callback: () {
-          Navigator.pop(context);
-          _navigateToHome();
-        },
-      );
-      return;
-    }
-
+  void moveToNextView() {
     _navigateToHome();
   }
 

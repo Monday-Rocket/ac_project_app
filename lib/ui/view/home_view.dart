@@ -6,7 +6,6 @@ import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/provider/auth/auth_repository.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/provider/share_data_provider.dart';
-import 'package:ac_project_app/provider/manager/app_pause_manager.dart';
 import 'package:ac_project_app/ui/page/home/local_explore_page.dart';
 import 'package:ac_project_app/ui/page/my_folder/my_folder_page.dart';
 import 'package:ac_project_app/ui/page/my_page/my_page.dart';
@@ -25,7 +24,6 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
   final uploadToolTipButtonKey = GlobalKey();
-  final appPauseManager = getIt<AppPauseManager>();
 
   @override
   void initState() {
@@ -53,7 +51,6 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
     if (state == AppLifecycleState.resumed) {
       if (!resumeState.value) return;
       resetResumeState();
-      appPauseManager.showPopupIfPaused(context);
       ShareDataProvider.bulkSaveToLocal();
     }
   }
@@ -180,11 +177,4 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
     return icons;
   }
 
-  void checkAppPause(BuildContext context) {
-    appPauseManager.showPopupIfPaused(context);
-  }
-
-  // 오프라인 모드: 공유 폴더 초대 링크 기능 비활성화
-  // void receiveInviteLink() { ... }
-  // void processInviteLink(Uri uri) { ... }
 }

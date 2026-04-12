@@ -3,7 +3,6 @@ import 'package:ac_project_app/provider/local/database_helper.dart';
 import 'package:ac_project_app/provider/local/local_bulk_repository.dart';
 import 'package:ac_project_app/provider/local/local_folder_repository.dart';
 import 'package:ac_project_app/provider/local/local_link_repository.dart';
-import 'package:ac_project_app/provider/manager/app_pause_manager.dart';
 import 'package:ac_project_app/provider/sync/sync_repository.dart';
 import 'package:get_it/get_it.dart';
 
@@ -32,8 +31,5 @@ void locator() {
         folderRepo: getIt<LocalFolderRepository>(),
         linkRepo: getIt<LocalLinkRepository>(),
       ),
-    )
-
-    // Manager
-    ..registerLazySingleton(AppPauseManager.new);
+    );
 }
