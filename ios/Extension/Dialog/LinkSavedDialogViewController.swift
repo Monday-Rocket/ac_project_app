@@ -27,7 +27,7 @@ class LinkSavedDialogViewController: UIViewController {
   }
   
   func goToApp() {
-    let urlString = "linkpool://com.mr.acProjectApp"
+    let urlString = "linkpool://"
     
     let url = URL(string: urlString)
     _ = openURL(url!)

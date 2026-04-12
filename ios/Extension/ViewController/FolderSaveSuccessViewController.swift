@@ -97,7 +97,7 @@ class FolderSaveSuccessViewController: UIViewController {
     }
 
     @IBAction func goToApp(_ sender: Any) {
-        guard let url = URL(string: "linkpool://boring-km.dev") else { return }
+        guard let url = URL(string: "linkpool://") else { return }
         if #available(iOS 18, *) {
             _ = openURLFallback(url)   // 새 방식
         } else {
