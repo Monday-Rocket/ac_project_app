@@ -5,6 +5,9 @@ import 'dart:io';
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/const/strings.dart';
 import 'package:ac_project_app/cubits/auth/auth_cubit.dart';
+import 'package:ac_project_app/cubits/links/link_check_cubit.dart';
+import 'package:ac_project_app/di/set_up_get_it.dart';
+import 'package:ac_project_app/provider/local/local_link_repository.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -163,40 +166,36 @@ class MyPage extends StatelessWidget {
       String menuName, {
       bool arrow = true,
       Color color = grey900,
+      IconData? icon,
     }) {
       return InkWell(
         key: Key('menu:$menuName'),
         onTap: () {
           switch (menuName) {
+            case '깨진 링크 체크':
+              _showLinkCheckDialog(context);
+              break;
             case '이용 약관':
-              {
-                launchUrl(
-                  Uri.parse(approveSecondLink),
-                  mode: LaunchMode.externalApplication,
-                );
-                break;
-              }
+              launchUrl(
+                Uri.parse(approveSecondLink),
+                mode: LaunchMode.externalApplication,
+              );
+              break;
             case '개인정보 처리방침':
-              {
-                launchUrl(
-                  Uri.parse(personalInfoLink),
-                  mode: LaunchMode.externalApplication,
-                );
-                break;
-              }
+              launchUrl(
+                Uri.parse(personalInfoLink),
+                mode: LaunchMode.externalApplication,
+              );
+              break;
             case '도움말':
-              {
-                launchUrl(
-                  Uri.parse(helpLink),
-                  mode: LaunchMode.externalApplication,
-                );
-                break;
-              }
+              launchUrl(
+                Uri.parse(helpLink),
+                mode: LaunchMode.externalApplication,
+              );
+              break;
             case '오픈소스 라이센스':
-              {
-                Navigator.pushNamed(context, Routes.ossLicenses);
-                break;
-              }
+              Navigator.pushNamed(context, Routes.ossLicenses);
+              break;
           }
         },
         child: Container(
@@ -205,15 +204,20 @@ class MyPage extends StatelessWidget {
             horizontal: 24.w,
           ),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                menuName,
-                style: TextStyle(
-                  color: color,
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w500,
-                  letterSpacing: -0.2,
+              if (icon != null) ...[
+                Icon(icon, size: 18.w, color: primary700),
+                SizedBox(width: 8.w),
+              ],
+              Expanded(
+                child: Text(
+                  menuName,
+                  style: TextStyle(
+                    color: color,
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: -0.2,
+                  ),
                 ),
               ),
               if (arrow) Icon(Icons.arrow_forward_ios_rounded, size: 16.w),
@@ -226,6 +230,8 @@ class MyPage extends StatelessWidget {
     return Column(
       children: [
         DivisionLine(),
+        MenuItem('깨진 링크 체크', icon: Icons.link_off),
+        DivisionLine(size: 1.w),
         MenuItem('이용 약관'),
         DivisionLine(size: 1.w),
         MenuItem('개인정보 처리방침'),
@@ -236,5 +242,201 @@ class MyPage extends StatelessWidget {
         DivisionLine(),
       ],
     );
+  }
+
+  void _showLinkCheckDialog(BuildContext context) {
+    final cubit = LinkCheckCubit(
+      linkRepository: getIt<LocalLinkRepository>(),
+    );
+
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => BlocProvider.value(
+        value: cubit,
+        child: BlocBuilder<LinkCheckCubit, LinkCheckState>(
+          builder: (context, state) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16.w),
+              ),
+              title: Text(
+                '깨진 링크 체크',
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.bold,
+                  color: grey900,
+                ),
+              ),
+              content: _linkCheckContent(state),
+              actions: _linkCheckActions(context, state, cubit),
+            );
+          },
+        ),
+      ),
+    ).then((_) => cubit.close());
+
+    cubit.checkAllLinks();
+  }
+
+  Widget _linkCheckContent(LinkCheckState state) {
+    if (state.status == LinkCheckStatus.checking) {
+      final progress = state.total > 0 ? state.checked / state.total : 0.0;
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(height: 8.w),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(4.w),
+            child: LinearProgressIndicator(
+              value: progress,
+              minHeight: 8.w,
+              backgroundColor: grey200,
+              valueColor: const AlwaysStoppedAnimation<Color>(primary700),
+            ),
+          ),
+          SizedBox(height: 12.w),
+          Text(
+            state.progressText,
+            style: TextStyle(fontSize: 13.sp, color: grey600),
+          ),
+        ],
+      );
+    }
+
+    if (state.status == LinkCheckStatus.error) {
+      return Text(
+        state.errorMessage ?? '오류가 발생했습니다',
+        style: TextStyle(fontSize: 13.sp, color: redError),
+      );
+    }
+
+    if (state.status == LinkCheckStatus.done) {
+      if (state.brokenLinks.isEmpty) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.check_circle_outline, size: 40.w, color: primary600),
+            SizedBox(height: 8.w),
+            Text(
+              '모든 링크가 정상입니다!',
+              style: TextStyle(fontSize: 14.sp, color: grey700),
+            ),
+          ],
+        );
+      }
+
+      return SizedBox(
+        width: double.maxFinite,
+        height: 240.w,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              state.doneText,
+              style: TextStyle(
+                fontSize: 13.sp,
+                color: redError,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            SizedBox(height: 8.w),
+            Expanded(
+              child: BlocBuilder<LinkCheckCubit, LinkCheckState>(
+                builder: (context, currentState) {
+                  return ListView.separated(
+                    shrinkWrap: true,
+                    itemCount: currentState.brokenLinks.length,
+                    separatorBuilder: (_, __) => SizedBox(height: 4.w),
+                    itemBuilder: (context, index) {
+                      final link = currentState.brokenLinks[index];
+                      return Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 12.w,
+                          vertical: 8.w,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFFF1F1),
+                          borderRadius: BorderRadius.circular(8.w),
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    link.title ?? link.url,
+                                    style: TextStyle(
+                                      fontSize: 12.sp,
+                                      color: grey700,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  Text(
+                                    link.status != null
+                                        ? 'HTTP ${link.status}'
+                                        : '연결 실패',
+                                    style: TextStyle(
+                                      fontSize: 10.sp,
+                                      color: grey500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () => context
+                                  .read<LinkCheckCubit>()
+                                  .deleteBrokenLink(link.linkId),
+                              child: Padding(
+                                padding: EdgeInsets.only(left: 8.w),
+                                child: Text(
+                                  '삭제',
+                                  style: TextStyle(
+                                    fontSize: 12.sp,
+                                    color: redError,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return const SizedBox.shrink();
+  }
+
+  List<Widget> _linkCheckActions(
+    BuildContext context,
+    LinkCheckState state,
+    LinkCheckCubit cubit,
+  ) {
+    if (state.status == LinkCheckStatus.checking) {
+      return [];
+    }
+
+    return [
+      TextButton(
+        onPressed: () => Navigator.of(context).pop(),
+        child: Text(
+          '닫기',
+          style: TextStyle(fontSize: 14.sp, color: grey600),
+        ),
+      ),
+    ];
   }
 }
