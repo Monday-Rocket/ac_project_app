@@ -66,8 +66,21 @@ class LocalFolderRepository {
     return LocalFolder.fromMap(result.first);
   }
 
-  /// 폴더 생성
+  /// 폴더 생성.
+  /// 미분류 폴더는 시스템이 관리하므로 is_classified=false 생성은 금지.
+  /// 미분류 폴더를 부모로 지정하는 것도 금지.
   Future<int> createFolder(LocalFolder folder) async {
+    if (!folder.isClassified) {
+      throw StateError(
+        '미분류 폴더는 시스템이 관리합니다. 수동 생성 불가.',
+      );
+    }
+    if (folder.parentId != null) {
+      await _assertNotUnclassified(
+        folder.parentId!,
+        '미분류 폴더 아래에는 하위 폴더를 만들 수 없습니다.',
+      );
+    }
     final db = await _databaseHelper.database;
     final now = DateTime.now().toIso8601String();
     final map = folder.toMap()
@@ -78,11 +91,15 @@ class LocalFolderRepository {
     return id;
   }
 
-  /// 폴더 업데이트
+  /// 폴더 업데이트. 미분류 폴더는 이름/부모 변경 모두 금지.
   Future<int> updateFolder(LocalFolder folder) async {
     if (folder.id == null) {
       throw ArgumentError('Folder ID cannot be null for update');
     }
+    await _assertNotUnclassified(
+      folder.id!,
+      '미분류 폴더는 수정할 수 없습니다.',
+    );
     final db = await _databaseHelper.database;
     final map = folder.toMap()..['updated_at'] = DateTime.now().toIso8601String();
     final count = await db.update(
@@ -95,8 +112,9 @@ class LocalFolderRepository {
     return count;
   }
 
-  /// 폴더 삭제 (연결된 링크도 CASCADE로 삭제됨)
+  /// 폴더 삭제. 미분류 폴더는 삭제 불가.
   Future<int> deleteFolder(int id) async {
+    await _assertNotUnclassified(id, '미분류 폴더는 삭제할 수 없습니다.');
     final db = await _databaseHelper.database;
     final count = await db.delete(
       _table,
@@ -105,6 +123,22 @@ class LocalFolderRepository {
     );
     Log.i('Deleted folder: $id');
     return count;
+  }
+
+  Future<void> _assertNotUnclassified(int folderId, String message) async {
+    final db = await _databaseHelper.database;
+    final rows = await db.query(
+      _table,
+      columns: ['is_classified'],
+      where: 'id = ?',
+      whereArgs: [folderId],
+      limit: 1,
+    );
+    if (rows.isEmpty) return;
+    final isClassified = (rows.first['is_classified'] as int?) == 1;
+    if (!isClassified) {
+      throw StateError(message);
+    }
   }
 
   /// 폴더 이름으로 검색
@@ -237,10 +271,17 @@ class LocalFolderRepository {
     return counts;
   }
 
-  /// 폴더의 부모 변경. 순환 참조(자기 자신/후손으로 이동) 시 false 반환.
+  /// 폴더의 부모 변경. 다음 경우 false 반환:
+  /// - 자기 자신이나 자기 후손으로 이동 (순환 참조)
+  /// - 미분류 폴더는 이동 불가 (항상 최상위 고정)
+  /// - 미분류 폴더를 새 부모로 지정 (하위 폴더 금지)
   Future<bool> moveFolder(int folderId, int? newParentId) async {
+    final target = await getFolderById(folderId);
+    if (target == null || !target.isClassified) return false;
     if (newParentId != null) {
       if (folderId == newParentId) return false;
+      final parent = await getFolderById(newParentId);
+      if (parent == null || !parent.isClassified) return false;
       final descendants = await getAllDescendants(folderId);
       if (descendants.any((f) => f.id == newParentId)) return false;
     }

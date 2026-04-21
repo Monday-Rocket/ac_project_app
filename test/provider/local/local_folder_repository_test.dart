@@ -335,4 +335,69 @@ void main() {
       expect(names.contains('React'), isFalse);
     });
   });
+
+  group('LocalFolderRepository — unclassified folder is system-managed', () {
+    test('createFolder with is_classified=false throws (only one allowed)',
+        () async {
+      final now = DateTime.now().toIso8601String();
+      expect(
+        () => repository.createFolder(
+          LocalFolder(
+            name: '또 다른 미분류',
+            isClassified: false,
+            createdAt: now,
+            updatedAt: now,
+          ),
+        ),
+        throwsA(isA<StateError>()),
+      );
+    });
+
+    test('createFolder with parent=unclassified is rejected', () async {
+      final unclassified = await repository.getUnclassifiedFolder();
+      final now = DateTime.now().toIso8601String();
+      expect(
+        () => repository.createFolder(
+          LocalFolder(
+            name: '하위',
+            parentId: unclassified!.id,
+            createdAt: now,
+            updatedAt: now,
+          ),
+        ),
+        throwsA(isA<StateError>()),
+      );
+    });
+
+    test('deleteFolder on unclassified is rejected', () async {
+      final unclassified = await repository.getUnclassifiedFolder();
+      expect(
+        () => repository.deleteFolder(unclassified!.id!),
+        throwsA(isA<StateError>()),
+      );
+    });
+
+    test('moveFolder on unclassified is rejected', () async {
+      final unclassified = await repository.getUnclassifiedFolder();
+      final now = DateTime.now().toIso8601String();
+      final otherId = await repository.createFolder(
+        LocalFolder(name: '다른 폴더', createdAt: now, updatedAt: now),
+      );
+
+      final ok = await repository.moveFolder(unclassified!.id!, otherId);
+
+      expect(ok, isFalse);
+      // still at root
+      final roots = await repository.getRootFolders();
+      expect(roots.any((f) => f.id == unclassified.id), isTrue);
+    });
+
+    test('updateFolder rename on unclassified is rejected', () async {
+      final unclassified = await repository.getUnclassifiedFolder();
+      expect(
+        () => repository.updateFolder(unclassified!.copyWith(name: '변경')),
+        throwsA(isA<StateError>()),
+      );
+    });
+  });
 }
