@@ -33,10 +33,6 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     saveLinksFromOutside();
     super.initState();
-    // AuthCubit 프로바이더가 빌드된 후 한 프레임 뒤에 dirty 보정 시도
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) _maybeRunDirtyCorrectionBackup();
-    });
   }
 
   void saveLinksFromOutside() {
@@ -53,6 +49,9 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
 
   final resumeState = ValueNotifier(true);
 
+  /// AuthCubit이 붙어있는 provider 하위 context에서 호출된다는 전제.
+  AuthCubit? _authCubitRef;
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
@@ -61,15 +60,15 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
       ShareDataProvider.bulkSaveToLocal();
 
       // plan 재조회 + 전환 감지 + dirty 시 보정 백업 (Pro)
-      if (mounted) {
-        context.read<AuthCubit>().refreshPlan();
-        _maybeRunDirtyCorrectionBackup();
+      final authCubit = _authCubitRef;
+      if (authCubit != null) {
+        authCubit.refreshPlan();
+        _maybeRunDirtyCorrectionBackup(authCubit);
       }
     }
   }
 
-  Future<void> _maybeRunDirtyCorrectionBackup() async {
-    final authCubit = context.read<AuthCubit>();
+  Future<void> _maybeRunDirtyCorrectionBackup(AuthCubit authCubit) async {
     if (!authCubit.state.isPro) return;
     final sync = getIt<SyncRepository>();
     if (await sync.isDirty()) {
@@ -79,10 +78,10 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
 
   bool _autoRestorePromptShown = false;
 
-  Future<void> _maybeShowAutoRestorePrompt() async {
+  Future<void> _maybeShowAutoRestorePrompt(BuildContext ctx) async {
     if (_autoRestorePromptShown) return;
-    if (!mounted) return;
-    final authCubit = context.read<AuthCubit>();
+
+    final authCubit = ctx.read<AuthCubit>();
     if (!authCubit.state.isPro) return;
 
     final sync = getIt<SyncRepository>();
@@ -91,12 +90,12 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
     if (!localEmpty) return;
     final hasRemote = await sync.hasRemoteBackup();
     if (!hasRemote) return;
-    if (!mounted) return;
+    if (!ctx.mounted) return;
     _autoRestorePromptShown = true;
 
     final ok = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
+      context: ctx,
+      builder: (dialogCtx) => AlertDialog(
         title: Text('백업 발견', style: TextStyle(fontSize: 16.sp)),
         content: Text(
           '계정에 연결된 백업 데이터가 있습니다. 이 기기로 복원할까요?',
@@ -104,11 +103,11 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
+            onPressed: () => Navigator.pop(dialogCtx, false),
             child: const Text('나중에'),
           ),
           TextButton(
-            onPressed: () => Navigator.pop(ctx, true),
+            onPressed: () => Navigator.pop(dialogCtx, true),
             child: const Text('복원'),
           ),
         ],
@@ -117,8 +116,8 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
     if (ok == true) {
       try {
         await sync.restoreFromRemote();
-        if (!mounted) return;
-        context.read<LocalFoldersCubit>().getFolders();
+        if (!ctx.mounted) return;
+        ctx.read<LocalFoldersCubit>().getFolders();
       } catch (_) {
         // 실패는 로그만
       }
@@ -166,14 +165,23 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
           },
         ),
       ],
-      child: BlocListener<AuthCubit, AuthState>(
-        listenWhen: (prev, curr) => prev.isPro != curr.isPro,
-        listener: (context, state) {
-          if (state.isPro) _maybeShowAutoRestorePrompt();
-        },
-        child: BlocBuilder<HomeViewCubit, int>(
-        builder: (context, index) {
-          final icons = getBottomIcons(index);
+      child: Builder(
+        builder: (innerCtx) {
+          // provider 하위 context에서 AuthCubit 레퍼런스 캡처 (lifecycle 훅용)
+          _authCubitRef ??= innerCtx.read<AuthCubit>();
+          // 첫 프레임에 dirty 보정 1회
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            final cubit = _authCubitRef;
+            if (cubit != null) _maybeRunDirtyCorrectionBackup(cubit);
+          });
+          return BlocListener<AuthCubit, AuthState>(
+            listenWhen: (prev, curr) => prev.isPro != curr.isPro,
+            listener: (ctx, state) {
+              if (state.isPro) _maybeShowAutoRestorePrompt(ctx);
+            },
+            child: BlocBuilder<HomeViewCubit, int>(
+              builder: (context, index) {
+                final icons = getBottomIcons(index);
 
           final bottomItems = [
             BottomNavigationBarItem(
@@ -204,6 +212,8 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
           return buildBody(index, bottomItems, context);
         },
       ),
+      );
+        },
       ),
     );
   }
