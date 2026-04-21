@@ -265,190 +265,402 @@ class MyPage extends StatelessWidget {
       barrierDismissible: false,
       builder: (_) => BlocProvider.value(
         value: cubit,
-        child: BlocBuilder<LinkCheckCubit, LinkCheckState>(
-          builder: (context, state) {
-            return AlertDialog(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16.w),
-              ),
-              title: Text(
-                '깨진 링크 체크',
-                style: TextStyle(
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.bold,
-                  color: grey900,
-                ),
-              ),
-              content: _linkCheckContent(state),
-              actions: _linkCheckActions(context, state, cubit),
-            );
-          },
-        ),
+        child: const _LinkCheckDialog(),
       ),
     ).then((_) => cubit.close());
-
-    cubit.checkAllLinks();
   }
+}
 
-  Widget _linkCheckContent(LinkCheckState state) {
-    if (state.status == LinkCheckStatus.checking) {
-      final progress = state.total > 0 ? state.checked / state.total : 0.0;
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SizedBox(height: 8.w),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(4.w),
-            child: LinearProgressIndicator(
-              value: progress,
-              minHeight: 8.w,
-              backgroundColor: grey200,
-              valueColor: const AlwaysStoppedAnimation<Color>(primary700),
+class _LinkCheckDialog extends StatelessWidget {
+  const _LinkCheckDialog();
+
+  @override
+  Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    return BlocBuilder<LinkCheckCubit, LinkCheckState>(
+      builder: (context, state) {
+        final dismissible = state.status != LinkCheckStatus.checking &&
+            state.status != LinkCheckStatus.initial;
+        return PopScope(
+          canPop: dismissible,
+          child: Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16.w),
+            ),
+            backgroundColor: Colors.white,
+            insetPadding: EdgeInsets.symmetric(horizontal: 24.w),
+            child: SizedBox(
+              width: width - 48.w,
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(20.w, 16.w, 20.w, 20.w),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _header(context, dismissible),
+                    SizedBox(height: 14.w),
+                    _LinkCheckBody(state: state),
+                    SizedBox(height: 20.w),
+                    _LinkCheckCta(state: state),
+                  ],
+                ),
+              ),
             ),
           ),
-          SizedBox(height: 12.w),
-          Text(
-            state.progressText,
-            style: TextStyle(fontSize: 13.sp, color: grey600),
+        );
+      },
+    );
+  }
+
+  Widget _header(BuildContext context, bool dismissible) {
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            '깨진 링크 체크',
+            style: TextStyle(
+              fontSize: 18.sp,
+              fontWeight: FontWeight.w700,
+              color: grey900,
+              letterSpacing: -0.2,
+            ),
+          ),
+        ),
+        if (dismissible)
+          GestureDetector(
+            onTap: () => Navigator.of(context).pop(),
+            behavior: HitTestBehavior.opaque,
+            child: Icon(Icons.close_rounded, size: 24.w, color: grey700),
+          ),
+      ],
+    );
+  }
+}
+
+class _LinkCheckBody extends StatelessWidget {
+  const _LinkCheckBody({required this.state});
+
+  final LinkCheckState state;
+
+  @override
+  Widget build(BuildContext context) {
+    switch (state.status) {
+      case LinkCheckStatus.initial:
+      case LinkCheckStatus.checking:
+        return _checking();
+      case LinkCheckStatus.empty:
+        return _empty();
+      case LinkCheckStatus.error:
+        return _error();
+      case LinkCheckStatus.cancelled:
+        return _cancelled();
+      case LinkCheckStatus.done:
+        return state.brokenLinks.isEmpty ? _allOk() : _brokenList(context);
+    }
+  }
+
+  Widget _checking() {
+    final progress = state.total > 0 ? state.checked / state.total : null;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SizedBox(height: 4.w),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(4.w),
+          child: LinearProgressIndicator(
+            value: progress,
+            minHeight: 8.w,
+            backgroundColor: grey200,
+            valueColor: const AlwaysStoppedAnimation<Color>(primary600),
+          ),
+        ),
+        SizedBox(height: 12.w),
+        Text(
+          state.total == 0 ? '링크를 불러오는 중...' : state.progressText,
+          style: TextStyle(fontSize: 14.sp, color: grey500),
+        ),
+      ],
+    );
+  }
+
+  Widget _empty() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 56.w,
+          height: 56.w,
+          decoration: const BoxDecoration(
+            color: primary100,
+            shape: BoxShape.circle,
+          ),
+          child: Icon(Icons.link_off, color: primary600, size: 28.w),
+        ),
+        SizedBox(height: 14.w),
+        Text(
+          '검사할 링크가 없어요',
+          style: TextStyle(
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w700,
+            color: grey900,
+          ),
+        ),
+        SizedBox(height: 6.w),
+        Text(
+          '저장된 링크가 없어서 검사를 건너뛰었어요',
+          style: TextStyle(fontSize: 14.sp, color: grey500),
+          textAlign: TextAlign.center,
+        ),
+      ],
+    );
+  }
+
+  Widget _error() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(Icons.error_outline, color: redError, size: 28.w),
+        SizedBox(height: 10.w),
+        Text(
+          state.errorMessage ?? '오류가 발생했습니다',
+          style: TextStyle(fontSize: 14.sp, color: grey700),
+          textAlign: TextAlign.center,
+        ),
+      ],
+    );
+  }
+
+  Widget _cancelled() {
+    final partial = state.total > 0;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 56.w,
+          height: 56.w,
+          decoration: const BoxDecoration(
+            color: grey200,
+            shape: BoxShape.circle,
+          ),
+          child: Icon(Icons.stop_rounded, color: grey600, size: 28.w),
+        ),
+        SizedBox(height: 14.w),
+        Text(
+          '검사를 중지했어요',
+          style: TextStyle(
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w700,
+            color: grey900,
+          ),
+        ),
+        SizedBox(height: 6.w),
+        Text(
+          partial
+              ? '${state.checked}/${state.total}개까지 확인했어요'
+              : '검사를 시작하지 않았어요',
+          style: TextStyle(fontSize: 14.sp, color: grey500),
+          textAlign: TextAlign.center,
+        ),
+      ],
+    );
+  }
+
+  Widget _allOk() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 56.w,
+          height: 56.w,
+          decoration: const BoxDecoration(
+            color: primary100,
+            shape: BoxShape.circle,
+          ),
+          child: Icon(Icons.check_rounded, color: primary600, size: 30.w),
+        ),
+        SizedBox(height: 14.w),
+        Text(
+          '모든 링크가 정상이에요',
+          style: TextStyle(
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w700,
+            color: grey900,
+          ),
+        ),
+        SizedBox(height: 6.w),
+        Text(
+          '${state.total}개 링크를 검사했어요',
+          style: TextStyle(fontSize: 14.sp, color: grey500),
+        ),
+      ],
+    );
+  }
+
+  Widget _brokenList(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          state.doneText,
+          style: TextStyle(
+            fontSize: 14.sp,
+            color: redError,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        SizedBox(height: 10.w),
+        SizedBox(
+          height: 260.w,
+          child: BlocBuilder<LinkCheckCubit, LinkCheckState>(
+            builder: (context, currentState) {
+              if (currentState.brokenLinks.isEmpty) {
+                return Center(
+                  child: Text(
+                    '모두 정리했어요!',
+                    style: TextStyle(fontSize: 14.sp, color: grey500),
+                  ),
+                );
+              }
+              return ListView.separated(
+                shrinkWrap: true,
+                itemCount: currentState.brokenLinks.length,
+                separatorBuilder: (_, __) => SizedBox(height: 6.w),
+                itemBuilder: (_, index) {
+                  final link = currentState.brokenLinks[index];
+                  return _BrokenLinkTile(link: link);
+                },
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _BrokenLinkTile extends StatelessWidget {
+  const _BrokenLinkTile({required this.link});
+
+  final BrokenLink link;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.w),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFF1F3),
+        borderRadius: BorderRadius.circular(10.w),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  link.title ?? link.url,
+                  style: TextStyle(
+                    fontSize: 13.sp,
+                    color: grey800,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                SizedBox(height: 2.w),
+                Text(
+                  link.status != null ? 'HTTP ${link.status}' : '연결 실패',
+                  style: TextStyle(fontSize: 11.sp, color: grey500),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(width: 8.w),
+          GestureDetector(
+            onTap: () => context
+                .read<LinkCheckCubit>()
+                .deleteBrokenLink(link.linkId),
+            behavior: HitTestBehavior.opaque,
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.w),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(6.w),
+              ),
+              child: Text(
+                '삭제',
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  color: redError,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
           ),
         ],
-      );
-    }
+      ),
+    );
+  }
+}
 
-    if (state.status == LinkCheckStatus.error) {
-      return Text(
-        state.errorMessage ?? '오류가 발생했습니다',
-        style: TextStyle(fontSize: 13.sp, color: redError),
-      );
-    }
+class _LinkCheckCta extends StatelessWidget {
+  const _LinkCheckCta({required this.state});
 
-    if (state.status == LinkCheckStatus.done) {
-      if (state.brokenLinks.isEmpty) {
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.check_circle_outline, size: 40.w, color: primary600),
-            SizedBox(height: 8.w),
-            Text(
-              '모든 링크가 정상입니다!',
-              style: TextStyle(fontSize: 14.sp, color: grey700),
-            ),
-          ],
-        );
-      }
+  final LinkCheckState state;
 
+  @override
+  Widget build(BuildContext context) {
+    final isChecking = state.status == LinkCheckStatus.checking ||
+        state.status == LinkCheckStatus.initial;
+
+    if (isChecking) {
       return SizedBox(
-        width: double.maxFinite,
-        height: 240.w,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              state.doneText,
-              style: TextStyle(
-                fontSize: 13.sp,
-                color: redError,
-                fontWeight: FontWeight.w600,
-              ),
+        width: double.infinity,
+        height: 48.w,
+        child: OutlinedButton(
+          onPressed: () => context.read<LinkCheckCubit>().cancel(),
+          style: OutlinedButton.styleFrom(
+            backgroundColor: Colors.white,
+            side: BorderSide(color: grey300, width: 1.w),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8.w),
             ),
-            SizedBox(height: 8.w),
-            Expanded(
-              child: BlocBuilder<LinkCheckCubit, LinkCheckState>(
-                builder: (context, currentState) {
-                  return ListView.separated(
-                    shrinkWrap: true,
-                    itemCount: currentState.brokenLinks.length,
-                    separatorBuilder: (_, __) => SizedBox(height: 4.w),
-                    itemBuilder: (context, index) {
-                      final link = currentState.brokenLinks[index];
-                      return Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 12.w,
-                          vertical: 8.w,
-                        ),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFFFF1F1),
-                          borderRadius: BorderRadius.circular(8.w),
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    link.title ?? link.url,
-                                    style: TextStyle(
-                                      fontSize: 12.sp,
-                                      color: grey700,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  Text(
-                                    link.status != null
-                                        ? 'HTTP ${link.status}'
-                                        : '연결 실패',
-                                    style: TextStyle(
-                                      fontSize: 10.sp,
-                                      color: grey500,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () => context
-                                  .read<LinkCheckCubit>()
-                                  .deleteBrokenLink(link.linkId),
-                              child: Padding(
-                                padding: EdgeInsets.only(left: 8.w),
-                                child: Text(
-                                  '삭제',
-                                  style: TextStyle(
-                                    fontSize: 12.sp,
-                                    color: redError,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  );
-                },
-              ),
+          ),
+          child: Text(
+            '중지',
+            style: TextStyle(
+              color: grey700,
+              fontSize: 16.sp,
+              fontWeight: FontWeight.bold,
             ),
-          ],
+          ),
         ),
       );
     }
 
-    return const SizedBox.shrink();
-  }
-
-  List<Widget> _linkCheckActions(
-    BuildContext context,
-    LinkCheckState state,
-    LinkCheckCubit cubit,
-  ) {
-    if (state.status == LinkCheckStatus.checking) {
-      return [];
-    }
-
-    return [
-      TextButton(
+    return SizedBox(
+      width: double.infinity,
+      height: 48.w,
+      child: ElevatedButton(
         onPressed: () => Navigator.of(context).pop(),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: primary600,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8.w),
+          ),
+          shadowColor: Colors.transparent,
+        ),
         child: Text(
-          '닫기',
-          style: TextStyle(fontSize: 14.sp, color: grey600),
+          '확인',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 16.sp,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
-    ];
+    );
   }
 }
 
