@@ -1,5 +1,6 @@
 import 'package:ac_project_app/models/local/local_folder.dart';
 import 'package:ac_project_app/provider/local/database_helper.dart';
+import 'package:ac_project_app/provider/sync/pro_remote_hooks.dart';
 import 'package:ac_project_app/util/logger.dart';
 
 class LocalFolderRepository {
@@ -88,6 +89,11 @@ class LocalFolderRepository {
       ..['updated_at'] = now;
     final id = await db.insert(_table, map);
     Log.i('Created folder: $id - ${folder.name}');
+    ProRemoteHooks.onFolderUpserted(folder.copyWith(
+      id: id,
+      createdAt: now,
+      updatedAt: now,
+    ));
     return id;
   }
 
@@ -101,7 +107,8 @@ class LocalFolderRepository {
       '미분류 폴더는 수정할 수 없습니다.',
     );
     final db = await _databaseHelper.database;
-    final map = folder.toMap()..['updated_at'] = DateTime.now().toIso8601String();
+    final now = DateTime.now().toIso8601String();
+    final map = folder.toMap()..['updated_at'] = now;
     final count = await db.update(
       _table,
       map,
@@ -109,12 +116,15 @@ class LocalFolderRepository {
       whereArgs: [folder.id],
     );
     Log.i('Updated folder: ${folder.id} - ${folder.name}');
+    ProRemoteHooks.onFolderUpserted(folder.copyWith(updatedAt: now));
     return count;
   }
 
   /// 폴더 삭제. 미분류 폴더는 삭제 불가.
   Future<int> deleteFolder(int id) async {
     await _assertNotUnclassified(id, '미분류 폴더는 삭제할 수 없습니다.');
+    // CASCADE로 삭제될 후손 폴더 ID 미리 확보 (원격 정리용)
+    final descendants = await getAllDescendants(id);
     final db = await _databaseHelper.database;
     final count = await db.delete(
       _table,
@@ -122,6 +132,9 @@ class LocalFolderRepository {
       whereArgs: [id],
     );
     Log.i('Deleted folder: $id');
+    for (final f in descendants) {
+      if (f.id != null) ProRemoteHooks.onFolderDeleted(f.id!);
+    }
     return count;
   }
 
@@ -158,16 +171,19 @@ class LocalFolderRepository {
   /// 폴더 썸네일 업데이트
   Future<int> updateThumbnail(int folderId, String? thumbnail) async {
     final db = await _databaseHelper.database;
+    final now = DateTime.now().toIso8601String();
     final count = await db.update(
       _table,
       {
         'thumbnail': thumbnail,
-        'updated_at': DateTime.now().toIso8601String(),
+        'updated_at': now,
       },
       where: 'id = ?',
       whereArgs: [folderId],
     );
     Log.i('Updated folder thumbnail: $folderId');
+    final refreshed = await getFolderById(folderId);
+    if (refreshed != null) ProRemoteHooks.onFolderUpserted(refreshed);
     return count;
   }
 
@@ -286,16 +302,21 @@ class LocalFolderRepository {
       if (descendants.any((f) => f.id == newParentId)) return false;
     }
     final db = await _databaseHelper.database;
+    final now = DateTime.now().toIso8601String();
     final count = await db.update(
       _table,
       {
         'parent_id': newParentId,
-        'updated_at': DateTime.now().toIso8601String(),
+        'updated_at': now,
       },
       where: 'id = ?',
       whereArgs: [folderId],
     );
     Log.i('Moved folder: $folderId → parent=$newParentId');
+    if (count > 0) {
+      final refreshed = await getFolderById(folderId);
+      if (refreshed != null) ProRemoteHooks.onFolderUpserted(refreshed);
+    }
     return count > 0;
   }
 }

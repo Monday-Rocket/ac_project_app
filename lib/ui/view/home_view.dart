@@ -6,6 +6,8 @@ import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/provider/auth/auth_repository.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/provider/share_data_provider.dart';
+import 'package:ac_project_app/provider/sync/pro_remote_hooks.dart';
+import 'package:ac_project_app/provider/sync/sync_repository.dart';
 import 'package:ac_project_app/ui/page/home/local_explore_page.dart';
 import 'package:ac_project_app/ui/page/my_folder/my_folder_page.dart';
 import 'package:ac_project_app/ui/page/my_page/my_page.dart';
@@ -30,6 +32,10 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     saveLinksFromOutside();
     super.initState();
+    // AuthCubit 프로바이더가 빌드된 후 한 프레임 뒤에 dirty 보정 시도
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _maybeRunDirtyCorrectionBackup();
+    });
   }
 
   void saveLinksFromOutside() {
@@ -52,7 +58,33 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
       if (!resumeState.value) return;
       resetResumeState();
       ShareDataProvider.bulkSaveToLocal();
+
+      // plan 재조회 + 전환 감지 + dirty 시 보정 백업 (Pro)
+      if (mounted) {
+        context.read<AuthCubit>().refreshPlan();
+        _maybeRunDirtyCorrectionBackup();
+      }
     }
+  }
+
+  Future<void> _maybeRunDirtyCorrectionBackup() async {
+    final authCubit = context.read<AuthCubit>();
+    if (!authCubit.state.isPro) return;
+    final sync = getIt<SyncRepository>();
+    if (await sync.isDirty()) {
+      await sync.backupToRemote();
+    }
+  }
+
+  void _configureProHooks(AuthCubit authCubit) {
+    final sync = getIt<SyncRepository>();
+    ProRemoteHooks.configure(
+      isPro: () => authCubit.state.isPro,
+      upsertFolder: sync.upsertFolderRemote,
+      upsertLink: sync.upsertLinkRemote,
+      deleteFolder: sync.deleteFolderRemote,
+      deleteLink: sync.deleteLinkRemote,
+    );
   }
 
   void resetResumeState() {
@@ -75,7 +107,14 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
           create: (_) => LocalFoldersCubit(rootsOnly: true),
         ),
         BlocProvider<AuthCubit>(
-          create: (_) => AuthCubit(authRepository: getIt<AuthRepository>()),
+          create: (_) {
+            final authCubit = AuthCubit(
+              authRepository: getIt<AuthRepository>(),
+              syncRepository: getIt<SyncRepository>(),
+            );
+            _configureProHooks(authCubit);
+            return authCubit;
+          },
         ),
       ],
       child: BlocBuilder<HomeViewCubit, int>(

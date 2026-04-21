@@ -1,5 +1,6 @@
 import 'package:ac_project_app/models/local/local_link.dart';
 import 'package:ac_project_app/provider/local/database_helper.dart';
+import 'package:ac_project_app/provider/sync/pro_remote_hooks.dart';
 import 'package:ac_project_app/util/logger.dart';
 
 class LocalLinkRepository {
@@ -78,6 +79,11 @@ class LocalLinkRepository {
     // 폴더 썸네일 업데이트 (첫 링크인 경우)
     await _updateFolderThumbnailIfNeeded(link.folderId, link.image);
 
+    ProRemoteHooks.onLinkUpserted(link.copyWith(
+      id: id,
+      createdAt: now,
+      updatedAt: now,
+    ));
     return id;
   }
 
@@ -87,7 +93,8 @@ class LocalLinkRepository {
       throw ArgumentError('Link ID cannot be null for update');
     }
     final db = await _databaseHelper.database;
-    final map = link.toMap()..['updated_at'] = DateTime.now().toIso8601String();
+    final now = DateTime.now().toIso8601String();
+    final map = link.toMap()..['updated_at'] = now;
     final count = await db.update(
       _table,
       map,
@@ -95,6 +102,7 @@ class LocalLinkRepository {
       whereArgs: [link.id],
     );
     Log.i('Updated link: ${link.id}');
+    ProRemoteHooks.onLinkUpserted(link.copyWith(updatedAt: now));
     return count;
   }
 
@@ -107,6 +115,7 @@ class LocalLinkRepository {
       whereArgs: [id],
     );
     Log.i('Deleted link: $id');
+    if (count > 0) ProRemoteHooks.onLinkDeleted(id);
     return count;
   }
 
@@ -123,6 +132,10 @@ class LocalLinkRepository {
       whereArgs: [linkId],
     );
     Log.i('Moved link $linkId to folder $newFolderId');
+    if (count > 0) {
+      final refreshed = await getLinkById(linkId);
+      if (refreshed != null) ProRemoteHooks.onLinkUpserted(refreshed);
+    }
     return count;
   }
 
@@ -137,6 +150,10 @@ class LocalLinkRepository {
       [newFolderId, DateTime.now().toIso8601String(), ...linkIds],
     );
     Log.i('Moved ${linkIds.length} links to folder $newFolderId');
+    for (final id in linkIds) {
+      final refreshed = await getLinkById(id);
+      if (refreshed != null) ProRemoteHooks.onLinkUpserted(refreshed);
+    }
     return count;
   }
 
