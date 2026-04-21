@@ -170,4 +170,169 @@ void main() {
       expect(newCount, initialCount + 2);
     });
   });
+
+  group('LocalFolderRepository — nested folders (v2)', () {
+    Future<int> makeFolder(String name, {int? parentId}) async {
+      final now = DateTime.now().toIso8601String();
+      return repository.createFolder(
+        LocalFolder(
+          name: name,
+          parentId: parentId,
+          createdAt: now,
+          updatedAt: now,
+        ),
+      );
+    }
+
+    test('getRootFolders returns only top-level folders (parent_id IS NULL)',
+        () async {
+      final workId = await makeFolder('일');
+      await makeFolder('개발', parentId: workId);
+      await makeFolder('개인');
+
+      final roots = await repository.getRootFolders();
+
+      expect(roots.map((f) => f.name).toSet(), {'미분류', '일', '개인'});
+      expect(roots.every((f) => f.parentId == null), isTrue);
+    });
+
+    test('getChildFolders returns direct children only', () async {
+      final workId = await makeFolder('일');
+      final devId = await makeFolder('개발', parentId: workId);
+      await makeFolder('디자인', parentId: workId);
+      await makeFolder('React', parentId: devId);
+
+      final children = await repository.getChildFolders(workId);
+
+      expect(children.map((f) => f.name).toSet(), {'개발', '디자인'});
+    });
+
+    test('getAllDescendants returns the folder itself plus all descendants',
+        () async {
+      final workId = await makeFolder('일');
+      final devId = await makeFolder('개발', parentId: workId);
+      final reactId = await makeFolder('React', parentId: devId);
+      await makeFolder('Hooks', parentId: reactId);
+      await makeFolder('개인'); // unrelated
+
+      final descendants = await repository.getAllDescendants(workId);
+
+      expect(
+        descendants.map((f) => f.name).toSet(),
+        {'일', '개발', 'React', 'Hooks'},
+      );
+    });
+
+    test('getBreadcrumb returns path from root to target folder', () async {
+      final workId = await makeFolder('일');
+      final devId = await makeFolder('개발', parentId: workId);
+      final reactId = await makeFolder('React', parentId: devId);
+
+      final breadcrumb = await repository.getBreadcrumb(reactId);
+
+      expect(breadcrumb.map((f) => f.name).toList(), ['일', '개발', 'React']);
+    });
+
+    test('getBreadcrumb for root folder returns only that folder', () async {
+      final id = await makeFolder('일');
+
+      final breadcrumb = await repository.getBreadcrumb(id);
+
+      expect(breadcrumb.map((f) => f.name).toList(), ['일']);
+    });
+
+    test('getRecursiveLinkCounts includes descendants link count', () async {
+      final db = await databaseHelper.database;
+      Future<void> addLink(int folderId, String url) async {
+        final now = DateTime.now().toIso8601String();
+        await db.insert('link', {
+          'folder_id': folderId,
+          'url': url,
+          'created_at': now,
+          'updated_at': now,
+        });
+      }
+
+      final workId = await makeFolder('일');
+      final devId = await makeFolder('개발', parentId: workId);
+      final reactId = await makeFolder('React', parentId: devId);
+      final personalId = await makeFolder('개인');
+
+      // 일: 1, 개발: 2, React: 3, 개인: 1
+      await addLink(workId, 'https://a');
+      await addLink(devId, 'https://b1');
+      await addLink(devId, 'https://b2');
+      await addLink(reactId, 'https://c1');
+      await addLink(reactId, 'https://c2');
+      await addLink(reactId, 'https://c3');
+      await addLink(personalId, 'https://p');
+
+      final counts = await repository.getRecursiveLinkCounts();
+
+      expect(counts[workId], 6); // 자기(1) + 개발(2) + React(3)
+      expect(counts[devId], 5); // 자기(2) + React(3)
+      expect(counts[reactId], 3); // 자기(3)
+      expect(counts[personalId], 1); // 자기(1)
+    });
+
+    test('moveFolder updates parent_id', () async {
+      final workId = await makeFolder('일');
+      final personalId = await makeFolder('개인');
+      final devId = await makeFolder('개발', parentId: workId);
+
+      final ok = await repository.moveFolder(devId, personalId);
+
+      expect(ok, isTrue);
+      final children = await repository.getChildFolders(personalId);
+      expect(children.map((f) => f.name).toList(), ['개발']);
+      final oldChildren = await repository.getChildFolders(workId);
+      expect(oldChildren, isEmpty);
+    });
+
+    test('moveFolder to root sets parent_id to NULL', () async {
+      final workId = await makeFolder('일');
+      final devId = await makeFolder('개발', parentId: workId);
+
+      final ok = await repository.moveFolder(devId, null);
+
+      expect(ok, isTrue);
+      final roots = await repository.getRootFolders();
+      expect(roots.any((f) => f.id == devId), isTrue);
+    });
+
+    test('moveFolder rejects moving folder into itself', () async {
+      final devId = await makeFolder('개발');
+
+      final ok = await repository.moveFolder(devId, devId);
+
+      expect(ok, isFalse);
+    });
+
+    test('moveFolder rejects moving folder into its descendant (cycle)',
+        () async {
+      final workId = await makeFolder('일');
+      final devId = await makeFolder('개발', parentId: workId);
+      final reactId = await makeFolder('React', parentId: devId);
+
+      final ok = await repository.moveFolder(workId, reactId);
+
+      expect(ok, isFalse);
+      final reactChildren = await repository.getChildFolders(reactId);
+      expect(reactChildren, isEmpty);
+    });
+
+    test('deleting parent cascades to children (FK)', () async {
+      final workId = await makeFolder('일');
+      final devId = await makeFolder('개발', parentId: workId);
+      await makeFolder('React', parentId: devId);
+
+      await repository.deleteFolder(workId);
+
+      final all = await repository.getAllFolders();
+      final names = all.map((f) => f.name).toSet();
+      expect(names.contains('일'), isFalse);
+      expect(names.contains('개발'), isFalse);
+      expect(names.contains('React'), isFalse);
+    });
+  });
 }

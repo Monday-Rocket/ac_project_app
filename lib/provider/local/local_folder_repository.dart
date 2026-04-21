@@ -143,4 +143,118 @@ class LocalFolderRepository {
     final result = await db.rawQuery('SELECT COUNT(*) as count FROM $_table');
     return result.first['count'] as int? ?? 0;
   }
+
+  /// 최상위 폴더 (parent_id IS NULL)
+  Future<List<LocalFolder>> getRootFolders() async {
+    final db = await _databaseHelper.database;
+    final result = await db.rawQuery('''
+      SELECT f.*, COUNT(l.id) as links_count
+      FROM $_table f
+      LEFT JOIN link l ON f.id = l.folder_id
+      WHERE f.parent_id IS NULL
+      GROUP BY f.id
+      ORDER BY f.is_classified ASC, f.created_at DESC
+    ''');
+    return result.map(LocalFolder.fromMap).toList();
+  }
+
+  /// 특정 폴더의 직계 자식 폴더
+  Future<List<LocalFolder>> getChildFolders(int parentId) async {
+    final db = await _databaseHelper.database;
+    final result = await db.rawQuery('''
+      SELECT f.*, COUNT(l.id) as links_count
+      FROM $_table f
+      LEFT JOIN link l ON f.id = l.folder_id
+      WHERE f.parent_id = ?
+      GROUP BY f.id
+      ORDER BY f.created_at DESC
+    ''', [parentId]);
+    return result.map(LocalFolder.fromMap).toList();
+  }
+
+  /// 특정 폴더 자신 + 모든 후손 (재귀 CTE)
+  Future<List<LocalFolder>> getAllDescendants(int folderId) async {
+    final db = await _databaseHelper.database;
+    final result = await db.rawQuery('''
+      WITH RECURSIVE subtree(id) AS (
+        SELECT id FROM $_table WHERE id = ?
+        UNION ALL
+        SELECT f.id FROM $_table f
+        JOIN subtree s ON f.parent_id = s.id
+      )
+      SELECT f.*, COUNT(l.id) as links_count
+      FROM $_table f
+      JOIN subtree s ON f.id = s.id
+      LEFT JOIN link l ON l.folder_id = f.id
+      GROUP BY f.id
+      ORDER BY f.created_at DESC
+    ''', [folderId]);
+    return result.map(LocalFolder.fromMap).toList();
+  }
+
+  /// 루트부터 해당 폴더까지의 경로 (브레드크럼)
+  Future<List<LocalFolder>> getBreadcrumb(int folderId) async {
+    final db = await _databaseHelper.database;
+    final result = await db.rawQuery('''
+      WITH RECURSIVE path(id, parent_id, depth) AS (
+        SELECT id, parent_id, 0 FROM $_table WHERE id = ?
+        UNION ALL
+        SELECT f.id, f.parent_id, p.depth + 1
+        FROM $_table f
+        JOIN path p ON f.id = p.parent_id
+      )
+      SELECT f.*, COUNT(l.id) as links_count, p.depth as _depth
+      FROM path p
+      JOIN $_table f ON f.id = p.id
+      LEFT JOIN link l ON l.folder_id = f.id
+      GROUP BY f.id, p.depth
+      ORDER BY p.depth DESC
+    ''', [folderId]);
+    return result.map(LocalFolder.fromMap).toList();
+  }
+
+  /// 각 폴더의 "자기 + 모든 후손" 재귀 링크 카운트
+  Future<Map<int, int>> getRecursiveLinkCounts() async {
+    final db = await _databaseHelper.database;
+    final result = await db.rawQuery('''
+      WITH RECURSIVE subtree(id, root) AS (
+        SELECT id, id FROM $_table
+        UNION ALL
+        SELECT f.id, s.root FROM $_table f
+        JOIN subtree s ON f.parent_id = s.id
+      )
+      SELECT s.root AS folder_id, COUNT(l.id) AS total
+      FROM subtree s
+      LEFT JOIN link l ON l.folder_id = s.id
+      GROUP BY s.root
+    ''');
+    final counts = <int, int>{};
+    for (final row in result) {
+      final folderId = row['folder_id'] as int?;
+      if (folderId == null) continue;
+      counts[folderId] = (row['total'] as int?) ?? 0;
+    }
+    return counts;
+  }
+
+  /// 폴더의 부모 변경. 순환 참조(자기 자신/후손으로 이동) 시 false 반환.
+  Future<bool> moveFolder(int folderId, int? newParentId) async {
+    if (newParentId != null) {
+      if (folderId == newParentId) return false;
+      final descendants = await getAllDescendants(folderId);
+      if (descendants.any((f) => f.id == newParentId)) return false;
+    }
+    final db = await _databaseHelper.database;
+    final count = await db.update(
+      _table,
+      {
+        'parent_id': newParentId,
+        'updated_at': DateTime.now().toIso8601String(),
+      },
+      where: 'id = ?',
+      whereArgs: [folderId],
+    );
+    Log.i('Moved folder: $folderId → parent=$newParentId');
+    return count > 0;
+  }
 }
