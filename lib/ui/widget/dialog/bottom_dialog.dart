@@ -8,9 +8,12 @@ import 'package:ac_project_app/cubits/folders/local_folders_cubit.dart';
 import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/link/link.dart';
+import 'package:ac_project_app/provider/local/local_folder_repository.dart';
 import 'package:ac_project_app/provider/local/local_link_repository.dart';
 import 'package:ac_project_app/provider/check_clipboard_link.dart';
+import 'package:ac_project_app/provider/recent_folders_repository.dart';
 import 'package:ac_project_app/ui/widget/add_folder/folder_add_title.dart';
+import 'package:ac_project_app/ui/widget/folder/pick_folder_sheet.dart';
 import 'package:ac_project_app/ui/widget/add_folder/horizontal_folder_list.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/dialog/center_dialog.dart';
@@ -440,6 +443,13 @@ void showFolderOptionsDialog(
                           },
                         ),
                         BottomListItem(
+                          '폴더 이동',
+                          callback: () {
+                            Navigator.pop(context);
+                            moveFolderAction(parentContext, currFolder);
+                          },
+                        ),
+                        BottomListItem(
                           '폴더 삭제',
                           callback: () {
                             deleteFolderDialog(
@@ -464,6 +474,43 @@ void showFolderOptionsDialog(
       );
     },
   );
+}
+
+Future<void> moveFolderAction(
+  BuildContext parentContext,
+  Folder currFolder,
+) async {
+  final folderId = currFolder.id;
+  if (folderId == null) return;
+  final folderRepo = getIt<LocalFolderRepository>();
+
+  // 자기 + 후손은 이동 대상 부모로 선택 불가
+  final descendants = await folderRepo.getAllDescendants(folderId);
+  final excludeIds = <int>{
+    for (final f in descendants)
+      if (f.id != null) f.id!,
+  };
+
+  if (!parentContext.mounted) return;
+  final newParentId = await showPickFolderSheet(
+    context: parentContext,
+    title: '폴더 이동',
+    excludeIds: excludeIds,
+    actionLabel: '이동',
+  );
+
+  if (newParentId == null) return;
+
+  final ok = await folderRepo.moveFolder(folderId, newParentId);
+  if (!parentContext.mounted) return;
+  if (ok) {
+    await const RecentFoldersRepository().record(newParentId);
+    if (!parentContext.mounted) return;
+    parentContext.read<LocalFoldersCubit>().getFolders();
+    showBottomToast('폴더를 이동했어요', context: parentContext);
+  } else {
+    showBottomToast('이동할 수 없는 폴더입니다', context: parentContext);
+  }
 }
 
 void changeFolderName(

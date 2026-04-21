@@ -4,6 +4,7 @@ import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/local/local_folder.dart';
 import 'package:ac_project_app/models/local/local_model_extensions.dart';
 import 'package:ac_project_app/provider/local/local_folder_repository.dart';
+import 'package:ac_project_app/provider/recent_folders_repository.dart';
 import 'package:ac_project_app/provider/shared_pref_provider.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -104,6 +105,8 @@ class LocalFoldersCubit extends Cubit<FoldersState> {
       if (folder.id == null) return false;
 
       await _folderRepository.deleteFolder(folder.id!);
+      // 최근 사용 목록에서도 정리 (삭제된 폴더 ID 잔존 방지)
+      await const RecentFoldersRepository().remove(folder.id!);
       await getFolders();
       return true;
     } catch (e) {
