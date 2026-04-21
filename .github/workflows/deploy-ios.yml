@@ -69,11 +69,16 @@ jobs:
       - name: Install CocoaPods
         run: cd ios && pod install
 
-      - name: Sync Extension build number
+      - name: Sync build number across targets
         working-directory: ios
         run: |
-          /usr/libexec/PlistBuddy -c "Set :CFBundleVersion ${{ steps.version.outputs.VERSION_CODE }}" Extension/Info.plist
-          /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString ${{ steps.version.outputs.VERSION_NAME }}" Extension/Info.plist
+          VERSION_NAME="${{ steps.version.outputs.VERSION_NAME }}"
+          VERSION_CODE="${{ steps.version.outputs.VERSION_CODE }}"
+          # Extension/Runner target 모두의 하드코딩된 버전값 치환
+          sed -i '' -E "s/CURRENT_PROJECT_VERSION = [^;]+;/CURRENT_PROJECT_VERSION = ${VERSION_CODE};/g" Runner.xcodeproj/project.pbxproj
+          sed -i '' -E "s/MARKETING_VERSION = [^;]+;/MARKETING_VERSION = ${VERSION_NAME};/g" Runner.xcodeproj/project.pbxproj
+          echo "✅ pbxproj 버전 동기화: $VERSION_NAME ($VERSION_CODE)"
+          grep -E "CURRENT_PROJECT_VERSION|MARKETING_VERSION" Runner.xcodeproj/project.pbxproj | sort -u
 
       - name: Build Flutter iOS
         run: |
