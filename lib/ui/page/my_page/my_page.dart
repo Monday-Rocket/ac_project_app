@@ -8,7 +8,9 @@ import 'package:ac_project_app/cubits/auth/auth_cubit.dart';
 import 'package:ac_project_app/cubits/links/link_check_cubit.dart';
 import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/provider/local/local_link_repository.dart';
+import 'package:ac_project_app/provider/sync/sync_repository.dart';
 import 'package:ac_project_app/routes.dart';
+import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -41,6 +43,7 @@ class MyPage extends StatelessWidget {
             ),
           ),
           _AccountSection(),
+          _BackupSection(),
           MenuList(context),
         ],
       ),
@@ -150,6 +153,15 @@ class MyPage extends StatelessWidget {
         ],
         SizedBox(height: 16.w),
       ],
+    );
+  }
+
+  Widget _BackupSection() {
+    return BlocBuilder<AuthCubit, AuthState>(
+      builder: (context, state) {
+        if (!state.isPro) return const SizedBox.shrink();
+        return const _BackupCard();
+      },
     );
   }
 
@@ -438,5 +450,171 @@ class MyPage extends StatelessWidget {
         ),
       ),
     ];
+  }
+}
+
+class _BackupCard extends StatefulWidget {
+  const _BackupCard();
+
+  @override
+  State<_BackupCard> createState() => _BackupCardState();
+}
+
+class _BackupCardState extends State<_BackupCard> {
+  late final SyncRepository _sync = getIt<SyncRepository>();
+  DateTime? _lastBackupAt;
+  bool _running = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _refreshLastBackup();
+  }
+
+  Future<void> _refreshLastBackup() async {
+    final at = await _sync.getLastBackupAt();
+    if (mounted) setState(() => _lastBackupAt = at);
+  }
+
+  Future<void> _backupNow() async {
+    if (_running) return;
+    setState(() => _running = true);
+    try {
+      final ok = await _sync.backupToRemote();
+      if (!mounted) return;
+      showBottomToast(
+        ok ? '백업 완료' : '백업에 실패했어요',
+        context: context,
+      );
+      await _refreshLastBackup();
+    } finally {
+      if (mounted) setState(() => _running = false);
+    }
+  }
+
+  Future<void> _restore() async {
+    if (_running) return;
+    final hasRemote = await _sync.hasRemoteBackup();
+    if (!mounted) return;
+    if (!hasRemote) {
+      showBottomToast('백업된 데이터가 없습니다', context: context);
+      return;
+    }
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('백업에서 복원', style: TextStyle(fontSize: 16.sp)),
+        content: Text(
+          '현재 기기의 데이터가 삭제되고 백업으로 덮어써집니다. 계속할까요?',
+          style: TextStyle(fontSize: 13.sp, color: grey700),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('취소'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text('복원', style: TextStyle(color: primary600)),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+    setState(() => _running = true);
+    try {
+      await _sync.restoreFromRemote();
+      if (!mounted) return;
+      showBottomToast('복원 완료', context: context);
+    } catch (e) {
+      if (!mounted) return;
+      showBottomToast('복원에 실패했어요', context: context);
+    } finally {
+      if (mounted) setState(() => _running = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.w),
+      padding: EdgeInsets.all(16.w),
+      decoration: BoxDecoration(
+        color: primary100,
+        borderRadius: BorderRadius.circular(12.w),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.cloud_outlined, size: 18.sp, color: primary700),
+              SizedBox(width: 8.w),
+              Text(
+                '백업 & 복원',
+                style: TextStyle(
+                  color: grey900,
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 4.w),
+          Text(
+            _lastBackupAt == null
+                ? '아직 백업된 적이 없습니다'
+                : '마지막 백업: ${_formatDate(_lastBackupAt!)}',
+            style: TextStyle(color: grey700, fontSize: 12.sp),
+          ),
+          SizedBox(height: 12.w),
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: _running ? null : _backupNow,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: primary600,
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.w),
+                    ),
+                  ),
+                  child: Text(
+                    _running ? '진행 중…' : '지금 백업',
+                    style: TextStyle(fontSize: 13.sp),
+                  ),
+                ),
+              ),
+              SizedBox(width: 8.w),
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: _running ? null : _restore,
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: primary700,
+                    side: BorderSide(color: primary600, width: 1.w),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.w),
+                    ),
+                  ),
+                  child: Text(
+                    '백업에서 복원',
+                    style: TextStyle(fontSize: 13.sp),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatDate(DateTime dt) {
+    final local = dt.toLocal();
+    String two(int n) => n.toString().padLeft(2, '0');
+    return '${local.year}-${two(local.month)}-${two(local.day)} '
+        '${two(local.hour)}:${two(local.minute)}';
   }
 }
