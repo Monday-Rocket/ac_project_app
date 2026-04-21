@@ -150,7 +150,6 @@ class ShareDataProvider {
           .map(
             (f) => Folder(
               name: f.name,
-              visible: true,
               thumbnail: f.thumbnail,
               time: f.createdAt,
             ),

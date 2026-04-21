@@ -33,8 +33,6 @@ class _LinkDetailViewState extends State<LinkDetailView> {
   final scrollController = ScrollController();
   late Link? globalLink;
   late bool? isMine;
-  late bool linkVisible;
-  late bool isShared;
   late String heroPrefix;
 
   @override
@@ -42,8 +40,6 @@ class _LinkDetailViewState extends State<LinkDetailView> {
     final args = getArguments(context);
     globalLink = args['link'] as Link;
     isMine = args['isMine'] as bool?;
-    linkVisible = args['visible'] as bool? ?? true;
-    isShared = args['isShared'] as bool? ?? false;
     heroPrefix = args['heroPrefix'] as String? ?? '';
 
     // 오프라인 모드: 모든 링크는 내 링크
@@ -76,7 +72,6 @@ class _LinkDetailViewState extends State<LinkDetailView> {
                       cubitContext,
                       keyboardHeight,
                       visible,
-                      linkVisible,
                     ),
                   );
                 } else {
@@ -95,7 +90,6 @@ class _LinkDetailViewState extends State<LinkDetailView> {
                       cubitContext,
                       keyboardHeight,
                       visible,
-                      linkVisible,
                     ),
                   );
                 }
@@ -124,7 +118,6 @@ class _LinkDetailViewState extends State<LinkDetailView> {
     BuildContext cubitContext,
     double keyboardHeight,
     bool visible,
-    bool linkVisible,
   ) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -144,7 +137,7 @@ class _LinkDetailViewState extends State<LinkDetailView> {
         toolbarHeight: 48.w,
         actions: [
           InkWell(
-            onTap: () => showLinkDialog(isMyLink, link, context, linkVisible),
+            onTap: () => showLinkDialog(isMyLink, link, context),
             child: Container(
               margin: EdgeInsets.only(right: 24.w),
               child: SvgPicture.asset(
@@ -189,18 +182,15 @@ class _LinkDetailViewState extends State<LinkDetailView> {
     );
   }
 
-  Future<bool?> showLinkDialog(bool isMyLink, Link link, BuildContext context, bool linkVisible) {
+  Future<bool?> showLinkDialog(bool isMyLink, Link link, BuildContext context) {
     return isMyLink
         ? showMyLinkOptionsDialog(
             link,
             context,
-            linkVisible: linkVisible,
-            isShared: isShared,
           )
         : showLinkOptionsDialog(
             link,
             context,
-            isShared: isShared,
             callback: () => Navigator.pop(context),
           );
   }

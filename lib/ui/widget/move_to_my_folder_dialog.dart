@@ -113,7 +113,6 @@ void onSelectFolder(
             arguments: {
               'link': link,
               'isMine': true,
-              'visible': folder.visible,
             },
           );
         },

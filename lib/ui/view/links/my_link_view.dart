@@ -25,7 +25,6 @@ import 'package:ac_project_app/ui/widget/widget_offset.dart';
 import 'package:ac_project_app/util/get_arguments.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:ac_project_app/util/number_commas.dart';
-import 'package:ac_project_app/util/shared_profiles.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -240,7 +239,6 @@ class MyLinkView extends StatelessWidget {
     List<Folder> folders,
     Folder folder,
   ) {
-    // 오프라인 모드: 공유 폴더 관련 기능 비활성화
     final actions = <Widget>[];
     if (folder.isClassified != false) {
       actions.add(
@@ -314,15 +312,6 @@ class MyLinkView extends StatelessWidget {
                 ),
               ),
             ),
-            if (!(folder.visible ?? false))
-              Container(
-                margin: EdgeInsets.only(left: 8.w),
-                child: Assets.images.icLockWebp.image(width: 24.w, height: 24.w, fit: BoxFit.cover),
-              )
-            else
-              const SizedBox.shrink(),
-            10.horizontalSpace,
-            ParticipantsProfile(folder.membersCount ?? 0)
           ],
         ),
       ),
@@ -331,11 +320,7 @@ class MyLinkView extends StatelessWidget {
 
   Widget LinkCountText(LinkListState state, Folder folder) {
     final count = (state is LinkListLoadedState) ? state.totalCount : 0;
-    if (folder.shared ?? false) {
-      return buildSharedContentsCountText(count, folder.membersCount);
-    } else {
-      return buildContentsCountText(count);
-    }
+    return buildContentsCountText(count);
   }
 
   Widget buildContentsCountText(int count) {
@@ -349,42 +334,6 @@ class MyLinkView extends StatelessWidget {
             fontWeight: FontWeight.w500,
             fontSize: 14.sp,
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget buildSharedContentsCountText(int count, int? membersCount) {
-    final members = membersCount ?? 0;
-    return SliverToBoxAdapter(
-      child: Container(
-        margin: EdgeInsets.only(left: 24.w, top: 3.w),
-        child: Row(
-          children: [
-            Text(
-              '${addCommasFrom(count)}개의 링크',
-              style: TextStyle(
-                color: greyText,
-                fontWeight: FontWeight.w500,
-                fontSize: 14.sp,
-              ),
-            ),
-            8.horizontalSpace,
-            Container(
-              width: 1,
-              height: 10,
-              color: grey300,
-            ),
-            8.horizontalSpace,
-            Text(
-              '$members명의 멤버',
-              style: TextStyle(
-                color: greyText,
-                fontWeight: FontWeight.w500,
-                fontSize: 14.sp,
-              ),
-            ),
-          ],
         ),
       ),
     );
@@ -631,8 +580,6 @@ class MyLinkView extends StatelessWidget {
           arguments: {
             'link': link,
             'isMine': true,
-            'visible': folder.visible,
-            'isShared': folder.shared,
             'heroPrefix': 'myLink_',
           },
         ).then((result) {

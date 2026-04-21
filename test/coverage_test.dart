@@ -3,7 +3,6 @@ import 'package:ac_project_app/const/consts.dart';
 import 'package:ac_project_app/const/strings.dart';
 import 'package:ac_project_app/cubits/common/button_state_cubit.dart';
 import 'package:ac_project_app/cubits/folders/folder_name_cubit.dart';
-import 'package:ac_project_app/cubits/folders/folder_visible_cubit.dart';
 import 'package:ac_project_app/cubits/folders/folders_state.dart';
 import 'package:ac_project_app/cubits/folders/get_selected_folder_cubit.dart';
 import 'package:ac_project_app/cubits/folders/local_folders_cubit.dart';
@@ -49,7 +48,6 @@ import 'package:ac_project_app/provider/tool_tip_check.dart';
 import 'package:ac_project_app/routes.dart';
 // ignore_for_file: unused_import
 import 'package:ac_project_app/ui/page/home/local_explore_page.dart';
-import 'package:ac_project_app/ui/page/my_folder/folder_visible_state.dart';
 import 'package:ac_project_app/ui/page/my_folder/my_folder_page.dart';
 import 'package:ac_project_app/ui/page/my_page/my_page.dart';
 import 'package:ac_project_app/ui/view/home_view.dart';

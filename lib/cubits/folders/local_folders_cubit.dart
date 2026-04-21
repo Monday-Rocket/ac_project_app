@@ -66,26 +66,6 @@ class LocalFoldersCubit extends Cubit<FoldersState> {
     }
   }
 
-  /// visible (isClassified) 토글
-  Future<bool> transferVisible(Folder folder) async {
-    try {
-      if (folder.id == null) return false;
-
-      final localFolder = await _folderRepository.getFolderById(folder.id!);
-      if (localFolder == null) return false;
-
-      final updated = localFolder.copyWith(
-        isClassified: !localFolder.isClassified,
-      );
-      await _folderRepository.updateFolder(updated);
-      await getFolders();
-      return true;
-    } catch (e) {
-      Log.e('LocalFoldersCubit.transferVisible error: $e');
-      return false;
-    }
-  }
-
   /// 폴더 이름 변경
   Future<bool> changeName(Folder folder, String name) async {
     try {
@@ -100,27 +80,6 @@ class LocalFoldersCubit extends Cubit<FoldersState> {
       return true;
     } catch (e) {
       Log.e('LocalFoldersCubit.changeName error: $e');
-      return false;
-    }
-  }
-
-  /// 폴더 이름 및 visible 변경
-  Future<bool> changeNameAndVisible(Folder folder) async {
-    try {
-      if (folder.id == null) return false;
-
-      final localFolder = await _folderRepository.getFolderById(folder.id!);
-      if (localFolder == null) return false;
-
-      final updated = localFolder.copyWith(
-        name: folder.name,
-        isClassified: folder.visible,
-      );
-      await _folderRepository.updateFolder(updated);
-      await getFolders();
-      return true;
-    } catch (e) {
-      Log.e('LocalFoldersCubit.changeNameAndVisible error: $e');
       return false;
     }
   }

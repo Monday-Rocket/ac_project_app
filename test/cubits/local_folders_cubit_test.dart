@@ -4,7 +4,6 @@ import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/local/local_folder.dart';
 import 'package:ac_project_app/provider/local/local_folder_repository.dart';
-import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -35,15 +34,14 @@ LocalFolder makeLocalFolder({
 Folder makeFolder({
   int? id = 1,
   String name = 'Test Folder',
-  bool visible = true,
+  bool isClassified = true,
   int links = 0,
 }) =>
     Folder(
       id: id,
       name: name,
-      visible: visible,
       links: links,
-      isClassified: visible,
+      isClassified: isClassified,
     );
 
 /// Register a fresh mock in getIt and return it.
@@ -431,104 +429,6 @@ void main() {
 
       final state = cubit.state as FolderLoadedState;
       expect(state.folders, isEmpty);
-      await cubit.close();
-    });
-  });
-
-  // -------------------------------------------------------------------------
-  // transferVisible()
-  // -------------------------------------------------------------------------
-
-  group('transferVisible()', () {
-    test('toggles isClassified from true to false and returns true', () async {
-      _stubGetAll(mockRepo, [makeLocalFolder()]);
-      final cubit = await _buildAndDrain();
-
-      final localFolder = makeLocalFolder(id: 1, isClassified: true);
-      when(mockRepo.getFolderById(1)).thenAnswer((_) async => localFolder);
-      when(mockRepo.updateFolder(any)).thenAnswer((_) async => 1);
-      _stubGetAll(mockRepo, []);
-
-      final result = await cubit.transferVisible(makeFolder(id: 1));
-
-      expect(result, isTrue);
-      final captured =
-          verify(mockRepo.updateFolder(captureAny)).captured.single
-              as LocalFolder;
-      expect(captured.isClassified, isFalse);
-      await cubit.close();
-    });
-
-    test('returns false when folder id is null', () async {
-      final cubit = await _buildAndDrain();
-
-      final result = await cubit.transferVisible(makeFolder(id: null));
-
-      expect(result, isFalse);
-      verifyNever(mockRepo.getFolderById(any));
-      await cubit.close();
-    });
-
-    test('returns false when getFolderById returns null', () async {
-      final cubit = await _buildAndDrain();
-
-      when(mockRepo.getFolderById(1)).thenAnswer((_) async => null);
-
-      final result = await cubit.transferVisible(makeFolder(id: 1));
-
-      expect(result, isFalse);
-      verifyNever(mockRepo.updateFolder(any));
-      await cubit.close();
-    });
-  });
-
-  // -------------------------------------------------------------------------
-  // changeNameAndVisible()
-  // -------------------------------------------------------------------------
-
-  group('changeNameAndVisible()', () {
-    test('updates name and isClassified from Folder.visible', () async {
-      _stubGetAll(mockRepo, [makeLocalFolder()]);
-      final cubit = await _buildAndDrain();
-
-      final localFolder =
-          makeLocalFolder(id: 1, name: 'Old', isClassified: true);
-      when(mockRepo.getFolderById(1)).thenAnswer((_) async => localFolder);
-      when(mockRepo.updateFolder(any)).thenAnswer((_) async => 1);
-      _stubGetAll(mockRepo, []);
-
-      // visible: false → isClassified should become false in the updated record.
-      final folder = makeFolder(id: 1, name: 'New Name', visible: false);
-      final result = await cubit.changeNameAndVisible(folder);
-
-      expect(result, isTrue);
-      final captured =
-          verify(mockRepo.updateFolder(captureAny)).captured.single
-              as LocalFolder;
-      expect(captured.name, 'New Name');
-      expect(captured.isClassified, isFalse);
-      await cubit.close();
-    });
-
-    test('returns false when folder id is null', () async {
-      final cubit = await _buildAndDrain();
-
-      final result = await cubit.changeNameAndVisible(makeFolder(id: null));
-
-      expect(result, isFalse);
-      verifyNever(mockRepo.getFolderById(any));
-      await cubit.close();
-    });
-
-    test('returns false when getFolderById returns null', () async {
-      final cubit = await _buildAndDrain();
-
-      when(mockRepo.getFolderById(1)).thenAnswer((_) async => null);
-
-      final result = await cubit.changeNameAndVisible(makeFolder(id: 1));
-
-      expect(result, isFalse);
-      verifyNever(mockRepo.updateFolder(any));
       await cubit.close();
     });
   });

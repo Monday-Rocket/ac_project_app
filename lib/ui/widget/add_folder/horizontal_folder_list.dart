@@ -3,7 +3,6 @@ import 'package:ac_project_app/cubits/folders/folders_state.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/util/logger.dart';
-import 'package:ac_project_app/util/shared_profiles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -53,7 +52,6 @@ Widget buildFolderList({
 GestureDetector FolderItem(int i, List<Folder> folders, void Function(int index, Folder folder)? callback, int? selectedIndex) {
   final folder = folders[i];
   final rightPadding = i != folders.length - 1 ? 12 : 24;
-  final visible = folder.visible ?? false;
   return GestureDetector(
     onTap: () {
       callback?.call(i, folder);
@@ -93,13 +91,6 @@ GestureDetector FolderItem(int i, List<Folder> folders, void Function(int index,
                   ),
                 ),
               ),
-              Align(
-                alignment: Alignment.topLeft,
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 12),
-                  child: ParticipantsProfile(folder.membersCount ?? 0, scale: 0.75, fontSize: 8),
-                ),
-              ),
               IgnorePointer(
                 child: AnimatedOpacity(
                   duration: const Duration(milliseconds: 300),
@@ -115,20 +106,6 @@ GestureDetector FolderItem(int i, List<Folder> folders, void Function(int index,
                   ),
                 ),
               ),
-              if (!visible)
-                SizedBox(
-                  width: 95.w,
-                  height: 95.w,
-                  child: Align(
-                    alignment: Alignment.bottomRight,
-                    child: Padding(
-                      padding: EdgeInsets.only(bottom: 3.w),
-                      child: Assets.images.icLockWebp.image(),
-                    ),
-                  ),
-                )
-              else
-                const SizedBox.shrink(),
             ],
           ),
           SizedBox(height: 6.w),

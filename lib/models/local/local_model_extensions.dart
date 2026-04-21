@@ -9,14 +9,10 @@ extension LocalFolderToFolder on LocalFolder {
     return Folder(
       id: id,
       thumbnail: thumbnail,
-      visible: isClassified,
       name: name,
       links: linksCount ?? 0,
       time: createdAt,
       isClassified: isClassified,
-      isAdmin: true, // 로컬에서는 항상 관리자
-      shared: false, // 오프라인 모드에서는 공유 기능 없음
-      membersCount: 0,
     );
   }
 }
@@ -46,7 +42,7 @@ extension FolderToLocalFolder on Folder {
       id: id,
       name: name ?? '폴더',
       thumbnail: thumbnail,
-      isClassified: visible ?? isClassified ?? true,
+      isClassified: isClassified ?? true,
       createdAt: time ?? now,
       updatedAt: now,
       linksCount: links,

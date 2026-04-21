@@ -315,9 +315,6 @@ class _MyFolderPageState extends State<MyFolderPage> with WidgetsBindingObserver
 
   ListTile FolderListItem(List<Folder> folders, int index, BuildContext context) {
     final folder = folders[index];
-    final isAdmin = folder.isAdmin ?? false;
-    final isSharedFolder = folder.shared ?? false;
-    final visible = folder.visible ?? true;
     final isNotClassified = folder.name == '미분류';
     final isLastFolder = index == folders.length - 1;
 
@@ -339,35 +336,20 @@ class _MyFolderPageState extends State<MyFolderPage> with WidgetsBindingObserver
                     width: 69.w,
                     height: 63.w,
                     margin: EdgeInsets.only(right: 30.w),
-                    child: Stack(
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(20.w),
-                          ),
-                          child: ColoredBox(
-                            color: grey100,
-                            child: FolderThumbnail(folder),
-                          ),
-                        ),
-                        if (!visible)
-                          Align(
-                            alignment: Alignment.bottomRight,
-                            child: Padding(
-                              padding: EdgeInsets.only(bottom: 3.w),
-                              child: Assets.images.icLockWebp.image(width: 24.w, height: 24.w, fit: BoxFit.cover),
-                            ),
-                          )
-                        else
-                          const SizedBox.shrink(),
-                      ],
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(20.w),
+                      ),
+                      child: ColoredBox(
+                        color: grey100,
+                        child: FolderThumbnail(folder),
+                      ),
                     ),
                   ),
                   Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SharedCountText(isSharedFolder, folder.membersCount),
                       SizedBox(
                         width: 120.w,
                         child: Text(
@@ -402,14 +384,7 @@ class _MyFolderPageState extends State<MyFolderPage> with WidgetsBindingObserver
               else
                 InkWell(
                   onTap: () {
-                    if (isSharedFolder) {
-                      showSharedFolderOptionsDialogFromFolders(context, folder, isAdmin: isAdmin, callback: () {
-                        Navigator.pop(context);
-                        context.read<LocalFoldersCubit>().getFolders();
-                      });
-                    } else {
-                      showFolderOptionsDialog(folders, folder, context);
-                    }
+                    showFolderOptionsDialog(folders, folder, context);
                   },
                   child: Padding(
                     padding: EdgeInsets.all(8.w),
@@ -424,26 +399,18 @@ class _MyFolderPageState extends State<MyFolderPage> with WidgetsBindingObserver
   }
 
   Widget FolderThumbnail(Folder folder) {
-    if (folder.shared ?? false) {
-      return emptyFolderView(folder.shared);
-    }
-
     return folder.thumbnail != null && (folder.thumbnail?.isNotEmpty ?? false)
         ? Image.network(
             folder.thumbnail!,
             width: 63.w,
             height: 63.w,
             fit: BoxFit.cover,
-            errorBuilder: (_, __, ___) => emptyFolderView(folder.shared),
+            errorBuilder: (_, __, ___) => emptyFolderView(),
           )
-        : emptyFolderView(folder.shared);
+        : emptyFolderView();
   }
 
-  Container emptyFolderView(bool? shared) {
-    var color = const Color(0xFFA07EFF);
-    if (shared ?? false) {
-      color = const Color(0xFF7EA5FF);
-    }
+  Container emptyFolderView() {
     return Container(
       width: 63.w,
       height: 63.w,
@@ -451,31 +418,9 @@ class _MyFolderPageState extends State<MyFolderPage> with WidgetsBindingObserver
       child: Center(
         child: SvgPicture.asset(
           Assets.images.folder,
-          colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+          colorFilter: const ColorFilter.mode(Color(0xFFA07EFF), BlendMode.srcIn),
           width: 24.w,
           height: 24.w,
-        ),
-      ),
-    );
-  }
-
-  Widget SharedCountText(bool isSharedFolder, int? membersCount) {
-    if (!isSharedFolder || membersCount == null || membersCount <= 0) {
-      return const SizedBox.shrink();
-    }
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
-      margin: EdgeInsets.only(bottom: 4.w),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF3F1FF),
-        borderRadius: BorderRadius.circular(6),
-      ),
-      child: Text(
-        '$membersCount명 참여중',
-        style: TextStyle(
-          fontSize: 12.sp,
-          fontWeight: FontWeight.w500,
-          color: const Color(0xFF536DFE),
         ),
       ),
     );

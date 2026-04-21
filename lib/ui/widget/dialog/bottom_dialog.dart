@@ -6,17 +6,14 @@ import 'package:ac_project_app/cubits/folders/folders_state.dart';
 import 'package:ac_project_app/cubits/folders/get_selected_folder_cubit.dart';
 import 'package:ac_project_app/cubits/folders/local_folders_cubit.dart';
 import 'package:ac_project_app/di/set_up_get_it.dart';
-import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/provider/local/local_link_repository.dart';
 import 'package:ac_project_app/provider/check_clipboard_link.dart';
-import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/add_folder/folder_add_title.dart';
 import 'package:ac_project_app/ui/widget/add_folder/horizontal_folder_list.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/dialog/center_dialog.dart';
-import 'package:ac_project_app/ui/widget/dialog/delete_share_folder_dialog.dart';
 import 'package:ac_project_app/ui/widget/move_to_my_folder_dialog.dart';
 import 'package:ac_project_app/ui/widget/rename_folder/show_rename_folder_dialog.dart';
 import 'package:flutter/material.dart';
@@ -27,9 +24,7 @@ import 'package:share_plus/share_plus.dart';
 Future<bool?> showMyLinkOptionsDialog(
     Link link,
     BuildContext parentContext, {
-      bool isShared = false,
       void Function()? popCallback,
-      bool? linkVisible,
     }) {
   return showModalBottomSheet<bool?>(
     backgroundColor: Colors.transparent,
@@ -76,7 +71,6 @@ Future<bool?> showMyLinkOptionsDialog(
           },
         ),
       ];
-      if (isShared) children.removeLast();
       return Wrap(
         children: [
           DecoratedBox(
@@ -192,7 +186,6 @@ Future<bool?> showChangeFolderDialog(Link link, BuildContext parentContext) {
 Future<bool?> showLinkOptionsDialog(
     Link link,
     BuildContext parentContext, {
-      bool isShared = false,
       void Function()? callback,
     }) {
   return showModalBottomSheet<bool?>(
@@ -217,9 +210,7 @@ Future<bool?> showLinkOptionsDialog(
             moveToMyFolderDialog(parentContext, link);
           },
         ),
-        // 오프라인 모드: 신고하기 기능 비활성화
       ];
-      if (isShared) children.removeAt(2);
       return Wrap(
         children: [
           DecoratedBox(
@@ -337,7 +328,6 @@ void saveEmptyFolder(
   }
   final folder = Folder(
     name: folderName,
-    visible: true,
   );
 
   context.read<FolderNameCubit>().add(folder).then((result) {
@@ -474,264 +464,6 @@ void showFolderOptionsDialog(
       );
     },
   );
-}
-
-void showSharedFolderOptionsDialogFromFolders(
-    BuildContext parentContext,
-    Folder folder, {
-      bool isAdmin = false,
-      void Function()? callback,
-    }) {
-  Column SharedFolderMenu() {
-    if (isAdmin) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          BottomListItem(
-            '폴더 설정',
-            callback: () {
-              Navigator.pushNamed(parentContext, Routes.sharedLinkSetting, arguments: {
-                'folder': folder,
-              }).then((result) {
-                if (result == true) {
-                  parentContext.read<LocalFoldersCubit>().getFolders();
-                }
-              });
-            },
-          ),
-          BottomListItem(
-            '폴더 삭제',
-            callback: () {
-              deleteSharedFolderAdminDialog(
-                parentContext,
-                folder,
-                callback: () {
-                  callback?.call();
-                },
-              );
-            },
-          ),
-          // BottomListItem(
-          //   '멤버 관리',
-          //   callback: () {},
-          // ),
-        ],
-      );
-    } else {
-      // 오프라인 모드: 공유 폴더 초대 기능 비활성화
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          BottomListItem(
-            '폴더 나가기',
-            callback: () {
-              deleteShareFolderDialog(
-                parentContext,
-                folder,
-                callback: () {
-                  callback?.call();
-                },
-              );
-            },
-          ),
-        ],
-      );
-    }
-  }
-
-  showModalBottomSheet<bool?>(
-    backgroundColor: Colors.transparent,
-    context: parentContext,
-    isScrollControlled: true,
-    builder: (BuildContext context) {
-      return Wrap(
-        children: [
-          DecoratedBox(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20.w),
-                topRight: Radius.circular(20.w),
-              ),
-            ),
-            child: Padding(
-              padding: EdgeInsets.only(
-                top: 29.w,
-                bottom: Platform.isAndroid ? MediaQuery.of(context).padding.bottom : 0,
-              ),
-              child: Column(
-                children: [
-                  Container(
-                    margin: EdgeInsets.only(left: 30.w, right: 20.w),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          '폴더 옵션',
-                          style: TextStyle(
-                            color: grey800,
-                            fontSize: 20.sp,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        InkWell(
-                          onTap: () => Navigator.pop(context),
-                          child: Icon(
-                            Icons.close_rounded,
-                            size: 24.w,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(
-                      top: 17.w,
-                      left: 6.w,
-                      right: 6.w,
-                      bottom: 20.w,
-                    ),
-                    child: SharedFolderMenu(),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      );
-    },
-  ).then((result) {
-    if (result ?? false) {
-      parentContext.read<LocalFoldersCubit>().getFolders();
-    }
-  });
-}
-
-void showSharedFolderOptionsDialogInShareFolder(
-    BuildContext parentContext,
-    Folder folder, {
-      bool isAdmin = false,
-      void Function()? callback,
-    }) {
-  Column SharedFolderMenu() {
-    if (isAdmin) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          BottomListItem(
-            '폴더 설정',
-            callback: () {
-              Navigator.pushNamed(parentContext, Routes.sharedLinkSetting, arguments: {
-                'folder': folder,
-              }).then((result) {
-                if (result == true) {
-                  parentContext.read<LocalFoldersCubit>().getFolders();
-                }
-              });
-            },
-          ),
-          BottomListItem(
-            '폴더 삭제',
-            callback: () {
-              deleteSharedFolderAdminDialog(
-                parentContext,
-                folder,
-                callback: () {
-                  callback?.call();
-                },
-              );
-            },
-          ),
-        ],
-      );
-    } else {
-      // 오프라인 모드: 공유 폴더 초대 기능 비활성화
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          BottomListItem(
-            '폴더 나가기',
-            callback: () async {
-              deleteShareFolderDialog(
-                parentContext,
-                folder,
-                callback: () {
-                  callback?.call();
-                },
-              );
-            },
-          ),
-        ],
-      );
-    }
-  }
-
-  showModalBottomSheet<bool?>(
-    backgroundColor: Colors.transparent,
-    context: parentContext,
-    isScrollControlled: true,
-    builder: (BuildContext context) {
-      return Wrap(
-        children: [
-          DecoratedBox(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20.w),
-                topRight: Radius.circular(20.w),
-              ),
-            ),
-            child: Padding(
-              padding: EdgeInsets.only(
-                top: 29.w,
-                bottom: Platform.isAndroid ? MediaQuery.of(context).padding.bottom : 0,
-              ),
-              child: Column(
-                children: [
-                  Container(
-                    margin: EdgeInsets.only(left: 30.w, right: 20.w),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          '공유 폴더',
-                          style: TextStyle(
-                            color: grey800,
-                            fontSize: 20.sp,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        InkWell(
-                          onTap: () => Navigator.pop(context),
-                          child: Icon(
-                            Icons.close_rounded,
-                            size: 24.w,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(
-                      top: 17.w,
-                      left: 6.w,
-                      right: 6.w,
-                      bottom: 20.w,
-                    ),
-                    child: SharedFolderMenu(),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      );
-    },
-  ).then((result) {
-    if (result ?? false) {
-      parentContext.read<LocalFoldersCubit>().getFolders();
-    }
-  });
 }
 
 void changeFolderName(
