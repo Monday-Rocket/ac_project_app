@@ -95,23 +95,8 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
 
     final ok = await showDialog<bool>(
       context: ctx,
-      builder: (dialogCtx) => AlertDialog(
-        title: Text('백업 발견', style: TextStyle(fontSize: 16.sp)),
-        content: Text(
-          '계정에 연결된 백업 데이터가 있습니다. 이 기기로 복원할까요?',
-          style: TextStyle(fontSize: 13.sp),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogCtx, false),
-            child: const Text('나중에'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(dialogCtx, true),
-            child: const Text('복원'),
-          ),
-        ],
-      ),
+      barrierDismissible: false,
+      builder: (dialogCtx) => const _AutoRestoreDialog(),
     );
     if (ok == true) {
       try {
@@ -281,4 +266,122 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
     return icons;
   }
 
+}
+
+/// 신규 기기에서 Pro 로그인 직후 노출되는 자동 복구 팝업.
+/// 앱 공용 Dialog 스타일(흰 배경, 16.w 라운드, primary CTA)로 맞춤.
+class _AutoRestoreDialog extends StatelessWidget {
+  const _AutoRestoreDialog();
+
+  @override
+  Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16.w),
+      ),
+      backgroundColor: Colors.white,
+      insetPadding: EdgeInsets.symmetric(horizontal: 24.w),
+      child: SizedBox(
+        width: width - (24.w * 2),
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(20.w, 28.w, 20.w, 20.w),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 56.w,
+                height: 56.w,
+                decoration: const BoxDecoration(
+                  color: primary100,
+                  shape: BoxShape.circle,
+                ),
+                alignment: Alignment.center,
+                child: Icon(
+                  Icons.cloud_download_outlined,
+                  size: 28.w,
+                  color: primary700,
+                ),
+              ),
+              SizedBox(height: 16.w),
+              Text(
+                '백업 데이터가 있어요',
+                style: TextStyle(
+                  color: grey900,
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: -0.2,
+                  height: 1.2,
+                ),
+              ),
+              SizedBox(height: 10.w),
+              Text(
+                '계정에 저장된 폴더와 링크를\n이 기기로 가져올까요?',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: grey500,
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: -0.1,
+                  height: 1.45,
+                ),
+              ),
+              SizedBox(height: 24.w),
+              Row(
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                      height: 48.w,
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.pop(context, false),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: grey600,
+                          side: BorderSide(color: grey200, width: 1.w),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.w),
+                          ),
+                        ),
+                        child: Text(
+                          '나중에',
+                          style: TextStyle(
+                            fontSize: 15.sp,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 8.w),
+                  Expanded(
+                    child: SizedBox(
+                      height: 48.w,
+                      child: ElevatedButton(
+                        onPressed: () => Navigator.pop(context, true),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: primary600,
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          shadowColor: Colors.transparent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.w),
+                          ),
+                        ),
+                        child: Text(
+                          '복원하기',
+                          style: TextStyle(
+                            fontSize: 15.sp,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
