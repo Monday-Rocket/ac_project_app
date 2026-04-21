@@ -87,7 +87,10 @@ class AuthRepository {
     if (Platform.isIOS) {
       return '310694628669-8ltau1vabhn2009kuik3nuddh8bs282l.apps.googleusercontent.com';
     }
-    return '310694628669-10m2vjbei0f279n1j0etqod97ul9e12k.apps.googleusercontent.com';
+    // Android / 기타 플랫폼: Web application 타입 Client ID 사용
+    // (Chrome Extension 과 공유하는 Web Client ID — Supabase Authorized Client IDs 에
+    //  이미 등록되어 있음)
+    return '310694628669-cm6c89tss9g8vbp5dtd173gpe64bs0on.apps.googleusercontent.com';
   }
 }
 
