@@ -6,6 +6,7 @@ import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/provider/auth/auth_repository.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/provider/share_data_provider.dart';
+import 'package:ac_project_app/provider/local/local_link_repository.dart';
 import 'package:ac_project_app/provider/sync/pro_remote_hooks.dart';
 import 'package:ac_project_app/provider/sync/sync_repository.dart';
 import 'package:ac_project_app/ui/page/home/local_explore_page.dart';
@@ -76,6 +77,54 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
     }
   }
 
+  bool _autoRestorePromptShown = false;
+
+  Future<void> _maybeShowAutoRestorePrompt() async {
+    if (_autoRestorePromptShown) return;
+    if (!mounted) return;
+    final authCubit = context.read<AuthCubit>();
+    if (!authCubit.state.isPro) return;
+
+    final sync = getIt<SyncRepository>();
+    final linkRepo = getIt<LocalLinkRepository>();
+    final localEmpty = (await linkRepo.getTotalLinkCount()) == 0;
+    if (!localEmpty) return;
+    final hasRemote = await sync.hasRemoteBackup();
+    if (!hasRemote) return;
+    if (!mounted) return;
+    _autoRestorePromptShown = true;
+
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('백업 발견', style: TextStyle(fontSize: 16.sp)),
+        content: Text(
+          '계정에 연결된 백업 데이터가 있습니다. 이 기기로 복원할까요?',
+          style: TextStyle(fontSize: 13.sp),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('나중에'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('복원'),
+          ),
+        ],
+      ),
+    );
+    if (ok == true) {
+      try {
+        await sync.restoreFromRemote();
+        if (!mounted) return;
+        context.read<LocalFoldersCubit>().getFolders();
+      } catch (_) {
+        // 실패는 로그만
+      }
+    }
+  }
+
   void _configureProHooks(AuthCubit authCubit) {
     final sync = getIt<SyncRepository>();
     ProRemoteHooks.configure(
@@ -117,7 +166,12 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
           },
         ),
       ],
-      child: BlocBuilder<HomeViewCubit, int>(
+      child: BlocListener<AuthCubit, AuthState>(
+        listenWhen: (prev, curr) => prev.isPro != curr.isPro,
+        listener: (context, state) {
+          if (state.isPro) _maybeShowAutoRestorePrompt();
+        },
+        child: BlocBuilder<HomeViewCubit, int>(
         builder: (context, index) {
           final icons = getBottomIcons(index);
 
@@ -149,6 +203,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
           ];
           return buildBody(index, bottomItems, context);
         },
+      ),
       ),
     );
   }
