@@ -7,20 +7,14 @@ on:
 
 env:
   FLUTTER_VERSION: "3.41.1"
-  RUBY_VERSION: "3.3"
 
 jobs:
   deploy:
     name: Build & Deploy to TestFlight
-    runs-on: macos-latest
+    runs-on: macos-26
     timeout-minutes: 60
 
     steps:
-      - name: Setup Xcode
-        uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: latest-stable
-
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -44,7 +38,7 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: ${{ env.RUBY_VERSION }}
+          ruby-version: '3.3'
           bundler-cache: true
           working-directory: ios
 
@@ -63,7 +57,10 @@ jobs:
       - name: Decode Secrets.xcconfig
         run: echo '${{ secrets.SECRETS_XCCONFIG }}' | base64 -d > ./ios/Secrets.xcconfig
 
-      - name: Install Flutter dependencies
+      - name: Decode App Store Connect API Key
+        run: echo "${{ secrets.APP_STORE_API_KEY_BASE64 }}" | base64 --decode > ios/fastlane/AuthKey.p8
+
+      - name: Clean and install dependencies
         run: flutter clean && flutter pub get
 
       - name: Run code generation
@@ -71,6 +68,12 @@ jobs:
 
       - name: Install CocoaPods
         run: cd ios && pod install
+
+      - name: Sync Extension build number
+        working-directory: ios
+        run: |
+          /usr/libexec/PlistBuddy -c "Set :CFBundleVersion ${{ steps.version.outputs.VERSION_CODE }}" Extension/Info.plist
+          /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString ${{ steps.version.outputs.VERSION_NAME }}" Extension/Info.plist
 
       - name: Build Flutter iOS
         run: |
@@ -81,22 +84,15 @@ jobs:
             --build-number=${{ steps.version.outputs.VERSION_CODE }}
 
       - name: Deploy to TestFlight
-        run: cd ios && bundle exec fastlane closed_beta
+        run: |
+          cd ios
+          bundle exec fastlane deploy_testflight
         env:
-          ITC_TEAM_ID: ${{ secrets.ITC_TEAM_ID }}
-          APPLICATION_ID: ${{ secrets.APPLICATION_ID }}
-          BUNDLE_IDENTIFIER: ${{ secrets.BUNDLE_IDENTIFIER }}
-          EXTENSION_IDENTIFIER: ${{ secrets.EXTENSION_IDENTIFIER }}
-          DEVELOPER_PORTAL_TEAM_ID: ${{ secrets.DEVELOPER_PORTAL_TEAM_ID }}
-          FASTLANE_APPLE_ID: ${{ secrets.FASTLANE_APPLE_EMAIL_ID }}
-          FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
-          FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.APP_SPECIFIC_PASSWORD }}
+          APP_STORE_KEY_ID: ${{ secrets.APP_STORE_KEY_ID }}
+          APP_STORE_ISSUER_ID: ${{ secrets.APP_STORE_ISSUER_ID }}
+          APP_STORE_KEY_PATH: fastlane/AuthKey.p8
+          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.GIT_AUTHORIZATION }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-          GIT_AUTHORIZATION: ${{ secrets.GIT_AUTHORIZATION }}
-          PROVISIONING_PROFILE_SPECIFIER: ${{ secrets.PROVISIONING_PROFILE_SPECIFIER }}
-          EXTENSION_PROVISIONING_PROFILE_SPECIFIER: ${{ secrets.EXTENSION_PROVISIONING_PROFILE_SPECIFIER }}
-          TEMP_KEYCHAIN_PASSWORD: ${{ secrets.TEMP_KEYCHAIN_PASSWORD }}
-          TEMP_KEYCHAIN_USER: ${{ secrets.TEMP_KEYCHAIN_USER }}
 
       - name: Upload build logs on failure
         if: failure()

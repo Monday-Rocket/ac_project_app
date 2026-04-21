@@ -1,63 +1,140 @@
-# Replace evverything in Fastfile with below code
 default_platform(:ios)
-APPLICATION_ID = ENV["APPLICATION_ID"]
-BUNDLE_IDENTIFIER = ENV["BUNDLE_IDENTIFIER"]
-EXTENSION_IDENTIFIER = ENV["EXTENSION_IDENTIFIER"]
-TEMP_KEYCHAIN_USER = ENV["TEMP_KEYCHAIN_USER"]
-TEMP_KEYCHAIN_PASSWORD = ENV["TEMP_KEYCHAIN_PASSWORD"]
-def delete_temp_keychain(name)
-  delete_keychain(
-    name: name
-  ) if File.exist? File.expand_path("~/Library/Keychains/#{name}-db")
-end
-def create_temp_keychain(name, password)
-  create_keychain(
-    name: name,
-    password: password,
-    unlock: true,
-    timeout: 0,
-    lock_when_sleeps: false
-  )
-end
-def ensure_temp_keychain(name, password)
-  delete_temp_keychain(name)
-  create_temp_keychain(name, password)
-end
+
+APP_IDENTIFIER = "com.mr.acProjectApp"
+EXTENSION_IDENTIFIER = "com.mr.acProjectApp.Extension"
+TEAM_ID = "T583WJWNAK"
+
 platform :ios do
-  lane :closed_beta do
-    keychain_name = TEMP_KEYCHAIN_USER
-    keychain_password = TEMP_KEYCHAIN_PASSWORD
-    ensure_temp_keychain(keychain_name, keychain_password)
-    match(
-      type: 'appstore',
-      app_identifier: ["#{BUNDLE_IDENTIFIER}", "#{EXTENSION_IDENTIFIER}"],
-      git_basic_authorization: Base64.strict_encode64(ENV["GIT_AUTHORIZATION"]),
-      readonly: true,
-      keychain_name: keychain_name,
-      keychain_password: keychain_password
+  desc "Sync certificates and profiles via Match"
+  lane :sync_certs do
+    setup_ci if is_ci
+
+    api_key = app_store_connect_api_key(
+      key_id: ENV["APP_STORE_KEY_ID"],
+      issuer_id: ENV["APP_STORE_ISSUER_ID"],
+      key_filepath: ENV["APP_STORE_KEY_PATH"] || "fastlane/AuthKey.p8",
     )
-    gym(
-      configuration: "Release",
+
+    match(
+      type: "appstore",
+      app_identifier: [APP_IDENTIFIER, EXTENSION_IDENTIFIER],
+      api_key: api_key,
+      readonly: is_ci,
+    )
+  end
+
+  desc "Build and deploy to TestFlight"
+  lane :deploy_testflight do
+    setup_ci if is_ci
+
+    api_key = app_store_connect_api_key(
+      key_id: ENV["APP_STORE_KEY_ID"],
+      issuer_id: ENV["APP_STORE_ISSUER_ID"],
+      key_filepath: ENV["APP_STORE_KEY_PATH"] || "fastlane/AuthKey.p8",
+    )
+
+    match(
+      type: "appstore",
+      app_identifier: [APP_IDENTIFIER, EXTENSION_IDENTIFIER],
+      api_key: api_key,
+      readonly: true,
+    )
+
+    update_code_signing_settings(
+      use_automatic_signing: false,
+      path: "Runner.xcodeproj",
+      team_id: TEAM_ID,
+      code_sign_identity: "Apple Distribution",
+      profile_name: "match AppStore #{APP_IDENTIFIER}",
+      bundle_identifier: APP_IDENTIFIER,
+      targets: ["Runner"],
+    )
+
+    update_code_signing_settings(
+      use_automatic_signing: false,
+      path: "Runner.xcodeproj",
+      team_id: TEAM_ID,
+      code_sign_identity: "Apple Distribution",
+      profile_name: "match AppStore #{EXTENSION_IDENTIFIER}",
+      bundle_identifier: EXTENSION_IDENTIFIER,
+      targets: ["Extension"],
+    )
+
+    build_app(
       workspace: "Runner.xcworkspace",
       scheme: "Runner",
+      configuration: "Release",
       export_method: "app-store",
+      clean: false,
+      output_directory: "../build/ios",
+      output_name: "Runner.ipa",
       export_options: {
         uploadSymbols: false,
         provisioningProfiles: {
-          "com.mr.acProjectApp" => "match AppStore com.mr.acProjectApp",
-          "com.mr.acProjectApp.Extension" => "match AppStore com.mr.acProjectApp.Extension"
+          APP_IDENTIFIER => "match AppStore #{APP_IDENTIFIER}",
+          EXTENSION_IDENTIFIER => "match AppStore #{EXTENSION_IDENTIFIER}",
         }
       }
     )
-    pilot(
-      apple_id: "#{APPLICATION_ID}",
-      app_identifier: "#{BUNDLE_IDENTIFIER}",
+
+    upload_to_testflight(
+      api_key: api_key,
       skip_waiting_for_build_processing: true,
-      skip_submission: true,
-      distribute_external: false,
-      notify_external_testers: false,
-      ipa: "./Runner.ipa"
     )
-    delete_temp_keychain(keychain_name)
+  end
+
+  desc "Build only (no deploy)"
+  lane :build_only do
+    setup_ci if is_ci
+
+    api_key = app_store_connect_api_key(
+      key_id: ENV["APP_STORE_KEY_ID"],
+      issuer_id: ENV["APP_STORE_ISSUER_ID"],
+      key_filepath: ENV["APP_STORE_KEY_PATH"] || "fastlane/AuthKey.p8",
+    )
+
+    match(
+      type: "appstore",
+      app_identifier: [APP_IDENTIFIER, EXTENSION_IDENTIFIER],
+      api_key: api_key,
+      readonly: true,
+    )
+
+    update_code_signing_settings(
+      use_automatic_signing: false,
+      path: "Runner.xcodeproj",
+      team_id: TEAM_ID,
+      code_sign_identity: "Apple Distribution",
+      profile_name: "match AppStore #{APP_IDENTIFIER}",
+      bundle_identifier: APP_IDENTIFIER,
+      targets: ["Runner"],
+    )
+
+    update_code_signing_settings(
+      use_automatic_signing: false,
+      path: "Runner.xcodeproj",
+      team_id: TEAM_ID,
+      code_sign_identity: "Apple Distribution",
+      profile_name: "match AppStore #{EXTENSION_IDENTIFIER}",
+      bundle_identifier: EXTENSION_IDENTIFIER,
+      targets: ["Extension"],
+    )
+
+    build_app(
+      workspace: "Runner.xcworkspace",
+      scheme: "Runner",
+      configuration: "Release",
+      export_method: "app-store",
+      clean: false,
+      output_directory: "../build/ios",
+      output_name: "Runner.ipa",
+      export_options: {
+        uploadSymbols: false,
+        provisioningProfiles: {
+          APP_IDENTIFIER => "match AppStore #{APP_IDENTIFIER}",
+          EXTENSION_IDENTIFIER => "match AppStore #{EXTENSION_IDENTIFIER}",
+        }
+      }
+    )
   end
 end

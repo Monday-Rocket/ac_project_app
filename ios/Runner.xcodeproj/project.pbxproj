@@ -353,14 +353,11 @@
 			buildPhases = (
 				356742059544EF467988C787 /* [CP] Check Pods Manifest.lock */,
 				AEE2471C28CF82200092F192 /* Embed App Extensions */,
-				AE2358E82BF5C1200045890F /* [Crashlytics] Clear dSYM */,
 				9740EEB61CF901F6004384FC /* Run Script */,
 				97C146EA1CF9000F007C117D /* Sources */,
 				97C146EB1CF9000F007C117D /* Frameworks */,
 				97C146EC1CF9000F007C117D /* Resources */,
 				3B06AD1E1E4923F5004D2608 /* Thin Binary */,
-				E8FF0151F034C36084045D9B /* [firebase_crashlytics] Crashlytics Upload Symbols */,
-				AE2358E92BF5C1B30045890F /* [Crashlytics] Upload dSYM */,
 				74C8F09B40FB49CE4765E446 /* [CP] Embed Pods Frameworks */,
 				C3C8EBB8722DDB8D4E59E21D /* [CP] Copy Pods Resources */,
 			);
@@ -520,42 +517,6 @@
 			shellPath = /bin/sh;
 			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" build\n";
 		};
-		AE2358E82BF5C1200045890F /* [Crashlytics] Clear dSYM */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "[Crashlytics] Clear dSYM";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "rm -rf $DWARF_DSYM_FOLDER_PATH/$DWARF_DSYM_FILE_NAME\n";
-		};
-		AE2358E92BF5C1B30045890F /* [Crashlytics] Upload dSYM */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "[Crashlytics] Upload dSYM";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "sleep 1 # Without this, there seems a chance that the script runs before dSYM generation is finished \n$PODS_ROOT/FirebaseCrashlytics/upload-symbols -gsp $PROJECT_DIR/Runner/GoogleService-Info.plist -p ios $DWARF_DSYM_FOLDER_PATH/$DWARF_DSYM_FILE_NAME\n";
-		};
 		C3C8EBB8722DDB8D4E59E21D /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -572,29 +533,6 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources.sh\"\n";
 			showEnvVarsInLog = 0;
-		};
-		E8FF0151F034C36084045D9B /* [firebase_crashlytics] Crashlytics Upload Symbols */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"\"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}\"",
-				"\"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/\"",
-				"\"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Info.plist\"",
-				"\"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)\"",
-				"\"$(PROJECT_DIR)/firebase_app_id_file.json\"",
-			);
-			name = "[firebase_crashlytics] Crashlytics Upload Symbols";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"$PODS_ROOT/FirebaseCrashlytics/upload-symbols\" --flutter-project \"$PROJECT_DIR/firebase_app_id_file.json\" \n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

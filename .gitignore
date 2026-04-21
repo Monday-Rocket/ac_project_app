@@ -4,6 +4,10 @@
 *.pyc
 *.swp
 .DS_Store
+
+# Fastlane secrets
+ios/fastlane/AuthKey*.p8
+ios/fastlane/report.xml
 .atom/
 .build/
 .buildlog/
