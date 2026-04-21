@@ -1,118 +1,119 @@
 import 'package:ac_project_app/models/local/local_folder.dart';
 import 'package:ac_project_app/models/local/local_link.dart';
+import 'package:ac_project_app/provider/local/database_helper.dart';
 import 'package:ac_project_app/provider/local/local_folder_repository.dart';
 import 'package:ac_project_app/provider/local/local_link_repository.dart';
+import 'package:ac_project_app/util/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+/// Pro 백업/복구 + 원격 CRUD 쓰기 전담 Repository.
+///
+/// 정책 요약 (로드맵 §4):
+/// - 로컬 SQLite = 진실의 원천.
+/// - Pro 유저: CRUD 시 로컬 + 원격에 fire-and-forget 동시 쓰기.
+///   원격 쓰기 실패 시 `lp_remote_dirty` 플래그 ON → 다음 기회에 full replace 로 보정.
+/// - 백업은 full replace 트랜잭션 (기존 원격 folders/links 전부 DELETE + 로컬 전체 INSERT).
+/// - 복구는 원격 메모리 다운로드 → 로컬 SQLite 트랜잭션 교체 + sqlite_sequence 보정.
+/// - Pro → Free 전환 시 원격 전체 삭제(purgeRemote).
+/// - 삭제는 hard delete 로 통일.
+/// - `_isBackingUp` 플래그로 중복 실행 방지.
 class SyncRepository {
-  final SupabaseClient _client;
-  final LocalFolderRepository _folderRepo;
-  final LocalLinkRepository _linkRepo;
-
-  static const _folderMapKey = 'lp_sync_folder_map';
-  static const _linkMapKey = 'lp_sync_link_map';
-  static const _lastSyncKey = 'lp_sync_last_at';
-
   SyncRepository({
     required LocalFolderRepository folderRepo,
     required LocalLinkRepository linkRepo,
+    DatabaseHelper? databaseHelper,
     SupabaseClient? client,
   })  : _folderRepo = folderRepo,
         _linkRepo = linkRepo,
+        _databaseHelper = databaseHelper ?? DatabaseHelper.instance,
         _client = client ?? Supabase.instance.client;
 
-  // ── ID 매핑 관리 ──
+  final LocalFolderRepository _folderRepo;
+  final LocalLinkRepository _linkRepo;
+  final DatabaseHelper _databaseHelper;
+  final SupabaseClient _client;
 
-  Future<Map<int, String>> _getFolderMap() async {
+  static const _kLastBackupAt = 'lp_last_backup_at';
+  static const _kRemoteDirty = 'lp_remote_dirty';
+
+  bool _isBackingUp = false;
+
+  String? _requireUserId() => _client.auth.currentUser?.id;
+
+  // ── 플래그/메타 ───────────────────────────────────────────────────────
+
+  Future<DateTime?> getLastBackupAt() async {
     final prefs = await SharedPreferences.getInstance();
-    final raw = prefs.getStringList(_folderMapKey) ?? [];
-    final map = <int, String>{};
-    for (final entry in raw) {
-      final parts = entry.split(':');
-      if (parts.length == 2) {
-        map[int.parse(parts[0])] = parts[1];
-      }
+    final raw = prefs.getString(_kLastBackupAt);
+    if (raw == null) return null;
+    return DateTime.tryParse(raw);
+  }
+
+  Future<void> _setLastBackupAtNow() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_kLastBackupAt, DateTime.now().toIso8601String());
+  }
+
+  Future<bool> isDirty() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_kRemoteDirty) ?? false;
+  }
+
+  Future<void> _setDirty(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_kRemoteDirty, value);
+  }
+
+  // ── 원격 쓰기 래퍼 ────────────────────────────────────────────────────
+
+  /// 모든 원격 쓰기 경로는 이 래퍼를 경유.
+  /// - 요청 전 dirty=true (optimistic: 앱 강제종료 시에도 다음에 보정됨)
+  /// - 성공 시 dirty=false
+  /// - 실패 시 dirty 유지, 예외는 로그만 남기고 삼킴 (fire-and-forget)
+  Future<void> remoteWrite(Future<void> Function() operation) async {
+    await _setDirty(true);
+    try {
+      await operation();
+      await _setDirty(false);
+    } catch (e) {
+      Log.e('SyncRepository.remoteWrite failed: $e');
     }
-    return map;
   }
 
-  Future<void> _setFolderMap(Map<int, String> map) async {
-    final prefs = await SharedPreferences.getInstance();
-    final raw = map.entries.map((e) => '${e.key}:${e.value}').toList();
-    await prefs.setStringList(_folderMapKey, raw);
-  }
+  // ── 개별 upsert/delete ───────────────────────────────────────────────
 
-  Future<Map<int, String>> _getLinkMap() async {
-    final prefs = await SharedPreferences.getInstance();
-    final raw = prefs.getStringList(_linkMapKey) ?? [];
-    final map = <int, String>{};
-    for (final entry in raw) {
-      final parts = entry.split(':');
-      if (parts.length == 2) {
-        map[int.parse(parts[0])] = parts[1];
-      }
-    }
-    return map;
-  }
-
-  Future<void> _setLinkMap(Map<int, String> map) async {
-    final prefs = await SharedPreferences.getInstance();
-    final raw = map.entries.map((e) => '${e.key}:${e.value}').toList();
-    await prefs.setStringList(_linkMapKey, raw);
-  }
-
-  Future<String?> getLastSyncAt() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(_lastSyncKey);
-  }
-
-  Future<void> _setLastSyncAt(String at) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_lastSyncKey, at);
-  }
-
-  Future<bool> isSyncSetup() async {
-    final map = await _getFolderMap();
-    return map.isNotEmpty;
-  }
-
-  // ── 초기 업로드 ──
-
-  Future<void> initialUpload() async {
-    final user = _client.auth.currentUser;
-    if (user == null) throw Exception('로그인이 필요합니다');
-
-    final folders = await _folderRepo.getAllFolders();
-    final folderMap = <int, String>{};
-
-    // 폴더 업로드
-    for (final folder in folders) {
-      final data = await _client.from('folders').insert({
-        'user_id': user.id,
+  Future<void> upsertFolderRemote(LocalFolder folder) async {
+    final userId = _requireUserId();
+    if (userId == null || folder.id == null) return;
+    await remoteWrite(() async {
+      await _client.from('folders').upsert({
+        'user_id': userId,
         'client_id': folder.id,
+        'parent_id': null, // 로컬 parent_id는 int, 원격은 UUID. 원격 parent 매핑은 full replace 경로에서만 정확 설정.
         'name': folder.name,
         'thumbnail': folder.thumbnail,
         'is_classified': folder.isClassified,
         'created_at': folder.createdAt,
         'updated_at': folder.updatedAt,
-      }).select('id').single();
+      }, onConflict: 'user_id,client_id');
+    });
+  }
 
-      folderMap[folder.id!] = data['id'] as String;
+  Future<void> upsertLinkRemote(LocalLink link) async {
+    final userId = _requireUserId();
+    if (userId == null || link.id == null) return;
+    final folderServerId = await _resolveRemoteFolderId(userId, link.folderId);
+    if (folderServerId == null) {
+      // 부모 폴더가 아직 원격에 없으면 dirty만 세팅해두고 다음 full replace에서 해결
+      await _setDirty(true);
+      return;
     }
-
-    await _setFolderMap(folderMap);
-
-    // 링크 업로드 (50개씩 배치)
-    final linkMap = <int, String>{};
-    final allLinks = await _linkRepo.getAllLinks();
-
-    for (var i = 0; i < allLinks.length; i += 50) {
-      final batch = allLinks.skip(i).take(50).toList();
-      final rows = batch.map((link) => {
-        'user_id': user.id,
+    await remoteWrite(() async {
+      await _client.from('links').upsert({
+        'user_id': userId,
         'client_id': link.id,
-        'folder_id': folderMap[link.folderId],
+        'folder_id': folderServerId,
         'url': link.url,
         'title': link.title,
         'image': link.image,
@@ -120,247 +121,243 @@ class SyncRepository {
         'inflow_type': link.inflowType,
         'created_at': link.createdAt,
         'updated_at': link.updatedAt,
-      }).toList();
+      }, onConflict: 'user_id,client_id');
+    });
+  }
 
-      final data = await _client
+  Future<void> deleteFolderRemote(int localFolderId) async {
+    final userId = _requireUserId();
+    if (userId == null) return;
+    await remoteWrite(() async {
+      await _client
+          .from('folders')
+          .delete()
+          .match({'user_id': userId, 'client_id': localFolderId});
+    });
+  }
+
+  Future<void> deleteLinkRemote(int localLinkId) async {
+    final userId = _requireUserId();
+    if (userId == null) return;
+    await remoteWrite(() async {
+      await _client
           .from('links')
-          .insert(rows)
-          .select('id, client_id');
-
-      for (final row in data) {
-        linkMap[row['client_id'] as int] = row['id'] as String;
-      }
-    }
-
-    await _setLinkMap(linkMap);
-    await _setLastSyncAt(DateTime.now().toUtc().toIso8601String());
+          .delete()
+          .match({'user_id': userId, 'client_id': localLinkId});
+    });
   }
 
-  // ── 증분 동기화 ──
-
-  Future<void> incrementalSync() async {
-    final user = _client.auth.currentUser;
-    if (user == null) throw Exception('로그인이 필요합니다');
-
-    final lastSync = await getLastSyncAt();
-    final syncStartedAt = DateTime.now().toUtc().toIso8601String();
-
-    final folderMap = await _getFolderMap();
-    final linkMap = await _getLinkMap();
-
-    await _pullFolders(user.id, lastSync, folderMap);
-    await _pullLinks(user.id, lastSync, folderMap, linkMap);
-    await _pushFolders(user.id, lastSync, folderMap);
-    await _pushLinks(user.id, lastSync, folderMap, linkMap);
-
-    await _setFolderMap(folderMap);
-    await _setLinkMap(linkMap);
-    await _setLastSyncAt(syncStartedAt);
+  Future<String?> _resolveRemoteFolderId(String userId, int localFolderId) async {
+    final rows = await _client
+        .from('folders')
+        .select('id')
+        .match({'user_id': userId, 'client_id': localFolderId})
+        .limit(1);
+    if (rows.isEmpty) return null;
+    return rows.first['id'] as String?;
   }
 
-  // ── Pull: 서버 → 로컬 ──
+  // ── 백업 (full replace) ──────────────────────────────────────────────
 
-  Future<void> _pullFolders(
-    String userId,
-    String? lastSync,
-    Map<int, String> folderMap,
-  ) async {
-    var query = _client.from('folders').select().eq('user_id', userId);
-    if (lastSync != null) query = query.gt('updated_at', lastSync);
+  /// 원격 원본을 로컬 전체 상태로 교체.
+  /// Pro 전환 시 / dirty 보정 시 / 수동 백업 시 동일하게 사용.
+  /// 원격 folders, links 전부 DELETE → 로컬 전체 INSERT.
+  /// parent_id 매핑을 위해 folders 를 먼저 모두 INSERT 해 client_id ↔ id 맵을 확보.
+  Future<bool> backupToRemote() async {
+    if (_isBackingUp) return false;
+    final userId = _requireUserId();
+    if (userId == null) return false;
 
-    final serverFolders = await query;
-    final reverseMap = _invertMap(folderMap);
+    _isBackingUp = true;
+    try {
+      final folders = await _folderRepo.getAllFolders();
+      final links = await _linkRepo.getAllLinks();
 
-    for (final sf in serverFolders) {
-      final uuid = sf['id'] as String;
-      final localId = reverseMap[uuid];
+      // 1) 원격 초기화
+      await _client.from('links').delete().match({'user_id': userId});
+      await _client.from('folders').delete().match({'user_id': userId});
 
-      if (sf['deleted_at'] != null) {
-        if (localId != null) {
-          await _folderRepo.deleteFolder(localId);
-        }
-        continue;
+      // 2) 폴더 INSERT (parent_id 없이)
+      final folderRows = folders
+          .where((f) => f.id != null)
+          .map((f) => {
+                'user_id': userId,
+                'client_id': f.id,
+                'name': f.name,
+                'thumbnail': f.thumbnail,
+                'is_classified': f.isClassified,
+                'created_at': f.createdAt,
+                'updated_at': f.updatedAt,
+              })
+          .toList();
+      if (folderRows.isNotEmpty) {
+        await _client.from('folders').insert(folderRows);
       }
 
-      if (localId != null) {
-        final local = await _folderRepo.getFolderById(localId);
-        if (local != null && (sf['updated_at'] as String).compareTo(local.updatedAt) > 0) {
-          await _folderRepo.updateFolder(local.copyWith(
-            name: sf['name'] as String,
-            thumbnail: sf['thumbnail'] as String?,
-            isClassified: sf['is_classified'] as bool,
-          ));
-        }
-      } else {
-        final now = DateTime.now().toUtc().toIso8601String();
-        final created = await _folderRepo.createFolder(LocalFolder(
-          name: sf['name'] as String,
-          thumbnail: sf['thumbnail'] as String?,
-          isClassified: sf['is_classified'] as bool,
-          createdAt: sf['created_at'] as String? ?? now,
-          updatedAt: sf['updated_at'] as String? ?? now,
-        ));
-        folderMap[created] = uuid;
-      }
-    }
-  }
+      // 3) folders의 client_id → 원격 id 맵 확보 (parent_id 2차 UPDATE 용)
+      final folderRemote = await _client
+          .from('folders')
+          .select('id, client_id')
+          .match({'user_id': userId});
+      final clientToServerFolderId = <int, String>{
+        for (final row in folderRemote)
+          (row['client_id'] as int): (row['id'] as String),
+      };
 
-  Future<void> _pullLinks(
-    String userId,
-    String? lastSync,
-    Map<int, String> folderMap,
-    Map<int, String> linkMap,
-  ) async {
-    var query = _client.from('links').select().eq('user_id', userId);
-    if (lastSync != null) query = query.gt('updated_at', lastSync);
-
-    final serverLinks = await query;
-    final reverseFolder = _invertMap(folderMap);
-    final reverseLink = _invertMap(linkMap);
-
-    for (final sl in serverLinks) {
-      final uuid = sl['id'] as String;
-      final localId = reverseLink[uuid];
-      final folderUuid = sl['folder_id'] as String;
-      final localFolderId = reverseFolder[folderUuid];
-
-      if (sl['deleted_at'] != null) {
-        if (localId != null) await _linkRepo.deleteLink(localId);
-        continue;
-      }
-
-      if (localFolderId == null) continue;
-
-      if (localId != null) {
-        final local = await _linkRepo.getLinkById(localId);
-        if (local != null && (sl['updated_at'] as String).compareTo(local.updatedAt) > 0) {
-          await _linkRepo.updateLink(local.copyWith(
-            folderId: localFolderId,
-            url: sl['url'] as String,
-            title: sl['title'] as String?,
-            image: sl['image'] as String?,
-            describe: sl['describe'] as String?,
-          ));
-        }
-      } else {
-        final now = DateTime.now().toUtc().toIso8601String();
-        final created = await _linkRepo.createLink(LocalLink(
-          folderId: localFolderId,
-          url: sl['url'] as String,
-          title: sl['title'] as String?,
-          image: sl['image'] as String?,
-          describe: sl['describe'] as String?,
-          inflowType: sl['inflow_type'] as String?,
-          createdAt: sl['created_at'] as String? ?? now,
-          updatedAt: sl['updated_at'] as String? ?? now,
-        ));
-        linkMap[created] = uuid;
-      }
-    }
-  }
-
-  // ── Push: 로컬 → 서버 ──
-
-  Future<void> _pushFolders(
-    String userId,
-    String? lastSync,
-    Map<int, String> folderMap,
-  ) async {
-    final folders = await _folderRepo.getAllFolders();
-
-    for (final folder in folders) {
-      final uuid = folderMap[folder.id];
-
-      if (uuid == null) {
-        final data = await _client.from('folders').insert({
-          'user_id': userId,
-          'client_id': folder.id,
-          'name': folder.name,
-          'thumbnail': folder.thumbnail,
-          'is_classified': folder.isClassified,
-          'created_at': folder.createdAt,
-          'updated_at': folder.updatedAt,
-        }).select('id').single();
-
-        folderMap[folder.id!] = data['id'] as String;
-      } else if (lastSync == null || folder.updatedAt.compareTo(lastSync) > 0) {
-        final serverData = await _client
+      // 4) parent_id 세팅 (로컬 parent_id(int) → 원격 parent uuid)
+      for (final f in folders) {
+        if (f.id == null || f.parentId == null) continue;
+        final parentRemote = clientToServerFolderId[f.parentId!];
+        if (parentRemote == null) continue;
+        await _client
             .from('folders')
-            .select('updated_at')
-            .eq('id', uuid)
-            .single();
-
-        if (folder.updatedAt.compareTo(serverData['updated_at'] as String) > 0) {
-          await _client.from('folders').update({
-            'name': folder.name,
-            'thumbnail': folder.thumbnail,
-            'is_classified': folder.isClassified,
-            'updated_at': folder.updatedAt,
-          }).eq('id', uuid);
-        }
+            .update({'parent_id': parentRemote})
+            .match({'user_id': userId, 'client_id': f.id!});
       }
-    }
-  }
 
-  Future<void> _pushLinks(
-    String userId,
-    String? lastSync,
-    Map<int, String> folderMap,
-    Map<int, String> linkMap,
-  ) async {
-    final links = await _linkRepo.getAllLinks();
-
-    for (final link in links) {
-      final uuid = linkMap[link.id];
-      final folderUuid = folderMap[link.folderId];
-      if (folderUuid == null) continue;
-
-      if (uuid == null) {
-        final data = await _client.from('links').insert({
+      // 5) 링크 INSERT (folder_id 매핑)
+      final linkRows = <Map<String, dynamic>>[];
+      for (final l in links) {
+        if (l.id == null) continue;
+        final folderRemoteId = clientToServerFolderId[l.folderId];
+        if (folderRemoteId == null) continue;
+        linkRows.add({
           'user_id': userId,
-          'client_id': link.id,
-          'folder_id': folderUuid,
-          'url': link.url,
-          'title': link.title,
-          'image': link.image,
-          'describe': link.describe,
-          'inflow_type': link.inflowType,
-          'created_at': link.createdAt,
-          'updated_at': link.updatedAt,
-        }).select('id').single();
-
-        linkMap[link.id!] = data['id'] as String;
-      } else if (lastSync == null || link.updatedAt.compareTo(lastSync) > 0) {
-        final serverData = await _client
-            .from('links')
-            .select('updated_at')
-            .eq('id', uuid)
-            .single();
-
-        if (link.updatedAt.compareTo(serverData['updated_at'] as String) > 0) {
-          await _client.from('links').update({
-            'folder_id': folderUuid,
-            'url': link.url,
-            'title': link.title,
-            'image': link.image,
-            'describe': link.describe,
-            'updated_at': link.updatedAt,
-          }).eq('id', uuid);
-        }
+          'client_id': l.id,
+          'folder_id': folderRemoteId,
+          'url': l.url,
+          'title': l.title,
+          'image': l.image,
+          'describe': l.describe,
+          'inflow_type': l.inflowType,
+          'created_at': l.createdAt,
+          'updated_at': l.updatedAt,
+        });
       }
+      if (linkRows.isNotEmpty) {
+        await _client.from('links').insert(linkRows);
+      }
+
+      await _setLastBackupAtNow();
+      await _setDirty(false);
+      Log.i('backupToRemote ok: ${folders.length} folders, ${links.length} links');
+      return true;
+    } catch (e) {
+      Log.e('backupToRemote failed: $e');
+      return false;
+    } finally {
+      _isBackingUp = false;
     }
   }
 
-  // ── 유틸 ──
-
-  Map<String, int> _invertMap(Map<int, String> map) {
-    return {for (final e in map.entries) e.value: e.key};
+  /// Pro 자동 복구 팝업 조건 체크용.
+  Future<bool> hasRemoteBackup() async {
+    final userId = _requireUserId();
+    if (userId == null) return false;
+    final rows = await _client
+        .from('folders')
+        .select('id')
+        .match({'user_id': userId})
+        .limit(1);
+    return rows.isNotEmpty;
   }
 
-  Future<void> clearSyncData() async {
+  // ── 복구 ──────────────────────────────────────────────────────────────
+
+  /// 원격 → 로컬 전체 복구.
+  /// 1) 원격 folders/links 전체 다운로드 (메모리)
+  /// 2) 성공 시 로컬 SQLite 트랜잭션: 기존 데이터 삭제 + 새 데이터 삽입
+  /// 3) sqlite_sequence 보정 (다음 insert id 충돌 방지)
+  Future<void> restoreFromRemote() async {
+    final userId = _requireUserId();
+    if (userId == null) return;
+
+    // 1) 원격 다운로드
+    final remoteFolders = await _client
+        .from('folders')
+        .select()
+        .match({'user_id': userId});
+    final remoteLinks = await _client
+        .from('links')
+        .select()
+        .match({'user_id': userId});
+
+    // 원격 parent uuid → client_id 역매핑을 위해 server_id → client_id 맵 준비
+    final serverIdToClient = <String, int>{
+      for (final f in remoteFolders)
+        (f['id'] as String): (f['client_id'] as int),
+    };
+
+    final db = await _databaseHelper.database;
+    await db.transaction((txn) async {
+      await txn.delete('link');
+      await txn.delete('folder');
+
+      for (final f in remoteFolders) {
+        final clientId = f['client_id'] as int;
+        final parentServer = f['parent_id'] as String?;
+        final parentClient =
+            parentServer != null ? serverIdToClient[parentServer] : null;
+        await txn.insert('folder', {
+          'id': clientId,
+          'name': f['name'] as String,
+          'thumbnail': f['thumbnail'] as String?,
+          'is_classified': (f['is_classified'] as bool) ? 1 : 0,
+          'parent_id': parentClient,
+          'created_at': f['created_at'] as String,
+          'updated_at': f['updated_at'] as String,
+        });
+      }
+
+      for (final l in remoteLinks) {
+        final clientId = l['client_id'] as int;
+        final folderServer = l['folder_id'] as String;
+        final folderClient = serverIdToClient[folderServer];
+        if (folderClient == null) continue;
+        await txn.insert('link', {
+          'id': clientId,
+          'folder_id': folderClient,
+          'url': l['url'] as String,
+          'title': l['title'] as String?,
+          'image': l['image'] as String?,
+          'describe': l['describe'] as String?,
+          'inflow_type': l['inflow_type'] as String?,
+          'created_at': l['created_at'] as String,
+          'updated_at': l['updated_at'] as String,
+        });
+      }
+
+      // sqlite_sequence 보정 — 다음 insert의 auto-increment가 복구된 최댓값 뒤에서 시작하게
+      await txn.rawUpdate(
+        'UPDATE sqlite_sequence SET seq = '
+        "(SELECT COALESCE(MAX(id), 0) FROM folder) WHERE name = 'folder'",
+      );
+      await txn.rawUpdate(
+        'UPDATE sqlite_sequence SET seq = '
+        "(SELECT COALESCE(MAX(id), 0) FROM link) WHERE name = 'link'",
+      );
+    });
+    Log.i('restoreFromRemote ok: ${remoteFolders.length} folders, ${remoteLinks.length} links');
+  }
+
+  /// Pro → Free 전환 시 원격 전체 삭제.
+  /// 실패해도 다음 백업이 full replace 라 자동 청소됨 (로그만 남김).
+  Future<void> purgeRemote() async {
+    final userId = _requireUserId();
+    if (userId == null) return;
+    try {
+      await _client.from('links').delete().match({'user_id': userId});
+      await _client.from('folders').delete().match({'user_id': userId});
+      Log.i('purgeRemote ok');
+    } catch (e) {
+      Log.e('purgeRemote failed: $e');
+    }
+  }
+
+  /// 테스트/디버깅용 — 백업 메타 초기화 (원격 데이터는 건드리지 않음).
+  Future<void> clearLocalSyncMeta() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(_folderMapKey);
-    await prefs.remove(_linkMapKey);
-    await prefs.remove(_lastSyncKey);
+    await prefs.remove(_kLastBackupAt);
+    await prefs.remove(_kRemoteDirty);
   }
 }
