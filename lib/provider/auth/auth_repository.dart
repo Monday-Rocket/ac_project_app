@@ -60,8 +60,15 @@ class AuthRepository {
   }
 
   Future<String> getPlan() async {
+    final info = await getPlanInfo();
+    return info.effectivePlan;
+  }
+
+  /// plan + 만료일을 함께 반환. 만료 체크는 호출자 쪽에서 하거나
+  /// [PlanInfo.effectivePlan] 을 사용.
+  Future<PlanInfo> getPlanInfo() async {
     final user = currentUser;
-    if (user == null) return 'free';
+    if (user == null) return const PlanInfo(plan: 'free', expiresAt: null);
 
     final data = await _client
         .from('profiles')
@@ -70,15 +77,10 @@ class AuthRepository {
         .single();
 
     final plan = data['plan'] as String? ?? 'free';
-    final expiresAt = data['plan_expires_at'] as String?;
-
-    if (plan == 'pro' && expiresAt != null) {
-      if (DateTime.parse(expiresAt).isBefore(DateTime.now())) {
-        return 'free';
-      }
-    }
-
-    return plan;
+    final expiresAtRaw = data['plan_expires_at'] as String?;
+    final expiresAt =
+        expiresAtRaw == null ? null : DateTime.tryParse(expiresAtRaw);
+    return PlanInfo(plan: plan, expiresAt: expiresAt);
   }
 
   String _getGoogleServerClientId() {
@@ -86,5 +88,19 @@ class AuthRepository {
       return '310694628669-8ltau1vabhn2009kuik3nuddh8bs282l.apps.googleusercontent.com';
     }
     return '310694628669-10m2vjbei0f279n1j0etqod97ul9e12k.apps.googleusercontent.com';
+  }
+}
+
+class PlanInfo {
+  const PlanInfo({required this.plan, required this.expiresAt});
+
+  final String plan;
+  final DateTime? expiresAt;
+
+  /// 만료 시각까지 고려한 실사용 plan. 만료된 'pro'는 'free'로 강등.
+  String get effectivePlan {
+    if (plan != 'pro') return plan;
+    if (expiresAt == null) return 'pro';
+    return expiresAt!.isAfter(DateTime.now()) ? 'pro' : 'free';
   }
 }

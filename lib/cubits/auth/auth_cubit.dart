@@ -1,6 +1,10 @@
 import 'dart:async';
 
+import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/provider/auth/auth_repository.dart';
+import 'package:ac_project_app/provider/shared_pref_provider.dart';
+import 'package:ac_project_app/provider/sync/sync_repository.dart';
+import 'package:ac_project_app/util/logger.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -10,28 +14,40 @@ class AuthState {
   final AuthStatus status;
   final User? user;
   final String? plan;
+  final DateTime? planExpiresAt;
   final String? errorMessage;
 
   const AuthState({
     this.status = AuthStatus.initial,
     this.user,
     this.plan,
+    this.planExpiresAt,
     this.errorMessage,
   });
 
-  bool get isPro => plan == 'pro';
+  /// 만료까지 고려한 Pro 여부.
+  bool get isPro {
+    if (plan != 'pro') return false;
+    if (planExpiresAt == null) return true;
+    return planExpiresAt!.isAfter(DateTime.now());
+  }
+
   bool get isLoggedIn => status == AuthStatus.authenticated && user != null;
 
   AuthState copyWith({
     AuthStatus? status,
     User? user,
     String? plan,
+    DateTime? planExpiresAt,
     String? errorMessage,
+    bool clearExpiresAt = false,
   }) {
     return AuthState(
       status: status ?? this.status,
       user: user ?? this.user,
       plan: plan ?? this.plan,
+      planExpiresAt:
+          clearExpiresAt ? null : (planExpiresAt ?? this.planExpiresAt),
       errorMessage: errorMessage,
     );
   }
@@ -39,10 +55,17 @@ class AuthState {
 
 class AuthCubit extends Cubit<AuthState> {
   final AuthRepository _authRepository;
+  final SyncRepository? _syncRepository;
   StreamSubscription<AuthState>? _authSubscription;
 
-  AuthCubit({required AuthRepository authRepository})
-      : _authRepository = authRepository,
+  static const _kCachedPlan = 'lp_cached_plan';
+
+  AuthCubit({
+    required AuthRepository authRepository,
+    SyncRepository? syncRepository,
+  })  : _authRepository = authRepository,
+        _syncRepository =
+            syncRepository ?? (getIt.isRegistered<SyncRepository>() ? getIt<SyncRepository>() : null),
         super(const AuthState()) {
     _init();
   }
@@ -67,12 +90,50 @@ class AuthCubit extends Cubit<AuthState> {
     });
   }
 
+  /// Plan 조회 + 캐시 비교 후 free↔pro 전환 트리거. 앱 시작/포그라운드 복귀/로그인 성공 시 호출.
+  Future<void> refreshPlan() => _loadPlan();
+
   Future<void> _loadPlan() async {
     try {
-      final plan = await _authRepository.getPlan();
-      emit(state.copyWith(plan: plan));
+      final info = await _authRepository.getPlanInfo();
+      final effective = info.effectivePlan;
+      final previous = await SharedPrefHelper.getValueFromKey<String>(
+        _kCachedPlan,
+        defaultValue: '',
+      );
+
+      emit(state.copyWith(
+        plan: effective,
+        planExpiresAt: info.expiresAt,
+        clearExpiresAt: info.expiresAt == null,
+      ));
+
+      await SharedPrefHelper.saveKeyValue(_kCachedPlan, effective);
+
+      // 전환 감지
+      if (previous.isEmpty || previous == effective) return;
+      if (_syncRepository == null) return;
+
+      if (previous == 'free' && effective == 'pro') {
+        Log.i('Plan transition: free → pro. Triggering initial backup.');
+        unawaited(_syncRepository.backupToRemote());
+      } else if (previous == 'pro' && effective == 'free') {
+        Log.i('Plan transition: pro → free. Restore + purge.');
+        unawaited(() async {
+          try {
+            await _syncRepository.restoreFromRemote();
+          } catch (e) {
+            Log.e('restoreFromRemote failed: $e');
+          }
+          try {
+            await _syncRepository.purgeRemote();
+          } catch (e) {
+            Log.e('purgeRemote failed: $e');
+          }
+        }());
+      }
     } catch (_) {
-      // 플랜 로드 실패 시 free로 유지
+      // 플랜 로드 실패 시 상태 유지
     }
   }
 
@@ -106,6 +167,7 @@ class AuthCubit extends Cubit<AuthState> {
 
   Future<void> signOut() async {
     await _authRepository.signOut();
+    await SharedPrefHelper.saveKeyValue(_kCachedPlan, '');
     emit(const AuthState(status: AuthStatus.unauthenticated));
   }
 
