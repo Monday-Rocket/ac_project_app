@@ -14,6 +14,8 @@ class Folder {
     this.links,
     this.time,
     this.isClassified,
+    this.parentId,
+    this.linksTotal,
   });
 
   factory Folder.fromJson(Map<String, dynamic> json) => _$FolderFromJson(json);
@@ -26,6 +28,10 @@ class Folder {
   final int? links;
   @JsonKey(name: 'created_date_time') final String? time;
   final bool? isClassified;
+  final int? parentId;
+  // 재귀 링크 카운트 (자기 + 모든 후손). UI 계층 표시용, 직렬화 제외.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  final int? linksTotal;
 
   static bool containsNameFromFolderList(List<Folder> folders, String? value) {
     return folders.map((folder) => folder.name).toList().contains(value ?? '');
@@ -52,6 +58,8 @@ class Folder {
     int? links,
     String? time,
     bool? isClassified,
+    int? parentId,
+    int? linksTotal,
   }) {
     return Folder(
       id: id ?? this.id,
@@ -60,6 +68,8 @@ class Folder {
       links: links ?? this.links,
       time: time ?? this.time,
       isClassified: isClassified ?? this.isClassified,
+      parentId: parentId ?? this.parentId,
+      linksTotal: linksTotal ?? this.linksTotal,
     );
   }
 }

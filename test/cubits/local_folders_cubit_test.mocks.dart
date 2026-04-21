@@ -135,4 +135,72 @@ class MockLocalFolderRepository extends _i1.Mock
         ),
         returnValue: _i3.Future<int>.value(0),
       ) as _i3.Future<int>);
+
+  @override
+  _i3.Future<List<_i4.LocalFolder>> getRootFolders() => (super.noSuchMethod(
+        Invocation.method(
+          #getRootFolders,
+          [],
+        ),
+        returnValue:
+            _i3.Future<List<_i4.LocalFolder>>.value(<_i4.LocalFolder>[]),
+      ) as _i3.Future<List<_i4.LocalFolder>>);
+
+  @override
+  _i3.Future<List<_i4.LocalFolder>> getChildFolders(int? parentId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getChildFolders,
+          [parentId],
+        ),
+        returnValue:
+            _i3.Future<List<_i4.LocalFolder>>.value(<_i4.LocalFolder>[]),
+      ) as _i3.Future<List<_i4.LocalFolder>>);
+
+  @override
+  _i3.Future<List<_i4.LocalFolder>> getAllDescendants(int? folderId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getAllDescendants,
+          [folderId],
+        ),
+        returnValue:
+            _i3.Future<List<_i4.LocalFolder>>.value(<_i4.LocalFolder>[]),
+      ) as _i3.Future<List<_i4.LocalFolder>>);
+
+  @override
+  _i3.Future<List<_i4.LocalFolder>> getBreadcrumb(int? folderId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getBreadcrumb,
+          [folderId],
+        ),
+        returnValue:
+            _i3.Future<List<_i4.LocalFolder>>.value(<_i4.LocalFolder>[]),
+      ) as _i3.Future<List<_i4.LocalFolder>>);
+
+  @override
+  _i3.Future<Map<int, int>> getRecursiveLinkCounts() => (super.noSuchMethod(
+        Invocation.method(
+          #getRecursiveLinkCounts,
+          [],
+        ),
+        returnValue: _i3.Future<Map<int, int>>.value(<int, int>{}),
+      ) as _i3.Future<Map<int, int>>);
+
+  @override
+  _i3.Future<bool> moveFolder(
+    int? folderId,
+    int? newParentId,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #moveFolder,
+          [
+            folderId,
+            newParentId,
+          ],
+        ),
+        returnValue: _i3.Future<bool>.value(false),
+      ) as _i3.Future<bool>);
 }

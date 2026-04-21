@@ -5,7 +5,7 @@ import 'package:ac_project_app/models/local/local_link.dart';
 
 /// LocalFolder를 기존 Folder 모델로 변환하는 확장
 extension LocalFolderToFolder on LocalFolder {
-  Folder toFolder() {
+  Folder toFolder({int? linksTotal}) {
     return Folder(
       id: id,
       thumbnail: thumbnail,
@@ -13,7 +13,19 @@ extension LocalFolderToFolder on LocalFolder {
       links: linksCount ?? 0,
       time: createdAt,
       isClassified: isClassified,
+      parentId: parentId,
+      linksTotal: linksTotal,
     );
+  }
+}
+
+/// List 변환 — 재귀 링크 카운트 맵을 받아 각 폴더에 linksTotal 주입
+extension LocalFolderListWithCounts on List<LocalFolder> {
+  List<Folder> toFolderListWithRecursiveCounts(Map<int, int> recursiveCounts) {
+    return map((f) {
+      final total = f.id != null ? recursiveCounts[f.id] : null;
+      return f.toFolder(linksTotal: total);
+    }).toList();
   }
 }
 

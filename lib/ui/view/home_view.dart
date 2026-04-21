@@ -72,7 +72,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
           create: (_) => HomeViewCubit((args['index'] as int?) ?? 0),
         ),
         BlocProvider<LocalFoldersCubit>(
-          create: (_) => LocalFoldersCubit(),
+          create: (_) => LocalFoldersCubit(rootsOnly: true),
         ),
         BlocProvider<AuthCubit>(
           create: (_) => AuthCubit(authRepository: getIt<AuthRepository>()),

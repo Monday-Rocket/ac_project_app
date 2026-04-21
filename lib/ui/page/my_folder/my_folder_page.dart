@@ -12,6 +12,7 @@ import 'package:ac_project_app/ui/widget/add_folder/show_add_folder_dialog.dart'
 import 'package:ac_project_app/ui/widget/buttons/upload_button.dart';
 import 'package:ac_project_app/ui/widget/custom_reorderable_list_view.dart';
 import 'package:ac_project_app/ui/widget/dialog/bottom_dialog.dart';
+import 'package:ac_project_app/ui/widget/folder/folder_tree_modal.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:ac_project_app/util/number_commas.dart';
 import 'package:flutter/material.dart';
@@ -162,6 +163,17 @@ class _MyFolderPageState extends State<MyFolderPage> with WidgetsBindingObserver
               ),
             ),
           ),
+          InkWell(
+            onTap: () => showFolderTreeModal(context),
+            child: Padding(
+              padding: EdgeInsets.all(6.w),
+              child: Icon(
+                Icons.account_tree_outlined,
+                size: 22.sp,
+                color: primary600,
+              ),
+            ),
+          ),
           if (folderState is FolderLoadedState)
             InkWell(
               onTap: () => showAddFolderDialog(
@@ -268,17 +280,30 @@ class _MyFolderPageState extends State<MyFolderPage> with WidgetsBindingObserver
     List<Folder> folders,
     int index,
   ) {
-    Navigator.pushNamed(
-      context,
-      Routes.myLinks,
-      arguments: {
-        'folders': folders,
-        'selectedFolder': folders[index],
-        'tabIndex': index,
-      },
-    ).then((_) {
-      context.read<LocalFoldersCubit>().getFolders();
-    });
+    final folder = folders[index];
+    // 미분류는 기존 myLinks 뷰로 이동 (하위 폴더 없으므로 드릴다운 불필요)
+    // 일반 폴더는 드릴다운 페이지 진입 (하위 폴더 + 직접 링크 동시 표시)
+    if (folder.isClassified ?? true) {
+      Navigator.pushNamed(
+        context,
+        Routes.folderDrillDown,
+        arguments: {'folderId': folder.id},
+      ).then((_) {
+        context.read<LocalFoldersCubit>().getFolders();
+      });
+    } else {
+      Navigator.pushNamed(
+        context,
+        Routes.myLinks,
+        arguments: {
+          'folders': folders,
+          'selectedFolder': folder,
+          'tabIndex': index,
+        },
+      ).then((_) {
+        context.read<LocalFoldersCubit>().getFolders();
+      });
+    }
   }
 
   Widget buildListView(List<Folder> folders, BuildContext context) {
@@ -367,7 +392,7 @@ class _MyFolderPageState extends State<MyFolderPage> with WidgetsBindingObserver
                         height: 6.w,
                       ),
                       Text(
-                        '링크 ${addCommasFrom(folder.links)}개',
+                        '링크 ${addCommasFrom(folder.linksTotal ?? folder.links ?? 0)}개',
                         style: TextStyle(
                           fontSize: 12.sp,
                           fontWeight: FontWeight.w500,

@@ -11,13 +11,18 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 /// 로컬 DB를 사용하는 폴더 Cubit
 /// GetFoldersCubit을 대체
 class LocalFoldersCubit extends Cubit<FoldersState> {
-  LocalFoldersCubit({bool? excludeUnclassified}) : super(FolderInitialState()) {
+  LocalFoldersCubit({bool? excludeUnclassified, bool rootsOnly = false})
+      : _rootsOnly = rootsOnly,
+        super(FolderInitialState()) {
     if (excludeUnclassified ?? false) {
       getFoldersWithoutUnclassified();
     } else {
       getFolders(isFirst: true);
     }
   }
+
+  /// true면 최상위 폴더만 조회 (중첩 폴더 UI의 홈 리스트 용도).
+  final bool _rootsOnly;
 
   List<Folder> folders = [];
 
@@ -27,8 +32,15 @@ class LocalFoldersCubit extends Cubit<FoldersState> {
     try {
       emit(FolderLoadingState());
 
-      final localFolders = await _folderRepository.getAllFolders();
-      folders = localFolders.toFolderList();
+      final localFolders = _rootsOnly
+          ? await _folderRepository.getRootFolders()
+          : await _folderRepository.getAllFolders();
+      final recursiveCounts = _rootsOnly
+          ? await _folderRepository.getRecursiveLinkCounts()
+          : const <int, int>{};
+      folders = _rootsOnly
+          ? localFolders.toFolderListWithRecursiveCounts(recursiveCounts)
+          : localFolders.toFolderList();
 
       final totalLinksText = '${getTotalLinksCount()}';
       final addedLinksCount = await getAddedLinksCount();
@@ -44,9 +56,11 @@ class LocalFoldersCubit extends Cubit<FoldersState> {
   }
 
   int getTotalLinksCount() {
+    // rootsOnly일 때는 루트의 linksTotal(재귀 카운트)을 써야 전체 합이 정확.
     return folders.fold<int>(
       0,
-      (previousValue, element) => previousValue + (element.links ?? 0),
+      (previousValue, element) =>
+          previousValue + (_rootsOnly ? (element.linksTotal ?? 0) : (element.links ?? 0)),
     );
   }
 
