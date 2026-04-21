@@ -1,24 +1,45 @@
 name: Measure Code Coverage
+
 on:
   pull_request:
     branches:
       - develop
+
+env:
+  FLUTTER_VERSION: "3.41.1"
+
 jobs:
   test-coverage:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v3
-      - uses: subosito/flutter-action@v2.8.0
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.29.3'
-      - name: Install packages
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Decode .env
+        run: echo '${{ secrets.DOTENV }}' | base64 -d > .env
+
+      - name: Decode firebase_options.dart
+        run: echo '${{ secrets.FIREBASE_OPTIONS }}' | base64 -d > ./lib/firebase_options.dart
+
+      - name: Install Flutter dependencies
         run: flutter pub get
-      - run: echo '${{ secrets.DOTENV }}' | base64 -d > .env
-      - run: echo "${{ secrets.FIREBASE_OPTIONS }}" | base64 -d > ./lib/firebase_options.dart
-      - name: run flutter test
+
+      - name: Run code generation
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Run flutter test with coverage
         run: flutter test --coverage
-      - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v3
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true

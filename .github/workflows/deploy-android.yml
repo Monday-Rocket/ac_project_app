@@ -1,0 +1,101 @@
+name: Deploy to Play Store (Internal)
+
+on:
+  push:
+    tags:
+      - 'android-v*'
+
+env:
+  JAVA_VERSION: "17"
+  FLUTTER_VERSION: "3.41.1"
+  RUBY_VERSION: "3.3"
+
+jobs:
+  deploy:
+    name: Build & Deploy to Internal Testing
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Extract version from tag
+        id: version
+        run: |
+          TAG=${GITHUB_REF#refs/tags/android-v}
+          VERSION_NAME=${TAG}
+          VERSION_CODE=$(( ${{ github.run_number }} + 100 ))
+          echo "VERSION_NAME=$VERSION_NAME" >> $GITHUB_OUTPUT
+          echo "VERSION_CODE=$VERSION_CODE" >> $GITHUB_OUTPUT
+          echo "📦 Version: $VERSION_NAME ($VERSION_CODE)"
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: ${{ env.JAVA_VERSION }}
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+          bundler-cache: true
+          working-directory: android
+
+      - name: Decode .env
+        run: echo '${{ secrets.DOTENV }}' | base64 -d > .env
+
+      - name: Decode firebase_options.dart
+        run: echo '${{ secrets.FIREBASE_OPTIONS }}' | base64 -d > ./lib/firebase_options.dart
+
+      - name: Decode Android keystore
+        run: echo '${{ secrets.ANDROID_KEYSTORE_BASE64 }}' | base64 -d > ./android/monday-key.jks
+
+      - name: Decode signing.properties
+        run: echo '${{ secrets.SIGNING_PROPERTIES }}' | base64 -d > ./android/signing.properties
+
+      - name: Decode Play Store credentials
+        run: echo '${{ secrets.PRIVATE_ANDROID_API_KEY }}' | base64 -d > ./android/playstore-api-key.json
+
+      - name: Decode google-services.json
+        run: echo '${{ secrets.GOOGLE_SERVICES_ANDROID }}' | base64 -d > ./android/app/google-services.json
+
+      - name: Decode strings_secret.xml
+        run: echo '${{ secrets.ANDROID_STRING_SECRET }}' | base64 -d > ./android/app/src/main/res/values/strings_secret.xml
+
+      - name: Install Flutter dependencies
+        run: flutter pub get
+
+      - name: Run code generation
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Build AAB
+        run: |
+          flutter build appbundle \
+            --release \
+            --build-name=${{ steps.version.outputs.VERSION_NAME }} \
+            --build-number=${{ steps.version.outputs.VERSION_CODE }}
+
+      - name: Deploy to Play Store (Internal)
+        run: cd android && bundle exec fastlane beta
+
+      - name: Upload build logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-build-logs
+          path: |
+            build/app/outputs/bundle/release/
+            android/app/build/outputs/
+          retention-days: 7
+
+      - name: Summary
+        run: echo "✅ Deployed v${{ steps.version.outputs.VERSION_NAME }}+${{ steps.version.outputs.VERSION_CODE }} to Internal Testing"

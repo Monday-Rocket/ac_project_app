@@ -1,0 +1,112 @@
+name: Deploy to TestFlight
+
+on:
+  push:
+    tags:
+      - 'ios-v*'
+
+env:
+  FLUTTER_VERSION: "3.41.1"
+  RUBY_VERSION: "3.3"
+
+jobs:
+  deploy:
+    name: Build & Deploy to TestFlight
+    runs-on: macos-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Setup Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Extract version from tag
+        id: version
+        run: |
+          TAG=${GITHUB_REF#refs/tags/ios-v}
+          VERSION_NAME=${TAG}
+          VERSION_CODE=$(( ${{ github.run_number }} + 100 ))
+          echo "VERSION_NAME=$VERSION_NAME" >> $GITHUB_OUTPUT
+          echo "VERSION_CODE=$VERSION_CODE" >> $GITHUB_OUTPUT
+          echo "📦 Version: $VERSION_NAME ($VERSION_CODE)"
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+          bundler-cache: true
+          working-directory: ios
+
+      - name: Decode .env
+        run: echo '${{ secrets.DOTENV }}' | base64 -d > .env
+
+      - name: Decode firebase_options.dart
+        run: echo '${{ secrets.FIREBASE_OPTIONS }}' | base64 -d > ./lib/firebase_options.dart
+
+      - name: Decode firebase_app_id_file.json
+        run: echo '${{ secrets.FIREBASE_APP_ID_FILE }}' | base64 -d > ./ios/firebase_app_id_file.json
+
+      - name: Decode GoogleService-Info.plist
+        run: echo '${{ secrets.GOOGLE_SERVICE_IOS }}' | base64 -d > ./ios/Runner/GoogleService-Info.plist
+
+      - name: Decode Secrets.xcconfig
+        run: echo '${{ secrets.SECRETS_XCCONFIG }}' | base64 -d > ./ios/Secrets.xcconfig
+
+      - name: Install Flutter dependencies
+        run: flutter clean && flutter pub get
+
+      - name: Run code generation
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Install CocoaPods
+        run: cd ios && pod install
+
+      - name: Build Flutter iOS
+        run: |
+          flutter build ios \
+            --release \
+            --no-codesign \
+            --build-name=${{ steps.version.outputs.VERSION_NAME }} \
+            --build-number=${{ steps.version.outputs.VERSION_CODE }}
+
+      - name: Deploy to TestFlight
+        run: cd ios && bundle exec fastlane closed_beta
+        env:
+          ITC_TEAM_ID: ${{ secrets.ITC_TEAM_ID }}
+          APPLICATION_ID: ${{ secrets.APPLICATION_ID }}
+          BUNDLE_IDENTIFIER: ${{ secrets.BUNDLE_IDENTIFIER }}
+          EXTENSION_IDENTIFIER: ${{ secrets.EXTENSION_IDENTIFIER }}
+          DEVELOPER_PORTAL_TEAM_ID: ${{ secrets.DEVELOPER_PORTAL_TEAM_ID }}
+          FASTLANE_APPLE_ID: ${{ secrets.FASTLANE_APPLE_EMAIL_ID }}
+          FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
+          FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.APP_SPECIFIC_PASSWORD }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          GIT_AUTHORIZATION: ${{ secrets.GIT_AUTHORIZATION }}
+          PROVISIONING_PROFILE_SPECIFIER: ${{ secrets.PROVISIONING_PROFILE_SPECIFIER }}
+          EXTENSION_PROVISIONING_PROFILE_SPECIFIER: ${{ secrets.EXTENSION_PROVISIONING_PROFILE_SPECIFIER }}
+          TEMP_KEYCHAIN_PASSWORD: ${{ secrets.TEMP_KEYCHAIN_PASSWORD }}
+          TEMP_KEYCHAIN_USER: ${{ secrets.TEMP_KEYCHAIN_USER }}
+
+      - name: Upload build logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-build-logs
+          path: |
+            ~/Library/Logs/gym/Runner-Runner.log
+            ios/build/
+          retention-days: 7
+
+      - name: Summary
+        run: echo "✅ Deployed v${{ steps.version.outputs.VERSION_NAME }}+${{ steps.version.outputs.VERSION_CODE }} to TestFlight"
