@@ -86,8 +86,7 @@ class MyPage extends StatelessWidget {
                 style: TextStyle(fontSize: 14.sp, color: grey900, fontWeight: FontWeight.w600),
                 overflow: TextOverflow.ellipsis,
               ),
-              if (state.isPro)
-                Text('Pro', style: TextStyle(fontSize: 12.sp, color: primary600, fontWeight: FontWeight.bold)),
+              if (state.isPro) const _ProCaption(),
             ],
           ),
         ),
@@ -160,7 +159,7 @@ class MyPage extends StatelessWidget {
     return BlocBuilder<AuthCubit, AuthState>(
       builder: (context, state) {
         if (!state.isPro) return const SizedBox.shrink();
-        return const _BackupCard();
+        return const _SyncIssueBanner();
       },
     );
   }
@@ -453,27 +452,118 @@ class MyPage extends StatelessWidget {
   }
 }
 
-class _BackupCard extends StatefulWidget {
-  const _BackupCard();
+/// Pro 계정의 마지막 백업 시각을 한 줄로 조용히 노출.
+/// 아직 백업된 적이 없으면 "Pro" 만 표시.
+class _ProCaption extends StatefulWidget {
+  const _ProCaption();
 
   @override
-  State<_BackupCard> createState() => _BackupCardState();
+  State<_ProCaption> createState() => _ProCaptionState();
 }
 
-class _BackupCardState extends State<_BackupCard> {
+class _ProCaptionState extends State<_ProCaption> with WidgetsBindingObserver {
   late final SyncRepository _sync = getIt<SyncRepository>();
   DateTime? _lastBackupAt;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _refresh();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) _refresh();
+  }
+
+  Future<void> _refresh() async {
+    final at = await _sync.getLastBackupAt();
+    if (mounted) setState(() => _lastBackupAt = at);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final caption = _lastBackupAt == null
+        ? 'Pro'
+        : 'Pro · 마지막 백업 ${_formatDate(_lastBackupAt!)}';
+    return Padding(
+      padding: EdgeInsets.only(top: 2.w),
+      child: Text(
+        caption,
+        style: TextStyle(
+          fontSize: 12.sp,
+          color: primary600,
+          fontWeight: FontWeight.w600,
+          letterSpacing: -0.1,
+        ),
+      ),
+    );
+  }
+
+  String _formatDate(DateTime dt) {
+    final local = dt.toLocal();
+    String two(int n) => n.toString().padLeft(2, '0');
+    return '${two(local.month)}/${two(local.day)} '
+        '${two(local.hour)}:${two(local.minute)}';
+  }
+}
+
+/// 원격 쓰기가 실패한 상태(dirty)가 임계 시간 이상 지속될 때만 노출되는 배너.
+/// "지금 백업" 버튼으로 수동 보정 가능. 성공 시 배너 자체가 사라짐.
+class _SyncIssueBanner extends StatefulWidget {
+  const _SyncIssueBanner();
+
+  /// dirty 지속이 이 시간 이상이면 배너 노출. 짧은 일시적 실패에는 안 나옴.
+  static const Duration _threshold = Duration(minutes: 30);
+
+  @override
+  State<_SyncIssueBanner> createState() => _SyncIssueBannerState();
+}
+
+class _SyncIssueBannerState extends State<_SyncIssueBanner>
+    with WidgetsBindingObserver {
+  late final SyncRepository _sync = getIt<SyncRepository>();
+  bool _show = false;
   bool _running = false;
 
   @override
   void initState() {
     super.initState();
-    _refreshLastBackup();
+    WidgetsBinding.instance.addObserver(this);
+    _refresh();
   }
 
-  Future<void> _refreshLastBackup() async {
-    final at = await _sync.getLastBackupAt();
-    if (mounted) setState(() => _lastBackupAt = at);
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) _refresh();
+  }
+
+  Future<void> _refresh() async {
+    final dirty = await _sync.isDirty();
+    if (!dirty) {
+      if (mounted && _show) setState(() => _show = false);
+      return;
+    }
+    final since = await _sync.getDirtySince();
+    final age = since == null
+        ? Duration.zero
+        : DateTime.now().difference(since);
+    if (mounted) {
+      setState(() => _show = age >= _SyncIssueBanner._threshold);
+    }
   }
 
   Future<void> _backupNow() async {
@@ -483,52 +573,10 @@ class _BackupCardState extends State<_BackupCard> {
       final ok = await _sync.backupToRemote();
       if (!mounted) return;
       showBottomToast(
-        ok ? '백업 완료' : '백업에 실패했어요',
+        ok ? '동기화 완료' : '동기화에 실패했어요',
         context: context,
       );
-      await _refreshLastBackup();
-    } finally {
-      if (mounted) setState(() => _running = false);
-    }
-  }
-
-  Future<void> _restore() async {
-    if (_running) return;
-    final hasRemote = await _sync.hasRemoteBackup();
-    if (!mounted) return;
-    if (!hasRemote) {
-      showBottomToast('백업된 데이터가 없습니다', context: context);
-      return;
-    }
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text('백업에서 복원', style: TextStyle(fontSize: 16.sp)),
-        content: Text(
-          '현재 기기의 데이터가 삭제되고 백업으로 덮어써집니다. 계속할까요?',
-          style: TextStyle(fontSize: 13.sp, color: grey700),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('취소'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: Text('복원', style: TextStyle(color: primary600)),
-          ),
-        ],
-      ),
-    );
-    if (confirmed != true || !mounted) return;
-    setState(() => _running = true);
-    try {
-      await _sync.restoreFromRemote();
-      if (!mounted) return;
-      showBottomToast('복원 완료', context: context);
-    } catch (e) {
-      if (!mounted) return;
-      showBottomToast('복원에 실패했어요', context: context);
+      await _refresh();
     } finally {
       if (mounted) setState(() => _running = false);
     }
@@ -536,85 +584,51 @@ class _BackupCardState extends State<_BackupCard> {
 
   @override
   Widget build(BuildContext context) {
+    if (!_show) return const SizedBox.shrink();
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.w),
-      padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.fromLTRB(14.w, 12.w, 12.w, 12.w),
       decoration: BoxDecoration(
-        color: primary100,
-        borderRadius: BorderRadius.circular(12.w),
+        color: const Color(0xFFFFF4E5),
+        borderRadius: BorderRadius.circular(10.w),
+        border: Border.all(color: const Color(0xFFFFE0B2), width: 1.w),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
         children: [
-          Row(
-            children: [
-              Icon(Icons.cloud_outlined, size: 18.sp, color: primary700),
-              SizedBox(width: 8.w),
-              Text(
-                '백업 & 복원',
-                style: TextStyle(
-                  color: grey900,
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.bold,
-                ),
+          Icon(Icons.sync_problem, size: 18.sp, color: const Color(0xFFE07400)),
+          SizedBox(width: 10.w),
+          Expanded(
+            child: Text(
+              '동기화 밀림 상태예요. 지금 정리해 두세요.',
+              style: TextStyle(
+                color: grey900,
+                fontSize: 12.sp,
+                fontWeight: FontWeight.w600,
               ),
-            ],
+            ),
           ),
-          SizedBox(height: 4.w),
-          Text(
-            _lastBackupAt == null
-                ? '아직 백업된 적이 없습니다'
-                : '마지막 백업: ${_formatDate(_lastBackupAt!)}',
-            style: TextStyle(color: grey700, fontSize: 12.sp),
-          ),
-          SizedBox(height: 12.w),
-          Row(
-            children: [
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: _running ? null : _backupNow,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: primary600,
-                    foregroundColor: Colors.white,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.w),
-                    ),
-                  ),
-                  child: Text(
-                    _running ? '진행 중…' : '지금 백업',
-                    style: TextStyle(fontSize: 13.sp),
-                  ),
+          SizedBox(width: 8.w),
+          SizedBox(
+            height: 32.w,
+            child: ElevatedButton(
+              onPressed: _running ? null : _backupNow,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: primary600,
+                foregroundColor: Colors.white,
+                elevation: 0,
+                padding: EdgeInsets.symmetric(horizontal: 12.w),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(6.w),
                 ),
               ),
-              SizedBox(width: 8.w),
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: _running ? null : _restore,
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: primary700,
-                    side: BorderSide(color: primary600, width: 1.w),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.w),
-                    ),
-                  ),
-                  child: Text(
-                    '백업에서 복원',
-                    style: TextStyle(fontSize: 13.sp),
-                  ),
-                ),
+              child: Text(
+                _running ? '…' : '지금 백업',
+                style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.w700),
               ),
-            ],
+            ),
           ),
         ],
       ),
     );
-  }
-
-  String _formatDate(DateTime dt) {
-    final local = dt.toLocal();
-    String two(int n) => n.toString().padLeft(2, '0');
-    return '${local.year}-${two(local.month)}-${two(local.day)} '
-        '${two(local.hour)}:${two(local.minute)}';
   }
 }

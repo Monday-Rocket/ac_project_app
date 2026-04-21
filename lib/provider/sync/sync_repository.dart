@@ -36,6 +36,7 @@ class SyncRepository {
 
   static const _kLastBackupAt = 'lp_last_backup_at';
   static const _kRemoteDirty = 'lp_remote_dirty';
+  static const _kDirtySince = 'lp_remote_dirty_since';
 
   bool _isBackingUp = false;
 
@@ -60,9 +61,24 @@ class SyncRepository {
     return prefs.getBool(_kRemoteDirty) ?? false;
   }
 
+  /// dirty 상태가 언제부터 지속되고 있는지. dirty 해제되면 null.
+  Future<DateTime?> getDirtySince() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(_kDirtySince);
+    if (raw == null) return null;
+    return DateTime.tryParse(raw);
+  }
+
   Future<void> _setDirty(bool value) async {
     final prefs = await SharedPreferences.getInstance();
+    final prev = prefs.getBool(_kRemoteDirty) ?? false;
     await prefs.setBool(_kRemoteDirty, value);
+    if (value && !prev) {
+      // false → true 전환 시점에만 시작 시각 기록 (기존 dirty 이어지면 유지)
+      await prefs.setString(_kDirtySince, DateTime.now().toIso8601String());
+    } else if (!value) {
+      await prefs.remove(_kDirtySince);
+    }
   }
 
   // ── 원격 쓰기 래퍼 ────────────────────────────────────────────────────
@@ -359,5 +375,6 @@ class SyncRepository {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_kLastBackupAt);
     await prefs.remove(_kRemoteDirty);
+    await prefs.remove(_kDirtySince);
   }
 }
