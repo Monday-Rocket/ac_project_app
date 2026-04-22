@@ -1,4 +1,3 @@
-import 'package:ac_project_app/ui/page/my_folder/folder_drill_down_page.dart';
 import 'package:ac_project_app/ui/page/my_page/my_page.dart';
 import 'package:ac_project_app/ui/view/home_view.dart';
 import 'package:ac_project_app/ui/view/links/link_detail_view.dart';
@@ -16,7 +15,6 @@ class Routes {
   static const linkDetail = '/linkDetail';
   static const myLinks = '/myLinks';
   static const search = '/search';
-  static const folderDrillDown = '/folderDrillDown';
 
   // etc
   static const splash = '/splash';
@@ -49,11 +47,6 @@ class Pages {
         return router.create(child: const TutorialView());
       case Routes.ossLicenses:
         return router.create(child: const OssLicensesView());
-      case Routes.folderDrillDown:
-        final args = arguments as Map<String, dynamic>?;
-        final folderId = args?['folderId'] as int?;
-        if (folderId == null) return null;
-        return router.create(child: FolderDrillDownPage(folderId: folderId));
       default:
         return null;
     }

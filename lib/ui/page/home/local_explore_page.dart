@@ -5,8 +5,7 @@ import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/link_hero.dart';
-import 'package:ac_project_app/util/string_utils.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:ac_project_app/ui/widget/link_thumbnail.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -187,35 +186,19 @@ class LocalExplorePage extends StatelessWidget {
                   ),
                 ),
               ),
-            if (hasHttpImageUrl(link))
-              Container(
-                margin: EdgeInsets.only(bottom: 16.w),
-                child: LinkHero(
-                  tag: 'explore_linkImage${link.id}',
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.all(Radius.circular(7.w)),
-                    child: Container(
-                      constraints: const BoxConstraints(minWidth: double.infinity),
-                      color: grey100,
-                      child: CachedNetworkImage(
-                        imageUrl: link.image ?? '',
-                        fadeInDuration: const Duration(milliseconds: 300),
-                        fadeOutDuration: const Duration(milliseconds: 300),
-                        imageBuilder: (context, imageProvider) => Container(
-                          height: 160.w,
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                              image: imageProvider,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                        errorWidget: (_, __, ___) => const SizedBox(),
-                      ),
-                    ),
-                  ),
+            Container(
+              margin: EdgeInsets.only(bottom: 16.w),
+              child: LinkHero(
+                tag: 'explore_linkImage${link.id}',
+                child: LinkThumbnail(
+                  imageUrl: link.image,
+                  linkUrl: link.url,
+                  width: double.infinity,
+                  height: 160.w,
+                  borderRadius: BorderRadius.all(Radius.circular(7.w)),
                 ),
               ),
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.end,

@@ -38,6 +38,8 @@ class LocalLinksFromFolderCubit extends Cubit<LinkListState> {
 
       List<LocalLink> localLinks;
       int totalCount;
+      var breadcrumb = const <Folder>[];
+      var childFolders = const <Folder>[];
 
       if (folder.id == null) {
         emit(LinkListErrorState('폴더 ID가 없습니다'));
@@ -45,14 +47,25 @@ class LocalLinksFromFolderCubit extends Cubit<LinkListState> {
       }
 
       if (folder.isClassified ?? true) {
+        final effectiveId = folder.id!;
         localLinks = await _linkRepository.getLinksByFolderId(
-          folder.id!,
+          effectiveId,
           limit: _pageSize,
           offset: pageNum * _pageSize,
         );
-        totalCount = await _linkRepository.getLinkCountByFolderId(folder.id!);
+        totalCount =
+            await _linkRepository.getLinkCountByFolderId(effectiveId);
+        final breadcrumbRaw = await _folderRepository.getBreadcrumb(effectiveId);
+        final childFoldersRaw =
+            await _folderRepository.getChildFolders(effectiveId);
+        final recursiveCounts =
+            await _folderRepository.getRecursiveLinkCounts();
+        breadcrumb = breadcrumbRaw
+            .toFolderListWithRecursiveCounts(recursiveCounts);
+        childFolders = childFoldersRaw
+            .toFolderListWithRecursiveCounts(recursiveCounts);
       } else {
-        // 미분류 폴더
+        // 미분류 폴더 — 중첩 구조가 없으므로 breadcrumb/childFolders 비워둔다.
         final unclassified = await _folderRepository.getUnclassifiedFolder();
         if (unclassified?.id == null) {
           emit(LinkListErrorState('미분류 폴더를 찾을 수 없습니다'));
@@ -78,7 +91,14 @@ class LocalLinksFromFolderCubit extends Cubit<LinkListState> {
         allLinks.addAll(links);
       }
 
-      emit(LinkListLoadedState(links, totalCount));
+      emit(
+        LinkListLoadedState(
+          links,
+          totalCount,
+          breadcrumb: breadcrumb,
+          childFolders: childFolders,
+        ),
+      );
     } catch (e) {
       Log.e('LocalLinksFromFolderCubit.getSelectedLinks error: $e');
       emit(LinkListErrorState(e.toString()));

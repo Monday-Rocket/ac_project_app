@@ -1,13 +1,14 @@
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/models/local/local_folder.dart';
+import 'package:ac_project_app/models/local/local_model_extensions.dart';
 import 'package:ac_project_app/provider/local/local_folder_repository.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 /// 전체 폴더 트리 조망 모달.
-/// 노드 탭 시 해당 폴더의 드릴다운 페이지로 점프하고 모달은 닫힘.
+/// 노드 탭 시 해당 폴더 상세로 점프하고 모달은 닫힘.
 Future<void> showFolderTreeModal(BuildContext context) async {
   await showModalBottomSheet<void>(
     context: context,
@@ -119,14 +120,19 @@ class _FolderTreeSheetState extends State<_FolderTreeSheet> {
       final hasChildren = data.byParent[id]?.isNotEmpty ?? false;
       final isExpanded = _expanded.contains(id);
       final total = data.counts[id] ?? 0;
+      final targetFolder = folder.toFolder(linksTotal: total);
       widgets.add(
         InkWell(
           onTap: () {
             Navigator.pop(context);
             Navigator.pushNamed(
               context,
-              Routes.folderDrillDown,
-              arguments: {'folderId': id},
+              Routes.myLinks,
+              arguments: {
+                'folders': [targetFolder],
+                'selectedFolder': targetFolder,
+                'tabIndex': 0,
+              },
             );
           },
           child: Padding(

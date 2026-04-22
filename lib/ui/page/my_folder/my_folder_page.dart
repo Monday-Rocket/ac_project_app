@@ -281,29 +281,17 @@ class _MyFolderPageState extends State<MyFolderPage> with WidgetsBindingObserver
     int index,
   ) {
     final folder = folders[index];
-    // 미분류는 기존 myLinks 뷰로 이동 (하위 폴더 없으므로 드릴다운 불필요)
-    // 일반 폴더는 드릴다운 페이지 진입 (하위 폴더 + 직접 링크 동시 표시)
-    if (folder.isClassified ?? true) {
-      Navigator.pushNamed(
-        context,
-        Routes.folderDrillDown,
-        arguments: {'folderId': folder.id},
-      ).then((_) {
-        context.read<LocalFoldersCubit>().getFolders();
-      });
-    } else {
-      Navigator.pushNamed(
-        context,
-        Routes.myLinks,
-        arguments: {
-          'folders': folders,
-          'selectedFolder': folder,
-          'tabIndex': index,
-        },
-      ).then((_) {
-        context.read<LocalFoldersCubit>().getFolders();
-      });
-    }
+    Navigator.pushNamed(
+      context,
+      Routes.myLinks,
+      arguments: {
+        'folders': folders,
+        'selectedFolder': folder,
+        'tabIndex': index,
+      },
+    ).then((_) {
+      context.read<LocalFoldersCubit>().getFolders();
+    });
   }
 
   Widget buildListView(List<Folder> folders, BuildContext context) {

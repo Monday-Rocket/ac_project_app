@@ -8,7 +8,6 @@ import 'package:ac_project_app/cubits/links/local_links_from_folder_cubit.dart';
 import 'package:ac_project_app/cubits/tool_tip/my_link_upload_tool_tip_cubit.dart';
 import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
-import 'package:ac_project_app/gen/fonts.gen.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/link/link.dart';
 import 'package:ac_project_app/provider/local/local_link_repository.dart';
@@ -181,21 +180,14 @@ class MyLinkView extends StatelessWidget {
                     return true;
                   },
                   child: CustomScrollView(
-                    //crossAxisAlignment: CrossAxisAlignment.start,
                     slivers: [
                       buildTopAppBar(context, folders, folder),
+                      buildBreadcrumb(context, state),
                       buildTitleBar(folder),
                       LinkCountText(state, folder),
                       buildSearchBar(context, links),
-                      buildTabBar(
-                        folders,
-                        tabIndex,
-                        folder,
-                        links,
-                        onChangeIndex: (int index) {
-                          // tabIndex = index;
-                        },
-                      ),
+                      SliverToBoxAdapter(child: SizedBox(height: 18.w)),
+                      buildChildFoldersSection(context, folders, state),
                       buildBodyList(
                         folder: folder,
                         width: width,
@@ -401,106 +393,159 @@ class MyLinkView extends StatelessWidget {
     );
   }
 
-  Widget buildTabBar(
-    List<Folder> folders,
-    int tabIndex,
-    Folder folder,
-    List<Link> totalLinks, {
-    required void Function(int index) onChangeIndex,
-  }) {
+  Widget buildBreadcrumb(BuildContext context, LinkListState state) {
+    if (state is! LinkListLoadedState || state.breadcrumb.length < 2) {
+      // 루트이거나(= 자기 자신 1개), 미분류(빈 리스트) 이면 노출 불필요
+      return const SliverToBoxAdapter(child: SizedBox.shrink());
+    }
+
+    final breadcrumb = state.breadcrumb;
     return SliverToBoxAdapter(
       child: Container(
-        margin: EdgeInsets.only(top: 30.w, left: 12.w, right: 20.w),
-        padding: EdgeInsets.only(bottom: 18.w),
-        child: DefaultTabController(
-          length: folders.length,
-          initialIndex: tabIndex,
-          child: SizedBox(
-            height: 36.w,
-            child: Stack(
-              children: [
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                      left: 15.w,
-                      right: 11.w,
-                      bottom: 1.w,
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            color: greyTab,
-                            height: 1.w,
-                          ),
-                        ),
-                      ],
+        color: grey100,
+        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.w),
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: [
+              for (var i = 0; i < breadcrumb.length; i++) ...[
+                if (i > 0)
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 6.w),
+                    child: Icon(
+                      Icons.chevron_right,
+                      size: 16.sp,
+                      color: grey600,
                     ),
                   ),
-                ),
-                Container(
-                  margin: EdgeInsets.only(right: 7.w),
-                  child: Builder(
-                    builder: (context) {
-                      final tabs = <Widget>[];
-                      for (final folder in folders) {
-                        tabs.add(
-                          Container(
-                            constraints: BoxConstraints(
-                              maxWidth: 100.w,
-                            ),
-                            padding: EdgeInsets.symmetric(
-                              vertical: 7.w,
-                            ),
-                            child: Text(
-                              folder.name ?? '',
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        );
-                      }
-                      return TabBar(
-                        isScrollable: true,
-                        physics: const ClampingScrollPhysics(),
-                        tabAlignment: TabAlignment.start,
-                        unselectedLabelColor: grey700,
-                        labelColor: primaryTab,
-                        labelStyle: TextStyle(
-                          fontFamily: FontFamily.pretendard,
-                          fontSize: 16.sp,
-                          height: 19 / 16,
-                          fontWeight: FontWeight.w800,
-                        ),
-                        unselectedLabelStyle: TextStyle(
-                          fontFamily: FontFamily.pretendard,
-                          fontSize: 16.sp,
-                          height: 19 / 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        indicator: UnderlineTabIndicator(
-                          borderSide: BorderSide(
-                            color: primaryTab,
-                            width: 2.5.w,
-                          ),
-                        ),
-                        labelPadding: EdgeInsets.symmetric(horizontal: 13.w),
-                        tabs: tabs,
-                        onTap: (index) {
-                          onChangeIndex.call(index);
-                          totalLinks.clear();
-                          context.read<GetSelectedFolderCubit>().update(folders[index]);
-                          context.read<LocalLinksFromFolderCubit>().getSelectedLinks(folders[index], 0);
-                        },
-                      );
-                    },
+                InkWell(
+                  onTap: i == breadcrumb.length - 1
+                      ? null
+                      : () => _jumpToFolder(context, breadcrumb[i]),
+                  child: Text(
+                    breadcrumb[i].name ?? '',
+                    style: TextStyle(
+                      color: i == breadcrumb.length - 1 ? blackBold : grey600,
+                      fontSize: 13.sp,
+                      fontWeight: i == breadcrumb.length - 1
+                          ? FontWeight.w600
+                          : FontWeight.w500,
+                    ),
                   ),
                 ),
               ],
-            ),
+            ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget buildChildFoldersSection(
+    BuildContext context,
+    List<Folder> folders,
+    LinkListState state,
+  ) {
+    if (state is! LinkListLoadedState || state.childFolders.isEmpty) {
+      return const SliverToBoxAdapter(child: SizedBox.shrink());
+    }
+
+    final children = state.childFolders;
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: EdgeInsets.only(bottom: 8.w),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.w),
+              child: Text(
+                '하위 폴더 (${children.length})',
+                style: TextStyle(
+                  color: grey600,
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: -0.2,
+                ),
+              ),
+            ),
+            for (final child in children)
+              InkWell(
+                onTap: () => _jumpToFolder(context, child),
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 24.w,
+                    vertical: 12.w,
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 40.w,
+                        height: 40.w,
+                        decoration: BoxDecoration(
+                          color: primary100,
+                          borderRadius: BorderRadius.circular(10.w),
+                        ),
+                        alignment: Alignment.center,
+                        child: Icon(
+                          Icons.folder,
+                          size: 20.sp,
+                          color: primary600,
+                        ),
+                      ),
+                      SizedBox(width: 12.w),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              child.name ?? '',
+                              style: TextStyle(
+                                color: blackBold,
+                                fontSize: 15.sp,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            SizedBox(height: 2.w),
+                            Text(
+                              '링크 ${addCommasFrom(child.linksTotal ?? child.links ?? 0)}개',
+                              style: TextStyle(
+                                color: greyText,
+                                fontSize: 12.sp,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Icon(
+                        Icons.chevron_right,
+                        color: grey600,
+                        size: 20.sp,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.w),
+              child: Divider(height: 1, thickness: 1.w, color: greyTab),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _jumpToFolder(BuildContext context, Folder folder) {
+    Navigator.pushReplacementNamed(
+      context,
+      Routes.myLinks,
+      arguments: {
+        'folders': [folder],
+        'selectedFolder': folder,
+        'tabIndex': 0,
+      },
     );
   }
 
