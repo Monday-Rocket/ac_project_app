@@ -6,7 +6,6 @@ import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/provider/auth/auth_repository.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/provider/share_data_provider.dart';
-import 'package:ac_project_app/provider/local/local_link_repository.dart';
 import 'package:ac_project_app/provider/sync/pro_remote_hooks.dart';
 import 'package:ac_project_app/provider/sync/sync_repository.dart';
 import 'package:ac_project_app/ui/page/home/local_explore_page.dart';
@@ -76,31 +75,25 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
     }
   }
 
-  bool _autoRestoreAttempted = false;
+  bool _autoSyncAttempted = false;
 
-  /// Pro 로그인 + 로컬 비어있음 + 원격 백업 있음 → 조용히 자동 복원.
-  /// 팝업으로 묻지 않는다 (자동 우선 정책).
-  Future<void> _maybeAutoRestore(BuildContext ctx) async {
-    if (_autoRestoreAttempted) return;
+  /// Pro 로그인 시 로컬 + 원격 자동 머지. 앱 라이프타임 1회만 시도.
+  Future<void> _maybeAutoSync(BuildContext ctx) async {
+    if (_autoSyncAttempted) return;
 
     final authCubit = ctx.read<AuthCubit>();
     if (!authCubit.state.isPro) return;
 
-    final sync = getIt<SyncRepository>();
-    final linkRepo = getIt<LocalLinkRepository>();
-    final localEmpty = (await linkRepo.getTotalLinkCount()) == 0;
-    if (!localEmpty) return;
-    final hasRemote = await sync.hasRemoteBackup();
-    if (!hasRemote) return;
-    if (!ctx.mounted) return;
-    _autoRestoreAttempted = true;
+    _autoSyncAttempted = true;
 
+    final sync = getIt<SyncRepository>();
     try {
-      await sync.restoreFromRemote();
+      final result = await sync.mergeWithRemote();
+      if (result == null) return;
       if (!ctx.mounted) return;
       ctx.read<LocalFoldersCubit>().getFolders();
-    } catch (_) {
-      // 실패는 로그만. 다음 앱 시작 시 _autoRestoreAttempted 가 리셋되므로 재시도됨.
+    } catch (e) {
+      // 실패는 로그만. 다음 앱 시작 시 _autoSyncAttempted 가 리셋되므로 재시도됨.
     }
   }
 
@@ -157,7 +150,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
           return BlocListener<AuthCubit, AuthState>(
             listenWhen: (prev, curr) => prev.isPro != curr.isPro,
             listener: (ctx, state) {
-              if (state.isPro) _maybeAutoRestore(ctx);
+              if (state.isPro) _maybeAutoSync(ctx);
             },
             child: BlocBuilder<HomeViewCubit, int>(
               builder: (context, index) {
