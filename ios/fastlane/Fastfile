@@ -4,6 +4,11 @@ APP_IDENTIFIER = "com.mr.acProjectApp"
 EXTENSION_IDENTIFIER = "com.mr.acProjectApp.Extension"
 TEAM_ID = "T583WJWNAK"
 
+def profile_name_for(bundle_id)
+  # match가 동적으로 생성한 프로파일 이름(뒤에 cert id suffix 포함)을 가져온다.
+  ENV["sigh_#{bundle_id}_appstore_profile-name"] || "match AppStore #{bundle_id}"
+end
+
 platform :ios do
   desc "Sync certificates and profiles via Match"
   lane :sync_certs do
@@ -40,12 +45,15 @@ platform :ios do
       readonly: true,
     )
 
+    runner_profile    = profile_name_for(APP_IDENTIFIER)
+    extension_profile = profile_name_for(EXTENSION_IDENTIFIER)
+
     update_code_signing_settings(
       use_automatic_signing: false,
       path: "Runner.xcodeproj",
       team_id: TEAM_ID,
       code_sign_identity: "Apple Distribution",
-      profile_name: "match AppStore #{APP_IDENTIFIER}",
+      profile_name: runner_profile,
       bundle_identifier: APP_IDENTIFIER,
       targets: ["Runner"],
     )
@@ -55,7 +63,7 @@ platform :ios do
       path: "Runner.xcodeproj",
       team_id: TEAM_ID,
       code_sign_identity: "Apple Distribution",
-      profile_name: "match AppStore #{EXTENSION_IDENTIFIER}",
+      profile_name: extension_profile,
       bundle_identifier: EXTENSION_IDENTIFIER,
       targets: ["Extension"],
     )
@@ -71,8 +79,8 @@ platform :ios do
       export_options: {
         uploadSymbols: false,
         provisioningProfiles: {
-          APP_IDENTIFIER => "match AppStore #{APP_IDENTIFIER}",
-          EXTENSION_IDENTIFIER => "match AppStore #{EXTENSION_IDENTIFIER}",
+          APP_IDENTIFIER => runner_profile,
+          EXTENSION_IDENTIFIER => extension_profile,
         }
       }
     )
@@ -100,12 +108,15 @@ platform :ios do
       readonly: true,
     )
 
+    runner_profile    = profile_name_for(APP_IDENTIFIER)
+    extension_profile = profile_name_for(EXTENSION_IDENTIFIER)
+
     update_code_signing_settings(
       use_automatic_signing: false,
       path: "Runner.xcodeproj",
       team_id: TEAM_ID,
       code_sign_identity: "Apple Distribution",
-      profile_name: "match AppStore #{APP_IDENTIFIER}",
+      profile_name: runner_profile,
       bundle_identifier: APP_IDENTIFIER,
       targets: ["Runner"],
     )
@@ -115,7 +126,7 @@ platform :ios do
       path: "Runner.xcodeproj",
       team_id: TEAM_ID,
       code_sign_identity: "Apple Distribution",
-      profile_name: "match AppStore #{EXTENSION_IDENTIFIER}",
+      profile_name: extension_profile,
       bundle_identifier: EXTENSION_IDENTIFIER,
       targets: ["Extension"],
     )
@@ -131,8 +142,8 @@ platform :ios do
       export_options: {
         uploadSymbols: false,
         provisioningProfiles: {
-          APP_IDENTIFIER => "match AppStore #{APP_IDENTIFIER}",
-          EXTENSION_IDENTIFIER => "match AppStore #{EXTENSION_IDENTIFIER}",
+          APP_IDENTIFIER => runner_profile,
+          EXTENSION_IDENTIFIER => extension_profile,
         }
       }
     )
