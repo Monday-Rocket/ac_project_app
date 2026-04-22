@@ -1,5 +1,7 @@
 // ignore_for_file: avoid_positional_boolean_parameters
 
+import 'dart:async';
+
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/links/edit_state.dart';
 import 'package:ac_project_app/cubits/links/local_detail_edit_cubit.dart';
@@ -11,6 +13,7 @@ import 'package:ac_project_app/ui/widget/buttons/bottom_sheet_button.dart';
 import 'package:ac_project_app/ui/widget/dialog/bottom_dialog.dart';
 import 'package:ac_project_app/ui/widget/dialog/center_dialog.dart';
 import 'package:ac_project_app/ui/widget/link_hero.dart';
+import 'package:ac_project_app/ui/widget/link_thumbnail.dart';
 import 'package:ac_project_app/util/date_utils.dart';
 import 'package:ac_project_app/util/get_arguments.dart';
 import 'package:ac_project_app/util/logger.dart';
@@ -47,7 +50,13 @@ class _LinkDetailViewState extends State<LinkDetailView> {
 
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_) => LocalDetailEditCubit(globalLink)),
+        BlocProvider(
+          create: (_) {
+            final cubit = LocalDetailEditCubit(globalLink);
+            unawaited(cubit.backfillImageIfMissing(globalLink!));
+            return cubit;
+          },
+        ),
         BlocProvider(create: (_) => LocalUploadLinkCubit()),
       ],
       child: KeyboardDismissOnTap(
@@ -267,30 +276,16 @@ class _LinkDetailViewState extends State<LinkDetailView> {
                   children: [
                     LinkHero(
                       tag: '${heroPrefix}linkImage${link.id}',
-                      child: ClipRRect(
+                      child: LinkThumbnail(
+                        imageUrl: link.image,
+                        linkUrl: link.url,
+                        width: MediaQuery.of(cubitContext).size.width - 48.w,
+                        height: 193.w,
                         borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(10.w),
                           topRight: Radius.circular(10.w),
                         ),
-                        child: Image.network(
-                          link.image ?? '',
-                          fit: BoxFit.cover,
-                          width: MediaQuery.of(cubitContext).size.width - 48.w,
-                          height: 193.w,
-                          errorBuilder: (_, __, ___) {
-                            return Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(10.w),
-                                  topRight: Radius.circular(10.w),
-                                ),
-                              ),
-                              width: MediaQuery.of(cubitContext).size.width - 48.w,
-                              height: 10.w,
-                            );
-                          },
-                        ),
+                        useFavicon: false,
                       ),
                     ),
                     DecoratedBox(

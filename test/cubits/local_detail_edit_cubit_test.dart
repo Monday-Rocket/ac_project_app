@@ -5,6 +5,7 @@ import 'package:ac_project_app/models/local/local_link.dart';
 import 'package:ac_project_app/provider/local/local_link_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
+import 'package:metadata_fetch/metadata_fetch.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
@@ -257,6 +258,164 @@ void main() {
         final result = await cubit.moveLink(1, 2);
 
         expect(result, isFalse);
+
+        cubit.close();
+      });
+    });
+
+    group('backfillImageIfMissing()', () {
+      const linkWithImage = Link(
+        id: 1,
+        url: 'https://test.com',
+        image: 'https://test.com/existing.png',
+        title: 'Test',
+        folderId: 1,
+      );
+
+      const linkWithoutImage = Link(
+        id: 2,
+        url: 'https://test.com',
+        title: 'Test',
+        folderId: 1,
+      );
+
+      const localLinkWithoutImage = LocalLink(
+        id: 2,
+        folderId: 1,
+        url: 'https://test.com',
+        title: 'Test',
+        createdAt: '2024-01-01',
+        updatedAt: '2024-01-01',
+      );
+
+      test('link.image 이미 있으면 network 호출도 DB update 도 없음', () async {
+        var metadataCalls = 0;
+        final cubit = LocalDetailEditCubit(
+          null,
+          metadataLoader: (url) async {
+            metadataCalls++;
+            return Metadata()..image = 'https://test.com/og.png';
+          },
+        );
+
+        await cubit.backfillImageIfMissing(linkWithImage);
+
+        expect(metadataCalls, 0);
+        verifyNever(mockRepository.getLinkById(any));
+        verifyNever(mockRepository.updateLink(any));
+
+        cubit.close();
+      });
+
+      test('image 없고 metadata.image 성공 → updateLink 호출 + editedView emit',
+          () async {
+        when(mockRepository.getLinkById(2))
+            .thenAnswer((_) async => localLinkWithoutImage);
+        when(mockRepository.updateLink(any)).thenAnswer((_) async => 1);
+
+        final cubit = LocalDetailEditCubit(
+          null,
+          metadataLoader: (url) async {
+            expect(url, 'https://test.com');
+            return Metadata()..image = 'https://test.com/og.png';
+          },
+        );
+
+        await cubit.backfillImageIfMissing(linkWithoutImage);
+
+        final captured =
+            verify(mockRepository.updateLink(captureAny)).captured;
+        expect(captured, hasLength(1));
+        expect((captured.first as LocalLink).image, 'https://test.com/og.png');
+
+        expect(cubit.state.type, EditStateType.editedView);
+        expect(cubit.state.link?.image, 'https://test.com/og.png');
+
+        cubit.close();
+      });
+
+      test('metadata 로드 실패 → no-op', () async {
+        final cubit = LocalDetailEditCubit(
+          null,
+          metadataLoader: (url) async => throw Exception('network fail'),
+        );
+
+        await cubit.backfillImageIfMissing(linkWithoutImage);
+
+        verifyNever(mockRepository.getLinkById(any));
+        verifyNever(mockRepository.updateLink(any));
+        expect(cubit.state.type, EditStateType.view);
+        expect(cubit.state.link, isNull);
+
+        cubit.close();
+      });
+
+      test('metadata 는 성공했지만 image 가 null → no-op', () async {
+        final cubit = LocalDetailEditCubit(
+          null,
+          metadataLoader: (url) async => Metadata(),
+        );
+
+        await cubit.backfillImageIfMissing(linkWithoutImage);
+
+        verifyNever(mockRepository.getLinkById(any));
+        verifyNever(mockRepository.updateLink(any));
+        expect(cubit.state.type, EditStateType.view);
+
+        cubit.close();
+      });
+
+      test('link.id 가 null 이면 no-op', () async {
+        var metadataCalls = 0;
+        const noIdLink = Link(url: 'https://test.com');
+        final cubit = LocalDetailEditCubit(
+          null,
+          metadataLoader: (url) async {
+            metadataCalls++;
+            return Metadata()..image = 'https://test.com/og.png';
+          },
+        );
+
+        await cubit.backfillImageIfMissing(noIdLink);
+
+        expect(metadataCalls, 0);
+        verifyNever(mockRepository.updateLink(any));
+
+        cubit.close();
+      });
+
+      test('link.url 이 null 이면 no-op', () async {
+        var metadataCalls = 0;
+        const noUrlLink = Link(id: 3, folderId: 1);
+        final cubit = LocalDetailEditCubit(
+          null,
+          metadataLoader: (url) async {
+            metadataCalls++;
+            return Metadata()..image = 'https://test.com/og.png';
+          },
+        );
+
+        await cubit.backfillImageIfMissing(noUrlLink);
+
+        expect(metadataCalls, 0);
+        verifyNever(mockRepository.updateLink(any));
+
+        cubit.close();
+      });
+
+      test('getLinkById 가 null 반환 → updateLink 호출 안 함', () async {
+        when(mockRepository.getLinkById(2)).thenAnswer((_) async => null);
+
+        final cubit = LocalDetailEditCubit(
+          null,
+          metadataLoader: (url) async =>
+              Metadata()..image = 'https://test.com/og.png',
+        );
+
+        await cubit.backfillImageIfMissing(linkWithoutImage);
+
+        verify(mockRepository.getLinkById(2)).called(1);
+        verifyNever(mockRepository.updateLink(any));
 
         cubit.close();
       });
