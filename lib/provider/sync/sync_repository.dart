@@ -3,6 +3,8 @@ import 'package:ac_project_app/models/local/local_link.dart';
 import 'package:ac_project_app/provider/local/database_helper.dart';
 import 'package:ac_project_app/provider/local/local_folder_repository.dart';
 import 'package:ac_project_app/provider/local/local_link_repository.dart';
+import 'package:ac_project_app/provider/recent_folders_repository.dart';
+import 'package:ac_project_app/provider/share_data_provider.dart';
 import 'package:ac_project_app/provider/sync/merge_compute.dart';
 import 'package:ac_project_app/provider/sync/merge_types.dart';
 import 'package:ac_project_app/util/logger.dart';
@@ -406,6 +408,19 @@ class SyncRepository {
       }
 
       Log.i('mergeWithRemote ok: ${result.stats}');
+
+      // 5) 후처리: 외부에 저장된 id 참조 정리
+      try {
+        await const RecentFoldersRepository().clear();
+      } catch (e) {
+        Log.e('mergeWithRemote: recent clear failed: $e');
+      }
+      try {
+        await ShareDataProvider.syncFoldersToShareDB();
+      } catch (e) {
+        Log.e('mergeWithRemote: share.db sync failed: $e');
+      }
+
       return result;
     } finally {
       _isMerging = false;
