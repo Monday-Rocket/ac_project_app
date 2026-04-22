@@ -350,4 +350,115 @@ void main() {
       expect(result.stats.foldersMerged, 1);
     });
   });
+
+  group('computeMerge - 계층 폴더', () {
+    test('로컬 Work/Frontend + 원격 Work/Frontend → parent_id 재매핑', () {
+      final localWork = LocalFolder(
+        id: 1,
+        name: 'Work',
+        createdAt: '2026-04-01T00:00:00.000Z',
+        updatedAt: '2026-04-01T00:00:00.000Z',
+      );
+      final localFrontend = LocalFolder(
+        id: 2,
+        parentId: 1,
+        name: 'Frontend',
+        createdAt: '2026-04-02T00:00:00.000Z',
+        updatedAt: '2026-04-02T00:00:00.000Z',
+      );
+      final remoteFolders = [
+        {
+          'id': 'uuid-work',
+          'client_id': 10,
+          'name': 'Work',
+          'thumbnail': null,
+          'is_classified': true,
+          'parent_id': null,
+          'created_at': '2026-03-01T00:00:00.000Z',
+          'updated_at': '2026-03-01T00:00:00.000Z',
+        },
+        {
+          'id': 'uuid-frontend',
+          'client_id': 11,
+          'name': 'Frontend',
+          'thumbnail': null,
+          'is_classified': true,
+          'parent_id': 'uuid-work',
+          'created_at': '2026-03-02T00:00:00.000Z',
+          'updated_at': '2026-03-02T00:00:00.000Z',
+        },
+      ];
+
+      final result = computeMerge(
+        localFolders: [localWork, localFrontend],
+        localLinks: const [],
+        remoteFolders: remoteFolders,
+        remoteLinks: const [],
+        mergeAt: mergeAt,
+      );
+
+      expect(result.folders, hasLength(2));
+      expect(result.stats.foldersMerged, 2);
+
+      final work =
+          result.folders.firstWhere((f) => f.name == 'Work');
+      final frontend =
+          result.folders.firstWhere((f) => f.name == 'Frontend');
+
+      expect(work.parentId, isNull);
+      expect(frontend.parentId, work.id);
+    });
+
+    test('같은 이름 다른 경로(Work/Frontend vs Dev/Frontend) → 두 개 유지 (Q2=B)', () {
+      final localWork = LocalFolder(
+        id: 1,
+        name: 'Work',
+        createdAt: '2026-04-01T00:00:00.000Z',
+        updatedAt: '2026-04-01T00:00:00.000Z',
+      );
+      final localFrontend = LocalFolder(
+        id: 2,
+        parentId: 1,
+        name: 'Frontend',
+        createdAt: '2026-04-02T00:00:00.000Z',
+        updatedAt: '2026-04-02T00:00:00.000Z',
+      );
+      final remoteFolders = [
+        {
+          'id': 'uuid-dev',
+          'client_id': 10,
+          'name': 'Dev',
+          'thumbnail': null,
+          'is_classified': true,
+          'parent_id': null,
+          'created_at': '2026-03-01T00:00:00.000Z',
+          'updated_at': '2026-03-01T00:00:00.000Z',
+        },
+        {
+          'id': 'uuid-frontend',
+          'client_id': 11,
+          'name': 'Frontend',
+          'thumbnail': null,
+          'is_classified': true,
+          'parent_id': 'uuid-dev',
+          'created_at': '2026-03-02T00:00:00.000Z',
+          'updated_at': '2026-03-02T00:00:00.000Z',
+        },
+      ];
+
+      final result = computeMerge(
+        localFolders: [localWork, localFrontend],
+        localLinks: const [],
+        remoteFolders: remoteFolders,
+        remoteLinks: const [],
+        mergeAt: mergeAt,
+      );
+
+      // Work, Dev, Work/Frontend, Dev/Frontend → 4개
+      expect(result.folders, hasLength(4));
+      expect(result.stats.foldersMerged, 0);
+      expect(result.stats.foldersLocalOnly, 2);
+      expect(result.stats.foldersRemoteOnly, 2);
+    });
+  });
 }
