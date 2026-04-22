@@ -149,7 +149,8 @@ void main() {
       expect(result.folders, hasLength(2));
       expect(result.links, hasLength(1), reason: '중첩 폴더 링크가 드롭되면 안 됨');
       // Frontend 폴더의 새 id를 찾아 링크의 folderId가 그것인지 확인
-      final frontendNew = result.folders.firstWhere((f) => f.name == 'Frontend');
+      final frontendNew =
+          result.folders.firstWhere((f) => f.name == 'Frontend');
       expect(result.links.first.folderId, frontendNew.id);
       expect(result.stats.linksLocalOnly, 1);
     });
@@ -212,8 +213,7 @@ void main() {
       // created_at: 더 이른 쪽 → 원격(3/15)
       expect(result.folders.first.createdAt, '2026-03-15T00:00:00.000Z');
       // updated_at: 머지 시점
-      expect(result.folders.first.updatedAt,
-          mergeAt.toUtc().toIso8601String());
+      expect(result.folders.first.updatedAt, mergeAt.toUtc().toIso8601String());
 
       // 링크: 하나로 머지
       expect(result.links, hasLength(1));
@@ -228,8 +228,7 @@ void main() {
       // created_at: 이른 쪽 → 원격(3/20)
       expect(result.links.first.createdAt, '2026-03-20T00:00:00.000Z');
       // updated_at: 머지 시점
-      expect(result.links.first.updatedAt,
-          mergeAt.toUtc().toIso8601String());
+      expect(result.links.first.updatedAt, mergeAt.toUtc().toIso8601String());
 
       expect(result.stats.foldersMerged, 1);
       expect(result.stats.linksMerged, 1);
@@ -400,10 +399,8 @@ void main() {
       expect(result.folders, hasLength(2));
       expect(result.stats.foldersMerged, 2);
 
-      final work =
-          result.folders.firstWhere((f) => f.name == 'Work');
-      final frontend =
-          result.folders.firstWhere((f) => f.name == 'Frontend');
+      final work = result.folders.firstWhere((f) => f.name == 'Work');
+      final frontend = result.folders.firstWhere((f) => f.name == 'Frontend');
 
       expect(work.parentId, isNull);
       expect(frontend.parentId, work.id);

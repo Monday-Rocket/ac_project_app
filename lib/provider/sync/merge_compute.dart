@@ -308,7 +308,10 @@ String? _parentPathKey(String key) {
 
 /// 로컬 폴더의 id → path_key 맵
 Map<int, String> _buildLocalPathKeyMap(List<LocalFolder> folders) {
-  final byId = {for (final f in folders) if (f.id != null) f.id!: f};
+  final byId = {
+    for (final f in folders)
+      if (f.id != null) f.id!: f
+  };
   final result = <int, String>{};
   for (final f in folders) {
     if (f.id == null) continue;
@@ -336,7 +339,8 @@ String _computeLocalPathKey(
 }
 
 /// 원격 폴더(Map)의 client_id → path_key 맵
-Map<int, String> _buildRemotePathKeyMap(List<Map<String, dynamic>> remoteFolders) {
+Map<int, String> _buildRemotePathKeyMap(
+    List<Map<String, dynamic>> remoteFolders) {
   final byServerId = {
     for (final f in remoteFolders) (f['id'] as String): f,
   };

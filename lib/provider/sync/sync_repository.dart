@@ -111,7 +111,8 @@ class SyncRepository {
       await _client.from('folders').upsert({
         'user_id': userId,
         'client_id': folder.id,
-        'parent_id': null, // 로컬 parent_id는 int, 원격은 UUID. 원격 parent 매핑은 full replace 경로에서만 정확 설정.
+        'parent_id':
+            null, // 로컬 parent_id는 int, 원격은 UUID. 원격 parent 매핑은 full replace 경로에서만 정확 설정.
         'name': folder.name,
         'thumbnail': folder.thumbnail,
         'is_classified': folder.isClassified,
@@ -168,12 +169,12 @@ class SyncRepository {
     });
   }
 
-  Future<String?> _resolveRemoteFolderId(String userId, int localFolderId) async {
+  Future<String?> _resolveRemoteFolderId(
+      String userId, int localFolderId) async {
     final rows = await _client
         .from('folders')
         .select('id')
-        .match({'user_id': userId, 'client_id': localFolderId})
-        .limit(1);
+        .match({'user_id': userId, 'client_id': localFolderId}).limit(1);
     if (rows.isEmpty) return null;
     return rows.first['id'] as String?;
   }
@@ -230,10 +231,8 @@ class SyncRepository {
         if (f.id == null || f.parentId == null) continue;
         final parentRemote = clientToServerFolderId[f.parentId!];
         if (parentRemote == null) continue;
-        await _client
-            .from('folders')
-            .update({'parent_id': parentRemote})
-            .match({'user_id': userId, 'client_id': f.id!});
+        await _client.from('folders').update({'parent_id': parentRemote}).match(
+            {'user_id': userId, 'client_id': f.id!});
       }
 
       // 5) 링크 INSERT (folder_id 매핑)
@@ -261,7 +260,8 @@ class SyncRepository {
 
       await _setLastBackupAtNow();
       await _setDirty(false);
-      Log.i('backupToRemote ok: ${folders.length} folders, ${links.length} links');
+      Log.i(
+          'backupToRemote ok: ${folders.length} folders, ${links.length} links');
       return true;
     } catch (e) {
       Log.e('backupToRemote failed: $e');
@@ -278,8 +278,7 @@ class SyncRepository {
     final rows = await _client
         .from('folders')
         .select('id')
-        .match({'user_id': userId})
-        .limit(1);
+        .match({'user_id': userId}).limit(1);
     return rows.isNotEmpty;
   }
 
@@ -294,14 +293,10 @@ class SyncRepository {
     if (userId == null) return;
 
     // 1) 원격 다운로드
-    final remoteFolders = await _client
-        .from('folders')
-        .select()
-        .match({'user_id': userId});
-    final remoteLinks = await _client
-        .from('links')
-        .select()
-        .match({'user_id': userId});
+    final remoteFolders =
+        await _client.from('folders').select().match({'user_id': userId});
+    final remoteLinks =
+        await _client.from('links').select().match({'user_id': userId});
 
     // 원격 parent uuid → client_id 역매핑을 위해 server_id → client_id 맵 준비
     final serverIdToClient = <String, int>{
@@ -358,7 +353,8 @@ class SyncRepository {
         "(SELECT COALESCE(MAX(id), 0) FROM link) WHERE name = 'link'",
       );
     });
-    Log.i('restoreFromRemote ok: ${remoteFolders.length} folders, ${remoteLinks.length} links');
+    Log.i(
+        'restoreFromRemote ok: ${remoteFolders.length} folders, ${remoteLinks.length} links');
   }
 
   // ── 자동 머지 ──────────────────────────────────────────────────────────
@@ -379,10 +375,8 @@ class SyncRepository {
       // 여기서 실패하면 머지 전체 실패로 간주 — 예외 전파.
       final localFolders = await _folderRepo.getAllFolders();
       final localLinks = await _linkRepo.getAllLinks();
-      final remoteFolders = await _client
-          .from('folders')
-          .select()
-          .match({'user_id': userId});
+      final remoteFolders =
+          await _client.from('folders').select().match({'user_id': userId});
       final remoteLinks =
           await _client.from('links').select().match({'user_id': userId});
 
