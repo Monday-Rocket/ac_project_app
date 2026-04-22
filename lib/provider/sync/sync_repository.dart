@@ -3,6 +3,8 @@ import 'package:ac_project_app/models/local/local_link.dart';
 import 'package:ac_project_app/provider/local/database_helper.dart';
 import 'package:ac_project_app/provider/local/local_folder_repository.dart';
 import 'package:ac_project_app/provider/local/local_link_repository.dart';
+import 'package:ac_project_app/provider/sync/merge_compute.dart';
+import 'package:ac_project_app/provider/sync/merge_types.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -39,6 +41,7 @@ class SyncRepository {
   static const _kDirtySince = 'lp_remote_dirty_since';
 
   bool _isBackingUp = false;
+  bool _isMerging = false;
 
   String? _requireUserId() => _client.auth.currentUser?.id;
 
@@ -354,6 +357,100 @@ class SyncRepository {
       );
     });
     Log.i('restoreFromRemote ok: ${remoteFolders.length} folders, ${remoteLinks.length} links');
+  }
+
+  // ── 자동 머지 ──────────────────────────────────────────────────────────
+
+  /// 로컬 + 원격을 머지한 결과로 양쪽을 교체.
+  /// - 순수 계산 (computeMerge)
+  /// - 로컬 SQLite 트랜잭션으로 원자적 교체
+  /// - 원격은 backupToRemote() 재사용 (best-effort, 실패 시 dirty=true)
+  /// 반환: 성공 시 MergeResult, 실패 시 null.
+  Future<MergeResult?> mergeWithRemote() async {
+    if (_isMerging) return null;
+    final userId = _requireUserId();
+    if (userId == null) return null;
+
+    _isMerging = true;
+    try {
+      // 1) 양쪽 스냅샷 로드 + 2) 순수 계산 + 3) 로컬 트랜잭션은 한 묶음.
+      // 여기서 실패하면 머지 전체 실패로 간주 — 예외 전파.
+      final localFolders = await _folderRepo.getAllFolders();
+      final localLinks = await _linkRepo.getAllLinks();
+      final remoteFolders = await _client
+          .from('folders')
+          .select()
+          .match({'user_id': userId});
+      final remoteLinks =
+          await _client.from('links').select().match({'user_id': userId});
+
+      final result = computeMerge(
+        localFolders: localFolders,
+        localLinks: localLinks,
+        remoteFolders: List<Map<String, dynamic>>.from(remoteFolders),
+        remoteLinks: List<Map<String, dynamic>>.from(remoteLinks),
+        mergeAt: DateTime.now().toUtc(),
+      );
+
+      await _applyMergeToLocal(result);
+
+      // 4) 원격 full replace는 best-effort. 실패해도 로컬은 이미 머지 상태.
+      //    backupToRemote가 내부에서 dirty=true 유지 → 다음 포그라운드 복귀 시 보정.
+      try {
+        final remoteOk = await backupToRemote();
+        if (!remoteOk) {
+          Log.e('mergeWithRemote: remote replace failed, dirty=true 유지');
+        }
+      } catch (e) {
+        Log.e('mergeWithRemote: remote replace threw: $e');
+      }
+
+      Log.i('mergeWithRemote ok: ${result.stats}');
+      return result;
+    } finally {
+      _isMerging = false;
+    }
+  }
+
+  Future<void> _applyMergeToLocal(MergeResult result) async {
+    final db = await _databaseHelper.database;
+    await db.transaction((txn) async {
+      await txn.delete('link');
+      await txn.delete('folder');
+
+      // folders 먼저 (parent_id 없이)
+      for (final f in result.folders) {
+        final map = Map<String, dynamic>.from(f.toMap())..remove('parent_id');
+        await txn.insert('folder', map);
+      }
+
+      // parent_id 2-pass update
+      for (final f in result.folders) {
+        if (f.parentId != null && f.id != null) {
+          await txn.update(
+            'folder',
+            {'parent_id': f.parentId},
+            where: 'id = ?',
+            whereArgs: [f.id],
+          );
+        }
+      }
+
+      // links
+      for (final l in result.links) {
+        await txn.insert('link', l.toMap());
+      }
+
+      // sqlite_sequence 보정
+      await txn.rawUpdate(
+        'UPDATE sqlite_sequence SET seq = '
+        "(SELECT COALESCE(MAX(id), 0) FROM folder) WHERE name = 'folder'",
+      );
+      await txn.rawUpdate(
+        'UPDATE sqlite_sequence SET seq = '
+        "(SELECT COALESCE(MAX(id), 0) FROM link) WHERE name = 'link'",
+      );
+    });
   }
 
   /// Pro → Free 전환 시 원격 전체 삭제.
