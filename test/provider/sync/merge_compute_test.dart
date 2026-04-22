@@ -154,4 +154,200 @@ void main() {
       expect(result.stats.linksLocalOnly, 1);
     });
   });
+
+  group('computeMerge - 양쪽 머지 & 필드 규칙', () {
+    test('같은 URL + 같은 path_key → 하나로 머지 + 필드 규칙 적용', () {
+      final localFolder = LocalFolder(
+        id: 10,
+        name: 'Work',
+        thumbnail: null,
+        createdAt: '2026-04-01T00:00:00.000Z',
+        updatedAt: '2026-04-10T00:00:00.000Z',
+      );
+      final localLink = LocalLink(
+        id: 50,
+        folderId: 10,
+        url: 'https://same.com',
+        title: null,
+        describe: '로컬 메모',
+        createdAt: '2026-04-05T00:00:00.000Z',
+        updatedAt: '2026-04-10T00:00:00.000Z',
+      );
+      final remoteFolder = {
+        'id': 'uuid-work',
+        'client_id': 99,
+        'name': 'Work',
+        'thumbnail': 'remote.png',
+        'is_classified': true,
+        'parent_id': null,
+        'created_at': '2026-03-15T00:00:00.000Z',
+        'updated_at': '2026-04-20T00:00:00.000Z',
+      };
+      final remoteLink = {
+        'id': 'uuid-link',
+        'client_id': 77,
+        'folder_id': 'uuid-work',
+        'url': 'https://same.com',
+        'title': '원격 제목',
+        'image': 'img.png',
+        'describe': null,
+        'inflow_type': null,
+        'created_at': '2026-03-20T00:00:00.000Z',
+        'updated_at': '2026-04-20T00:00:00.000Z',
+      };
+
+      final result = computeMerge(
+        localFolders: [localFolder],
+        localLinks: [localLink],
+        remoteFolders: [remoteFolder],
+        remoteLinks: [remoteLink],
+        mergeAt: mergeAt,
+      );
+
+      // 폴더: 하나로 머지
+      expect(result.folders, hasLength(1));
+      expect(result.folders.first.name, 'Work');
+      // thumbnail: 비어있지 않은 쪽 우선 → 원격
+      expect(result.folders.first.thumbnail, 'remote.png');
+      // created_at: 더 이른 쪽 → 원격(3/15)
+      expect(result.folders.first.createdAt, '2026-03-15T00:00:00.000Z');
+      // updated_at: 머지 시점
+      expect(result.folders.first.updatedAt,
+          mergeAt.toUtc().toIso8601String());
+
+      // 링크: 하나로 머지
+      expect(result.links, hasLength(1));
+      // title: 로컬 null, 원격 있음 → 원격
+      expect(result.links.first.title, '원격 제목');
+      // image: 로컬 null, 원격 있음 → 원격
+      expect(result.links.first.image, 'img.png');
+      // describe: 로컬 있음, 원격 null → 로컬
+      expect(result.links.first.describe, '로컬 메모');
+      // url: 로컬 원본
+      expect(result.links.first.url, 'https://same.com');
+      // created_at: 이른 쪽 → 원격(3/20)
+      expect(result.links.first.createdAt, '2026-03-20T00:00:00.000Z');
+      // updated_at: 머지 시점
+      expect(result.links.first.updatedAt,
+          mergeAt.toUtc().toIso8601String());
+
+      expect(result.stats.foldersMerged, 1);
+      expect(result.stats.linksMerged, 1);
+    });
+
+    test('같은 URL + 다른 path_key → 두 개로 유지 (Q1=C)', () {
+      final localFolder = LocalFolder(
+        id: 1,
+        name: 'Work',
+        createdAt: '2026-04-01T00:00:00.000Z',
+        updatedAt: '2026-04-01T00:00:00.000Z',
+      );
+      final localLink = LocalLink(
+        id: 1,
+        folderId: 1,
+        url: 'https://same.com',
+        createdAt: '2026-04-01T00:00:00.000Z',
+        updatedAt: '2026-04-01T00:00:00.000Z',
+      );
+      final remoteFolder = {
+        'id': 'uuid-dev',
+        'client_id': 1,
+        'name': 'Dev', // 다른 이름 → 다른 path_key
+        'thumbnail': null,
+        'is_classified': true,
+        'parent_id': null,
+        'created_at': '2026-03-01T00:00:00.000Z',
+        'updated_at': '2026-03-01T00:00:00.000Z',
+      };
+      final remoteLink = {
+        'id': 'uuid-link',
+        'client_id': 1,
+        'folder_id': 'uuid-dev',
+        'url': 'https://same.com', // 같은 URL
+        'title': null,
+        'image': null,
+        'describe': null,
+        'inflow_type': null,
+        'created_at': '2026-03-01T00:00:00.000Z',
+        'updated_at': '2026-03-01T00:00:00.000Z',
+      };
+
+      final result = computeMerge(
+        localFolders: [localFolder],
+        localLinks: [localLink],
+        remoteFolders: [remoteFolder],
+        remoteLinks: [remoteLink],
+        mergeAt: mergeAt,
+      );
+
+      expect(result.folders, hasLength(2));
+      expect(result.links, hasLength(2));
+      expect(result.stats.linksMerged, 0);
+      expect(result.stats.linksLocalOnly, 1);
+      expect(result.stats.linksRemoteOnly, 1);
+    });
+
+    test('대소문자 다른 폴더/URL → 두 개로 유지 (Q7=A)', () {
+      final localFolder = LocalFolder(
+        id: 1,
+        name: 'Work',
+        createdAt: '2026-04-01T00:00:00.000Z',
+        updatedAt: '2026-04-01T00:00:00.000Z',
+      );
+      final remoteFolder = {
+        'id': 'uuid',
+        'client_id': 1,
+        'name': 'work', // 대소문자 다름
+        'thumbnail': null,
+        'is_classified': true,
+        'parent_id': null,
+        'created_at': '2026-03-01T00:00:00.000Z',
+        'updated_at': '2026-03-01T00:00:00.000Z',
+      };
+
+      final result = computeMerge(
+        localFolders: [localFolder],
+        localLinks: const [],
+        remoteFolders: [remoteFolder],
+        remoteLinks: const [],
+        mergeAt: mergeAt,
+      );
+
+      expect(result.folders, hasLength(2));
+      expect(result.stats.foldersMerged, 0);
+    });
+
+    test('양쪽 미분류 폴더 → 하나로 통합', () {
+      final localFolder = LocalFolder(
+        id: 1,
+        name: '미분류',
+        isClassified: false,
+        createdAt: '2026-04-01T00:00:00.000Z',
+        updatedAt: '2026-04-01T00:00:00.000Z',
+      );
+      final remoteFolder = {
+        'id': 'uuid',
+        'client_id': 1,
+        'name': 'Unclassified', // 이름 달라도 is_classified=false면 같은 폴더
+        'thumbnail': null,
+        'is_classified': false,
+        'parent_id': null,
+        'created_at': '2026-03-01T00:00:00.000Z',
+        'updated_at': '2026-03-01T00:00:00.000Z',
+      };
+
+      final result = computeMerge(
+        localFolders: [localFolder],
+        localLinks: const [],
+        remoteFolders: [remoteFolder],
+        remoteLinks: const [],
+        mergeAt: mergeAt,
+      );
+
+      expect(result.folders, hasLength(1));
+      expect(result.folders.first.isClassified, false);
+      expect(result.folders.first.name, '미분류'); // 로컬 이름
+      expect(result.stats.foldersMerged, 1);
+    });
+  });
 }
