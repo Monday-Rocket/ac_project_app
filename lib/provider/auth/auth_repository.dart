@@ -1,5 +1,8 @@
+import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
+import 'package:crypto/crypto.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -15,9 +18,17 @@ class AuthRepository {
   Stream<AuthState> get authStateChanges => _client.auth.onAuthStateChange;
 
   Future<User> signInWithGoogle() async {
+    // Supabase signInWithIdToken 은 "id_token 의 nonce claim 과 전달한 nonce 가
+    // 둘 다 있거나 둘 다 없어야" 한다. google_sign_in 7.x 는 id_token 에 nonce
+    // claim 을 포함시켜 돌려주므로, 우리가 rawNonce 를 만들어 initialize 에는
+    // sha256(rawNonce) 를, Supabase 에는 rawNonce 원본을 넘긴다.
+    final rawNonce = _generateRawNonce();
+    final hashedNonce = sha256.convert(utf8.encode(rawNonce)).toString();
+
     final googleSignIn = GoogleSignIn.instance;
-    googleSignIn.initialize(
+    await googleSignIn.initialize(
       serverClientId: _getGoogleServerClientId(),
+      nonce: hashedNonce,
     );
 
     final account = await googleSignIn.authenticate();
@@ -28,10 +39,19 @@ class AuthRepository {
     final response = await _client.auth.signInWithIdToken(
       provider: OAuthProvider.google,
       idToken: idToken,
+      nonce: rawNonce,
     );
 
     if (response.user == null) throw Exception('Supabase 로그인에 실패했습니다');
     return response.user!;
+  }
+
+  String _generateRawNonce([int length = 32]) {
+    const chars =
+        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._';
+    final rnd = Random.secure();
+    return List.generate(length, (_) => chars[rnd.nextInt(chars.length)])
+        .join();
   }
 
   Future<User> signInWithApple() async {
