@@ -10,7 +10,6 @@ import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/provider/local/local_link_repository.dart';
 import 'package:ac_project_app/provider/sync/sync_repository.dart';
 import 'package:ac_project_app/routes.dart';
-import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -43,7 +42,6 @@ class MyPage extends StatelessWidget {
             ),
           ),
           _AccountSection(),
-          _BackupSection(),
           MenuList(context),
         ],
       ),
@@ -152,15 +150,6 @@ class MyPage extends StatelessWidget {
         ],
         SizedBox(height: 16.w),
       ],
-    );
-  }
-
-  Widget _BackupSection() {
-    return BlocBuilder<AuthCubit, AuthState>(
-      builder: (context, state) {
-        if (!state.isPro) return const SizedBox.shrink();
-        return const _SyncIssueBanner();
-      },
     );
   }
 
@@ -727,120 +716,3 @@ class _ProCaptionState extends State<_ProCaption> with WidgetsBindingObserver {
   }
 }
 
-/// 원격 쓰기가 실패한 상태(dirty)가 임계 시간 이상 지속될 때만 노출되는 배너.
-/// "지금 백업" 버튼으로 수동 보정 가능. 성공 시 배너 자체가 사라짐.
-class _SyncIssueBanner extends StatefulWidget {
-  const _SyncIssueBanner();
-
-  /// dirty 지속이 이 시간 이상이면 배너 노출. 짧은 일시적 실패에는 안 나옴.
-  static const Duration _threshold = Duration(minutes: 30);
-
-  @override
-  State<_SyncIssueBanner> createState() => _SyncIssueBannerState();
-}
-
-class _SyncIssueBannerState extends State<_SyncIssueBanner>
-    with WidgetsBindingObserver {
-  late final SyncRepository _sync = getIt<SyncRepository>();
-  bool _show = false;
-  bool _running = false;
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addObserver(this);
-    _refresh();
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) _refresh();
-  }
-
-  Future<void> _refresh() async {
-    final dirty = await _sync.isDirty();
-    if (!dirty) {
-      if (mounted && _show) setState(() => _show = false);
-      return;
-    }
-    final since = await _sync.getDirtySince();
-    final age = since == null
-        ? Duration.zero
-        : DateTime.now().difference(since);
-    if (mounted) {
-      setState(() => _show = age >= _SyncIssueBanner._threshold);
-    }
-  }
-
-  Future<void> _backupNow() async {
-    if (_running) return;
-    setState(() => _running = true);
-    try {
-      final ok = await _sync.backupToRemote();
-      if (!mounted) return;
-      showBottomToast(
-        ok ? '동기화 완료' : '동기화에 실패했어요',
-        context: context,
-      );
-      await _refresh();
-    } finally {
-      if (mounted) setState(() => _running = false);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (!_show) return const SizedBox.shrink();
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.w),
-      padding: EdgeInsets.fromLTRB(14.w, 12.w, 12.w, 12.w),
-      decoration: BoxDecoration(
-        color: const Color(0xFFFFF4E5),
-        borderRadius: BorderRadius.circular(10.w),
-        border: Border.all(color: const Color(0xFFFFE0B2), width: 1.w),
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.sync_problem, size: 18.sp, color: const Color(0xFFE07400)),
-          SizedBox(width: 10.w),
-          Expanded(
-            child: Text(
-              '동기화 밀림 상태예요. 지금 정리해 두세요.',
-              style: TextStyle(
-                color: grey900,
-                fontSize: 12.sp,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-          SizedBox(width: 8.w),
-          SizedBox(
-            height: 32.w,
-            child: ElevatedButton(
-              onPressed: _running ? null : _backupNow,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: primary600,
-                foregroundColor: Colors.white,
-                elevation: 0,
-                padding: EdgeInsets.symmetric(horizontal: 12.w),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(6.w),
-                ),
-              ),
-              child: Text(
-                _running ? '…' : '지금 백업',
-                style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.w700),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}

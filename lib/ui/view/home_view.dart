@@ -11,6 +11,8 @@ import 'package:ac_project_app/provider/sync/sync_repository.dart';
 import 'package:ac_project_app/ui/page/home/local_explore_page.dart';
 import 'package:ac_project_app/ui/page/my_folder/my_folder_page.dart';
 import 'package:ac_project_app/ui/page/my_page/my_page.dart';
+import 'package:ac_project_app/ui/widget/bottom_toast.dart';
+import 'package:ac_project_app/ui/widget/dialog/pro_backup_dialog.dart';
 import 'package:ac_project_app/util/get_arguments.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -58,42 +60,11 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
       resetResumeState();
       ShareDataProvider.bulkSaveToLocal();
 
-      // plan 재조회 + 전환 감지 + dirty 시 보정 백업 (Pro)
+      // plan 재조회 + 전환 감지
       final authCubit = _authCubitRef;
       if (authCubit != null) {
         authCubit.refreshPlan();
-        _maybeRunDirtyCorrectionBackup(authCubit);
       }
-    }
-  }
-
-  Future<void> _maybeRunDirtyCorrectionBackup(AuthCubit authCubit) async {
-    if (!authCubit.state.isPro) return;
-    final sync = getIt<SyncRepository>();
-    if (await sync.isDirty()) {
-      await sync.backupToRemote();
-    }
-  }
-
-  bool _autoSyncAttempted = false;
-
-  /// Pro 로그인 시 로컬 + 원격 자동 머지. 앱 라이프타임 1회만 시도.
-  Future<void> _maybeAutoSync(BuildContext ctx) async {
-    if (_autoSyncAttempted) return;
-
-    final authCubit = ctx.read<AuthCubit>();
-    if (!authCubit.state.isPro) return;
-
-    _autoSyncAttempted = true;
-
-    final sync = getIt<SyncRepository>();
-    try {
-      final result = await sync.mergeWithRemote();
-      if (result == null) return;
-      if (!ctx.mounted) return;
-      ctx.read<LocalFoldersCubit>().getFolders();
-    } catch (e) {
-      // 실패는 로그만. 다음 앱 시작 시 _autoSyncAttempted 가 리셋되므로 재시도됨.
     }
   }
 
@@ -142,53 +113,79 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
         builder: (innerCtx) {
           // provider 하위 context에서 AuthCubit 레퍼런스 캡처 (lifecycle 훅용)
           _authCubitRef ??= innerCtx.read<AuthCubit>();
-          // 첫 프레임에 dirty 보정 1회
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            final cubit = _authCubitRef;
-            if (cubit != null) _maybeRunDirtyCorrectionBackup(cubit);
-          });
           return BlocListener<AuthCubit, AuthState>(
-            listenWhen: (prev, curr) => prev.isPro != curr.isPro,
-            listener: (ctx, state) {
-              if (state.isPro) _maybeAutoSync(ctx);
-            },
+            listenWhen: (prev, curr) =>
+                prev.backupPhase != curr.backupPhase,
+            listener: _onBackupPhaseChanged,
             child: BlocBuilder<HomeViewCubit, int>(
-              builder: (context, index) {
-                final icons = getBottomIcons(index);
+            builder: (context, index) {
+              final icons = getBottomIcons(index);
 
-                final bottomItems = [
-                  BottomNavigationBarItem(
-                    icon: SizedBox(
-                      width: 24.w,
-                      height: 24.w,
-                      child: icons[0],
-                    ),
-                    label: '마이폴더',
+              final bottomItems = [
+                BottomNavigationBarItem(
+                  icon: SizedBox(
+                    width: 24.w,
+                    height: 24.w,
+                    child: icons[0],
                   ),
-                  BottomNavigationBarItem(
-                    icon: SizedBox(
-                      width: 24.w,
-                      height: 24.w,
-                      child: icons[1],
-                    ),
-                    label: '탐색',
+                  label: '마이폴더',
+                ),
+                BottomNavigationBarItem(
+                  icon: SizedBox(
+                    width: 24.w,
+                    height: 24.w,
+                    child: icons[1],
                   ),
-                  BottomNavigationBarItem(
-                    icon: SizedBox(
-                      width: 24.w,
-                      height: 24.w,
-                      child: icons[2],
-                    ),
-                    label: '마이페이지',
+                  label: '탐색',
+                ),
+                BottomNavigationBarItem(
+                  icon: SizedBox(
+                    width: 24.w,
+                    height: 24.w,
+                    child: icons[2],
                   ),
-                ];
-                return buildBody(index, bottomItems, context);
-              },
-            ),
+                  label: '마이페이지',
+                ),
+              ];
+              return buildBody(index, bottomItems, context);
+            },
+          ),
           );
         },
       ),
     );
+  }
+
+  /// Free → Pro 전환 시 백업 진행 다이얼로그 생명주기 관리.
+  /// - preparing 에지에서 다이얼로그 노출 (중복 방지 플래그 [_backupDialogOpen]).
+  /// - done/failed 결과 토스트.
+  /// - idle 로 복귀하면 다이얼로그 닫기.
+  bool _backupDialogOpen = false;
+  void _onBackupPhaseChanged(BuildContext ctx, AuthState state) {
+    final phase = state.backupPhase;
+    if (state.isBackupInProgress && !_backupDialogOpen) {
+      _backupDialogOpen = true;
+      final cubit = ctx.read<AuthCubit>();
+      showDialog<void>(
+        context: ctx,
+        barrierDismissible: false,
+        builder: (_) => BlocProvider.value(
+          value: cubit,
+          child: const ProBackupDialog(),
+        ),
+      );
+    } else if (phase == ProBackupPhase.done) {
+      if (ctx.mounted) {
+        showBottomToast(context: ctx, '백업을 마쳤어요!');
+      }
+    } else if (phase == ProBackupPhase.failed) {
+      if (ctx.mounted) {
+        showBottomToast(context: ctx, '백업에 실패했어요. 잠시 후 다시 시도해 주세요.');
+      }
+    } else if (phase == ProBackupPhase.idle && _backupDialogOpen) {
+      _backupDialogOpen = false;
+      Navigator.of(ctx, rootNavigator: true).maybePop();
+    }
   }
 
   Widget buildBody(

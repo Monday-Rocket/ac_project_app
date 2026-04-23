@@ -3,6 +3,7 @@
 > 작성일: 2026-04-23 (v3 — 중첩 폴더 생성 Phase 1 머지 후)
 > 문서 성격: **세션이 초기화돼도 새 세션에서 이 파일만 읽고 바로 이어갈 수 있도록 작성된 handoff**
 > 관련 문서:
+> - `docs/SYNC_MODEL_V2.md` — **🆕 동기화 모델 재설계 (2026-04-23 결정, 구현 대기)** — 기존 union merge 폐기, Pro=서버가 진실 / Free=로컬이 진실 / 전환점에서만 full replace
 > - `docs/PRO_ROADMAP.md` — P0 / P1 / P2 전체 로드맵과 설계 결정 이력
 > - `docs/HANDOFF_nested_folder_create.md` — 중첩 폴더 생성 Phase 1 상세 (이미 머지됨, 히스토리 참조용)
 > - `docs/superpowers/specs/2026-04-23-nested-folder-create-design.md` — 중첩 폴더 설계 스펙
