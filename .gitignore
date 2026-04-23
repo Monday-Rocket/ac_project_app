@@ -64,3 +64,5 @@ coverage
 # FVM Version Cache
 .fvm/
 .fvmrc
+# Supabase CLI local cache
+supabase/.temp/
