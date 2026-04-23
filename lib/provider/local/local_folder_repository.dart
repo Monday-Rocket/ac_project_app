@@ -1,5 +1,6 @@
 import 'package:ac_project_app/models/local/local_folder.dart';
 import 'package:ac_project_app/provider/local/database_helper.dart';
+import 'package:ac_project_app/provider/local/folder_exceptions.dart';
 import 'package:ac_project_app/provider/sync/pro_remote_hooks.dart';
 import 'package:ac_project_app/util/logger.dart';
 
@@ -70,16 +71,27 @@ class LocalFolderRepository {
   /// 폴더 생성.
   /// 미분류 폴더는 시스템이 관리하므로 is_classified=false 생성은 금지.
   /// 미분류 폴더를 부모로 지정하는 것도 금지.
+  /// 형제 범위에서 동명 폴더가 있어도 거부.
   Future<int> createFolder(LocalFolder folder) async {
     if (!folder.isClassified) {
-      throw StateError(
+      throw const UnclassifiedCreationException(
         '미분류 폴더는 시스템이 관리합니다. 수동 생성 불가.',
       );
     }
     if (folder.parentId != null) {
-      await _assertNotUnclassified(
-        folder.parentId!,
-        '미분류 폴더 아래에는 하위 폴더를 만들 수 없습니다.',
+      final parent = await getFolderById(folder.parentId!);
+      if (parent == null) {
+        throw const ParentNotFoundException('부모 폴더가 존재하지 않습니다.');
+      }
+      if (!parent.isClassified) {
+        throw const ParentNotClassifiedException(
+          '미분류 폴더 아래에는 하위 폴더를 만들 수 없습니다.',
+        );
+      }
+    }
+    if (await isSiblingNameTaken(folder.parentId, folder.name)) {
+      throw const SiblingNameTakenException(
+        '같은 위치에 이미 같은 이름의 폴더가 있습니다.',
       );
     }
     final db = await _databaseHelper.database;
@@ -95,6 +107,28 @@ class LocalFolderRepository {
       updatedAt: now,
     ));
     return id;
+  }
+
+  /// 같은 부모 아래에 동일한 이름의 **분류된** 폴더가 이미 있는지.
+  /// parentId=null은 루트 범위. 시스템 관리 폴더(미분류)는 비교 대상에서 제외.
+  /// 비교는 바이트-equal (대소문자 구분, 유니코드 정규화 없음).
+  /// 호출부가 필요 시 이름을 trim한 뒤 전달해야 한다.
+  Future<bool> isSiblingNameTaken(int? parentId, String name) async {
+    final db = await _databaseHelper.database;
+    final rows = parentId == null
+        ? await db.query(
+            _table,
+            where: 'parent_id IS NULL AND name = ? AND is_classified = 1',
+            whereArgs: [name],
+            limit: 1,
+          )
+        : await db.query(
+            _table,
+            where: 'parent_id = ? AND name = ? AND is_classified = 1',
+            whereArgs: [parentId, name],
+            limit: 1,
+          );
+    return rows.isNotEmpty;
   }
 
   /// 폴더 업데이트. 미분류 폴더는 이름/부모 변경 모두 금지.

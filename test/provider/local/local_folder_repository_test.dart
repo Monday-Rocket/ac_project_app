@@ -1,5 +1,6 @@
 import 'package:ac_project_app/models/local/local_folder.dart';
 import 'package:ac_project_app/provider/local/database_helper.dart';
+import 'package:ac_project_app/provider/local/folder_exceptions.dart';
 import 'package:ac_project_app/provider/local/local_folder_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -349,7 +350,7 @@ void main() {
             updatedAt: now,
           ),
         ),
-        throwsA(isA<StateError>()),
+        throwsA(isA<UnclassifiedCreationException>()),
       );
     });
 
@@ -365,7 +366,7 @@ void main() {
             updatedAt: now,
           ),
         ),
-        throwsA(isA<StateError>()),
+        throwsA(isA<ParentNotClassifiedException>()),
       );
     });
 
@@ -396,7 +397,174 @@ void main() {
       final unclassified = await repository.getUnclassifiedFolder();
       expect(
         () => repository.updateFolder(unclassified!.copyWith(name: '변경')),
-        throwsA(isA<StateError>()),
+        throwsA(isA<StateError>()), // _assertNotUnclassified still uses StateError
+      );
+    });
+  });
+
+  group('isSiblingNameTaken', () {
+    test('루트 범위에 동명 폴더 있으면 true', () async {
+      await repository.createFolder(LocalFolder(
+        name: 'React',
+        createdAt: DateTime.now().toIso8601String(),
+        updatedAt: DateTime.now().toIso8601String(),
+      ));
+
+      final taken = await repository.isSiblingNameTaken(null, 'React');
+      expect(taken, isTrue);
+    });
+
+    test('루트 범위에 없으면 false', () async {
+      final taken = await repository.isSiblingNameTaken(null, 'Nothing');
+      expect(taken, isFalse);
+    });
+
+    test('자식 범위에서 동명 형제 있으면 true', () async {
+      final parentId = await repository.createFolder(LocalFolder(
+        name: 'Parent',
+        createdAt: DateTime.now().toIso8601String(),
+        updatedAt: DateTime.now().toIso8601String(),
+      ));
+      await repository.createFolder(LocalFolder(
+        name: 'Child',
+        parentId: parentId,
+        createdAt: DateTime.now().toIso8601String(),
+        updatedAt: DateTime.now().toIso8601String(),
+      ));
+
+      final taken = await repository.isSiblingNameTaken(parentId, 'Child');
+      expect(taken, isTrue);
+    });
+
+    test('다른 부모 아래 같은 이름은 false (형제 아님)', () async {
+      final parentA = await repository.createFolder(LocalFolder(
+        name: 'A',
+        createdAt: DateTime.now().toIso8601String(),
+        updatedAt: DateTime.now().toIso8601String(),
+      ));
+      final parentB = await repository.createFolder(LocalFolder(
+        name: 'B',
+        createdAt: DateTime.now().toIso8601String(),
+        updatedAt: DateTime.now().toIso8601String(),
+      ));
+      await repository.createFolder(LocalFolder(
+        name: 'Shared',
+        parentId: parentA,
+        createdAt: DateTime.now().toIso8601String(),
+        updatedAt: DateTime.now().toIso8601String(),
+      ));
+
+      final takenUnderB = await repository.isSiblingNameTaken(parentB, 'Shared');
+      expect(takenUnderB, isFalse);
+
+      final takenUnderA = await repository.isSiblingNameTaken(parentA, 'Shared');
+      expect(takenUnderA, isTrue);
+    });
+
+    test('루트 이름과 중첩 이름은 서로 독립적', () async {
+      final parentId = await repository.createFolder(LocalFolder(
+        name: 'Topic',
+        createdAt: DateTime.now().toIso8601String(),
+        updatedAt: DateTime.now().toIso8601String(),
+      ));
+
+      // 루트에 Topic이 있지만, parentId 범위에는 Topic이 없으므로 false.
+      final takenUnderParent =
+          await repository.isSiblingNameTaken(parentId, 'Topic');
+      expect(takenUnderParent, isFalse);
+    });
+
+    test('공백 포함 이름은 trim되지 않고 그대로 비교됨 (trim은 호출부 책임)', () async {
+      await repository.createFolder(LocalFolder(
+        name: 'Spaced',
+        createdAt: DateTime.now().toIso8601String(),
+        updatedAt: DateTime.now().toIso8601String(),
+      ));
+
+      final takenExact = await repository.isSiblingNameTaken(null, 'Spaced');
+      final takenWithSpace = await repository.isSiblingNameTaken(null, 'Spaced ');
+      expect(takenExact, isTrue);
+      expect(takenWithSpace, isFalse);
+    });
+
+    test('루트에서 미분류 폴더 이름은 false를 반환 (시스템 폴더 매칭 제외)', () async {
+      // 미분류 폴더는 is_classified=0 이므로 sibling 매칭 대상이 아니어야 한다.
+      final taken = await repository.isSiblingNameTaken(null, '미분류');
+      expect(taken, isFalse);
+    });
+  });
+
+  group('createFolder with parent', () {
+    test('자식 생성 성공 시 parent_id 저장됨', () async {
+      final parentId = await repository.createFolder(LocalFolder(
+        name: 'Parent',
+        createdAt: DateTime.now().toIso8601String(),
+        updatedAt: DateTime.now().toIso8601String(),
+      ));
+      final childId = await repository.createFolder(LocalFolder(
+        name: 'Child',
+        parentId: parentId,
+        createdAt: DateTime.now().toIso8601String(),
+        updatedAt: DateTime.now().toIso8601String(),
+      ));
+
+      final child = await repository.getFolderById(childId);
+      expect(child, isNotNull);
+      expect(child!.parentId, parentId);
+    });
+
+    test('존재하지 않는 부모 id 지정 시 ParentNotFoundException', () async {
+      expect(
+        () => repository.createFolder(LocalFolder(
+          name: 'Orphan',
+          parentId: 99999,
+          createdAt: DateTime.now().toIso8601String(),
+          updatedAt: DateTime.now().toIso8601String(),
+        )),
+        throwsA(isA<ParentNotFoundException>()),
+      );
+    });
+
+    test('미분류 폴더를 부모로 지정 시 ParentNotClassifiedException', () async {
+      final unclassified = await repository.getUnclassifiedFolder();
+      expect(
+        () => repository.createFolder(LocalFolder(
+          name: 'Forbidden',
+          parentId: unclassified!.id,
+          createdAt: DateTime.now().toIso8601String(),
+          updatedAt: DateTime.now().toIso8601String(),
+        )),
+        throwsA(
+          isA<ParentNotClassifiedException>().having(
+            (e) => e.message,
+            'message',
+            contains('미분류 폴더 아래에는'),
+          ),
+        ),
+      );
+    });
+
+    test('동일 부모 아래 동일 이름 거부 (Repository 방어선)', () async {
+      final parentId = await repository.createFolder(LocalFolder(
+        name: 'Parent',
+        createdAt: DateTime.now().toIso8601String(),
+        updatedAt: DateTime.now().toIso8601String(),
+      ));
+      await repository.createFolder(LocalFolder(
+        name: 'Dup',
+        parentId: parentId,
+        createdAt: DateTime.now().toIso8601String(),
+        updatedAt: DateTime.now().toIso8601String(),
+      ));
+
+      expect(
+        () => repository.createFolder(LocalFolder(
+          name: 'Dup',
+          parentId: parentId,
+          createdAt: DateTime.now().toIso8601String(),
+          updatedAt: DateTime.now().toIso8601String(),
+        )),
+        throwsA(isA<SiblingNameTakenException>()),
       );
     });
   });

@@ -8,6 +8,7 @@ import 'package:ac_project_app/provider/share_data_provider.dart';
 import 'package:ac_project_app/provider/sync/merge_compute.dart';
 import 'package:ac_project_app/provider/sync/merge_types.dart';
 import 'package:ac_project_app/util/logger.dart';
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -45,7 +46,18 @@ class SyncRepository {
   bool _isBackingUp = false;
   bool _isMerging = false;
 
+  /// Supabase 호출 모킹이 어려워 parent 해결 경로만 테스트에서 오버라이드할 수 있게 한다.
+  @visibleForTesting
+  Future<String?> Function(String userId, int localFolderId)?
+      resolveRemoteFolderIdForTest;
+
   String? _requireUserId() => _client.auth.currentUser?.id;
+
+  Future<String?> _resolveFolderOrTestHook(String userId, int localId) {
+    final hook = resolveRemoteFolderIdForTest;
+    if (hook != null) return hook(userId, localId);
+    return _resolveRemoteFolderId(userId, localId);
+  }
 
   // ── 플래그/메타 ───────────────────────────────────────────────────────
 
@@ -107,12 +119,28 @@ class SyncRepository {
   Future<void> upsertFolderRemote(LocalFolder folder) async {
     final userId = _requireUserId();
     if (userId == null || folder.id == null) return;
+
+    String? parentServerId;
+    if (folder.parentId != null) {
+      try {
+        parentServerId =
+            await _resolveFolderOrTestHook(userId, folder.parentId!);
+      } catch (e) {
+        Log.e('upsertFolderRemote: parent resolve failed: $e');
+        await _setDirty(true);
+        return;
+      }
+      if (parentServerId == null) {
+        await _setDirty(true);
+        return;
+      }
+    }
+
     await remoteWrite(() async {
       await _client.from('folders').upsert({
         'user_id': userId,
         'client_id': folder.id,
-        'parent_id':
-            null, // 로컬 parent_id는 int, 원격은 UUID. 원격 parent 매핑은 full replace 경로에서만 정확 설정.
+        'parent_id': parentServerId,
         'name': folder.name,
         'thumbnail': folder.thumbnail,
         'is_classified': folder.isClassified,
@@ -125,12 +153,20 @@ class SyncRepository {
   Future<void> upsertLinkRemote(LocalLink link) async {
     final userId = _requireUserId();
     if (userId == null || link.id == null) return;
-    final folderServerId = await _resolveRemoteFolderId(userId, link.folderId);
-    if (folderServerId == null) {
-      // 부모 폴더가 아직 원격에 없으면 dirty만 세팅해두고 다음 full replace에서 해결
+
+    String? folderServerId;
+    try {
+      folderServerId = await _resolveFolderOrTestHook(userId, link.folderId);
+    } catch (e) {
+      Log.e('upsertLinkRemote: folder resolve failed: $e');
       await _setDirty(true);
       return;
     }
+    if (folderServerId == null) {
+      await _setDirty(true);
+      return;
+    }
+
     await remoteWrite(() async {
       await _client.from('links').upsert({
         'user_id': userId,

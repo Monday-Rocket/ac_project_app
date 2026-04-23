@@ -14,6 +14,7 @@ import 'package:ac_project_app/provider/local/local_link_repository.dart';
 import 'package:ac_project_app/provider/tool_tip_check.dart';
 import 'package:ac_project_app/routes.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
+import 'package:ac_project_app/ui/widget/folder/show_create_folder_sheet.dart';
 import 'package:ac_project_app/ui/widget/buttons/upload_button.dart';
 import 'package:ac_project_app/ui/widget/dialog/bottom_dialog.dart';
 import 'package:ac_project_app/ui/widget/link_hero.dart';
@@ -187,7 +188,7 @@ class MyLinkView extends StatelessWidget {
                       LinkCountText(state, folder),
                       buildSearchBar(context, links),
                       SliverToBoxAdapter(child: SizedBox(height: 18.w)),
-                      buildChildFoldersSection(context, folders, state),
+                      buildChildFoldersSection(context, folders, state, folder),
                       buildBodyList(
                         folder: folder,
                         width: width,
@@ -445,8 +446,12 @@ class MyLinkView extends StatelessWidget {
     BuildContext context,
     List<Folder> folders,
     LinkListState state,
+    Folder currentFolder,
   ) {
-    if (state is! LinkListLoadedState || state.childFolders.isEmpty) {
+    if (state is! LinkListLoadedState) {
+      return const SliverToBoxAdapter(child: SizedBox.shrink());
+    }
+    if (currentFolder.isClassified == false) {
       return const SliverToBoxAdapter(child: SizedBox.shrink());
     }
 
@@ -457,76 +462,74 @@ class MyLinkView extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.w),
-              child: Text(
-                '하위 폴더 (${children.length})',
-                style: TextStyle(
-                  color: grey600,
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: -0.2,
+            _buildChildFoldersHeader(context, currentFolder, children.length),
+            if (children.isEmpty)
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 4.w),
+                child: Text(
+                  '하위 폴더 없음',
+                  style: TextStyle(color: grey400, fontSize: 13.sp),
                 ),
-              ),
-            ),
-            for (final child in children)
-              InkWell(
-                onTap: () => _jumpToFolder(context, child),
-                child: Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 24.w,
-                    vertical: 12.w,
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 40.w,
-                        height: 40.w,
-                        decoration: BoxDecoration(
-                          color: primary100,
-                          borderRadius: BorderRadius.circular(10.w),
+              )
+            else
+              for (final child in children)
+                InkWell(
+                  onTap: () => _jumpToFolder(context, child),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 24.w,
+                      vertical: 12.w,
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 40.w,
+                          height: 40.w,
+                          decoration: BoxDecoration(
+                            color: primary100,
+                            borderRadius: BorderRadius.circular(10.w),
+                          ),
+                          alignment: Alignment.center,
+                          child: Icon(
+                            Icons.folder,
+                            size: 20.sp,
+                            color: primary600,
+                          ),
                         ),
-                        alignment: Alignment.center,
-                        child: Icon(
-                          Icons.folder,
+                        SizedBox(width: 12.w),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                child.name ?? '',
+                                style: TextStyle(
+                                  color: blackBold,
+                                  fontSize: 15.sp,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              SizedBox(height: 2.w),
+                              Text(
+                                '링크 ${addCommasFrom(child.linksTotal ?? child.links ?? 0)}개',
+                                style: TextStyle(
+                                  color: greyText,
+                                  fontSize: 12.sp,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Icon(
+                          Icons.chevron_right,
+                          color: grey600,
                           size: 20.sp,
-                          color: primary600,
                         ),
-                      ),
-                      SizedBox(width: 12.w),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              child.name ?? '',
-                              style: TextStyle(
-                                color: blackBold,
-                                fontSize: 15.sp,
-                                fontWeight: FontWeight.w600,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            SizedBox(height: 2.w),
-                            Text(
-                              '링크 ${addCommasFrom(child.linksTotal ?? child.links ?? 0)}개',
-                              style: TextStyle(
-                                color: greyText,
-                                fontSize: 12.sp,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Icon(
-                        Icons.chevron_right,
-                        color: grey600,
-                        size: 20.sp,
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.w),
               child: Divider(height: 1, thickness: 1.w, color: greyTab),
@@ -535,6 +538,61 @@ class MyLinkView extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _buildChildFoldersHeader(
+    BuildContext context,
+    Folder currentFolder,
+    int childCount,
+  ) {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(24.w, 8.w, 12.w, 8.w),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              '하위 폴더 ($childCount)',
+              style: TextStyle(
+                color: grey600,
+                fontSize: 12.sp,
+                fontWeight: FontWeight.w600,
+                letterSpacing: -0.2,
+              ),
+            ),
+          ),
+          InkWell(
+            key: const Key('my_link_view_add_child_folder'),
+            onTap: () => _onAddChildFolder(context, currentFolder),
+            borderRadius: BorderRadius.circular(8.w),
+            child: Padding(
+              padding: EdgeInsets.all(8.w),
+              child: Icon(
+                Icons.create_new_folder_outlined,
+                size: 18.sp,
+                color: primary600,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _onAddChildFolder(
+    BuildContext context,
+    Folder parent,
+  ) async {
+    final newId = await showCreateFolderSheet(
+      context,
+      initialParentId: parent.id,
+    );
+    if (newId == null || !context.mounted) return;
+    showBottomToast(
+      context: context,
+      "'${parent.name ?? ''}' 아래에 폴더가 생성되었어요!",
+    );
+    context.read<LocalLinksFromFolderCubit>().refresh();
+    context.read<LocalFoldersCubit>().getFolders();
   }
 
   void _jumpToFolder(BuildContext context, Folder folder) {

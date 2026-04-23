@@ -1,10 +1,10 @@
 import 'dart:io';
 
 import 'package:ac_project_app/const/colors.dart';
-import 'package:ac_project_app/cubits/folders/folder_name_cubit.dart';
 import 'package:ac_project_app/cubits/folders/folders_state.dart';
 import 'package:ac_project_app/cubits/folders/get_selected_folder_cubit.dart';
 import 'package:ac_project_app/cubits/folders/local_folders_cubit.dart';
+import 'package:ac_project_app/cubits/links/local_links_from_folder_cubit.dart';
 import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/link/link.dart';
@@ -14,6 +14,7 @@ import 'package:ac_project_app/provider/check_clipboard_link.dart';
 import 'package:ac_project_app/provider/recent_folders_repository.dart';
 import 'package:ac_project_app/ui/widget/add_folder/folder_add_title.dart';
 import 'package:ac_project_app/ui/widget/folder/pick_folder_sheet.dart';
+import 'package:ac_project_app/ui/widget/folder/show_create_folder_sheet.dart';
 import 'package:ac_project_app/ui/widget/add_folder/horizontal_folder_list.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/dialog/center_dialog.dart';
@@ -318,59 +319,6 @@ BoxDecoration DialogDecoration() {
   );
 }
 
-void saveEmptyFolder(
-    BuildContext context,
-    BuildContext parentContext,
-    String folderName, {
-      void Function(BuildContext context, List<Folder> folders, int index)? moveToMyLinksView,
-      void Function()? callback,
-      bool? hasNotUnclassified,
-    }) {
-  if (folderName.isEmpty) {
-    return;
-  }
-  final folder = Folder(
-    name: folderName,
-  );
-
-  context.read<FolderNameCubit>().add(folder).then((result) {
-    if (result) {
-      Navigator.pop(context);
-      showBottomToast(context: context, '새로운 폴더가 생성되었어요!');
-
-      if (hasNotUnclassified ?? false) {
-        parentContext.read<LocalFoldersCubit>().getFoldersWithoutUnclassified().then((_) {
-          runCallback(
-            parentContext,
-            moveToMyLinksView: moveToMyLinksView,
-            callback: callback,
-          );
-        });
-      } else {
-        parentContext.read<LocalFoldersCubit>().getFolders().then((_) {
-          runCallback(
-            parentContext,
-            moveToMyLinksView: moveToMyLinksView,
-            callback: callback,
-          );
-        });
-      }
-    } else {
-      showBottomToast(context: context, '중복된 폴더 이름입니다!');
-    }
-  });
-}
-
-void runCallback(
-    BuildContext parentContext, {
-      void Function(BuildContext context, List<Folder> folders, int index)? moveToMyLinksView,
-      void Function()? callback,
-    }) {
-  final folders = parentContext.read<LocalFoldersCubit>().folders;
-  moveToMyLinksView?.call(parentContext, folders, folders.length - 1);
-  callback?.call();
-}
-
 void showFolderOptionsDialog(
     List<Folder> folders,
     Folder currFolder,
@@ -432,6 +380,29 @@ void showFolderOptionsDialog(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        BottomListItem(
+                          '하위 폴더 추가',
+                          callback: () async {
+                            Navigator.pop(context); // 옵션 시트 먼저 닫기
+                            final newId = await showCreateFolderSheet(
+                              parentContext,
+                              initialParentId: currFolder.id,
+                            );
+                            if (newId == null || !parentContext.mounted) return;
+                            showBottomToast(
+                              context: parentContext,
+                              "'${currFolder.name ?? ''}' 아래에 폴더가 생성되었어요!",
+                            );
+                            parentContext
+                                .read<LocalFoldersCubit>()
+                                .getFolders();
+                            if (fromLinkView) {
+                              parentContext
+                                  .read<LocalLinksFromFolderCubit>()
+                                  .refresh();
+                            }
+                          },
+                        ),
                         BottomListItem(
                           '폴더명 변경',
                           callback: () {
