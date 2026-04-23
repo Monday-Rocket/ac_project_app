@@ -1,6 +1,6 @@
 # LinkPool 앱 — 세션 Handoff
 
-> 작성일: 2026-04-23 (v3 — 중첩 폴더 생성 Phase 1 머지 후)
+> 작성일: 2026-04-23 (v4 — Sync v2 Phase A/A' + 오프라인 팝업 + Grace purge pg function 머지 후)
 > 문서 성격: **세션이 초기화돼도 새 세션에서 이 파일만 읽고 바로 이어갈 수 있도록 작성된 handoff**
 > 관련 문서:
 > - `docs/SYNC_MODEL_V2.md` — **🆕 동기화 모델 재설계 (2026-04-23 결정, 구현 대기)** — 기존 union merge 폐기, Pro=서버가 진실 / Free=로컬이 진실 / 전환점에서만 full replace
@@ -16,14 +16,21 @@
 
 ## Quick Resume (재개 시 이것부터)
 
-1. **현재 코드 상태**: nested-folder-create Phase 1 머지 완료. `develop` = `origin/develop` 동기화됨. 마지막 커밋 `247a687f Merge branch 'feat/nested-folder-create' into develop`.
-2. **다음 해야 할 일 우선순위**:
-   1. 실기기 시각 검증 잔여 (섹션 1.1) — 깨진 링크 다이얼로그, 드릴다운 페이지, PickFolderSheet 등
-   2. **Phase 2 — Chrome 확장 중첩 폴더 생성 UI** (섹션 1.2)
-   3. 실 Apple ID 수동 E2E (섹션 1.3)
-   4. 결제(RevenueCat) 연동 (섹션 5)
-   5. 남은 Dependabot 취약점 2건 (high) (섹션 1.4)
-3. **빌드/테스트 현황**: `fvm flutter analyze` clean (info만), `fvm flutter test` **217 passed, 2 skipped, 1 pre-existing failure** (`url_loader_test.dart` 외부 네트워크 의존).
+1. **현재 코드 상태**: `feat/sync-v2` 브랜치에 Sync v2 Phase A + A' + 오프라인 팝업 + Phase C(Migration 005) 커밋. develop 머지 대기 중.
+   - Phase A: union merge 폐기 + proMutate + dirty flag 전면 제거 + Grace period + Pro 업로드 로딩 Dialog
+   - Phase A': 주기 pull (lifecycle resumed / 콜드 스타트 / 탭 진입) + 5s debounce
+   - 오프라인 팝업: SyncRepository.offlineNotifier + OfflineDialog (Pro 전용, HomeView 구독)
+   - Phase C: `supabase/migrations/005_grace_purge_function.sql` + `supabase/functions/grace-purge/index.ts` (수동 배포 대기)
+2. **Phase B 미착수**: Chrome 확장 v2 (별도 저장소 `linkpool-chrome-extension`). `docs/SYNC_MODEL_V2.md` §4 참조.
+3. **다음 해야 할 일 우선순위**:
+   1. `feat/sync-v2` → `develop` 머지
+   2. Supabase 대시보드에서 Migration 005 + Edge Function 배포 (`supabase/README.md` 가이드 참조)
+   3. **Phase B — Chrome 확장 v2 전환** (`linkpool-chrome-extension` 저장소)
+   4. 실기기 시각 검증 잔여 (섹션 1.1) — Pro 업로드 Dialog, 오프라인 팝업, 주기 pull 등
+   5. 실 Apple ID 수동 E2E (섹션 1.3)
+   6. 결제(RevenueCat) 연동 (섹션 5)
+   7. 남은 Dependabot 취약점 2건 (high) (섹션 1.4)
+4. **빌드/테스트 현황**: `fvm flutter analyze lib/` clean (info만), `fvm flutter test` **221 passed, 0 failed**.
 4. **마지막 실동작 검증됨 (2026-04-23, Galaxy A52s `R5CRB2A38HM`)**:
    - 중첩 폴더 생성 Task 9 — Step 1/2/4 통과
      - `A.parent_id = null` ✅
