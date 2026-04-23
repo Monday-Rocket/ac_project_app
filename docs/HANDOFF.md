@@ -26,44 +26,13 @@
 
 ## 남은 작업
 
-### 1. Phase B — Chrome 확장 v2 전환 (별도 저장소) ✅ 완료 (2026-04-24)
+### 1. Phase B — Chrome 확장 v2 잔여 작업
 
 저장소: `/Users/kangmin/dev/linkpool-chrome-extension`. 참조: `docs/SYNC_MODEL_V2.md` §4.
-커밋: `9303e19 feat(sync): 동기화 모델 v2 구현 (SSOT remote-first)` — main 푸시 완료.
 
-- [x] `src/supabase/pro-mutate.ts` — `proMutate(fn)` 래퍼 (navigator.onLine + auth/pro/remote_failed 분기)
-- [x] `src/supabase/pro-hooks.ts` — createFolder/updateFolder/deleteFolder/createLink/updateLink/deleteLink + bulk 2종
-- [x] `src/supabase/full-pull.ts` — 원격 folders/links 전체 다운로드 → `chrome.storage.local` 원자 교체
-- [x] `src/supabase/transition.ts` — `onFreeToPro()` (remote wipe + upload), `onProToFree()` (fullPull + `lp_grace_until = now+7d`)
-- [x] `src/supabase/sync.ts` 통째로 삭제 (유틸은 `sync-keys.ts` 로 분리)
-- [x] `src/storage/storage.ts` 9개 쓰기 메서드에 Pro 분기 — 실패 시 `ProMutateError` throw
-- [x] `src/sidepanel/App.tsx` / `src/popup/App.tsx` — 오프라인 배너, "마지막 동기화" 캡션, visibility/focus/online debounced pull, 팝업 오픈 시 pull
-- [x] `src/supabase/subscription.ts` — `refreshSubscriptionWithTransitions()` (free↔pro 에지 감지, lazy import 로 순환 회피)
-- [x] `src/background/service-worker.ts` — `onInstalled`/`onStartup` + `alarms` 60min 에 refresh 훅
-- [x] `src/sidepanel/components/SettingsView.tsx` — Pro 캡션("Pro · YYYY-MM-DD 까지") / Grace 캡션 / "지금 동기화" 버튼
-- [x] `manifest.json` — `alarms` 권한 추가
-- [x] Vitest: `pro-mutate` 5건 + `full-pull` 3건 + `transition` 3건 = 11건 추가 (전체 78/78 통과)
 - [ ] Chrome Web Store 심사 공백용 v1 쓰기 비활성화 flag 핫픽스 (SYNC_MODEL_V2 §7.2, §10) — **미착수**
 - [ ] 북마크 경로 best-effort + `lp_bookmark_sync_failed` flag (SYNC_MODEL_V2 §3 오픈 이슈) — **미착수**
 - [ ] `storage.test.ts` 에 Pro 분기 테스트 확장 — **미착수**
-
-### 2. Phase 2 — Chrome 확장 중첩 폴더 생성 UI ✅ 완료 (2026-04-24)
-
-커밋: `4938a8f feat(sidepanel): 중첩 폴더 생성 UI (Phase 2)` — main 푸시 완료.
-
-- [x] 사이드패널 상단 "+ 새 폴더" 버튼 — 루트 폴더 생성
-- [x] `FolderTreeItem` 에 hover 시 "하위 폴더 추가" 진입점 추가 (인라인 input, Enter/Escape)
-- [x] `useFolderTree.handleExpand` 추가 — 하위 폴더 생성 시 부모 자동 펼침
-
-### 2-a. 확장 폴더/링크 CRUD UI ✅ 완료 (2026-04-24)
-
-커밋: `4856c2a feat(sidepanel): 폴더 rename/move/delete + 링크 edit/move UI 추가` — main 푸시 완료.
-
-- [x] 폴더 row hover: ✎ 이름 변경 / ⇄ 이동 / 🗑 삭제 / + 하위 폴더
-- [x] 링크 row hover: ✎ 수정 (title/url/describe 모달) / ⇄ 이동 / x 삭제
-- [x] `MoveFolderPicker` — 평탄화 트리 picker, 자기 자신 + 후손 배제, allowRoot 옵션
-- [x] `LinkEditModal` — URL 필수 validation, 공백 → null 변환
-- [x] 모든 변경 `storage.*` 경유 → Pro 유저는 원격 자동 반영
 
 ### 3. 실기기 회귀 검증 (Galaxy A52s `R5CRB2A38HM` / iPhone)
 
