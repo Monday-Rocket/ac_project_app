@@ -355,9 +355,9 @@ BottomListItem(
 
 ### 폐기
 
-- `lib/ui/widget/add_folder/show_add_folder_dialog.dart`
-- `lib/cubits/folders/folder_name_cubit.dart`
-- `lib/ui/widget/dialog/bottom_dialog.dart`의 `saveEmptyFolder`, `runCallback`
+- `lib/ui/widget/add_folder/show_add_folder_dialog.dart` — 이번 스펙에서 삭제
+- `lib/ui/widget/dialog/bottom_dialog.dart`의 `saveEmptyFolder`, `runCallback` — 이번 스펙에서 삭제
+- `lib/cubits/folders/folder_name_cubit.dart` — **rename 다이얼로그가 아직 사용 중이라 이번 스펙에서는 유지**. rename 경로까지 정리되면 폐기 가능. 후속 리팩터링 스펙으로 이관.
 
 ### 호출부 전환
 
