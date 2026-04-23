@@ -255,4 +255,50 @@ void main() {
     );
     expect(button.onPressed, isNull);
   });
+
+  testWidgets('생성 성공 시 시트가 닫히고 id를 반환한다', (tester) async {
+    _usePhoneViewport(tester);
+    when(mockCubit.createFolder('NewFolder'))
+        .thenAnswer((_) async => const Created(99));
+
+    int? capturedId;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: ScreenUtilInit(
+          designSize: const Size(375, 812),
+          builder: (_, __) => Scaffold(
+            body: BlocProvider<LocalFoldersCubit>.value(
+              value: mockCubit,
+              child: Builder(
+                builder: (ctx) => Center(
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      capturedId = await showCreateFolderSheet(ctx);
+                    },
+                    child: const Text('OPEN'),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('OPEN'));
+    await tester.pumpAndSettle();
+
+    await tester.enterText(
+      find.byKey(const Key('create_folder_name_field')),
+      'NewFolder',
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(const Key('create_folder_submit')));
+    await tester.pumpAndSettle();
+
+    // 시트가 닫혔는지
+    expect(find.text('새로운 폴더'), findsNothing);
+    // 반환 id가 올바른지
+    expect(capturedId, 99);
+  });
 }
