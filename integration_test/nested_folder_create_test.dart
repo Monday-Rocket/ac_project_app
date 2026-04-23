@@ -22,13 +22,34 @@ void main() {
 
   testWidgets('중첩 폴더 생성 골든 플로우 — 루트 "개발" → 자식 "React"',
       (tester) async {
-    final suffix = DateTime.now().millisecondsSinceEpoch.toString();
+    // maxLength=20자 제한(create_folder_name_field)에 걸리지 않게 suffix를 짧게.
+    // 'E2E_React_' 접두 10자 + suffix 6자 = 16자로 여유 있게 들어감.
+    final suffix = DateTime.now()
+        .millisecondsSinceEpoch
+        .toString()
+        .substring(7); // 뒤 6자리만 사용 (예: "123456")
     final parentName = 'E2E_개발_$suffix';
     final childName = 'E2E_React_$suffix';
 
     // 1) 앱 실행
     await app.main();
     await tester.pumpAndSettle(const Duration(seconds: 2));
+
+    // 1-a) 이전 실행에서 남았을 수 있는 E2E_* prefix 잔여 폴더 사전 정리.
+    //      자식 → 부모 순서가 필요하므로 parent_id가 null이 아닌 것부터 삭제.
+    final cleanupRepo = getIt<LocalFolderRepository>();
+    final before = await cleanupRepo.getAllFolders();
+    final leftovers = before
+        .where((f) => (f.name).startsWith('E2E_') && f.id != null)
+        .toList()
+      ..sort((a, b) {
+        final aHasParent = a.parentId != null ? 1 : 0;
+        final bHasParent = b.parentId != null ? 1 : 0;
+        return bHasParent.compareTo(aHasParent); // 자식 먼저
+      });
+    for (final f in leftovers) {
+      await cleanupRepo.deleteFolder(f.id!);
+    }
 
     // 2) 튜토리얼 시작 버튼 (처음 실행 시에만 존재)
     final startButton = find.byKey(const Key('StartAppButton'));
