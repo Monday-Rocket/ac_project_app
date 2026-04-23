@@ -15,6 +15,7 @@ void main() {
   late DatabaseHelper dbHelper;
   late MockSupabaseClient mockClient;
   late MockGoTrueClient mockAuth;
+  late MockUser mockUser;
 
   setUpAll(() {
     sqfliteFfiInit();
@@ -29,8 +30,9 @@ void main() {
 
     mockClient = MockSupabaseClient();
     mockAuth = MockGoTrueClient();
-    // No current user → _requireUserId() returns null
-    when(mockAuth.currentUser).thenReturn(null);
+    mockUser = MockUser();
+    when(mockUser.id).thenReturn('test-user-id');
+    when(mockAuth.currentUser).thenReturn(mockUser);
     when(mockClient.auth).thenReturn(mockAuth);
 
     sync = SyncRepository(
@@ -46,16 +48,17 @@ void main() {
   });
 
   group('upsertFolderRemote parent 해결', () {
-    test('parentId=null이면 resolver 호출 안 함', () async {
+    test('parentId=null이면 resolver 호출 안 함 (userId 존재 시나리오)', () async {
       var resolverCalls = 0;
       sync.resolveRemoteFolderIdForTest = (_, __) async {
         resolverCalls++;
         return 'should-not-be-called';
       };
 
-      // No Supabase session → upsertFolderRemote returns early at _requireUserId.
-      // That early return is BEFORE the resolver call, so resolverCalls should still be 0.
-      // We're verifying that the parent-resolution branch is only entered when parentId != null.
+      // userId가 존재하는 상태 (setUp에서 mockAuth.currentUser = mockUser 로 세팅).
+      // folder.parentId=null이므로 resolver 분기 자체가 실행되면 안 됨.
+      // 뒤이은 Supabase upsert 호출은 실제 네트워크가 아니라 fluent mock 미구성이라
+      // 예외가 나지만, remoteWrite가 이를 삼키므로 테스트는 정상 종료된다.
       await sync.upsertFolderRemote(const LocalFolder(
         id: 1,
         name: 'Root',
