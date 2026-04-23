@@ -179,11 +179,10 @@ class _MyFolderPageState extends State<MyFolderPage> with WidgetsBindingObserver
                 final newId = await showCreateFolderSheet(context);
                 if (newId == null || !context.mounted) return;
                 await context.read<LocalFoldersCubit>().getFolders();
+                if (!context.mounted) return;
+                showBottomToast(context: context, '새로운 폴더가 생성되었어요!');
                 final updatedFolders = context.read<LocalFoldersCubit>().folders;
                 moveToMyLinksView(context, updatedFolders, updatedFolders.length - 1);
-                if (context.mounted) {
-                  showBottomToast(context: context, '새로운 폴더가 생성되었어요!');
-                }
               },
               child: Padding(
                 padding: EdgeInsets.all(6.w),
