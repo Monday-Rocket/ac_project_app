@@ -6,6 +6,7 @@ import 'package:ac_project_app/provider/local/local_link_repository.dart';
 import 'package:ac_project_app/provider/sync/pro_mutate.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -47,6 +48,18 @@ class SyncRepository {
 
   bool _isBackingUp = false;
   bool _isPulling = false;
+
+  /// Pro 상태에서 원격 호출이 오프라인 예외로 실패하면 true 로 전환.
+  /// 성공 pull 로 다시 false 로 복귀. UI 는 이 값을 구독해 팝업을 노출한다.
+  final ValueNotifier<bool> offlineNotifier = ValueNotifier(false);
+
+  void markOffline() {
+    if (!offlineNotifier.value) offlineNotifier.value = true;
+  }
+
+  void clearOffline() {
+    if (offlineNotifier.value) offlineNotifier.value = false;
+  }
 
   /// Supabase 호출 모킹이 어려워 parent 해결 경로만 테스트에서 오버라이드할 수 있게 한다.
   @visibleForTesting
@@ -386,12 +399,20 @@ class SyncRepository {
     try {
       await restoreFromRemote();
       await _setLastPullAtNow();
+      clearOffline();
       return true;
     } on ProMutateOfflineException catch (e) {
-      Log.e('pullFromRemote offline (swallowed): $e');
+      Log.e('pullFromRemote offline: $e');
+      markOffline();
       return false;
     } catch (e) {
-      Log.e('pullFromRemote failed: $e');
+      // 네트워크 계열 예외 식별: SocketException / TimeoutException / HttpException / ClientException.
+      if (isOfflineException(e)) {
+        Log.e('pullFromRemote offline (raw): $e');
+        markOffline();
+      } else {
+        Log.e('pullFromRemote failed: $e');
+      }
       return false;
     } finally {
       _isPulling = false;

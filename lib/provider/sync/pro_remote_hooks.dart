@@ -1,6 +1,8 @@
+import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/models/local/local_folder.dart';
 import 'package:ac_project_app/models/local/local_link.dart';
 import 'package:ac_project_app/provider/sync/pro_mutate.dart';
+import 'package:ac_project_app/provider/sync/sync_repository.dart';
 import 'package:ac_project_app/util/logger.dart';
 
 /// Pro CRUD 원격 전파 훅.
@@ -67,13 +69,17 @@ class ProRemoteHooks {
   }
 
   /// 훅 호출 공통 처리.
-  /// - [ProMutateOfflineException] 은 조용히 로그만 남기고 삼킨다 (다음 full-pull 이 정정).
+  /// - [ProMutateOfflineException] 은 조용히 로그 + [SyncRepository.markOffline].
+  ///   (다음 full-pull 이 로컬 정정하고 오프라인 팝업은 HomeView 가 notifier 구독으로 표기)
   /// - 그 외 예외는 상향 (호출부가 트랜잭션 결정).
   static Future<void> _run(Future<void> Function() op) async {
     try {
       await op();
     } on ProMutateOfflineException catch (e) {
       Log.e('ProRemoteHooks offline (swallowed, pull will reconcile): $e');
+      if (getIt.isRegistered<SyncRepository>()) {
+        getIt<SyncRepository>().markOffline();
+      }
     }
   }
 }

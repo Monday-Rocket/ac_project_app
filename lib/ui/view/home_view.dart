@@ -14,6 +14,7 @@ import 'package:ac_project_app/ui/page/home/local_explore_page.dart';
 import 'package:ac_project_app/ui/page/my_folder/my_folder_page.dart';
 import 'package:ac_project_app/ui/page/my_page/my_page.dart';
 import 'package:ac_project_app/ui/widget/bottom_toast.dart';
+import 'package:ac_project_app/ui/widget/dialog/offline_dialog.dart';
 import 'package:ac_project_app/ui/widget/dialog/pro_backup_dialog.dart';
 import 'package:ac_project_app/util/get_arguments.dart';
 import 'package:flutter/material.dart';
@@ -30,11 +31,16 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
   final uploadToolTipButtonKey = GlobalKey();
+  SyncRepository? _sync;
+
+  /// 오프라인 팝업이 떠 있는 동안 중복 노출 방지.
+  bool _offlineDialogShowing = false;
 
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     saveLinksFromOutside();
+    _sync = getIt<SyncRepository>()..offlineNotifier.addListener(_onOfflineChanged);
     super.initState();
   }
 
@@ -46,8 +52,24 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
 
   @override
   void dispose() {
+    _sync?.offlineNotifier.removeListener(_onOfflineChanged);
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  /// SyncRepository.offlineNotifier 변화 감지. true + Pro + 미노출 상태에서만 팝업.
+  void _onOfflineChanged() {
+    final sync = _sync;
+    if (sync == null || !sync.offlineNotifier.value) return;
+    if (_offlineDialogShowing) return;
+    final authCubit = _authCubitRef;
+    if (authCubit == null || !authCubit.state.isPro) return;
+    if (!mounted) return;
+
+    _offlineDialogShowing = true;
+    OfflineDialog.show(context).whenComplete(() {
+      _offlineDialogShowing = false;
+    });
   }
 
   final resumeState = ValueNotifier(true);

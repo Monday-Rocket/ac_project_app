@@ -96,6 +96,14 @@ void main() {
       expect(ok, isFalse);
     });
 
+    test('markOffline / clearOffline 은 offlineNotifier 에 반영된다', () async {
+      expect(sync.offlineNotifier.value, isFalse);
+      sync.markOffline();
+      expect(sync.offlineNotifier.value, isTrue);
+      sync.clearOffline();
+      expect(sync.offlineNotifier.value, isFalse);
+    });
+
     test('clearLocalSyncMeta 는 lp_last_pull_at 도 제거한다', () async {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(
