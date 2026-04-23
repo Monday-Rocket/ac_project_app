@@ -11,20 +11,22 @@
 
 ## Quick Resume (세션 재개 시 이것부터 읽음)
 
-1. **현재 진행 상황**: Phase 1의 **Task 1~7 완료, Task 8·9 미완료**. `feat/nested-folder-create` 브랜치에 13개 커밋 누적.
+1. **현재 진행 상황**: Phase 1의 **Task 1~8 완료, Task 9 미완료**. `feat/nested-folder-create` 브랜치에 16개 커밋 누적 (Task 8 관련 3커밋 추가됨: key 부여, E2E 테스트, 실기기 피드백 반영 안정화).
 2. **다음 할 일**:
-   - **Task 8** (선택) — `integration_test/nested_folder_create_test.dart` 작성 + 로컬 실기기/시뮬레이터로 실행
-   - **Task 9** — Pro 실기기 수동 검증 체크리스트 완주 (Supabase Studio 병행 필요)
+   - **Task 9** — Pro 실기기/시뮬레이터 수동 검증 체크리스트 완주 (Supabase Studio 병행 필요) → 섹션 3의 Step 1~4를 그대로 수행
    - 그 후 develop으로 PR
 3. **환경 전제**:
    - Flutter 3.41.7 (FVM), Dart 3 sealed class 지원됨
    - 작업 브랜치 `feat/nested-folder-create` 체크아웃 상태
    - `git stash@{0}`에 세션 시작 전 작업하던 `ios/Runner.xcodeproj/project.pbxproj` 변경사항이 남아있음 (이번 작업과 무관)
+   - **iOS Google 로그인 fix는 별도 브랜치 `fix/google-signin-nonce`가 `develop`에 이미 머지됨** (시뮬레이터 400 해결, 2026-04-23)
+   - Task 8 E2E는 iPhone 17 시뮬레이터(iOS 26.4)에서 PASS 확인됨
 4. **막힐 때**:
+   - Task 9 실행 순서 / UI 위치 / Supabase 확인 항목 → **섹션 3의 Task 9 가이드**가 UI 기준으로 상세하게 재작성되어 있음
    - "내가 지금 뭘 바꿨지?" → 섹션 4 "완료된 작업 스냅샷"
    - "설계 결정이 왜 이렇지?" → 섹션 6 "결정 이력 요약" 또는 설계 스펙 문서
    - "실제 코드 어디에 있지?" → 섹션 5 "코드베이스 스냅샷"
-   - Task 8/9 실행 가이드 → 섹션 3
+   - "하위 폴더" 섹션이 UI에서 안 보이는 경우 → Task 9 가이드 최하단 트러블슈팅 표
 
 ---
 
@@ -126,20 +128,116 @@ Task 1~7은 **독립 머지 가능** 원칙으로 분리된 커밋 단위.
 
 **실행 전 확인**:
 - [ ] Task 1~8 구현 완료 커밋됨
-- [ ] Supabase 콘솔 접근 가능
-- [ ] Pro 계정 로그인 가능한 실기기 준비됨
+- [ ] Supabase Studio 접근 가능 (`folders` 테이블 Editor 뷰)
+- [ ] Pro 계정 로그인 가능한 실기기 또는 iOS 시뮬레이터 준비됨
 
-**체크리스트** (계획서 Task 9 원본):
+**참고 — "하위 폴더" 섹션이 안 보이면?**
+- 폴더가 미분류(`is_classified=false`)인 경우 섹션 전체가 숨겨짐 → 반드시 루트에서 "+"로 새로 만든 분류된 폴더를 사용
+- `LinkListLoadedState`가 아닌 상태(로딩 중 등)면 일시적으로 안 보임 → 몇 초 대기 후 재확인
+- 위치: 폴더 제목 → `링크 N개` → 검색바 → **"하위 폴더 (N)" 헤더** 순서로 아래에 렌더됨
 
-- [ ] Pro 로그인 → 루트 폴더 `A` 생성 → Supabase Studio `folders` 테이블에서 `client_id=<A.id>`, `parent_id=null`, `is_classified=true` 확인
-- [ ] 앱에서 `A` 진입 → `+ 하위 폴더` 탭 → `B` 생성 → Supabase에서 `B` 레코드의 `parent_id`가 `A의 uuid`와 일치하는지 확인 (**2-pass가 실제로 동작하는지 검증하는 핵심 항목**)
-- [ ] 비행기 모드 on → `B` 아래 `C` 생성 → 비행기 모드 off → (앱 재시작 또는 자동 보정 타이밍 대기 후) Supabase에 `C`가 `parent_id=B의 uuid`로 업서트됐는지 확인
-- [ ] **고아 부모 시나리오**: Supabase Studio에서 `A` 레코드 직접 삭제 → 앱에서 `A` 아래 `D` 생성 → 로컬은 `D` 존재, 원격은 `D` 없음, `dirty=true` 유지 → 수동 백업/머지 후 `D` 복원 확인
+---
 
-**완료 후**:
-- 결과를 PR 설명에 캡처로 기재
-- 스펙 문서 `Verification 체크리스트` 7개 항목 전부 체크
-- develop으로 PR 생성
+#### Step 1 — 루트 폴더 `A` 생성 및 원격 확인
+
+**앱 UI**:
+1. 하단 탭 **"내 폴더"** 선택
+2. 검색창 오른쪽의 **"+" 아이콘** 탭 (SearchView 우측, key: `my_folder_page_create_root_folder`)
+3. 시트에 이름 `A` 입력 → **"폴더 생성하기"** 탭
+4. 토스트 "새로운 폴더가 생성되었어요!" 확인 + 자동으로 `A` 상세로 이동
+
+**Supabase Studio**:
+5. `folders` 테이블 새로고침 → `A` 레코드 찾기
+6. **확인**:
+   - `name = "A"`
+   - `parent_id = null` ✅
+   - `is_classified = true` ✅
+   - `id`(uuid) 값 **복사**해두기 (Step 2 비교용)
+
+---
+
+#### Step 2 — 하위 폴더 `B` 생성 (**2-pass 핵심 검증**)
+
+**앱 UI** (`A` 상세 화면):
+1. 아래로 스크롤 → **"하위 폴더 (0)"** 헤더 찾기 (빈 상태면 "하위 폴더 없음" 문구)
+2. 헤더 우측의 **"+" 아이콘** (`create_new_folder_outlined`) 탭
+3. 시트에 이름 `B` 입력 → **"폴더 생성하기"** 탭
+4. 토스트 "'A' 아래에 폴더가 생성되었어요!" 확인
+5. `A` 상세에 **"하위 폴더 (1)"** + 자식 `B` 노출 (부모에 머무름)
+
+**또는** 대체 진입점: 우상단 `...` → "하위 폴더 추가" → 동일한 시트 흐름
+
+**Supabase Studio**:
+6. `folders` 테이블 새로고침 → `B` 레코드 찾기
+7. ⭐️ **핵심 확인**: `B.parent_id` 컬럼 값이 **Step 1에서 복사한 `A.id`(uuid)와 정확히 일치**
+   - 이 항목이 이번 Phase 1의 **`upsertFolderRemote` 2-pass 패턴 버그 fix의 유일한 실증 검증**
+   - 일치 스크린샷 확보 → PR 본문에 첨부
+
+---
+
+#### Step 3 — 오프라인 → 온라인 동기화
+
+**시뮬레이터**: macOS 메뉴 **Features → Network Link Conditioner → 100% Loss** 활성화
+**실기기**: 비행기 모드 on
+
+**앱 UI**:
+1. `A` → `B` 상세 진입
+2. `B` 상세의 **"하위 폴더 (0)" 헤더 "+"** 탭 → 이름 `C` 입력 → 생성
+3. 토스트 정상 표시 확인 (로컬은 즉시 저장됨)
+
+**네트워크 복원**: Network Link Conditioner 해제 / 비행기 모드 off
+4. 앱을 **완전 종료 후 재실행** (백그라운드 복귀 시 `didChangeAppLifecycleState`로 folders 새로고침되지만, 동기화 트리거는 앱 재시작이 가장 확실)
+5. 몇 초 대기
+
+**Supabase Studio**:
+6. `folders` 테이블 새로고침 → `C` 레코드 확인
+7. **확인**: `C.parent_id = B의 uuid`
+
+---
+
+#### Step 4 — 고아 부모 시나리오 (원격만 삭제 + 로컬에서 자식 생성)
+
+**Supabase Studio**:
+1. `folders` 테이블에서 **`A` 레코드 직접 Delete row**
+
+**앱 UI** (로컬에는 `A`가 아직 존재):
+2. 내 폴더 탭에서 `A` 진입 → 하위 폴더 섹션 "+" → 이름 `D` 입력 → 생성
+3. 토스트 표시 확인 (로컬 저장 성공)
+
+**확인**:
+4. Supabase 새로고침 → **`D`가 원격에 없어야 정상** ✅
+   - 부모 `A`의 remote uuid를 resolve 못해서 원격 업서트가 조기 반환 (`dirty=true` 유지)
+5. (선택) 로컬 DB에서 `D.dirty = 1` 유지 확인
+6. (선택) 추후 수동 백업/머지 시나리오: 백업으로 `A` 복원 후 `D`가 `parent_id=A의 uuid`로 업서트되는지
+
+---
+
+#### 증적(캡처) 체크리스트
+
+PR 본문에 첨부할 캡처:
+- [ ] Step 1: Supabase `A` 레코드 (`parent_id=null`, `is_classified=true`)
+- [ ] Step 2: Supabase `B` 레코드 (`parent_id=A의 uuid`) ⭐️ **핵심**
+- [ ] Step 3: Supabase `C` 레코드 (`parent_id=B의 uuid`)
+- [ ] Step 4: Supabase에 `D` 없음 + 앱에 `D` 보이는 화면
+
+---
+
+#### 완료 후
+
+- [ ] 위 4개 캡처 확보
+- [ ] 스펙 문서(`docs/superpowers/specs/2026-04-23-nested-folder-create-design.md`) `Verification 체크리스트` 7개 항목 전부 체크
+- [ ] `develop`으로 PR 생성 (본문 템플릿은 섹션 8 참고)
+
+---
+
+#### 잘 안 될 때
+
+| 증상 | 원인 후보 | 해결 |
+|------|----------|------|
+| `A` 상세에 "하위 폴더" 섹션 자체가 안 보임 | `is_classified=false` 또는 아직 `LinkListLoadedState` 아님 | Supabase에서 `A.is_classified` 확인. 로딩이면 몇 초 대기 후 새로고침 |
+| 이전 시뮬레이터 실행의 잔여 폴더가 보임 | 로컬 DB에 누적 | 앱 길게 눌러 삭제 → 재설치 or Pro 계정 재로그인 |
+| Step 3에서 `C.parent_id`가 null | 2-pass가 동작 안 했거나 parent가 원격에 아직 없음 | 앱 재시작 2회 반복, 그래도 null이면 `SyncRepository.upsertFolderRemote` 로그 확인 필요 |
+| 로그인이 400 | `fix/google-signin-nonce`가 develop에 머지 안 됐을 수 있음 | `git log develop --oneline \| head` 에 해당 커밋 확인 |
 
 ---
 
