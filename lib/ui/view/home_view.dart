@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/auth/auth_cubit.dart';
 import 'package:ac_project_app/cubits/folders/local_folders_cubit.dart';
@@ -60,12 +62,30 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
       resetResumeState();
       ShareDataProvider.bulkSaveToLocal();
 
-      // plan 재조회 + 전환 감지
+      // plan 재조회 + 전환 감지 → Pro 면 원격 pull 트리거
       final authCubit = _authCubitRef;
       if (authCubit != null) {
         authCubit.refreshPlan();
+        _triggerPullIfPro(authCubit);
       }
     }
+  }
+
+  /// Pro 상태면 SyncRepository.pullFromRemote() 호출 → 성공 시 LocalFoldersCubit 갱신.
+  /// SYNC_MODEL_V2 §2.2: lifecycle resumed, 화면 진입, 로그인 성공 시 호출.
+  void _triggerPullIfPro(AuthCubit authCubit) {
+    if (!authCubit.state.isPro) return;
+    final sync = getIt<SyncRepository>();
+    unawaited(() async {
+      final pulled = await sync.pullFromRemote();
+      if (!pulled) return;
+      if (!mounted) return;
+      // pull 이후 UI 갱신. LocalFoldersCubit 는 provider 하위 context 로 읽는다.
+      final ctx = context;
+      if (ctx.mounted) {
+        ctx.read<LocalFoldersCubit>().getFolders();
+      }
+    }());
   }
 
   void _configureProHooks(AuthCubit authCubit) {
@@ -112,7 +132,15 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
       child: Builder(
         builder: (innerCtx) {
           // provider 하위 context에서 AuthCubit 레퍼런스 캡처 (lifecycle 훅용)
-          _authCubitRef ??= innerCtx.read<AuthCubit>();
+          final captured = _authCubitRef;
+          if (captured == null) {
+            final cubit = innerCtx.read<AuthCubit>();
+            _authCubitRef = cubit;
+            // 콜드 스타트 최초 빌드 후 Pro 면 원격 pull 1회.
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _triggerPullIfPro(cubit);
+            });
+          }
           return BlocListener<AuthCubit, AuthState>(
             listenWhen: (prev, curr) =>
                 prev.backupPhase != curr.backupPhase,
@@ -219,6 +247,11 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
         onTap: (index) {
           if (index == 0) {
             context.read<LocalFoldersCubit>().getFolders();
+          }
+          // 마이폴더(0) / 마이페이지(2) 진입 시 Pro 면 원격 pull (debounce 는 SyncRepository 내부).
+          if (index == 0 || index == 2) {
+            final cubit = _authCubitRef;
+            if (cubit != null) _triggerPullIfPro(cubit);
           }
           context.read<HomeViewCubit>().moveTo(index);
         },

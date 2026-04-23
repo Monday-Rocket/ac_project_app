@@ -40,8 +40,13 @@ class SyncRepository {
   final SupabaseClient _client;
 
   static const _kLastBackupAt = 'lp_last_backup_at';
+  static const _kLastPullAt = 'lp_last_pull_at';
+
+  /// Pull 연속 호출 방지 debounce. lifecycle/화면 진입 다중 트리거 대비.
+  static const Duration _pullDebounce = Duration(seconds: 5);
 
   bool _isBackingUp = false;
+  bool _isPulling = false;
 
   /// Supabase 호출 모킹이 어려워 parent 해결 경로만 테스트에서 오버라이드할 수 있게 한다.
   @visibleForTesting
@@ -68,6 +73,19 @@ class SyncRepository {
   Future<void> _setLastBackupAtNow() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_kLastBackupAt, DateTime.now().toIso8601String());
+  }
+
+  /// 마지막 원격 pull 완료 시각. UI 오프라인 캡션("최근 동기화 MM/DD HH:mm") 용.
+  Future<DateTime?> getLastPullAt() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(_kLastPullAt);
+    if (raw == null) return null;
+    return DateTime.tryParse(raw);
+  }
+
+  Future<void> _setLastPullAtNow() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_kLastPullAt, DateTime.now().toIso8601String());
   }
 
   // ── 개별 upsert/delete (Pro CRUD 원격 전파) ─────────────────────────
@@ -342,6 +360,44 @@ class SyncRepository {
         'restoreFromRemote ok: ${remoteFolders.length} folders, ${remoteLinks.length} links');
   }
 
+  /// Pro 활성 기간의 주기 pull 엔트리.
+  /// SYNC_MODEL_V2 §2.2: lifecycle resumed / 화면 진입 / 로그인 성공 시 호출.
+  ///
+  /// - [force] 가 false(기본)면 마지막 pull 로부터 [_pullDebounce] 미만일 때 skip.
+  /// - 중복 호출 방지: 이미 pulling 중이면 skip.
+  /// - 오프라인/네트워크 예외는 로그만 남기고 삼킨다 (다음 트리거에 재시도).
+  /// - 서버 진실을 기준으로 로컬이 full replace 되므로 호출부는 이후 UI 갱신만 하면 된다.
+  ///
+  /// 반환: 실제 pull 이 수행돼 로컬이 변경됐으면 true, skip 됐으면 false.
+  Future<bool> pullFromRemote({bool force = false}) async {
+    if (_isPulling) return false;
+    final userId = _requireUserId();
+    if (userId == null) return false;
+
+    if (!force) {
+      final last = await getLastPullAt();
+      if (last != null &&
+          DateTime.now().difference(last) < _pullDebounce) {
+        return false;
+      }
+    }
+
+    _isPulling = true;
+    try {
+      await restoreFromRemote();
+      await _setLastPullAtNow();
+      return true;
+    } on ProMutateOfflineException catch (e) {
+      Log.e('pullFromRemote offline (swallowed): $e');
+      return false;
+    } catch (e) {
+      Log.e('pullFromRemote failed: $e');
+      return false;
+    } finally {
+      _isPulling = false;
+    }
+  }
+
   /// Pro → Free 전환 시 원격 전체 삭제 (즉시 purge 옵션, 미사용).
   /// v2 에서는 Grace period 후 서버 cron 이 정리하므로 클라이언트 호출은 기본적으로 불필요.
   Future<void> purgeRemote() async {
@@ -356,9 +412,10 @@ class SyncRepository {
     }
   }
 
-  /// 테스트/디버깅용 — 백업 메타 초기화 (원격 데이터는 건드리지 않음).
+  /// 테스트/디버깅용 — 백업/pull 메타 초기화 (원격 데이터는 건드리지 않음).
   Future<void> clearLocalSyncMeta() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_kLastBackupAt);
+    await prefs.remove(_kLastPullAt);
   }
 }

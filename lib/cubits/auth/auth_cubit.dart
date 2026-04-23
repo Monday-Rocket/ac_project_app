@@ -154,7 +154,14 @@ class AuthCubit extends Cubit<AuthState> {
       await SharedPrefHelper.saveKeyValue(_kCachedPlan, effective);
 
       // 전환 감지
-      if (previous.isEmpty || previous == effective) return;
+      if (previous.isEmpty || previous == effective) {
+        // 전환 에지 없음 — Pro 상태면 주기 pull 에 편승해 즉시 1회 당겨온다.
+        // SYNC_MODEL_V2 §2.2: 앱 콜드 스타트/로그인 성공 시 full pull.
+        if (effective == 'pro' && _syncRepository != null) {
+          unawaited(_syncRepository.pullFromRemote());
+        }
+        return;
+      }
       if (_syncRepository == null) return;
 
       if (previous == 'free' && effective == 'pro') {
