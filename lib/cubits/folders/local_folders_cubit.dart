@@ -1,3 +1,4 @@
+import 'package:ac_project_app/cubits/folders/create_folder_result.dart';
 import 'package:ac_project_app/cubits/folders/folders_state.dart';
 import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
@@ -115,21 +116,33 @@ class LocalFoldersCubit extends Cubit<FoldersState> {
     }
   }
 
-  /// 폴더 생성
-  Future<int?> createFolder(String name) async {
+  /// 폴더 생성. 결과는 CreateFolderResult로 구분 전달.
+  /// - 성공: Created(id)
+  /// - 형제 이름 중복: DuplicateSibling
+  /// - 부모 폴더 없음: ParentMissing
+  /// - 기타 실패: CreateFolderFailed(error)
+  Future<CreateFolderResult> createFolder(String name, {int? parentId}) async {
     try {
+      if (await _folderRepository.isSiblingNameTaken(parentId, name)) {
+        return const DuplicateSibling();
+      }
       final now = DateTime.now().toIso8601String();
       final newFolder = LocalFolder(
         name: name,
+        parentId: parentId,
         createdAt: now,
         updatedAt: now,
       );
       final id = await _folderRepository.createFolder(newFolder);
       await getFolders();
-      return id;
+      return Created(id);
+    } on StateError catch (e) {
+      Log.e('LocalFoldersCubit.createFolder state error: $e');
+      if (e.message.contains('부모 폴더')) return const ParentMissing();
+      return CreateFolderFailed(e);
     } catch (e) {
       Log.e('LocalFoldersCubit.createFolder error: $e');
-      return null;
+      return CreateFolderFailed(e);
     }
   }
 

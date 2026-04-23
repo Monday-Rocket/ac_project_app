@@ -1,3 +1,4 @@
+import 'package:ac_project_app/cubits/folders/create_folder_result.dart';
 import 'package:ac_project_app/cubits/folders/folders_state.dart';
 import 'package:ac_project_app/cubits/folders/local_folders_cubit.dart';
 import 'package:ac_project_app/di/set_up_get_it.dart';
@@ -257,40 +258,77 @@ void main() {
   // -------------------------------------------------------------------------
 
   group('createFolder()', () {
-    test('returns created id as an integer', () async {
+    test('성공 시 Created(id) 반환 + loading/loaded 상태 emit', () async {
       final cubit = await _buildAndDrain();
-
+      when(mockRepo.isSiblingNameTaken(null, 'New'))
+          .thenAnswer((_) async => false);
       when(mockRepo.createFolder(any)).thenAnswer((_) async => 42);
       _stubGetAll(mockRepo, [makeLocalFolder(id: 42, name: 'New')]);
 
-      final id = await cubit.createFolder('New');
+      CreateFolderResult? result;
+      final emitted = await collectStates(cubit, () async {
+        result = await cubit.createFolder('New');
+      });
 
-      expect(id, 42);
-      verify(mockRepo.createFolder(any)).called(1);
-      await cubit.close();
-    });
-
-    test('emits [loading, loaded] after successful creation', () async {
-      final cubit = await _buildAndDrain();
-
-      when(mockRepo.createFolder(any)).thenAnswer((_) async => 5);
-      // Return a distinct list so Equatable does not deduplicate.
-      _stubGetAll(mockRepo, [makeLocalFolder(id: 5, name: 'Created')]);
-
-      final emitted =
-          await collectStates(cubit, () => cubit.createFolder('Created'));
-
+      expect(result, isA<Created>());
+      expect((result! as Created).id, 42);
       expect(emitted, [isA<FolderLoadingState>(), isA<FolderLoadedState>()]);
       await cubit.close();
     });
 
-    test('returns null when repository throws', () async {
+    test('parentId 전달 시 Repository.createFolder에 그대로 전달됨', () async {
       final cubit = await _buildAndDrain();
+      when(mockRepo.isSiblingNameTaken(7, 'Child'))
+          .thenAnswer((_) async => false);
+      when(mockRepo.createFolder(any)).thenAnswer((_) async => 99);
+      _stubGetAll(mockRepo, [makeLocalFolder(id: 99, name: 'Child')]);
 
+      await cubit.createFolder('Child', parentId: 7);
+
+      final captured = verify(mockRepo.createFolder(captureAny)).captured.single
+          as LocalFolder;
+      expect(captured.parentId, 7);
+      expect(captured.name, 'Child');
+      await cubit.close();
+    });
+
+    test('형제 이름 중복 시 DuplicateSibling 반환, state emit 없음', () async {
+      final cubit = await _buildAndDrain();
+      when(mockRepo.isSiblingNameTaken(null, 'Dup'))
+          .thenAnswer((_) async => true);
+
+      CreateFolderResult? result;
+      final emitted = await collectStates(cubit, () async {
+        result = await cubit.createFolder('Dup');
+      });
+
+      expect(result, isA<DuplicateSibling>());
+      expect(emitted, isEmpty);
+      verifyNever(mockRepo.createFolder(any));
+      await cubit.close();
+    });
+
+    test('Repository가 "부모 폴더" StateError throw → ParentMissing', () async {
+      final cubit = await _buildAndDrain();
+      when(mockRepo.isSiblingNameTaken(5, 'X')).thenAnswer((_) async => false);
+      when(mockRepo.createFolder(any))
+          .thenThrow(StateError('부모 폴더가 존재하지 않습니다.'));
+
+      final result = await cubit.createFolder('X', parentId: 5);
+
+      expect(result, isA<ParentMissing>());
+      await cubit.close();
+    });
+
+    test('Repository 일반 예외 → CreateFolderFailed', () async {
+      final cubit = await _buildAndDrain();
+      when(mockRepo.isSiblingNameTaken(null, 'Bad'))
+          .thenAnswer((_) async => false);
       when(mockRepo.createFolder(any)).thenThrow(Exception('insert failed'));
-      final id = await cubit.createFolder('Bad Folder');
 
-      expect(id, isNull);
+      final result = await cubit.createFolder('Bad');
+
+      expect(result, isA<CreateFolderFailed>());
       await cubit.close();
     });
   });

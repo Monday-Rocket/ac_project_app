@@ -83,6 +83,22 @@ class MockLocalFolderRepository extends _i1.Mock
       ) as _i3.Future<int>);
 
   @override
+  _i3.Future<bool> isSiblingNameTaken(
+    int? parentId,
+    String? name,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #isSiblingNameTaken,
+          [
+            parentId,
+            name,
+          ],
+        ),
+        returnValue: _i3.Future<bool>.value(false),
+      ) as _i3.Future<bool>);
+
+  @override
   _i3.Future<int> updateFolder(_i4.LocalFolder? folder) => (super.noSuchMethod(
         Invocation.method(
           #updateFolder,
