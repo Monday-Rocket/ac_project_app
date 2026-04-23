@@ -175,6 +175,7 @@ class _MyFolderPageState extends State<MyFolderPage> with WidgetsBindingObserver
           ),
           if (folderState is FolderLoadedState)
             InkWell(
+              key: const Key('my_folder_page_create_root_folder'),
               onTap: () async {
                 final newId = await showCreateFolderSheet(context);
                 if (newId == null || !context.mounted) return;
