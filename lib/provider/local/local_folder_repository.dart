@@ -103,8 +103,8 @@ class LocalFolderRepository {
     return id;
   }
 
-  /// 같은 부모 아래에 동일한 이름의 폴더가 이미 있는지.
-  /// parentId=null은 루트 범위.
+  /// 같은 부모 아래에 동일한 이름의 **분류된** 폴더가 이미 있는지.
+  /// parentId=null은 루트 범위. 시스템 관리 폴더(미분류)는 비교 대상에서 제외.
   /// 비교는 바이트-equal (대소문자 구분, 유니코드 정규화 없음).
   /// 호출부가 필요 시 이름을 trim한 뒤 전달해야 한다.
   Future<bool> isSiblingNameTaken(int? parentId, String name) async {
@@ -112,13 +112,13 @@ class LocalFolderRepository {
     final rows = parentId == null
         ? await db.query(
             _table,
-            where: 'parent_id IS NULL AND name = ?',
+            where: 'parent_id IS NULL AND name = ? AND is_classified = 1',
             whereArgs: [name],
             limit: 1,
           )
         : await db.query(
             _table,
-            where: 'parent_id = ? AND name = ?',
+            where: 'parent_id = ? AND name = ? AND is_classified = 1',
             whereArgs: [parentId, name],
             limit: 1,
           );

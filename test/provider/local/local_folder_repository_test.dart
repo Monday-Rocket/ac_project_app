@@ -485,6 +485,12 @@ void main() {
       expect(takenExact, isTrue);
       expect(takenWithSpace, isFalse);
     });
+
+    test('루트에서 미분류 폴더 이름은 false를 반환 (시스템 폴더 매칭 제외)', () async {
+      // 미분류 폴더는 is_classified=0 이므로 sibling 매칭 대상이 아니어야 한다.
+      final taken = await repository.isSiblingNameTaken(null, '미분류');
+      expect(taken, isFalse);
+    });
   });
 
   group('createFolder with parent', () {
@@ -518,7 +524,7 @@ void main() {
       );
     });
 
-    test('미분류 폴더를 부모로 지정 시 StateError (기존 동작 유지)', () async {
+    test('미분류 폴더를 부모로 지정 시 StateError (메시지 검증)', () async {
       final unclassified = await repository.getUnclassifiedFolder();
       expect(
         () => repository.createFolder(LocalFolder(
@@ -527,7 +533,13 @@ void main() {
           createdAt: DateTime.now().toIso8601String(),
           updatedAt: DateTime.now().toIso8601String(),
         )),
-        throwsA(isA<StateError>()),
+        throwsA(
+          isA<StateError>().having(
+            (e) => e.message,
+            'message',
+            contains('미분류 폴더 아래에는'),
+          ),
+        ),
       );
     });
 
