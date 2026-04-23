@@ -1,5 +1,3 @@
-// ignore_for_file: avoid_positional_boolean_parameters
-
 import 'dart:async';
 
 import 'package:ac_project_app/const/colors.dart';
@@ -8,8 +6,9 @@ import 'package:ac_project_app/cubits/folders/local_folders_cubit.dart';
 import 'package:ac_project_app/gen/assets.gen.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/routes.dart';
-import 'package:ac_project_app/ui/widget/add_folder/show_add_folder_dialog.dart';
+import 'package:ac_project_app/ui/widget/bottom_toast.dart';
 import 'package:ac_project_app/ui/widget/buttons/upload_button.dart';
+import 'package:ac_project_app/ui/widget/folder/show_create_folder_sheet.dart';
 import 'package:ac_project_app/ui/widget/custom_reorderable_list_view.dart';
 import 'package:ac_project_app/ui/widget/dialog/bottom_dialog.dart';
 import 'package:ac_project_app/ui/widget/folder/folder_tree_modal.dart';
@@ -176,11 +175,16 @@ class _MyFolderPageState extends State<MyFolderPage> with WidgetsBindingObserver
           ),
           if (folderState is FolderLoadedState)
             InkWell(
-              onTap: () => showAddFolderDialog(
-                context,
-                moveToMyLinksView: moveToMyLinksView,
-                folders: folderState.folders,
-              ),
+              onTap: () async {
+                final newId = await showCreateFolderSheet(context);
+                if (newId == null || !context.mounted) return;
+                await context.read<LocalFoldersCubit>().getFolders();
+                final updatedFolders = context.read<LocalFoldersCubit>().folders;
+                moveToMyLinksView(context, updatedFolders, updatedFolders.length - 1);
+                if (context.mounted) {
+                  showBottomToast(context: context, '새로운 폴더가 생성되었어요!');
+                }
+              },
               child: Padding(
                 padding: EdgeInsets.all(6.w),
                 child: SvgPicture.asset(

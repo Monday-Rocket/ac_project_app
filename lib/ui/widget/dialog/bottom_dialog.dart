@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:ac_project_app/const/colors.dart';
-import 'package:ac_project_app/cubits/folders/folder_name_cubit.dart';
 import 'package:ac_project_app/cubits/folders/folders_state.dart';
 import 'package:ac_project_app/cubits/folders/get_selected_folder_cubit.dart';
 import 'package:ac_project_app/cubits/folders/local_folders_cubit.dart';
@@ -316,59 +315,6 @@ BoxDecoration DialogDecoration() {
       topRight: Radius.circular(20.w),
     ),
   );
-}
-
-void saveEmptyFolder(
-    BuildContext context,
-    BuildContext parentContext,
-    String folderName, {
-      void Function(BuildContext context, List<Folder> folders, int index)? moveToMyLinksView,
-      void Function()? callback,
-      bool? hasNotUnclassified,
-    }) {
-  if (folderName.isEmpty) {
-    return;
-  }
-  final folder = Folder(
-    name: folderName,
-  );
-
-  context.read<FolderNameCubit>().add(folder).then((result) {
-    if (result) {
-      Navigator.pop(context);
-      showBottomToast(context: context, '새로운 폴더가 생성되었어요!');
-
-      if (hasNotUnclassified ?? false) {
-        parentContext.read<LocalFoldersCubit>().getFoldersWithoutUnclassified().then((_) {
-          runCallback(
-            parentContext,
-            moveToMyLinksView: moveToMyLinksView,
-            callback: callback,
-          );
-        });
-      } else {
-        parentContext.read<LocalFoldersCubit>().getFolders().then((_) {
-          runCallback(
-            parentContext,
-            moveToMyLinksView: moveToMyLinksView,
-            callback: callback,
-          );
-        });
-      }
-    } else {
-      showBottomToast(context: context, '중복된 폴더 이름입니다!');
-    }
-  });
-}
-
-void runCallback(
-    BuildContext parentContext, {
-      void Function(BuildContext context, List<Folder> folders, int index)? moveToMyLinksView,
-      void Function()? callback,
-    }) {
-  final folders = parentContext.read<LocalFoldersCubit>().folders;
-  moveToMyLinksView?.call(parentContext, folders, folders.length - 1);
-  callback?.call();
 }
 
 void showFolderOptionsDialog(
