@@ -77,10 +77,16 @@ class LocalFolderRepository {
       );
     }
     if (folder.parentId != null) {
-      await _assertNotUnclassified(
-        folder.parentId!,
-        '미분류 폴더 아래에는 하위 폴더를 만들 수 없습니다.',
-      );
+      final parent = await getFolderById(folder.parentId!);
+      if (parent == null) {
+        throw StateError('부모 폴더가 존재하지 않습니다.');
+      }
+      if (!parent.isClassified) {
+        throw StateError('미분류 폴더 아래에는 하위 폴더를 만들 수 없습니다.');
+      }
+    }
+    if (await isSiblingNameTaken(folder.parentId, folder.name)) {
+      throw StateError('같은 위치에 이미 같은 이름의 폴더가 있습니다.');
     }
     final db = await _databaseHelper.database;
     final now = DateTime.now().toIso8601String();
@@ -95,6 +101,28 @@ class LocalFolderRepository {
       updatedAt: now,
     ));
     return id;
+  }
+
+  /// 같은 부모 아래에 동일한 이름의 폴더가 이미 있는지.
+  /// parentId=null은 루트 범위.
+  /// 비교는 바이트-equal (대소문자 구분, 유니코드 정규화 없음).
+  /// 호출부가 필요 시 이름을 trim한 뒤 전달해야 한다.
+  Future<bool> isSiblingNameTaken(int? parentId, String name) async {
+    final db = await _databaseHelper.database;
+    final rows = parentId == null
+        ? await db.query(
+            _table,
+            where: 'parent_id IS NULL AND name = ?',
+            whereArgs: [name],
+            limit: 1,
+          )
+        : await db.query(
+            _table,
+            where: 'parent_id = ? AND name = ?',
+            whereArgs: [parentId, name],
+            limit: 1,
+          );
+    return rows.isNotEmpty;
   }
 
   /// 폴더 업데이트. 미분류 폴더는 이름/부모 변경 모두 금지.
