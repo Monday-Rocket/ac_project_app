@@ -3,26 +3,27 @@ import 'package:ac_project_app/models/local/local_link.dart';
 import 'package:ac_project_app/provider/local/database_helper.dart';
 import 'package:ac_project_app/provider/local/local_folder_repository.dart';
 import 'package:ac_project_app/provider/local/local_link_repository.dart';
-import 'package:ac_project_app/provider/recent_folders_repository.dart';
-import 'package:ac_project_app/provider/share_data_provider.dart';
-import 'package:ac_project_app/provider/sync/merge_compute.dart';
-import 'package:ac_project_app/provider/sync/merge_types.dart';
+import 'package:ac_project_app/provider/sync/pro_mutate.dart';
 import 'package:ac_project_app/util/logger.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+/// [SyncRepository.backupToRemote] 진행 단계. UI 로딩 표시용.
+enum BackupPhase {
+  preparing,
+  uploadingFolders,
+  uploadingLinks,
+}
+
 /// Pro 백업/복구 + 원격 CRUD 쓰기 전담 Repository.
 ///
-/// 정책 요약 (로드맵 §4):
-/// - 로컬 SQLite = 진실의 원천.
-/// - Pro 유저: CRUD 시 로컬 + 원격에 fire-and-forget 동시 쓰기.
-///   원격 쓰기 실패 시 `lp_remote_dirty` 플래그 ON → 다음 기회에 full replace 로 보정.
-/// - 백업은 full replace 트랜잭션 (기존 원격 folders/links 전부 DELETE + 로컬 전체 INSERT).
-/// - 복구는 원격 메모리 다운로드 → 로컬 SQLite 트랜잭션 교체 + sqlite_sequence 보정.
-/// - Pro → Free 전환 시 원격 전체 삭제(purgeRemote).
-/// - 삭제는 hard delete 로 통일.
-/// - `_isBackingUp` 플래그로 중복 실행 방지.
+/// 정책 요약 (SYNC_MODEL_V2):
+/// - Free: 로컬 SQLite 가 진실. 원격 미사용.
+/// - Pro: 서버가 진실. 로컬은 서버의 읽기 캐시 + 미러.
+/// - 전환점(Free↔Pro)에서만 full replace 가 발생.
+/// - CRUD 원격 쓰기는 [proMutate] 로 감싸 오프라인/서버 오류를 호출부로 상향. dirty flag 폐기.
 class SyncRepository {
   SyncRepository({
     required LocalFolderRepository folderRepo,
@@ -40,11 +41,25 @@ class SyncRepository {
   final SupabaseClient _client;
 
   static const _kLastBackupAt = 'lp_last_backup_at';
-  static const _kRemoteDirty = 'lp_remote_dirty';
-  static const _kDirtySince = 'lp_remote_dirty_since';
+  static const _kLastPullAt = 'lp_last_pull_at';
+
+  /// Pull 연속 호출 방지 debounce. lifecycle/화면 진입 다중 트리거 대비.
+  static const Duration _pullDebounce = Duration(seconds: 5);
 
   bool _isBackingUp = false;
-  bool _isMerging = false;
+  bool _isPulling = false;
+
+  /// Pro 상태에서 원격 호출이 오프라인 예외로 실패하면 true 로 전환.
+  /// 성공 pull 로 다시 false 로 복귀. UI 는 이 값을 구독해 팝업을 노출한다.
+  final ValueNotifier<bool> offlineNotifier = ValueNotifier(false);
+
+  void markOffline() {
+    if (!offlineNotifier.value) offlineNotifier.value = true;
+  }
+
+  void clearOffline() {
+    if (offlineNotifier.value) offlineNotifier.value = false;
+  }
 
   /// Supabase 호출 모킹이 어려워 parent 해결 경로만 테스트에서 오버라이드할 수 있게 한다.
   @visibleForTesting
@@ -73,48 +88,20 @@ class SyncRepository {
     await prefs.setString(_kLastBackupAt, DateTime.now().toIso8601String());
   }
 
-  Future<bool> isDirty() async {
+  /// 마지막 원격 pull 완료 시각. UI 오프라인 캡션("최근 동기화 MM/DD HH:mm") 용.
+  Future<DateTime?> getLastPullAt() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool(_kRemoteDirty) ?? false;
-  }
-
-  /// dirty 상태가 언제부터 지속되고 있는지. dirty 해제되면 null.
-  Future<DateTime?> getDirtySince() async {
-    final prefs = await SharedPreferences.getInstance();
-    final raw = prefs.getString(_kDirtySince);
+    final raw = prefs.getString(_kLastPullAt);
     if (raw == null) return null;
     return DateTime.tryParse(raw);
   }
 
-  Future<void> _setDirty(bool value) async {
+  Future<void> _setLastPullAtNow() async {
     final prefs = await SharedPreferences.getInstance();
-    final prev = prefs.getBool(_kRemoteDirty) ?? false;
-    await prefs.setBool(_kRemoteDirty, value);
-    if (value && !prev) {
-      // false → true 전환 시점에만 시작 시각 기록 (기존 dirty 이어지면 유지)
-      await prefs.setString(_kDirtySince, DateTime.now().toIso8601String());
-    } else if (!value) {
-      await prefs.remove(_kDirtySince);
-    }
+    await prefs.setString(_kLastPullAt, DateTime.now().toIso8601String());
   }
 
-  // ── 원격 쓰기 래퍼 ────────────────────────────────────────────────────
-
-  /// 모든 원격 쓰기 경로는 이 래퍼를 경유.
-  /// - 요청 전 dirty=true (optimistic: 앱 강제종료 시에도 다음에 보정됨)
-  /// - 성공 시 dirty=false
-  /// - 실패 시 dirty 유지, 예외는 로그만 남기고 삼킴 (fire-and-forget)
-  Future<void> remoteWrite(Future<void> Function() operation) async {
-    await _setDirty(true);
-    try {
-      await operation();
-      await _setDirty(false);
-    } catch (e) {
-      Log.e('SyncRepository.remoteWrite failed: $e');
-    }
-  }
-
-  // ── 개별 upsert/delete ───────────────────────────────────────────────
+  // ── 개별 upsert/delete (Pro CRUD 원격 전파) ─────────────────────────
 
   Future<void> upsertFolderRemote(LocalFolder folder) async {
     final userId = _requireUserId();
@@ -122,22 +109,18 @@ class SyncRepository {
 
     String? parentServerId;
     if (folder.parentId != null) {
-      try {
-        parentServerId =
-            await _resolveFolderOrTestHook(userId, folder.parentId!);
-      } catch (e) {
-        Log.e('upsertFolderRemote: parent resolve failed: $e');
-        await _setDirty(true);
-        return;
-      }
+      parentServerId =
+          await _resolveFolderOrTestHook(userId, folder.parentId!);
       if (parentServerId == null) {
-        await _setDirty(true);
+        // 부모 원격 매핑이 없으면 원격 쓰기를 건너뛴다. 다음 lifecycle 의
+        // full-pull 에서 서버 상태가 진실로 취급되므로 자연 정정된다.
+        Log.e('upsertFolderRemote: parent not found in remote, skipping');
         return;
       }
     }
 
-    await remoteWrite(() async {
-      await _client.from('folders').upsert({
+    await proMutate<void>(
+      remote: () => _client.from('folders').upsert({
         'user_id': userId,
         'client_id': folder.id,
         'parent_id': parentServerId,
@@ -146,29 +129,23 @@ class SyncRepository {
         'is_classified': folder.isClassified,
         'created_at': folder.createdAt,
         'updated_at': folder.updatedAt,
-      }, onConflict: 'user_id,client_id');
-    });
+      }, onConflict: 'user_id,client_id'),
+    );
   }
 
   Future<void> upsertLinkRemote(LocalLink link) async {
     final userId = _requireUserId();
     if (userId == null || link.id == null) return;
 
-    String? folderServerId;
-    try {
-      folderServerId = await _resolveFolderOrTestHook(userId, link.folderId);
-    } catch (e) {
-      Log.e('upsertLinkRemote: folder resolve failed: $e');
-      await _setDirty(true);
-      return;
-    }
+    final folderServerId =
+        await _resolveFolderOrTestHook(userId, link.folderId);
     if (folderServerId == null) {
-      await _setDirty(true);
+      Log.e('upsertLinkRemote: folder not found in remote, skipping');
       return;
     }
 
-    await remoteWrite(() async {
-      await _client.from('links').upsert({
+    await proMutate<void>(
+      remote: () => _client.from('links').upsert({
         'user_id': userId,
         'client_id': link.id,
         'folder_id': folderServerId,
@@ -179,30 +156,30 @@ class SyncRepository {
         'inflow_type': link.inflowType,
         'created_at': link.createdAt,
         'updated_at': link.updatedAt,
-      }, onConflict: 'user_id,client_id');
-    });
+      }, onConflict: 'user_id,client_id'),
+    );
   }
 
   Future<void> deleteFolderRemote(int localFolderId) async {
     final userId = _requireUserId();
     if (userId == null) return;
-    await remoteWrite(() async {
-      await _client
+    await proMutate<void>(
+      remote: () => _client
           .from('folders')
           .delete()
-          .match({'user_id': userId, 'client_id': localFolderId});
-    });
+          .match({'user_id': userId, 'client_id': localFolderId}),
+    );
   }
 
   Future<void> deleteLinkRemote(int localLinkId) async {
     final userId = _requireUserId();
     if (userId == null) return;
-    await remoteWrite(() async {
-      await _client
+    await proMutate<void>(
+      remote: () => _client
           .from('links')
           .delete()
-          .match({'user_id': userId, 'client_id': localLinkId});
-    });
+          .match({'user_id': userId, 'client_id': localLinkId}),
+    );
   }
 
   Future<String?> _resolveRemoteFolderId(
@@ -215,19 +192,23 @@ class SyncRepository {
     return rows.first['id'] as String?;
   }
 
-  // ── 백업 (full replace) ──────────────────────────────────────────────
+  // ── 백업 (full replace) — Free → Pro 전환 전용 ───────────────────────
 
-  /// 원격 원본을 로컬 전체 상태로 교체.
-  /// Pro 전환 시 / dirty 보정 시 / 수동 백업 시 동일하게 사용.
-  /// 원격 folders, links 전부 DELETE → 로컬 전체 INSERT.
-  /// parent_id 매핑을 위해 folders 를 먼저 모두 INSERT 해 client_id ↔ id 맵을 확보.
-  Future<bool> backupToRemote() async {
+  /// 로컬 스냅샷으로 원격을 full replace.
+  /// SYNC_MODEL_V2 §2.1: Free → Pro 전환 시에만 호출. Pro 활성 기간의 동기화에는 쓰지 않는다.
+  ///
+  /// [onPhase] — 단계 진행 통지 콜백. 로딩 UI 가 업로드 중임을 표현하기 위해 사용.
+  /// 순서: preparing → uploadingFolders → uploadingLinks.
+  Future<bool> backupToRemote({
+    void Function(BackupPhase phase, {int? current, int? total})? onPhase,
+  }) async {
     if (_isBackingUp) return false;
     final userId = _requireUserId();
     if (userId == null) return false;
 
     _isBackingUp = true;
     try {
+      onPhase?.call(BackupPhase.preparing);
       final folders = await _folderRepo.getAllFolders();
       final links = await _linkRepo.getAllLinks();
 
@@ -236,6 +217,7 @@ class SyncRepository {
       await _client.from('folders').delete().match({'user_id': userId});
 
       // 2) 폴더 INSERT (parent_id 없이)
+      onPhase?.call(BackupPhase.uploadingFolders, total: folders.length);
       final folderRows = folders
           .where((f) => f.id != null)
           .map((f) => {
@@ -272,6 +254,7 @@ class SyncRepository {
       }
 
       // 5) 링크 INSERT (folder_id 매핑)
+      onPhase?.call(BackupPhase.uploadingLinks, total: links.length);
       final linkRows = <Map<String, dynamic>>[];
       for (final l in links) {
         if (l.id == null) continue;
@@ -295,7 +278,6 @@ class SyncRepository {
       }
 
       await _setLastBackupAtNow();
-      await _setDirty(false);
       Log.i(
           'backupToRemote ok: ${folders.length} folders, ${links.length} links');
       return true;
@@ -318,12 +300,10 @@ class SyncRepository {
     return rows.isNotEmpty;
   }
 
-  // ── 복구 ──────────────────────────────────────────────────────────────
+  // ── 복구 / 주기 pull ─────────────────────────────────────────────────
 
-  /// 원격 → 로컬 전체 복구.
-  /// 1) 원격 folders/links 전체 다운로드 (메모리)
-  /// 2) 성공 시 로컬 SQLite 트랜잭션: 기존 데이터 삭제 + 새 데이터 삽입
-  /// 3) sqlite_sequence 보정 (다음 insert id 충돌 방지)
+  /// 원격 → 로컬 full replace.
+  /// SYNC_MODEL_V2 §2.2/2.3: Pro 활성 기간의 주기 pull, Pro→Free 전환 시 모두 동일.
   Future<void> restoreFromRemote() async {
     final userId = _requireUserId();
     if (userId == null) return;
@@ -393,113 +373,54 @@ class SyncRepository {
         'restoreFromRemote ok: ${remoteFolders.length} folders, ${remoteLinks.length} links');
   }
 
-  // ── 자동 머지 ──────────────────────────────────────────────────────────
-
-  /// 로컬 + 원격을 머지한 결과로 양쪽을 교체.
-  /// - 순수 계산 (computeMerge)
-  /// - 로컬 SQLite 트랜잭션으로 원자적 교체
-  /// - 원격은 backupToRemote() 재사용 (best-effort, 실패 시 dirty=true)
-  /// 반환: 성공 시 MergeResult, 실패 시 null.
-  Future<MergeResult?> mergeWithRemote() async {
-    if (_isMerging) return null;
+  /// Pro 활성 기간의 주기 pull 엔트리.
+  /// SYNC_MODEL_V2 §2.2: lifecycle resumed / 화면 진입 / 로그인 성공 시 호출.
+  ///
+  /// - [force] 가 false(기본)면 마지막 pull 로부터 [_pullDebounce] 미만일 때 skip.
+  /// - 중복 호출 방지: 이미 pulling 중이면 skip.
+  /// - 오프라인/네트워크 예외는 로그만 남기고 삼킨다 (다음 트리거에 재시도).
+  /// - 서버 진실을 기준으로 로컬이 full replace 되므로 호출부는 이후 UI 갱신만 하면 된다.
+  ///
+  /// 반환: 실제 pull 이 수행돼 로컬이 변경됐으면 true, skip 됐으면 false.
+  Future<bool> pullFromRemote({bool force = false}) async {
+    if (_isPulling) return false;
     final userId = _requireUserId();
-    if (userId == null) return null;
+    if (userId == null) return false;
 
-    _isMerging = true;
+    if (!force) {
+      final last = await getLastPullAt();
+      if (last != null &&
+          DateTime.now().difference(last) < _pullDebounce) {
+        return false;
+      }
+    }
+
+    _isPulling = true;
     try {
-      // 1) 양쪽 스냅샷 로드 + 2) 순수 계산 + 3) 로컬 트랜잭션은 한 묶음.
-      // 여기서 실패하면 머지 전체 실패로 간주 — 예외 전파.
-      final localFolders = await _folderRepo.getAllFolders();
-      final localLinks = await _linkRepo.getAllLinks();
-      final remoteFolders =
-          await _client.from('folders').select().match({'user_id': userId});
-      final remoteLinks =
-          await _client.from('links').select().match({'user_id': userId});
-
-      final result = computeMerge(
-        localFolders: localFolders,
-        localLinks: localLinks,
-        remoteFolders: List<Map<String, dynamic>>.from(remoteFolders),
-        remoteLinks: List<Map<String, dynamic>>.from(remoteLinks),
-        mergeAt: DateTime.now().toUtc(),
-      );
-
-      await _applyMergeToLocal(result);
-
-      // 4) 원격 full replace는 best-effort. 실패해도 로컬은 이미 머지 상태.
-      //    backupToRemote가 내부에서 dirty=true 유지 → 다음 포그라운드 복귀 시 보정.
-      try {
-        final remoteOk = await backupToRemote();
-        if (!remoteOk) {
-          Log.e('mergeWithRemote: remote replace failed, dirty=true 유지');
-        }
-      } catch (e) {
-        Log.e('mergeWithRemote: remote replace threw: $e');
+      await restoreFromRemote();
+      await _setLastPullAtNow();
+      clearOffline();
+      return true;
+    } on ProMutateOfflineException catch (e) {
+      Log.e('pullFromRemote offline: $e');
+      markOffline();
+      return false;
+    } catch (e) {
+      // 네트워크 계열 예외 식별: SocketException / TimeoutException / HttpException / ClientException.
+      if (isOfflineException(e)) {
+        Log.e('pullFromRemote offline (raw): $e');
+        markOffline();
+      } else {
+        Log.e('pullFromRemote failed: $e');
       }
-
-      Log.i('mergeWithRemote ok: ${result.stats}');
-
-      // 5) 후처리: 외부에 저장된 id 참조 정리
-      try {
-        await const RecentFoldersRepository().clear();
-      } catch (e) {
-        Log.e('mergeWithRemote: recent clear failed: $e');
-      }
-      try {
-        await ShareDataProvider.syncFoldersToShareDB();
-      } catch (e) {
-        Log.e('mergeWithRemote: share.db sync failed: $e');
-      }
-
-      return result;
+      return false;
     } finally {
-      _isMerging = false;
+      _isPulling = false;
     }
   }
 
-  Future<void> _applyMergeToLocal(MergeResult result) async {
-    final db = await _databaseHelper.database;
-    await db.transaction((txn) async {
-      await txn.delete('link');
-      await txn.delete('folder');
-
-      // folders 먼저 (parent_id 없이)
-      for (final f in result.folders) {
-        final map = Map<String, dynamic>.from(f.toMap())..remove('parent_id');
-        await txn.insert('folder', map);
-      }
-
-      // parent_id 2-pass update
-      for (final f in result.folders) {
-        if (f.parentId != null && f.id != null) {
-          await txn.update(
-            'folder',
-            {'parent_id': f.parentId},
-            where: 'id = ?',
-            whereArgs: [f.id],
-          );
-        }
-      }
-
-      // links
-      for (final l in result.links) {
-        await txn.insert('link', l.toMap());
-      }
-
-      // sqlite_sequence 보정
-      await txn.rawUpdate(
-        'UPDATE sqlite_sequence SET seq = '
-        "(SELECT COALESCE(MAX(id), 0) FROM folder) WHERE name = 'folder'",
-      );
-      await txn.rawUpdate(
-        'UPDATE sqlite_sequence SET seq = '
-        "(SELECT COALESCE(MAX(id), 0) FROM link) WHERE name = 'link'",
-      );
-    });
-  }
-
-  /// Pro → Free 전환 시 원격 전체 삭제.
-  /// 실패해도 다음 백업이 full replace 라 자동 청소됨 (로그만 남김).
+  /// Pro → Free 전환 시 원격 전체 삭제 (즉시 purge 옵션, 미사용).
+  /// v2 에서는 Grace period 후 서버 cron 이 정리하므로 클라이언트 호출은 기본적으로 불필요.
   Future<void> purgeRemote() async {
     final userId = _requireUserId();
     if (userId == null) return;
@@ -512,11 +433,10 @@ class SyncRepository {
     }
   }
 
-  /// 테스트/디버깅용 — 백업 메타 초기화 (원격 데이터는 건드리지 않음).
+  /// 테스트/디버깅용 — 백업/pull 메타 초기화 (원격 데이터는 건드리지 않음).
   Future<void> clearLocalSyncMeta() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_kLastBackupAt);
-    await prefs.remove(_kRemoteDirty);
-    await prefs.remove(_kDirtySince);
+    await prefs.remove(_kLastPullAt);
   }
 }

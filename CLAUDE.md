@@ -103,8 +103,42 @@ class ExampleCubit extends Cubit<ExampleState> {
 }
 ```
 
+## 운영 DB 직접 접속 (Supabase)
+
+Pro/Free 전환, 테스트 데이터 정리, 원격 상태 검증 같은 작업에서 Supabase DB 에 직접 SQL 을 날려야 할 때가 있다. 접속 정보는 **프로젝트 루트 `.env`** 에 있음 (gitignored). Claude 는 쉘에서 다음 순서로 접근:
+
+```bash
+# 1) .env 로드 (프로젝트 루트에서 실행)
+set -a && source .env && set +a
+
+# 2) psql 호출 — psql 은 PATH 에 없으므로 절대경로 사용
+/opt/homebrew/opt/libpq/bin/psql "$LINKPOOL_SUPABASE_DB_URL" -c "SELECT 1;"
+```
+
+원라이너 예시:
+```bash
+set -a && source .env && set +a && /opt/homebrew/opt/libpq/bin/psql "$LINKPOOL_SUPABASE_DB_URL" -c "SELECT id, email, plan, plan_expires_at FROM profiles WHERE email = 'linkpooltest2@gmail.com';"
+```
+
+**환경변수 이름** (양 프로젝트 공통):
+- `LINKPOOL_SUPABASE_DB_URL` — psql 에 바로 넘기는 전체 connection string (pooler 경유, sslmode=require 포함)
+- `LINKPOOL_SUPABASE_DB_PASSWORD` — 비밀번호만 (별도 도구가 URL 분해를 요구할 때)
+
+**프로젝트 / 주요 테이블**:
+- Supabase project ref: `gystdpdelnfblgyeckth`
+- 테스트 계정: `linkpooltest2@gmail.com` (UUID `355d0598-e5e0-4ece-bb14-1dd03ec8e344`)
+- 핵심 테이블: `profiles` (plan), `folders`, `links`, `auth.users`
+- 스키마 정의: `linkpool-chrome-extension/supabase/migrations/*.sql` (앱과 공유)
+
+**운영 규칙** — 이건 프로덕션 DB 이므로 다음 순서를 반드시 지킨다:
+1. 먼저 `SELECT` 로 대상 row 를 확인해 사용자에게 보여준다.
+2. `UPDATE`/`DELETE`/`INSERT` 같은 destructive 쿼리는 **사용자 명시 승인 후에만** 실행.
+3. `RETURNING` 절을 가능한 한 포함해 변경된 내용을 즉시 확인 가능하게 한다.
+4. 여러 유저에 걸친 대규모 변경은 원칙적으로 트랜잭션(`BEGIN; ... COMMIT;`)으로 감싼다.
+
 ## 참고 문서
 
+- [동기화 모델 v2 (2026-04-23)](docs/SYNC_MODEL_V2.md)
 - [개발 환경 설정](docs/DEVELOPMENT_SETUP.md)
 - [아키텍처](docs/ARCHITECTURE.md)
 - [테스트 가이드](docs/TESTING_GUIDE.md)

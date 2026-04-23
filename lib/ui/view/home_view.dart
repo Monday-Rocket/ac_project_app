@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:ac_project_app/const/colors.dart';
 import 'package:ac_project_app/cubits/auth/auth_cubit.dart';
 import 'package:ac_project_app/cubits/folders/local_folders_cubit.dart';
@@ -11,6 +13,9 @@ import 'package:ac_project_app/provider/sync/sync_repository.dart';
 import 'package:ac_project_app/ui/page/home/local_explore_page.dart';
 import 'package:ac_project_app/ui/page/my_folder/my_folder_page.dart';
 import 'package:ac_project_app/ui/page/my_page/my_page.dart';
+import 'package:ac_project_app/ui/widget/bottom_toast.dart';
+import 'package:ac_project_app/ui/widget/dialog/offline_dialog.dart';
+import 'package:ac_project_app/ui/widget/dialog/pro_backup_dialog.dart';
 import 'package:ac_project_app/util/get_arguments.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -26,11 +31,16 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
   final uploadToolTipButtonKey = GlobalKey();
+  SyncRepository? _sync;
+
+  /// 오프라인 팝업이 떠 있는 동안 중복 노출 방지.
+  bool _offlineDialogShowing = false;
 
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     saveLinksFromOutside();
+    _sync = getIt<SyncRepository>()..offlineNotifier.addListener(_onOfflineChanged);
     super.initState();
   }
 
@@ -42,8 +52,24 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
 
   @override
   void dispose() {
+    _sync?.offlineNotifier.removeListener(_onOfflineChanged);
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  /// SyncRepository.offlineNotifier 변화 감지. true + Pro + 미노출 상태에서만 팝업.
+  void _onOfflineChanged() {
+    final sync = _sync;
+    if (sync == null || !sync.offlineNotifier.value) return;
+    if (_offlineDialogShowing) return;
+    final authCubit = _authCubitRef;
+    if (authCubit == null || !authCubit.state.isPro) return;
+    if (!mounted) return;
+
+    _offlineDialogShowing = true;
+    OfflineDialog.show(context).whenComplete(() {
+      _offlineDialogShowing = false;
+    });
   }
 
   final resumeState = ValueNotifier(true);
@@ -58,43 +84,30 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
       resetResumeState();
       ShareDataProvider.bulkSaveToLocal();
 
-      // plan 재조회 + 전환 감지 + dirty 시 보정 백업 (Pro)
+      // plan 재조회 + 전환 감지 → Pro 면 원격 pull 트리거
       final authCubit = _authCubitRef;
       if (authCubit != null) {
         authCubit.refreshPlan();
-        _maybeRunDirtyCorrectionBackup(authCubit);
+        _triggerPullIfPro(authCubit);
       }
     }
   }
 
-  Future<void> _maybeRunDirtyCorrectionBackup(AuthCubit authCubit) async {
+  /// Pro 상태면 SyncRepository.pullFromRemote() 호출 → 성공 시 LocalFoldersCubit 갱신.
+  /// SYNC_MODEL_V2 §2.2: lifecycle resumed, 화면 진입, 로그인 성공 시 호출.
+  void _triggerPullIfPro(AuthCubit authCubit) {
     if (!authCubit.state.isPro) return;
     final sync = getIt<SyncRepository>();
-    if (await sync.isDirty()) {
-      await sync.backupToRemote();
-    }
-  }
-
-  bool _autoSyncAttempted = false;
-
-  /// Pro 로그인 시 로컬 + 원격 자동 머지. 앱 라이프타임 1회만 시도.
-  Future<void> _maybeAutoSync(BuildContext ctx) async {
-    if (_autoSyncAttempted) return;
-
-    final authCubit = ctx.read<AuthCubit>();
-    if (!authCubit.state.isPro) return;
-
-    _autoSyncAttempted = true;
-
-    final sync = getIt<SyncRepository>();
-    try {
-      final result = await sync.mergeWithRemote();
-      if (result == null) return;
-      if (!ctx.mounted) return;
-      ctx.read<LocalFoldersCubit>().getFolders();
-    } catch (e) {
-      // 실패는 로그만. 다음 앱 시작 시 _autoSyncAttempted 가 리셋되므로 재시도됨.
-    }
+    unawaited(() async {
+      final pulled = await sync.pullFromRemote();
+      if (!pulled) return;
+      if (!mounted) return;
+      // pull 이후 UI 갱신. LocalFoldersCubit 는 provider 하위 context 로 읽는다.
+      final ctx = context;
+      if (ctx.mounted) {
+        ctx.read<LocalFoldersCubit>().getFolders();
+      }
+    }());
   }
 
   void _configureProHooks(AuthCubit authCubit) {
@@ -141,54 +154,88 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
       child: Builder(
         builder: (innerCtx) {
           // provider 하위 context에서 AuthCubit 레퍼런스 캡처 (lifecycle 훅용)
-          _authCubitRef ??= innerCtx.read<AuthCubit>();
-          // 첫 프레임에 dirty 보정 1회
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            final cubit = _authCubitRef;
-            if (cubit != null) _maybeRunDirtyCorrectionBackup(cubit);
-          });
+          final captured = _authCubitRef;
+          if (captured == null) {
+            final cubit = innerCtx.read<AuthCubit>();
+            _authCubitRef = cubit;
+            // 콜드 스타트 최초 빌드 후 Pro 면 원격 pull 1회.
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _triggerPullIfPro(cubit);
+            });
+          }
           return BlocListener<AuthCubit, AuthState>(
-            listenWhen: (prev, curr) => prev.isPro != curr.isPro,
-            listener: (ctx, state) {
-              if (state.isPro) _maybeAutoSync(ctx);
-            },
+            listenWhen: (prev, curr) =>
+                prev.backupPhase != curr.backupPhase,
+            listener: _onBackupPhaseChanged,
             child: BlocBuilder<HomeViewCubit, int>(
-              builder: (context, index) {
-                final icons = getBottomIcons(index);
+            builder: (context, index) {
+              final icons = getBottomIcons(index);
 
-                final bottomItems = [
-                  BottomNavigationBarItem(
-                    icon: SizedBox(
-                      width: 24.w,
-                      height: 24.w,
-                      child: icons[0],
-                    ),
-                    label: '마이폴더',
+              final bottomItems = [
+                BottomNavigationBarItem(
+                  icon: SizedBox(
+                    width: 24.w,
+                    height: 24.w,
+                    child: icons[0],
                   ),
-                  BottomNavigationBarItem(
-                    icon: SizedBox(
-                      width: 24.w,
-                      height: 24.w,
-                      child: icons[1],
-                    ),
-                    label: '탐색',
+                  label: '마이폴더',
+                ),
+                BottomNavigationBarItem(
+                  icon: SizedBox(
+                    width: 24.w,
+                    height: 24.w,
+                    child: icons[1],
                   ),
-                  BottomNavigationBarItem(
-                    icon: SizedBox(
-                      width: 24.w,
-                      height: 24.w,
-                      child: icons[2],
-                    ),
-                    label: '마이페이지',
+                  label: '탐색',
+                ),
+                BottomNavigationBarItem(
+                  icon: SizedBox(
+                    width: 24.w,
+                    height: 24.w,
+                    child: icons[2],
                   ),
-                ];
-                return buildBody(index, bottomItems, context);
-              },
-            ),
+                  label: '마이페이지',
+                ),
+              ];
+              return buildBody(index, bottomItems, context);
+            },
+          ),
           );
         },
       ),
     );
+  }
+
+  /// Free → Pro 전환 시 백업 진행 다이얼로그 생명주기 관리.
+  /// - preparing 에지에서 다이얼로그 노출 (중복 방지 플래그 [_backupDialogOpen]).
+  /// - done/failed 결과 토스트.
+  /// - idle 로 복귀하면 다이얼로그 닫기.
+  bool _backupDialogOpen = false;
+  void _onBackupPhaseChanged(BuildContext ctx, AuthState state) {
+    final phase = state.backupPhase;
+    if (state.isBackupInProgress && !_backupDialogOpen) {
+      _backupDialogOpen = true;
+      final cubit = ctx.read<AuthCubit>();
+      showDialog<void>(
+        context: ctx,
+        barrierDismissible: false,
+        builder: (_) => BlocProvider.value(
+          value: cubit,
+          child: const ProBackupDialog(),
+        ),
+      );
+    } else if (phase == ProBackupPhase.done) {
+      if (ctx.mounted) {
+        showBottomToast(context: ctx, '백업을 마쳤어요!');
+      }
+    } else if (phase == ProBackupPhase.failed) {
+      if (ctx.mounted) {
+        showBottomToast(context: ctx, '백업에 실패했어요. 잠시 후 다시 시도해 주세요.');
+      }
+    } else if (phase == ProBackupPhase.idle && _backupDialogOpen) {
+      _backupDialogOpen = false;
+      Navigator.of(ctx, rootNavigator: true).maybePop();
+    }
   }
 
   Widget buildBody(
@@ -222,6 +269,11 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
         onTap: (index) {
           if (index == 0) {
             context.read<LocalFoldersCubit>().getFolders();
+          }
+          // 마이폴더(0) / 마이페이지(2) 진입 시 Pro 면 원격 pull (debounce 는 SyncRepository 내부).
+          if (index == 0 || index == 2) {
+            final cubit = _authCubitRef;
+            if (cubit != null) _triggerPullIfPro(cubit);
           }
           context.read<HomeViewCubit>().moveTo(index);
         },

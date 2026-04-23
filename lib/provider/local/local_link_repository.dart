@@ -79,7 +79,7 @@ class LocalLinkRepository {
     // 폴더 썸네일 업데이트 (첫 링크인 경우)
     await _updateFolderThumbnailIfNeeded(link.folderId, link.image);
 
-    ProRemoteHooks.onLinkUpserted(link.copyWith(
+    await ProRemoteHooks.onLinkUpserted(link.copyWith(
       id: id,
       createdAt: now,
       updatedAt: now,
@@ -102,7 +102,7 @@ class LocalLinkRepository {
       whereArgs: [link.id],
     );
     Log.i('Updated link: ${link.id}');
-    ProRemoteHooks.onLinkUpserted(link.copyWith(updatedAt: now));
+    await ProRemoteHooks.onLinkUpserted(link.copyWith(updatedAt: now));
     return count;
   }
 
@@ -115,7 +115,7 @@ class LocalLinkRepository {
       whereArgs: [id],
     );
     Log.i('Deleted link: $id');
-    if (count > 0) ProRemoteHooks.onLinkDeleted(id);
+    if (count > 0) await ProRemoteHooks.onLinkDeleted(id);
     return count;
   }
 
@@ -134,7 +134,7 @@ class LocalLinkRepository {
     Log.i('Moved link $linkId to folder $newFolderId');
     if (count > 0) {
       final refreshed = await getLinkById(linkId);
-      if (refreshed != null) ProRemoteHooks.onLinkUpserted(refreshed);
+      if (refreshed != null) await ProRemoteHooks.onLinkUpserted(refreshed);
     }
     return count;
   }
@@ -152,7 +152,7 @@ class LocalLinkRepository {
     Log.i('Moved ${linkIds.length} links to folder $newFolderId');
     for (final id in linkIds) {
       final refreshed = await getLinkById(id);
-      if (refreshed != null) ProRemoteHooks.onLinkUpserted(refreshed);
+      if (refreshed != null) await ProRemoteHooks.onLinkUpserted(refreshed);
     }
     return count;
   }

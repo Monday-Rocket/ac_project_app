@@ -101,7 +101,7 @@ class LocalFolderRepository {
       ..['updated_at'] = now;
     final id = await db.insert(_table, map);
     Log.i('Created folder: $id - ${folder.name}');
-    ProRemoteHooks.onFolderUpserted(folder.copyWith(
+    await ProRemoteHooks.onFolderUpserted(folder.copyWith(
       id: id,
       createdAt: now,
       updatedAt: now,
@@ -150,7 +150,7 @@ class LocalFolderRepository {
       whereArgs: [folder.id],
     );
     Log.i('Updated folder: ${folder.id} - ${folder.name}');
-    ProRemoteHooks.onFolderUpserted(folder.copyWith(updatedAt: now));
+    await ProRemoteHooks.onFolderUpserted(folder.copyWith(updatedAt: now));
     return count;
   }
 
@@ -167,7 +167,7 @@ class LocalFolderRepository {
     );
     Log.i('Deleted folder: $id');
     for (final f in descendants) {
-      if (f.id != null) ProRemoteHooks.onFolderDeleted(f.id!);
+      if (f.id != null) await ProRemoteHooks.onFolderDeleted(f.id!);
     }
     return count;
   }
@@ -217,7 +217,7 @@ class LocalFolderRepository {
     );
     Log.i('Updated folder thumbnail: $folderId');
     final refreshed = await getFolderById(folderId);
-    if (refreshed != null) ProRemoteHooks.onFolderUpserted(refreshed);
+    if (refreshed != null) await ProRemoteHooks.onFolderUpserted(refreshed);
     return count;
   }
 
@@ -349,7 +349,7 @@ class LocalFolderRepository {
     Log.i('Moved folder: $folderId → parent=$newParentId');
     if (count > 0) {
       final refreshed = await getFolderById(folderId);
-      if (refreshed != null) ProRemoteHooks.onFolderUpserted(refreshed);
+      if (refreshed != null) await ProRemoteHooks.onFolderUpserted(refreshed);
     }
     return count > 0;
   }

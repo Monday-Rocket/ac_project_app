@@ -1,15 +1,17 @@
-import 'dart:async';
-
+import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/models/local/local_folder.dart';
 import 'package:ac_project_app/models/local/local_link.dart';
+import 'package:ac_project_app/provider/sync/pro_mutate.dart';
+import 'package:ac_project_app/provider/sync/sync_repository.dart';
 import 'package:ac_project_app/util/logger.dart';
 
-/// Pro 유저의 로컬 CRUD를 원격에 fire-and-forget 전파하기 위한 전역 훅.
+/// Pro CRUD 원격 전파 훅.
 ///
-/// 앱 시작 시 `ProRemoteHooks.configure(...)` 한 번으로 AuthCubit + SyncRepository 를 연결해두면,
-/// Local*Repository 들은 이 훅만 호출하면 된다 (Cubit/SyncRepository 직접 의존 제거).
-///
-/// Pro 가 아니거나 훅이 설정돼 있지 않으면 no-op.
+/// v2 (SYNC_MODEL_V2 §2.2):
+/// - Local*Repository 가 로컬 쓰기 직후 이 훅을 **await** 한다.
+/// - 훅 내부는 [proMutate] 로 원격 호출을 감싸 오프라인 예외를 분리.
+/// - 실패 시 오프라인 예외는 삼키고(다음 lifecycle 의 full-pull 이 정정), 그 외는 상향.
+/// - dirty flag 는 v2 에서 폐기됨.
 class ProRemoteHooks {
   ProRemoteHooks._();
 
@@ -42,35 +44,42 @@ class ProRemoteHooks {
     _deleteLink = null;
   }
 
-  static void onFolderUpserted(LocalFolder folder) {
+  static Future<void> onFolderUpserted(LocalFolder folder) async {
     final hook = _upsertFolder;
     if (hook == null || !_isProGetter()) return;
-    unawaited(_safe(() => hook(folder)));
+    await _run(() => hook(folder));
   }
 
-  static void onLinkUpserted(LocalLink link) {
+  static Future<void> onLinkUpserted(LocalLink link) async {
     final hook = _upsertLink;
     if (hook == null || !_isProGetter()) return;
-    unawaited(_safe(() => hook(link)));
+    await _run(() => hook(link));
   }
 
-  static void onFolderDeleted(int folderId) {
+  static Future<void> onFolderDeleted(int folderId) async {
     final hook = _deleteFolder;
     if (hook == null || !_isProGetter()) return;
-    unawaited(_safe(() => hook(folderId)));
+    await _run(() => hook(folderId));
   }
 
-  static void onLinkDeleted(int linkId) {
+  static Future<void> onLinkDeleted(int linkId) async {
     final hook = _deleteLink;
     if (hook == null || !_isProGetter()) return;
-    unawaited(_safe(() => hook(linkId)));
+    await _run(() => hook(linkId));
   }
 
-  static Future<void> _safe(Future<void> Function() op) async {
+  /// 훅 호출 공통 처리.
+  /// - [ProMutateOfflineException] 은 조용히 로그 + [SyncRepository.markOffline].
+  ///   (다음 full-pull 이 로컬 정정하고 오프라인 팝업은 HomeView 가 notifier 구독으로 표기)
+  /// - 그 외 예외는 상향 (호출부가 트랜잭션 결정).
+  static Future<void> _run(Future<void> Function() op) async {
     try {
       await op();
-    } catch (e) {
-      Log.e('ProRemoteHooks error (swallowed): $e');
+    } on ProMutateOfflineException catch (e) {
+      Log.e('ProRemoteHooks offline (swallowed, pull will reconcile): $e');
+      if (getIt.isRegistered<SyncRepository>()) {
+        getIt<SyncRepository>().markOffline();
+      }
     }
   }
 }
