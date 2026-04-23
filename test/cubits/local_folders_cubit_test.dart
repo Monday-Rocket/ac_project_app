@@ -4,6 +4,7 @@ import 'package:ac_project_app/cubits/folders/local_folders_cubit.dart';
 import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/local/local_folder.dart';
+import 'package:ac_project_app/provider/local/folder_exceptions.dart';
 import 'package:ac_project_app/provider/local/local_folder_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
@@ -260,8 +261,6 @@ void main() {
   group('createFolder()', () {
     test('성공 시 Created(id) 반환 + loading/loaded 상태 emit', () async {
       final cubit = await _buildAndDrain();
-      when(mockRepo.isSiblingNameTaken(null, 'New'))
-          .thenAnswer((_) async => false);
       when(mockRepo.createFolder(any)).thenAnswer((_) async => 42);
       _stubGetAll(mockRepo, [makeLocalFolder(id: 42, name: 'New')]);
 
@@ -278,8 +277,6 @@ void main() {
 
     test('parentId 전달 시 Repository.createFolder에 그대로 전달됨', () async {
       final cubit = await _buildAndDrain();
-      when(mockRepo.isSiblingNameTaken(7, 'Child'))
-          .thenAnswer((_) async => false);
       when(mockRepo.createFolder(any)).thenAnswer((_) async => 99);
       _stubGetAll(mockRepo, [makeLocalFolder(id: 99, name: 'Child')]);
 
@@ -294,8 +291,8 @@ void main() {
 
     test('형제 이름 중복 시 DuplicateSibling 반환, state emit 없음', () async {
       final cubit = await _buildAndDrain();
-      when(mockRepo.isSiblingNameTaken(null, 'Dup'))
-          .thenAnswer((_) async => true);
+      when(mockRepo.createFolder(any))
+          .thenThrow(const SiblingNameTakenException('같은 위치…'));
 
       CreateFolderResult? result;
       final emitted = await collectStates(cubit, () async {
@@ -304,15 +301,13 @@ void main() {
 
       expect(result, isA<DuplicateSibling>());
       expect(emitted, isEmpty);
-      verifyNever(mockRepo.createFolder(any));
       await cubit.close();
     });
 
-    test('Repository가 "부모 폴더" StateError throw → ParentMissing', () async {
+    test('Repository가 ParentNotFoundException throw → ParentMissing', () async {
       final cubit = await _buildAndDrain();
-      when(mockRepo.isSiblingNameTaken(5, 'X')).thenAnswer((_) async => false);
       when(mockRepo.createFolder(any))
-          .thenThrow(StateError('부모 폴더가 존재하지 않습니다.'));
+          .thenThrow(const ParentNotFoundException('부모 폴더가 존재하지 않습니다.'));
 
       final result = await cubit.createFolder('X', parentId: 5);
 
@@ -322,13 +317,24 @@ void main() {
 
     test('Repository 일반 예외 → CreateFolderFailed', () async {
       final cubit = await _buildAndDrain();
-      when(mockRepo.isSiblingNameTaken(null, 'Bad'))
-          .thenAnswer((_) async => false);
       when(mockRepo.createFolder(any)).thenThrow(Exception('insert failed'));
 
       final result = await cubit.createFolder('Bad');
 
       expect(result, isA<CreateFolderFailed>());
+      await cubit.close();
+    });
+
+    test('Repository가 ParentNotClassifiedException throw → ParentMissing',
+        () async {
+      final cubit = await _buildAndDrain();
+      when(mockRepo.createFolder(any)).thenThrow(
+        const ParentNotClassifiedException('미분류 폴더 아래에는 하위 폴더를 만들 수 없습니다.'),
+      );
+
+      final result = await cubit.createFolder('X', parentId: 3);
+
+      expect(result, isA<ParentMissing>());
       await cubit.close();
     });
   });

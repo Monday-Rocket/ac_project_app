@@ -4,6 +4,7 @@ import 'package:ac_project_app/di/set_up_get_it.dart';
 import 'package:ac_project_app/models/folder/folder.dart';
 import 'package:ac_project_app/models/local/local_folder.dart';
 import 'package:ac_project_app/models/local/local_model_extensions.dart';
+import 'package:ac_project_app/provider/local/folder_exceptions.dart';
 import 'package:ac_project_app/provider/local/local_folder_repository.dart';
 import 'package:ac_project_app/provider/recent_folders_repository.dart';
 import 'package:ac_project_app/provider/shared_pref_provider.dart';
@@ -119,13 +120,12 @@ class LocalFoldersCubit extends Cubit<FoldersState> {
   /// 폴더 생성. 결과는 CreateFolderResult로 구분 전달.
   /// - 성공: Created(id)
   /// - 형제 이름 중복: DuplicateSibling
-  /// - 부모 폴더 없음: ParentMissing
+  /// - 부모 폴더 없음 또는 부모가 미분류: ParentMissing
   /// - 기타 실패: CreateFolderFailed(error)
+  ///
+  /// 검증 로직은 Repository가 단일 출처. Cubit은 도메인 예외를 결과 타입으로 변환만 한다.
   Future<CreateFolderResult> createFolder(String name, {int? parentId}) async {
     try {
-      if (await _folderRepository.isSiblingNameTaken(parentId, name)) {
-        return const DuplicateSibling();
-      }
       final now = DateTime.now().toIso8601String();
       final newFolder = LocalFolder(
         name: name,
@@ -136,10 +136,12 @@ class LocalFoldersCubit extends Cubit<FoldersState> {
       final id = await _folderRepository.createFolder(newFolder);
       await getFolders();
       return Created(id);
-    } on StateError catch (e) {
-      Log.e('LocalFoldersCubit.createFolder state error: $e');
-      if (e.message.contains('부모 폴더')) return const ParentMissing();
-      return CreateFolderFailed(e);
+    } on SiblingNameTakenException {
+      return const DuplicateSibling();
+    } on ParentNotFoundException {
+      return const ParentMissing();
+    } on ParentNotClassifiedException {
+      return const ParentMissing();
     } catch (e) {
       Log.e('LocalFoldersCubit.createFolder error: $e');
       return CreateFolderFailed(e);

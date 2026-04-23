@@ -1,5 +1,6 @@
 import 'package:ac_project_app/models/local/local_folder.dart';
 import 'package:ac_project_app/provider/local/database_helper.dart';
+import 'package:ac_project_app/provider/local/folder_exceptions.dart';
 import 'package:ac_project_app/provider/sync/pro_remote_hooks.dart';
 import 'package:ac_project_app/util/logger.dart';
 
@@ -70,23 +71,28 @@ class LocalFolderRepository {
   /// 폴더 생성.
   /// 미분류 폴더는 시스템이 관리하므로 is_classified=false 생성은 금지.
   /// 미분류 폴더를 부모로 지정하는 것도 금지.
+  /// 형제 범위에서 동명 폴더가 있어도 거부.
   Future<int> createFolder(LocalFolder folder) async {
     if (!folder.isClassified) {
-      throw StateError(
+      throw const UnclassifiedCreationException(
         '미분류 폴더는 시스템이 관리합니다. 수동 생성 불가.',
       );
     }
     if (folder.parentId != null) {
       final parent = await getFolderById(folder.parentId!);
       if (parent == null) {
-        throw StateError('부모 폴더가 존재하지 않습니다.');
+        throw const ParentNotFoundException('부모 폴더가 존재하지 않습니다.');
       }
       if (!parent.isClassified) {
-        throw StateError('미분류 폴더 아래에는 하위 폴더를 만들 수 없습니다.');
+        throw const ParentNotClassifiedException(
+          '미분류 폴더 아래에는 하위 폴더를 만들 수 없습니다.',
+        );
       }
     }
     if (await isSiblingNameTaken(folder.parentId, folder.name)) {
-      throw StateError('같은 위치에 이미 같은 이름의 폴더가 있습니다.');
+      throw const SiblingNameTakenException(
+        '같은 위치에 이미 같은 이름의 폴더가 있습니다.',
+      );
     }
     final db = await _databaseHelper.database;
     final now = DateTime.now().toIso8601String();

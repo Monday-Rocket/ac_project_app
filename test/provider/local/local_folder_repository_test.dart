@@ -1,5 +1,6 @@
 import 'package:ac_project_app/models/local/local_folder.dart';
 import 'package:ac_project_app/provider/local/database_helper.dart';
+import 'package:ac_project_app/provider/local/folder_exceptions.dart';
 import 'package:ac_project_app/provider/local/local_folder_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -349,7 +350,7 @@ void main() {
             updatedAt: now,
           ),
         ),
-        throwsA(isA<StateError>()),
+        throwsA(isA<UnclassifiedCreationException>()),
       );
     });
 
@@ -365,7 +366,7 @@ void main() {
             updatedAt: now,
           ),
         ),
-        throwsA(isA<StateError>()),
+        throwsA(isA<ParentNotClassifiedException>()),
       );
     });
 
@@ -396,7 +397,7 @@ void main() {
       final unclassified = await repository.getUnclassifiedFolder();
       expect(
         () => repository.updateFolder(unclassified!.copyWith(name: '변경')),
-        throwsA(isA<StateError>()),
+        throwsA(isA<StateError>()), // _assertNotUnclassified still uses StateError
       );
     });
   });
@@ -512,7 +513,7 @@ void main() {
       expect(child!.parentId, parentId);
     });
 
-    test('존재하지 않는 부모 id 지정 시 StateError', () async {
+    test('존재하지 않는 부모 id 지정 시 ParentNotFoundException', () async {
       expect(
         () => repository.createFolder(LocalFolder(
           name: 'Orphan',
@@ -520,11 +521,11 @@ void main() {
           createdAt: DateTime.now().toIso8601String(),
           updatedAt: DateTime.now().toIso8601String(),
         )),
-        throwsA(isA<StateError>()),
+        throwsA(isA<ParentNotFoundException>()),
       );
     });
 
-    test('미분류 폴더를 부모로 지정 시 StateError (메시지 검증)', () async {
+    test('미분류 폴더를 부모로 지정 시 ParentNotClassifiedException', () async {
       final unclassified = await repository.getUnclassifiedFolder();
       expect(
         () => repository.createFolder(LocalFolder(
@@ -534,7 +535,7 @@ void main() {
           updatedAt: DateTime.now().toIso8601String(),
         )),
         throwsA(
-          isA<StateError>().having(
+          isA<ParentNotClassifiedException>().having(
             (e) => e.message,
             'message',
             contains('미분류 폴더 아래에는'),
@@ -563,7 +564,7 @@ void main() {
           createdAt: DateTime.now().toIso8601String(),
           updatedAt: DateTime.now().toIso8601String(),
         )),
-        throwsA(isA<StateError>()),
+        throwsA(isA<SiblingNameTakenException>()),
       );
     });
   });
