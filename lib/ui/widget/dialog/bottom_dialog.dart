@@ -391,7 +391,7 @@ void showFolderOptionsDialog(
                             if (newId == null || !parentContext.mounted) return;
                             showBottomToast(
                               context: parentContext,
-                              "'${currFolder.name}' 아래에 폴더가 생성되었어요!",
+                              "'${currFolder.name ?? ''}' 아래에 폴더가 생성되었어요!",
                             );
                             parentContext
                                 .read<LocalFoldersCubit>()
